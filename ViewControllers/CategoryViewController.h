@@ -7,19 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TextFieldCell.h"
+
+#import "SlidingViewController.h"
+#import "TextFieldCell.h"	// Needed for TextFieldCellDelegate
 
 @class AppDelegate;
 
 //@interface CategoryViewController : UITableViewController <TextViewCellDelegate, UIAlertViewDelegate>
-@interface CategoryViewController : UITableViewController <TextFieldCellDelegate>
+@interface CategoryViewController : SlidingViewController <TextFieldCellDelegate>
 {
 	AppDelegate*	appDelegate;
     id				editedObject;
 	BOOL			dirty;
-	TextFieldCell*	editCell;
-	CGFloat			keyboardHeight;
-	CGFloat			editFieldBottom;
 }
 
 @property (nonatomic, retain) id editedObject;
