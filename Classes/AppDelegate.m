@@ -212,30 +212,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 			}
 		}
 	}
-/*
-	const char *const query = "SELECT typeID, sequence FROM DefaultInsulinTypes ORDER BY sequence";
-	sqlite3_stmt *statement;
-	
-	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
-	{
-		unsigned i = 0;
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			// Find the corresponding InsulinType object
-			const int typeID = sqlite3_column_int(statement, 0);
-			for( InsulinType* t in self.insulinTypes )
-			{
-				if( t.typeID == typeID )
-				{
-					[self.defaultInsulinTypes addObject:t];
-					break;
-				}
-			}
-			++i;
-		}
-		NSAssert(i == [self.defaultInsulinTypes count], @"Incorrect number of defaultInsulinTypes");
-		sqlite3_finalize(statement);
-	}*/
 }
 
 - (void) loadInsulinTypes
@@ -679,29 +655,6 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	for( InsulinType* type in defaultInsulinTypes )
 		[a addObject:[NSNumber numberWithInt:type.typeID]];
 	[[NSUserDefaults standardUserDefaults] setObject:a forKey:kDefaultInsulinTypes];
-/*
-	// Truncate the category table
-	sqlite3_exec(database, "DELETE FROM DefaultInsulinTypes", NULL, NULL, NULL);
-	
-	static char *sql = "INSERT INTO DefaultInsulinTypes (typeID, sequence) VALUES(?,?)";
-	sqlite3_stmt *statement;
-	if( sqlite3_prepare_v2(database, sql, -1, &statement, NULL) != SQLITE_OK )
-		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
-	
-	unsigned i = 0;
-	for( InsulinType* type in defaultInsulinTypes )
-	{
-		sqlite3_bind_int(statement, 1, type.typeID);
-		sqlite3_bind_int(statement, 2, i);
-		int success = sqlite3_step(statement);
-		sqlite3_reset(statement);		// Reset the query for the next use
-		sqlite3_clear_bindings(statement);	//Clear all bindings for next time
-		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
-		++i;
-	}
-	sqlite3_finalize(statement);
-*/
 }
 
 - (void) updateInsulinType:(InsulinType*)type

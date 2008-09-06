@@ -10,15 +10,7 @@ CREATE TABLE GlucoseSettings
 INSERT INTO GlucoseSettings VALUES ('DatabaseSchemaVersion', '0');
 -- INSERT INTO GlucoseSettings VALUES ('CategoriesVersion', '0');
 -- INSERT INTO GlucoseSettings VALUES ('InsulinTypesVersion', '0');
-/*
-CREATE TABLE DefaultInsulinTypes
-( 'typeID' INTEGER PRIMARY KEY,		-- foreign key
-  'sequence' INTEGER UNIQUE	-- Sequence in default list, NOT type list
-);
 
-INSERT INTO DefaultInsulinTypes(typeID, sequence) VALUES (6, 0);	-- NPH
-INSERT INTO DefaultInsulinTypes(typeID, sequence) VALUES (1, 1);	-- Aspart
-*/
 CREATE TABLE InsulinTypes
 ( 'typeID' INTEGER PRIMARY KEY AUTOINCREMENT,
   'sequence' INTEGER UNIQUE,
