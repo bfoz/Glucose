@@ -38,6 +38,7 @@
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
 		scmConfiguration = {
+			repositoryName = bfoz;
 		};
 	};
 	150829A00E50086000FB556A /* Code sense */ = {
@@ -48,7 +49,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {733, 602}}";
 			sepNavSelRange = "{619, 12}";
-			sepNavVisRange = "{0, 1159}";
+			sepNavVisRange = "{0, 1217}";
 			sepNavWindowFrame = "{{925, 99}, {792, 692}}";
 		};
 	};
@@ -118,16 +119,16 @@
 	150829C60E500A9700FB556A /* InsulinTypeViewController.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {733, 541}}";
-			sepNavSelRange = "{538, 10}";
-			sepNavVisRange = "{0, 698}";
+			sepNavSelRange = "{456, 0}";
+			sepNavVisRange = "{0, 624}";
 		};
 	};
 	150829C70E500A9700FB556A /* InsulinTypeViewController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {733, 5152}}";
-			sepNavSelRange = "{1908, 0}";
-			sepNavVisRange = "{1321, 1518}";
-			sepNavWindowFrame = "{{752, 5}, {792, 692}}";
+			sepNavIntBoundsRect = "{{0, 0}, {900, 3808}}";
+			sepNavSelRange = "{3775, 12}";
+			sepNavVisRange = "{6967, 1258}";
+			sepNavWindowFrame = "{{762, 41}, {792, 692}}";
 		};
 	};
 	150829C80E500A9700FB556A /* LogEntryViewController.h */ = {
@@ -247,7 +248,7 @@
 		ignoreCount = 0;
 		lineNumber = 382;
 		location = Glucose;
-		modificationTime = 242365966.625235;
+		modificationTime = 242371551.7119;
 		state = 1;
 	};
 	15357A2B0E6C7DEA00EA4B3F /* LogViewController.m:102 */ = {
@@ -264,7 +265,7 @@
 		ignoreCount = 0;
 		lineNumber = 102;
 		location = Glucose;
-		modificationTime = 242365966.625319;
+		modificationTime = 242371551.711906;
 		state = 1;
 	};
 	15357A6D0E6C82D300EA4B3F /* LogViewController.m:99 */ = {
@@ -281,7 +282,7 @@
 		ignoreCount = 0;
 		lineNumber = 99;
 		location = Glucose;
-		modificationTime = 242365966.625497;
+		modificationTime = 242371551.711913;
 		state = 1;
 	};
 	1576A8530E66603F004EBBC0 /* AppDelegate.m:509 */ = {
@@ -298,8 +299,31 @@
 		ignoreCount = 0;
 		lineNumber = 509;
 		location = Glucose;
-		modificationTime = 242365966.625082;
+		modificationTime = 242371551.711882;
 		state = 1;
+	};
+	159B8F4C0E7243A7002C3975 /* SettingsViewController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {729, 604}}";
+			sepNavSelRange = "{177, 34}";
+			sepNavVisRange = "{0, 642}";
+		};
+	};
+	159B8F4D0E7243A7002C3975 /* SettingsViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1038, 4942}}";
+			sepNavSelRange = "{8847, 0}";
+			sepNavVisRange = "{8143, 1124}";
+			sepNavWindowFrame = "{{38, 300}, {788, 732}}";
+		};
+	};
+	159B8F4F0E7243A7002C3975 /* SlidingViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {729, 1750}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 1316}";
+			sepNavWindowFrame = "{{81, 197}, {788, 732}}";
+		};
 	};
 	159E81960E5156A40097EA6F /* LogEntryCell.h */ = {
 		uiCtxt = {
@@ -419,6 +443,30 @@
 					PBXSymbolsDataSource_ReferenceNameID,
 				);
 			};
+			PBXConfiguration.PBXFileTableDataSource3.XCSCMDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					20,
+					317,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_SCM_ColumnID,
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
 			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
 				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
@@ -441,8 +489,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 242369117;
-			PBXWorkspaceStateSaveDate = 242369117;
+			PBXPerProjectTemplateStateSaveDate = 242372524;
+			PBXWorkspaceStateSaveDate = 242372524;
 		};
 		sourceControlManager = 1508299F0E50086000FB556A /* Source Control */;
 		userBuildSettings = {
