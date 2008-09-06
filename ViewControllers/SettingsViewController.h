@@ -12,7 +12,6 @@
 @class CategoryViewController;
 @class InsulinTypeViewController;
 
-//@interface SettingsViewController : UITableViewController
 @interface SettingsViewController : SlidingViewController
 {
 	CategoryViewController*	categoryViewController;

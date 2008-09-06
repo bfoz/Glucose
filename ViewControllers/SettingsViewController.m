@@ -319,8 +319,7 @@ static AppDelegate* appDelegate = nil;
  
 - (void)textFieldDidBeginEditing:(UITextField*)field
 {
-	UITableViewCell* cell = [self cellForField:field];
-	[self didBeginEditing:cell field:field action:[self selectorForField:field]];
+	[self didBeginEditing:[self cellForField:field] field:field action:[self selectorForField:field]];
 }
 
 - (void)saveHighGlucoseWarningAction

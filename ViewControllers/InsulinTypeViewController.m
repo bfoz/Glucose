@@ -6,6 +6,8 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
+#import "TextFieldCell.h"
+
 #import "AppDelegate.h"
 #import "InsulinType.h"
 #import "InsulinTypeViewController.h"
@@ -14,9 +16,6 @@
 @interface InsulinTypeViewController ()
 
 @property (nonatomic, readonly) AppDelegate *appDelegate;
-
-- (void)saveAction:(id)sender;
-- (void)setViewMovedUp:(BOOL)movedUp;
 
 @end
 
@@ -28,10 +27,9 @@
 {
 	if (self = [super initWithStyle:style])
 	{
-		self.title = @"Insulin Type";
+		self.title = @"Insulin Types";
 		appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 		dirty = NO;
-		numChecked = 0;
 		multiCheck = NO;
 	}
 	return self;
@@ -83,68 +81,8 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) 
-												 name:UIKeyboardWillShowNotification object:self.view.window]; 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) 
-												 name:UIKeyboardWillHideNotification object:self.view.window]; 
-    // Redisplay the data to update the checkmark
-    [self.tableView reloadData];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    // Unregister for keyboard notifications while not visible.
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil]; 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil]; 
-	// 
-}
-
-// Animate the entire view up or down, to prevent the keyboard from covering the edited field.
-- (void)setViewMovedUp:(BOOL)movedUp
-{
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.3];
-    // Make changes to the view's frame inside the animation block. They will be animated instead
-    // of taking place immediately.
-    CGRect rect = self.view.frame;
-	
-	CGFloat h = keyboardHeight - editFieldBottom;
-	h = (h<0) ? 0 : h;
-	
-    if (movedUp)
-	{
-        // If moving up, not only decrease the origin but increase the height so the view 
-        // covers the entire screen behind the keyboard.
-        rect.origin.y -= h;
-        rect.size.height += h;
-    }
-	else
-	{
-        // If moving down, not only increase the origin but decrease the height.
-        rect.origin.y += h;
-        rect.size.height -= h;
-    }
-    self.view.frame = rect;
-    
-    [UIView commitAnimations];
-}
-
-#pragma mark Keyboard Notifications
-
-- (void)keyboardWillShow:(NSNotification *)notif
-{
-	CGRect r;
-	[[notif.userInfo objectForKey:UIKeyboardBoundsUserInfoKey] getValue:&r];
-	keyboardHeight = r.size.height;
-	if( editFieldBottom )
-        [self setViewMovedUp:YES];
-}
-
-- (void)keyboardWillHide:(NSNotification*)notif
-{
-	if( editFieldBottom )
-		[self setViewMovedUp:NO];
-	editFieldBottom = 0;	// Clear this to indicate that nothing is being edited that needs the view moved
+	[super viewWillAppear:animated];
+    [self.tableView reloadData];	// Redisplay the data to update the checkmark
 }
 
 #pragma mark <UITableViewDelegate>
@@ -309,20 +247,12 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (BOOL)textFieldCellShouldBeginEditing:(TextFieldCell*)cell
 {
-	if( !editFieldBottom )	// Ignore repeat calls
-		editFieldBottom = self.view.bounds.size.height - (cell.center.y + cell.bounds.size.height/2);
-	return YES;
+	return [self shouldBeginEditing:cell];
 }
 
 - (void)textFieldCellDidBeginEditing:(TextFieldCell*)cell
 {
-	// Temporarily replace the navbar's Done button with one that dismisses the keyboard
-	UIBarButtonItem* b = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave
-																	   target:self
-																	   action:@selector(saveAction:)];
-	editCell = cell;
-	self.navigationItem.rightBarButtonItem = b;
-	[b release];
+	[self didBeginEditing:cell field:cell.view action:@selector(saveAction)];
 }
 
 - (void)textFieldCellDidEndEditing:(TextFieldCell*)cell
@@ -337,13 +267,5 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	type.shortName = (cell.text && cell.text.length) ? cell.text : nil;
 	[appDelegate updateInsulinType:type];
 }
-
-- (void)saveAction:(id)sender
-{
-	[editCell resignFirstResponder];
-	self.navigationItem.rightBarButtonItem = nil;
-	editCell = nil;	//Not editing anything
-}
-
 
 @end

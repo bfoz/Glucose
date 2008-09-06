@@ -7,21 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TextFieldCell.h"
+#import "SlidingViewController.h"
 
 @class AppDelegate;
 @class LogEntry;
+@class TextFieldCell;
 
-@interface InsulinTypeViewController : UITableViewController <TextFieldCellDelegate>
+@interface InsulinTypeViewController : SlidingViewController <TextFieldCellDelegate>
 {
 	AppDelegate*	appDelegate;
 	BOOL			dirty;
-	TextFieldCell*	editCell;
     LogEntry*		editedObject;
 	unsigned		editedIndex;
-	CGFloat			keyboardHeight;
-	CGFloat			editFieldBottom;
-	unsigned		numChecked;
 	BOOL			multiCheck;
 }
 
