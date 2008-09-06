@@ -1,0 +1,132 @@
+//
+//  LogEntryCell.m
+//  Glucose
+//
+//  Created by Brandon Fosdick on 8/11/08.
+//  Copyright 2008 __MyCompanyName__. All rights reserved.
+//
+
+#import "AppDelegate.h"
+#import "LogEntryCell.h"
+#import "Constants.h"
+
+@implementation LogEntryCell
+
+@synthesize	labelCategory, labelDose0, labelDose1, labelGlucose, labelTimestamp, labelType0, labelType1;
+
+- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier
+{
+	if (self = [super initWithFrame:frame reuseIdentifier:reuseIdentifier])
+	{
+		self.selectionStyle = UITableViewCellSelectionStyleNone;
+		
+		labelCategory = [[UILabel alloc] initWithFrame:CGRectZero];
+		[self.contentView addSubview:labelCategory];
+		labelCategory.textAlignment = UITextAlignmentLeft;
+		labelCategory.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+
+		labelDose0 = [[UILabel alloc] initWithFrame:CGRectZero];
+		[self.contentView addSubview:labelDose0];
+		labelDose0.textAlignment = UITextAlignmentRight;
+		labelDose0.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+		
+		labelDose1 = [[UILabel alloc] initWithFrame:CGRectZero];
+		[self.contentView addSubview:labelDose1];
+		labelDose1.textAlignment = UITextAlignmentRight;
+		labelDose1.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+		
+		labelGlucose = [[UILabel alloc] initWithFrame:CGRectZero];
+		[self.contentView addSubview:labelGlucose];
+		labelGlucose.textAlignment = UITextAlignmentCenter;
+		labelGlucose.font = [UIFont boldSystemFontOfSize:[UIFont buttonFontSize]];
+
+		labelTimestamp = [[UILabel alloc] initWithFrame:CGRectZero];
+		[self.contentView addSubview:labelTimestamp];
+		labelTimestamp.textAlignment = UITextAlignmentLeft;
+		labelTimestamp.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+
+		labelType0 = [[UILabel alloc] initWithFrame:CGRectZero];
+		[self.contentView addSubview:labelType0];
+		labelType0.textAlignment = UITextAlignmentLeft;
+		labelType0.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+
+		labelType1 = [[UILabel alloc] initWithFrame:CGRectZero];
+		[self.contentView addSubview:labelType1];
+		labelType1.textAlignment = UITextAlignmentLeft;
+		labelType1.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+
+		[self layoutSubviews];
+	}
+	return self;
+}
+
+- (void)dealloc
+{
+	[labelCategory release];
+	[labelDose0 release];
+	[labelDose1 release];
+	[labelGlucose release];
+	[labelTimestamp release];
+	[labelType0 release];
+	[labelType1 release];
+	[super dealloc];
+}
+
+- (void)layoutSubviews
+{
+	[super layoutSubviews];
+	
+	CGRect contentRect = [self.contentView bounds];
+	CGRect insetRect = CGRectInset(contentRect, kCellLeftOffset, 0);
+//	CGRect insetRect = CGRectInset(contentRect, kCellLeftOffset, kCellTopOffset);
+//	NSLog(@"%f x %f\n", contentRect.size.width, contentRect.size.height);
+	const unsigned width = insetRect.size.width;	// Available width
+	const unsigned height = insetRect.size.height;	// Available height
+//	const unsigned width = contentRect.size.width - (kCellLeftOffset*2);	// Available width
+//	const unsigned height = contentRect.size.height - (kCellTopOffset*2);	// Available height
+//	NSLog(@"%d x %d\n", width, height);
+	const unsigned h = height/2;
+
+	// Start
+	const unsigned y0 = insetRect.origin.y;
+	const unsigned y1 = y0 + h;
+
+	// Width of the Category/Timestamp column
+	const unsigned w0 = maxCategoryNameWidth > 80 ? maxCategoryNameWidth : 80;
+//	const unsigned w1 = (width - w0)/2;
+//	const unsigned w1 = width/3;
+//	const unsigned w2 = w1/2-10;
+	const unsigned w2 = 30;
+//	const unsigned w2 = width/6;
+	const unsigned w3 = maxInsulinTypeShortNameWidth;
+//	const unsigned w3 = width - (w0 + w1 + w2);
+
+	const unsigned x0 = insetRect.origin.x;
+//	const unsigned x2 = x0 + w0 + w1;	// Left origin of column 2
+	const unsigned x3 = insetRect.origin.x + insetRect.size.width - maxInsulinTypeShortNameWidth;
+	const unsigned x2 = x3 - w2 - 3;	// Left origin of column 2
+//	const unsigned x3 = x2 + w2 + 3;
+
+	// Column 0 - Category/Timestamp
+	labelTimestamp.frame = CGRectMake(x0, y0, w0, h);
+	labelCategory.frame  = CGRectMake(x0, y1, w0, h);
+	// Column 1 - Glucose (fills remaining width)
+	labelGlucose.frame = CGRectMake(x0 + w0, y0, width - w3 - w2 - w0, height);
+//	labelGlucose.frame = CGRectMake(x0 + w0, y0, w1, height);
+	// Column 2
+	labelDose0.frame = CGRectMake(x2, y0, w2, h);
+	labelDose1.frame  = CGRectMake(x2, y1, w2, h);
+	// Column 3
+	labelType0.frame = CGRectMake(x3, y0, w3, h);
+	labelType1.frame  = CGRectMake(x3, y1, w3, h);
+/*
+	labelGlucose.backgroundColor = [UIColor lightGrayColor];
+	labelType1.backgroundColor = [UIColor cyanColor];
+	labelDose0.backgroundColor = [UIColor magentaColor];
+	labelTimestamp.backgroundColor = [UIColor yellowColor];
+*/
+}
+
+
+
+@end
