@@ -44,10 +44,14 @@
 - (BOOL)shouldBeginEditing:(UITableViewCell*)cell
 {
 	if( !editCellBottom )	// Ignore repeat calls
-		editCellBottom = self.view.bounds.size.height - (cell.center.y + cell.bounds.size.height/2);
+	{
+		CGPoint bottom = CGPointMake(0, cell.frame.origin.y + cell.bounds.size.height);
+		editCellBottom = [UIScreen mainScreen].bounds.size.height - [self.view convertPoint:bottom toView:nil].y;
+	}
 	return YES;
 }
 
+// The action selector is called when the Save button is tapped
 - (void)didBeginEditing:(UITableViewCell*)cell field:(id)field action:(SEL)action
 {
 	// Temporarily replace the navbar's Done button with one that dismisses the keyboard
@@ -98,7 +102,7 @@
     // Make changes to the view's frame inside the animation block. They will be animated instead
     // of taking place immediately.
     CGRect rect = self.view.frame;
-	
+
 	CGFloat h = keyboardHeight - editCellBottom;
 	h = (h<0) ? 0 : h;
 	
