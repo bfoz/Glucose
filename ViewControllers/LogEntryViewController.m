@@ -25,32 +25,24 @@
 
 @property (nonatomic, retain)	UITextField*	glucoseTextField;
 @property (nonatomic, readonly) NSDateFormatter* dateFormatter;
-@property (nonatomic, readonly) UIDatePicker* datePicker;
 @property (nonatomic, readonly) NSNumberFormatter* glucoseFormatter;
 @property (nonatomic, readonly) NSNumberFormatter* numberFormatter;
 @property (nonatomic, retain) UITableView *tableView;
 @property (nonatomic, retain) CategoryViewController* categoryViewController;
 @property (nonatomic, retain)	NSIndexPath*	selectedIndexPath;
-@property (nonatomic, retain)	UITableViewCell*	editCell;
 @property (nonatomic, retain)	UITableViewCell*	cellTimestamp;
 
 
-- (void)setViewMovedUp:(BOOL)movedUp;
-- (void)showDatePicker:(BOOL)s;
-//- (void)dateDoneAction:(id)sender;
-- (void)didBeginEditing:(UITableViewCell*)cell action:(SEL)action;
 - (void)toggleDatePicker;
-- (void)saveAction:(id)sender;
-- (void)hideDatePicker;
 
 @end
 
 @implementation LogEntryViewController
 
-@synthesize categoryViewController, dateFormatter, datePicker, entry, entrySection;
+@synthesize categoryViewController, dateFormatter, entry, entrySection;
 @synthesize glucoseFormatter, numberFormatter, tableView;
 @synthesize glucoseTextField;
-@synthesize selectedIndexPath, editCell, cellTimestamp;
+@synthesize selectedIndexPath, cellTimestamp;
 
 static AppDelegate* appDelegate = nil;
 
@@ -92,6 +84,7 @@ static AppDelegate* appDelegate = nil;
 
 	self.tableView = [[UITableView alloc] initWithFrame:v.frame style:UITableViewStyleGrouped];
 //	UITableView* tv = [[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
+	self.tableView.allowsSelectionDuringEditing = YES;
 	self.tableView.delegate = self;
 	self.tableView.dataSource = self;
 	[v addSubview:self.tableView];
@@ -119,11 +112,7 @@ static AppDelegate* appDelegate = nil;
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    // watch the keyboard so we can adjust the user interface if necessary.
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) 
-												 name:UIKeyboardWillShowNotification object:self.view.window]; 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) 
-												 name:UIKeyboardWillHideNotification object:self.view.window]; 
+	[super viewWillAppear:animated];
 
     // Remove any existing selection.
 	if( self.selectedIndexPath )
@@ -140,39 +129,7 @@ static AppDelegate* appDelegate = nil;
 	if( self.selectedIndexPath == nil )
 		[self setEditing:NO animated:YES];
 
-    // Unregister for keyboard notifications while not visible.
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil]; 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil]; 
-}
-
-// Animate the entire view up or down, to prevent the keyboard from covering the author field.
-- (void)setViewMovedUp:(BOOL)movedUp
-{
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.3];
-    // Make changes to the view's frame inside the animation block. They will be animated instead
-    // of taking place immediately.
-    CGRect rect = self.view.frame;
-
-	CGFloat h = keyboardHeight - editFieldBottom;
-	h = (h<0) ? 0 : h;
-
-    if (movedUp)
-	{
-        // If moving up, not only decrease the origin but increase the height so the view 
-        // covers the entire screen behind the keyboard.
-        rect.origin.y -= h;
-        rect.size.height += h;
-    }
-	else
-	{
-        // If moving down, not only increase the origin but decrease the height.
-        rect.origin.y += h;
-        rect.size.height -= h;
-    }
-    self.view.frame = rect;
-    
-    [UIView commitAnimations];
+	[super viewWillDisappear:animated];
 }
 
 - (void)setEditing:(BOOL)e animated:(BOOL)animated
@@ -203,24 +160,6 @@ static AppDelegate* appDelegate = nil;
 		[entry flush:database];
 	}
     [tableView reloadData];
-}
-
-#pragma mark Keyboard Notifications
-
-- (void)keyboardWillShow:(NSNotification *)notif
-{
-	CGRect r;
-	[[notif.userInfo objectForKey:UIKeyboardBoundsUserInfoKey] getValue:&r];
-	keyboardHeight = r.size.height;
-	if( editFieldBottom )
-        [self setViewMovedUp:YES];
-}
-
-- (void)keyboardWillHide:(NSNotification*)notif
-{
-	if( editFieldBottom )
-		[self setViewMovedUp:NO];
-	editFieldBottom = 0;	// Clear this to indicate that nothing is being edited that needs the view moved
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -452,6 +391,11 @@ static AppDelegate* appDelegate = nil;
 #pragma mark -
 #pragma mark <UITableViewDelegate>
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	return NO;
+}
+
 - (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Only allow selection if editing.
     return (self.editing) ? indexPath : nil;
@@ -524,96 +468,18 @@ static AppDelegate* appDelegate = nil;
 #pragma mark -
 #pragma mark Timestamp picker
 
-- (void)hideDatePicker
-{
-	NSLog(@"Hiding datepicker");
-	entry.timestamp = datePicker.date;
-	[self saveAction:nil];
-	
-	CGSize pickerSize = [datePicker sizeThatFits:CGSizeZero];
-	CGRect rect = datePicker.frame;
-	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationDuration:0.3];
-	rect.origin.y += pickerSize.height;
-	datePicker.frame = rect;
-	[UIView commitAnimations];
-//		datePicker.hidden = YES;
-}
-
-- (void)showDatePicker:(BOOL)s
-{
-	if( !datePicker )
-	{
-		datePicker = [[UIDatePicker alloc] initWithFrame:CGRectZero];
-		datePicker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		datePicker.datePickerMode = UIDatePickerModeDateAndTime;
-		[datePicker addTarget:self action:@selector(dateChangeAction) forControlEvents:(UIControlEventValueChanged)];
-		
-		CGSize pickerSize = [datePicker sizeThatFits:CGSizeZero];
-		CGRect screenRect = [[UIScreen mainScreen] applicationFrame];
-		CGRect rect = CGRectMake(0, screenRect.size.height - kToolbarHeight - 44.0,
-								 pickerSize.width, pickerSize.height);
-		datePicker.frame = rect;
-		
-		// add this picker to our view controller, initially hidden
-		datePicker.hidden = YES;
-		[self.view addSubview:datePicker];
-	}
-	if( s )
-	{
-		NSLog(@"Showing datepicker");
-		[datePicker setDate:entry.timestamp animated:NO];
-		datePicker.hidden = NO;
-		CGSize pickerSize = [datePicker sizeThatFits:CGSizeZero];
-		CGRect rect = datePicker.frame;
-		[UIView beginAnimations:nil context:NULL];
-		[UIView setAnimationDuration:0.3];
-		rect.origin.y -= pickerSize.height;
-		datePicker.frame = rect;
-//			datePicker.center.y += pickerSize.height;
-		[UIView commitAnimations];
-		[self didBeginEditing:cellTimestamp action:@selector(hideDatePicker)];
-	}
-	else
-		[self hideDatePicker];
-}
-
 - (void)toggleDatePicker
 {
-	[self showDatePicker:!(editCell == cellTimestamp)];
+	if( !(editCell == cellTimestamp) )
+		[self showDatePicker:cellTimestamp mode:UIDatePickerModeDateAndTime initialDate:entry.timestamp changeAction:@selector(dateChangeAction)];
+	else
+		[self hideDatePicker];
 }
 
 - (void)dateChangeAction
 {
 	entry.timestamp = datePicker.date;
 	cellTimestamp.text = [dateFormatter stringFromDate:entry.timestamp];
-}
-
-#pragma mark -
-#pragma mark Common Delegate Editing Handlers
-
-- (BOOL)shouldBeginEditing:(UITableViewCell*)cell
-{
-	if( !editFieldBottom )	// Ignore repeat calls
-		editFieldBottom = self.view.bounds.size.height - (cell.center.y + cell.bounds.size.height/2);
-	return YES;
-}
-
-- (void)didBeginEditing:(UITableViewCell*)cell action:(SEL)action
-{
-	// Temporarily replace the navbar's Done button with one that dismisses the keyboard
-	UIBarButtonItem* b = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave
-																	   target:self
-																	   action:action];
-	self.editCell = cell;
-	self.navigationItem.rightBarButtonItem = b;
-	[b release];
-}
-
-- (void)saveAction:(id)sender
-{
-	self.navigationItem.rightBarButtonItem = self.editButtonItem;
-	self.editCell = nil;	//Not editing anything
 }
 
 #pragma mark -
@@ -626,7 +492,7 @@ static AppDelegate* appDelegate = nil;
 
 - (void)textFieldCellDidBeginEditing:(TextFieldCell*)cell
 {
-	[self didBeginEditing:cell action:@selector(saveGlucoseAction:)];
+	[self didBeginEditing:cell field:cell.view action:@selector(saveGlucoseAction:)];
 }
 
 - (void)textFieldCellDidEndEditing:(TextFieldCell*)cell
@@ -643,7 +509,7 @@ static AppDelegate* appDelegate = nil;
 - (void)saveGlucoseAction:(id)sender
 {
 	[((TextFieldCell*)editCell).view resignFirstResponder];
-	[self saveAction:sender];
+	[self saveAction];
 }
 
 #pragma mark -
@@ -681,7 +547,7 @@ static AppDelegate* appDelegate = nil;
 
 - (void)doseDidBeginEditing:(DoseFieldCell*)cell
 {
-	[self didBeginEditing:cell action:@selector(saveDoseAction:)];
+	[self didBeginEditing:cell field:cell.doseField action:@selector(saveDoseAction:)];
 }
 
 - (void)doseDidEndEditing:(DoseFieldCell *)cell
@@ -693,7 +559,7 @@ static AppDelegate* appDelegate = nil;
 - (void)saveDoseAction:(id)sender
 {
 	[((DoseFieldCell*)editCell).doseField resignFirstResponder];
-	[self saveAction:sender];
+	[self saveAction];
 }
 
 #pragma mark -
@@ -706,14 +572,14 @@ static AppDelegate* appDelegate = nil;
 
 - (void)textViewCellDidBeginEditing:(TextViewCell*)cell
 {
-	[self didBeginEditing:cell action:@selector(saveNoteAction:)];
+	[self didBeginEditing:cell field:cell.view action:@selector(saveNoteAction:)];
 }
 
 - (void)saveNoteAction:(id)sender
 {
 	entry.note = ((TextViewCell *)editCell).view.text;
 	[((TextViewCell *)editCell).view resignFirstResponder];
-	[self saveAction:sender];
+	[self saveAction];
 }
 
 @end

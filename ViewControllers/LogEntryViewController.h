@@ -12,14 +12,13 @@
 #import "DoseFieldCell.h"
 #import "TextFieldCell.h"
 #import "TextViewCell.h"
+#import "SlidingViewController.h"
 
 @class CategoryViewController;
 @class InsulinTypeViewController;
 @class LogEntry;
 
-//@interface LogEntryViewController : UITableViewController <DoseFieldCellDelegate, UITextFieldDelegate, TextViewCellDelegate>
-@interface LogEntryViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, DoseFieldCellDelegate, TextViewCellDelegate, TextFieldCellDelegate>
-//@interface LogEntryViewController : UIViewController
+@interface LogEntryViewController : SlidingViewController <DoseFieldCellDelegate, TextViewCellDelegate, TextFieldCellDelegate>
 {
 	LogEntry* entry;
 	NSMutableDictionary*	entrySection;
@@ -28,15 +27,11 @@
 	CategoryViewController*	categoryViewController;
 	InsulinTypeViewController*	insulinTypeViewController;
     NSDateFormatter*	dateFormatter;
-	UIDatePicker*	datePicker;
     NSNumberFormatter*	glucoseFormatter;
     NSNumberFormatter*	numberFormatter;
 	UITextField*	glucoseTextField;
     UITableView*	tableView;
     NSIndexPath*	selectedIndexPath;
-	CGFloat			keyboardHeight;
-	CGFloat			editFieldBottom;
-	UITableViewCell*	editCell;
 	UITableViewCell*	cellTimestamp;
     sqlite3*	database;			// SQLite database handle
 }
