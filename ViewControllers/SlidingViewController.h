@@ -8,13 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SlidingViewController : UITableViewController <UITextFieldDelegate>
+@interface SlidingViewController : UITableViewController
 {
 	CGFloat			editCellBottom;
 	CGFloat			keyboardHeight;
 	UITableViewCell*	editCell;
 	id				editField;
 	UIBarButtonItem*	oldRightBarButtonItem;
+
+	UIDatePicker*	datePicker;
+	CGRect			oldDatePickerRect;
 }
 
 @property (nonatomic, retain)	UIBarButtonItem*	oldRightBarButtonItem;
@@ -24,5 +27,8 @@
 - (void)didBeginEditing:(UITableViewCell*)cell field:(id)field action:(SEL)action;
 - (void)saveAction;
 - (BOOL)shouldBeginEditing:(UITableViewCell*)cell;
+
+- (void)hideDatePicker;
+- (void) showDatePicker:(UITableViewCell*)cell mode:(UIDatePickerMode)mode initialDate:(NSDate*)date changeAction:(SEL)action;
 
 @end

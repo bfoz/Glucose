@@ -74,6 +74,7 @@
 	editField = nil;
 }
 
+#pragma mark -
 #pragma mark Keyboard Notifications
 
 - (void)keyboardWillShow:(NSNotification *)notif
@@ -92,6 +93,7 @@
 	editCellBottom = 0;	// Clear this to indicate that nothing is being edited that needs the view moved
 }
 
+#pragma mark -
 #pragma mark Sliding
 
 // Animate the entire view up or down, to prevent the keyboard from covering the edited row
@@ -122,6 +124,80 @@
     self.view.frame = rect;
     
     [UIView commitAnimations];
+}
+
+#pragma mark -
+#pragma mark Date/Time Picker
+
+- (void) didHideDatePicker:(NSString*)animationID finished:(BOOL)finished context:(void*)context
+{
+	((UIDatePicker*)context).hidden = YES;	// State change
+}
+
+- (void)hideDatePicker
+{
+	if( !datePicker || datePicker.hidden )
+		return;
+	
+	[datePicker removeTarget:self action:NULL forControlEvents:UIControlEventValueChanged];
+	[self saveAction];
+	
+	[UIView beginAnimations:nil context:datePicker];
+	[UIView setAnimationDelegate:self];
+	[UIView setAnimationDidStopSelector:@selector(didHideDatePicker:finished:context:)];
+	[UIView setAnimationDuration:0.3];
+	datePicker.frame = oldDatePickerRect;
+	[UIView commitAnimations];
+	
+	[self setViewMovedUp:NO];	// Do this before clearing editCellBottom
+	editCellBottom = 0;	// Clear this to indicate that nothing is being edited that needs the view moved
+}
+
+- (void) showDatePicker:(UITableViewCell*)cell mode:(UIDatePickerMode)mode initialDate:(NSDate*)date changeAction:(SEL)action
+{
+	if( !datePicker )
+	{
+		datePicker = [[UIDatePicker alloc] initWithFrame:CGRectZero];
+		datePicker.datePickerMode = mode;
+		[datePicker addTarget:self action:action forControlEvents:UIControlEventValueChanged];
+		
+		CGSize pickerSize = [datePicker sizeThatFits:CGSizeZero];
+		CGRect rect = CGRectMake(0, self.view.bounds.size.height,
+								 pickerSize.width, pickerSize.height);
+		datePicker.frame = rect;
+		
+		// Setting hidden doesn't help with the animation so it's used as a state variable
+		datePicker.hidden = YES;
+
+		[self.view addSubview:datePicker];
+	}
+	
+	// Nothing to do if already displaying the picker
+	if( !datePicker.hidden )
+		return;
+	
+	[self shouldBeginEditing:cell];	// Fake a delegate call
+	
+	[datePicker setDate:date animated:NO];
+	datePicker.hidden = NO;	// State change
+	CGRect rect = datePicker.frame;
+	oldDatePickerRect = rect;
+	keyboardHeight = [datePicker sizeThatFits:CGSizeZero].height;
+	
+	if( editCellBottom <= keyboardHeight )
+		rect.origin.y = cell.frame.origin.y + cell.bounds.size.height;
+	else
+		rect.origin.y = oldDatePickerRect.origin.y - keyboardHeight;
+
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationDuration:0.3];
+	datePicker.frame = rect;
+	[UIView commitAnimations];
+	
+	// Pretend to be a keyboard
+	[datePicker becomeFirstResponder];
+	[self setViewMovedUp:YES];
+	[self didBeginEditing:cell field:datePicker action:@selector(hideDatePicker)];
 }
 
 @end
