@@ -12,6 +12,22 @@
 
 @synthesize oldRightBarButtonItem;
 
+// Interpose a generic UIView above the UITableView for holding the datePicker view
+//  UITableView handles all non-tap touch events for its children, which
+//	 prevents the UIDatePicker from seeing flicks. Making the datePicker a
+//	 sibling of the UITableView allows it to get all events while visible.
+- (void)loadView
+{
+	[super loadView];
+
+	// Create a new UIView with the same size and position as the UITableView
+	UIView* v = [[UIView alloc] initWithFrame:[self.tableView frame]];
+	// Relocate the UITableView to the top of the UIView
+	self.tableView.frame = v.bounds;
+	[v addSubview:self.tableView];	// Reparent the UITableView
+	self.view = v;					// Insert the new UIView
+}
+
 - (void)dealloc
 {
 	[datePicker release];
