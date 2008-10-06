@@ -22,10 +22,18 @@
 
 	// Create a new UIView with the same size and position as the UITableView
 	UIView* v = [[UIView alloc] initWithFrame:[self.tableView frame]];
+	// Retain a copy of tableView and set tableView to nil while reparenting
+	//  I'm not sure why this works, but without it tableView gets corrupted.
+	UITableView* tv = self.tableView;
+	[tv retain];
+	self.tableView = nil;
 	// Relocate the UITableView to the top of the UIView
-	self.tableView.frame = v.bounds;
-	[v addSubview:self.tableView];	// Reparent the UITableView
+	tv.frame = v.bounds;
+	[v addSubview:tv];				// Reparent the UITableView
+	[tv release];
 	self.view = v;					// Insert the new UIView
+	self.tableView = tv;			// Restore tableView
+	[v release];
 }
 
 - (void)dealloc
