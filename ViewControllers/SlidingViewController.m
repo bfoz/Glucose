@@ -12,12 +12,10 @@
 
 @synthesize oldRightBarButtonItem;
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (void)dealloc
 {
-	if( self = [super initWithStyle:style] )
-	{
-	}
-	return self;
+	[datePicker release];
+	[super dealloc];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -158,8 +156,6 @@
 	if( !datePicker )
 	{
 		datePicker = [[UIDatePicker alloc] initWithFrame:CGRectZero];
-		datePicker.datePickerMode = mode;
-		[datePicker addTarget:self action:action forControlEvents:UIControlEventValueChanged];
 		
 		CGSize pickerSize = [datePicker sizeThatFits:CGSizeZero];
 		CGRect rect = CGRectMake(0, self.view.bounds.size.height,
@@ -172,6 +168,9 @@
 		[self.view addSubview:datePicker];
 	}
 	
+	datePicker.datePickerMode = mode;
+	[datePicker addTarget:self action:action forControlEvents:UIControlEventValueChanged];
+
 	// Nothing to do if already displaying the picker
 	if( !datePicker.hidden )
 		return;
