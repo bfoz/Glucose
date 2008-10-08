@@ -35,5 +35,6 @@
 
 - (void)hideDatePicker;
 - (void) showDatePicker:(UITableViewCell*)cell mode:(UIDatePickerMode)mode initialDate:(NSDate*)date changeAction:(SEL)action;
+- (void) toggleDatePicker:(UITableViewCell*)cell mode:(UIDatePickerMode)mode initialDate:(NSDate*)date changeAction:(SEL)action;
 
 @end

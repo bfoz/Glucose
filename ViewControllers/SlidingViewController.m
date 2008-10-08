@@ -192,7 +192,7 @@
 
 		[self.view addSubview:datePicker];
 	}
-	
+
 	datePicker.datePickerMode = mode;
 	[datePicker addTarget:self action:action forControlEvents:UIControlEventValueChanged];
 
@@ -222,6 +222,14 @@
 	[datePicker becomeFirstResponder];
 	[self setViewMovedUp:YES];
 	[self didBeginEditing:cell field:datePicker action:@selector(hideDatePicker)];
+}
+
+- (void) toggleDatePicker:(UITableViewCell*)cell mode:(UIDatePickerMode)mode initialDate:(NSDate*)date changeAction:(SEL)action
+{
+	if( editCell == cell )
+		[self hideDatePicker];
+	else
+		[self showDatePicker:cell mode:mode initialDate:date changeAction:action];
 }
 
 @end
