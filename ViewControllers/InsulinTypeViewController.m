@@ -98,12 +98,12 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	return self.editing ? [appDelegate.insulinTypes count] + 1 : [appDelegate.insulinTypes count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {	
 	const BOOL notOnePastEnd = indexPath.row < [appDelegate.insulinTypes count];
 	NSString* cellID = self.editing && notOnePastEnd ? @"EditCellID" : @"MyIdentifier";
 
-	UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+	UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
 	{
 		if( self.editing && notOnePastEnd )
@@ -132,7 +132,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	if( editedObject  && !self.editing )
 	{
@@ -141,12 +141,12 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	}
 
 	// HI guidlines say row should be selected and then deselected
-	[tableView deselectRowAtIndexPath:indexPath animated:YES];
+	[tv deselectRowAtIndexPath:indexPath animated:YES];
 
 	if( multiCheck )
 	{
 		InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
-		UITableViewCell *const cell = [tableView cellForRowAtIndexPath:indexPath];
+		UITableViewCell *const cell = [tv cellForRowAtIndexPath:indexPath];
 		if( [appDelegate.defaultInsulinTypes containsObject:type] )
 		{
 			cell.accessoryType = UITableViewCellAccessoryNone;

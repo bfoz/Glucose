@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "Category.h"
 #import "CategoryViewController.h"
+#import "Constants.h"
 #import "LogEntry.h"
 
 @interface CategoryViewController ()
@@ -73,12 +74,12 @@
 }
 
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {	
 	const BOOL notOnePastEnd = indexPath.row < [appDelegate.categories count];
 	NSString* cellID = self.editing && notOnePastEnd ? @"EditCellID" : @"MyIdentifier";
 
-	UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+	UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
 	{
 		if( self.editing && notOnePastEnd )
@@ -118,7 +119,7 @@
 	return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	if( editedObject && !self.editing )
 	{
@@ -128,7 +129,7 @@
 	}
 
 	// HI guidlines say row should be selected and then deselected
-	[tableView deselectRowAtIndexPath:indexPath animated:YES];
+	[tv deselectRowAtIndexPath:indexPath animated:YES];
 
 	if( self.parentViewController.modalViewController == self )
 		[self.parentViewController dismissModalViewControllerAnimated:YES];
