@@ -18,9 +18,14 @@
 
 	UIDatePicker*	datePicker;
 	CGRect			oldDatePickerRect;
+
+	// UITableViewController::tableView is set whenever view is set, so create
+	//  a new tableView property to mask the super's property
+	UITableView*	tableView;
 }
 
 @property (nonatomic, retain)	UIBarButtonItem*	oldRightBarButtonItem;
+@property (nonatomic, retain)	UITableView*		tableView;
 
 - (void)setViewMovedUp:(BOOL)movedUp;
 

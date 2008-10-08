@@ -11,6 +11,7 @@
 @implementation SlidingViewController
 
 @synthesize oldRightBarButtonItem;
+@synthesize tableView;
 
 // Interpose a generic UIView above the UITableView for holding the datePicker view
 //  UITableView handles all non-tap touch events for its children, which
@@ -20,19 +21,19 @@
 {
 	[super loadView];
 
-	// Create a new UIView with the same size and position as the UITableView
-	UIView* v = [[UIView alloc] initWithFrame:[self.tableView frame]];
-	// Retain a copy of tableView and set tableView to nil while reparenting
-	//  I'm not sure why this works, but without it tableView gets corrupted.
-	UITableView* tv = self.tableView;
-	[tv retain];
-	self.tableView = nil;
+	// Create a new UIView with the same size and position as the super's UITableView
+	UIView *const v = [[UIView alloc] initWithFrame:[super.tableView frame]];
+	// UITableViewController makes it difficult to set tableView and view independantly.
+	//  Setting tableView sets view=tableView
+	//  Setting view sets tableView=nil
+	// So, use self.tableView to override super.tableView. But first, make a copy
+	//  of super.tableView because it already points to a valid UITableView.
+	UITableView *const tv = super.tableView;
 	// Relocate the UITableView to the top of the UIView
 	tv.frame = v.bounds;
 	[v addSubview:tv];				// Reparent the UITableView
-	[tv release];
-	self.view = v;					// Insert the new UIView
-	self.tableView = tv;			// Restore tableView
+	self.tableView = tv;			// Keep a pointer to the UITableView created by the super
+	self.view = v;					// Insert the new parent UIView
 	[v release];
 }
 
