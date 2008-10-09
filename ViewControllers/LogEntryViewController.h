@@ -30,7 +30,6 @@
     NSNumberFormatter*	glucoseFormatter;
     NSNumberFormatter*	numberFormatter;
 	UITextField*	glucoseTextField;
-    UITableView*	tableView;
     NSIndexPath*	selectedIndexPath;
 	UITableViewCell*	cellTimestamp;
     sqlite3*	database;			// SQLite database handle

@@ -27,7 +27,6 @@
 @property (nonatomic, readonly) NSDateFormatter* dateFormatter;
 @property (nonatomic, readonly) NSNumberFormatter* glucoseFormatter;
 @property (nonatomic, readonly) NSNumberFormatter* numberFormatter;
-@property (nonatomic, retain) UITableView *tableView;
 @property (nonatomic, retain) CategoryViewController* categoryViewController;
 @property (nonatomic, retain)	NSIndexPath*	selectedIndexPath;
 @property (nonatomic, retain)	UITableViewCell*	cellTimestamp;
@@ -40,35 +39,41 @@
 @implementation LogEntryViewController
 
 @synthesize categoryViewController, dateFormatter, entry, entrySection;
-@synthesize glucoseFormatter, numberFormatter, tableView;
+@synthesize glucoseFormatter, numberFormatter;
 @synthesize glucoseTextField;
 @synthesize selectedIndexPath, cellTimestamp;
 
 static AppDelegate* appDelegate = nil;
 
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
+    if (self = [super initWithStyle:style])
+	{
+		self.title = @"Glucose";
+
+    	if( !appDelegate )
+			appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+		database = appDelegate.database;
+		
+		// Create a date formatter to convert the date to a string format.
+		dateFormatter = [[NSDateFormatter alloc] init];
+		[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+		[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+		
+		// Create a date formatter to convert the date to a string format.
+		numberFormatter = [[NSNumberFormatter alloc] init];
+		
+		// A number formatter for glucose measurements
+		glucoseFormatter = [[NSNumberFormatter alloc] init];
+		[glucoseFormatter setPositiveSuffix:@" mg/dL"];
+		[glucoseFormatter setNegativeSuffix:@" mg/dL"];
+	}
+    return self;
+}
+/*
 - (void)loadView
 {
-	if( entry == nil )
-		return;
-
-	if( !appDelegate )
-		appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-	database = appDelegate.database;
-
-	// Create a date formatter to convert the date to a string format.
-	dateFormatter = [[NSDateFormatter alloc] init];
-	[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
-	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-	
-	// Create a date formatter to convert the date to a string format.
-	numberFormatter = [[NSNumberFormatter alloc] init];
-
-	// A number formatter for glucose measurements
-	glucoseFormatter = [[NSNumberFormatter alloc] init];
-	[glucoseFormatter setPositiveSuffix:@" mg/dL"];
-	[glucoseFormatter setNegativeSuffix:@" mg/dL"];
-
-	/*
 //	NSArray* items = [NSArray arrayWithObjects:@"Details", @"Note"];
 	NSMutableArray* items = [[NSMutableArray alloc] init];
 	[items addObject:@"Detail"];
@@ -79,28 +84,13 @@ static AppDelegate* appDelegate = nil;
 	l.text = @"Glucose";
 	[v addSubview:s];
 	[v addSubview:l];
- */
-	UIView* v = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-
-	self.tableView = [[UITableView alloc] initWithFrame:v.frame style:UITableViewStyleGrouped];
-//	UITableView* tv = [[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
-	self.tableView.allowsSelectionDuringEditing = YES;
-	self.tableView.delegate = self;
-	self.tableView.dataSource = self;
-	[v addSubview:self.tableView];
-	self.view = v;
-	self.title = @"Glucose";
-
-	[tableView release];
 }
-
+*/
 - (void)dealloc
 {
 	[selectedIndexPath release];
 	[categoryViewController release];
-	[tableView release];
     [numberFormatter release];
-	[datePicker release];
     [dateFormatter release];
 	[super dealloc];
 }
@@ -108,6 +98,7 @@ static AppDelegate* appDelegate = nil;
 - (void)viewDidLoad
 {
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
+	self.tableView.allowsSelectionDuringEditing = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -117,11 +108,11 @@ static AppDelegate* appDelegate = nil;
     // Remove any existing selection.
 	if( self.selectedIndexPath )
 	{
-		[tableView deselectRowAtIndexPath:selectedIndexPath animated:NO];
+		[self.tableView deselectRowAtIndexPath:selectedIndexPath animated:NO];
 		self.selectedIndexPath = nil;
 	}
     // Redisplay the data.
-    [tableView reloadData];
+    [self.tableView reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -159,7 +150,7 @@ static AppDelegate* appDelegate = nil;
 		[appDelegate updateStatisticsForSection:s];
 		[entry flush:database];
 	}
-    [tableView reloadData];
+    [self.tableView reloadData];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
