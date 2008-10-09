@@ -120,7 +120,7 @@
 {
     // Create the detail view lazily
     if( !logEntryViewController )
-        logEntryViewController = [[LogEntryViewController alloc] init];
+        logEntryViewController = [[LogEntryViewController alloc] initWithStyle:UITableViewStyleGrouped];
 
 //    [entry hydrate];		// Force the LogEntry to be fully loaded from the database
     logEntryViewController.entry = entry;	// Give the view controller the LogEntry to display
