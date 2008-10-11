@@ -116,7 +116,6 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 		}
 		else
 			cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
-		cell.textAlignment = UITextAlignmentCenter;
 	}
 
 	if( notOnePastEnd )

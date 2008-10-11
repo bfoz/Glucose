@@ -75,7 +75,7 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{	
+{
 	const BOOL notOnePastEnd = indexPath.row < [appDelegate.categories count];
 	NSString* cellID = self.editing && notOnePastEnd ? @"EditCellID" : @"MyIdentifier";
 
@@ -92,7 +92,6 @@
 		}
 		else
 			cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
-		cell.textAlignment = UITextAlignmentCenter;
 	}
 
 	// If editing, the first row is the first category. If not editing, the first 
