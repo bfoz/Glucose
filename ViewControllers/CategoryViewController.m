@@ -86,8 +86,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	const BOOL notOnePastEnd = indexPath.row < [appDelegate.categories count];
-	NSString* cellID = self.editing && notOnePastEnd ? @"EditCellID" : @"MyIdentifier";
+	NSString* cellID = self.editing ? @"EditCellID" : @"MyIdentifier";
 
 	UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
@@ -147,11 +146,6 @@
 		cell.accessoryType = UITableViewCellAccessoryCheckmark;
 	else
 		cell.accessoryType = UITableViewCellAccessoryNone;
-}
-
-- (UITableViewCellEditingStyle) tableView:(UITableView*)tv editingStyleForRowAtIndexPath:(NSIndexPath*)path
-{
-	return UITableViewCellEditingStyleDelete;
 }
 
 - (BOOL) tableView:(UITableView*)tv canMoveRowAtIndexPath:(NSIndexPath*)path
