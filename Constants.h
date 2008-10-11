@@ -103,3 +103,9 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
 // Keys for NSUserDefaults
 #define	kDefaultInsulinTypes	@"DefaultInsulinTypes"
+#define kLastExportGoogleFromDate		@"LastExportGoogleFromDate"
+#define kLastExportGoogleToDate			@"LastExportGoogleToDate"
+#define kLastExportGoogleOnDate			@"LastExportGoogleOnDate"
+#define	kLastPurgeFromDate		@"LastPurgeFromDate"
+#define	kLastPurgeToDate		@"LastPurgeToDate"
+#define	kLastPurgedOnDate		@"LastPurgedOnDate"
