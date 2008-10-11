@@ -15,6 +15,8 @@
 @class InsulinTypeViewController;
 @class LogEntry;
 
+@class GDataServiceGoogleDocs;
+
 @interface AppDelegate : NSObject <UIApplicationDelegate>
 {
     IBOutlet UIWindow *window;
@@ -37,6 +39,7 @@
 @property (nonatomic, readonly)	InsulinTypeViewController*	insulinTypeViewController;
 @property (nonatomic, readonly)	NSMutableArray*		sections;
 @property (nonatomic, readonly)	sqlite3*		database;
+@property (nonatomic, readonly) GDataServiceGoogleDocs*	docService;
 
 - (NSMutableDictionary*) createSectionForDate:(NSDate*)date;
 //- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(NSMutableDictionary*)section;
@@ -55,7 +58,10 @@
 
 - (void) addCategory:(NSString*)name;
 - (void) flushCategories;
+- (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
+- (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
 - (unsigned) numRowsForCategoryID:(NSInteger)catID;
+- (NSDate*) earliestLogEntryDate;
 - (void) updateCategory:(Category*)c;
 - (void) updateCategoryNameMaxWidth;
 
@@ -67,8 +73,12 @@
 - (void) updateInsulinType:(InsulinType*)type;
 - (void) updateInsulinTypeShortNameMaxWidth;
 
+// Google Docs
+- (void) setUserCredentialsWithUsername:(NSString*)user password:(NSString*)pass;
+
 @end
 
 extern unsigned maxCategoryNameWidth;
 extern unsigned maxInsulinTypeShortNameWidth;
+extern NSDateFormatter* shortDateFormatter;
 

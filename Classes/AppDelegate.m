@@ -16,6 +16,8 @@
 #import "InsulinTypeViewController.h"
 #import "LogViewController.h"
 
+#import "GDataDocs.h"
+
 #define	LOG_SQL		@"glucose.sqlite"
 
 @interface AppDelegate (Private)
@@ -37,8 +39,9 @@
 @synthesize categoryViewController, insulinTypeViewController;
 @synthesize sections;
 @synthesize database;
+@synthesize docService;
 
-static NSDateFormatter* shortDateFormatter = nil;
+NSDateFormatter* shortDateFormatter = nil;
 
 unsigned maxCategoryNameWidth = 0;
 unsigned maxInsulinTypeShortNameWidth = 0;
@@ -478,6 +481,107 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 }
 
+- (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to
+{
+	const char *query = "DELETE FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime')";
+	sqlite3_stmt *statement;
+	
+	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
+	{
+		sqlite3_bind_int(statement, 1, [from timeIntervalSince1970]);
+		sqlite3_bind_int(statement, 2, [to timeIntervalSince1970]);
+		int success = sqlite3_step(statement);
+		sqlite3_finalize(statement);
+		if( success != SQLITE_DONE )
+			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(database));
+
+		// Delete the corresponding sections
+		NSMutableArray* a = [[NSMutableArray alloc] init];
+		for( NSMutableDictionary* s in sections )
+		{
+			NSDate *const d = [s objectForKey:@"SectionDate"];
+			NSComparisonResult b = [from compare:d];
+			NSComparisonResult c = [to compare:d];
+			
+			if( ((b == NSOrderedAscending) || (b == NSOrderedSame)) && 
+			    ((c == NSOrderedDescending) || (c == NSOrderedSame)) )
+				[a addObject:s];
+		}
+		for( NSMutableDictionary* s in a )
+		{
+			NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:[sections indexOfObjectIdenticalTo:s]];
+			[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
+			[sections removeObjectIdenticalTo:s];
+			[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
+		}
+	}
+}
+
+- (NSDate*) earliestLogEntryDate
+{
+	if( ![self numLogEntries] )
+		return nil;
+	
+	const char* q = "SELECT MIN(timestamp) from localLogEntries";
+	sqlite3_stmt *statement;
+	NSDate* d = nil;
+	
+	if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
+	{
+		unsigned i = 0;
+		while( sqlite3_step(statement) == SQLITE_ROW )
+		{
+			NSAssert(i==0, @"Too many rows returned for MIN()");
+			d = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)];
+			++i;
+		}
+		sqlite3_finalize(statement);
+	}
+	return d;
+}
+
+- (unsigned) numLogEntries
+{
+	const char* q = "SELECT COUNT() from localLogEntries";
+	sqlite3_stmt *statement;
+	unsigned num = 0;
+	
+	if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
+	{
+		unsigned i = 0;
+		while( sqlite3_step(statement) == SQLITE_ROW )
+		{
+			NSAssert(i==0, @"Too many rows returned for COUNT()");
+			num = sqlite3_column_int(statement, 0);
+			++i;
+		}
+		sqlite3_finalize(statement);
+	}
+	return num;
+}
+
+- (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to
+{
+	const char* q = "SELECT COUNT() from localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime')";
+	sqlite3_stmt *statement;
+	unsigned num = 0;
+	
+	if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
+	{
+		sqlite3_bind_int(statement, 1, [from timeIntervalSince1970]);
+		sqlite3_bind_int(statement, 2, [to timeIntervalSince1970]);
+		unsigned i = 0;
+		while( sqlite3_step(statement) == SQLITE_ROW )
+		{
+			NSAssert(i==0, @"Too many rows returned for COUNT() in numLogEntriesFrom:to:");
+			num = sqlite3_column_int(statement, 0);
+			++i;
+		}
+		sqlite3_finalize(statement);
+	}
+	return num;
+}
+
 - (unsigned) numRowsForCategoryID:(NSInteger)catID
 {
 	return 0;
@@ -578,7 +682,6 @@ int compareLogEntriesByDate(id left, id right, void* context)
 			maxWidth = a;
 	}
 	maxCategoryNameWidth = maxWidth;
-	NSLog(@"maxCategoryNameWidth = %u", maxCategoryNameWidth);
 }
 
 #pragma mark InsulinType Records
@@ -686,6 +789,26 @@ int compareLogEntriesByDate(id left, id right, void* context)
 			maxWidth = a;
 	}
 	maxInsulinTypeShortNameWidth = maxWidth;
+}
+
+#pragma mark -
+#pragma mark GData Interface
+
+- (GDataServiceGoogleDocs *)docService
+{
+	static GDataServiceGoogleDocs*	service = nil;
+	if( !service )
+	{
+		service = [[GDataServiceGoogleDocs alloc] init];
+		
+		[service setUserAgent:@"net.bfoz-Glucose-0.1"];
+	}
+	return service;
+}
+
+- (void) setUserCredentialsWithUsername:(NSString*)user password:(NSString*)pass
+{
+	[self.docService setUserCredentialsWithUsername:user password:pass];
 }
 
 #pragma mark -
