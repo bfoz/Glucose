@@ -52,8 +52,8 @@ static AppDelegate* appDelegate = nil;
 - (void) doneAction:(id)sender
 {
 	// Cancel edit mode in case the controllers are reused later
-	[categoryViewController setEditing:NO];	
-	[insulinTypeViewController setEditing:NO];
+	[categoryViewController setEditing:NO animated:NO];	
+	[insulinTypeViewController setEditing:NO animated:NO];
 	[insulinTypeViewController setMultiCheck:NO];
 
 	// Persist changes to NSUserDefaults
@@ -211,13 +211,13 @@ static AppDelegate* appDelegate = nil;
 				case 0:
 					if( !categoryViewController )	// Get the view controller from appDelegate
 						categoryViewController = appDelegate.categoryViewController;
-					[categoryViewController setEditing:YES];
+					[categoryViewController setEditing:YES animated:NO];
 					[self.navigationController pushViewController:categoryViewController animated:YES];
 					break;
 				case 1:
 					if( !insulinTypeViewController )
 						insulinTypeViewController = appDelegate.insulinTypeViewController;
-					[insulinTypeViewController setEditing:YES];
+					[insulinTypeViewController setEditing:YES animated:NO];
 					[self.navigationController pushViewController:insulinTypeViewController animated:YES];
 					break;
 				case 2:

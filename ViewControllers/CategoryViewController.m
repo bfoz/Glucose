@@ -39,9 +39,9 @@
 	[super dealloc];
 }
 
-- (void) setEditing:(BOOL)e
+- (void) setEditing:(BOOL)e animated:(BOOL)animated
 {
-	[super setEditing:e];
+	[super setEditing:e animated:animated];
 	// Flush the category array to the database if it has been modified
 	if( dirty )
 	{
