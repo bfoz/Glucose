@@ -49,6 +49,18 @@
 		dirty = NO;
 		[appDelegate updateCategoryNameMaxWidth];
 	}
+    // Eanble the Add button while editing
+	if( e )
+		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(appendNewCategory)];
+	else
+		self.navigationItem.rightBarButtonItem = nil;
+}
+
+- (void) appendNewCategory
+{
+	NSIndexPath* path = [NSIndexPath indexPathForRow:[appDelegate.categories count] inSection:0];
+	[appDelegate addCategory:nil];	// Create a new Category record
+	[tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -67,10 +79,8 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	// In editing mode there is one extra row for "Add new category"
-	// Otherwise there's an extra row for "None"
-	// Either way, it's count+1
-	return [appDelegate.categories count] + 1;
+	// When not in editing mode there is one extra row for "None"
+	return self.editing ? [appDelegate.categories count] : [appDelegate.categories count] + 1;
 }
 
 
@@ -82,7 +92,7 @@
 	UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
 	{
-		if( self.editing && notOnePastEnd )
+		if( self.editing )
 		{
 			cell = [[[TextFieldCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
 			((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
@@ -94,18 +104,12 @@
 			cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
 	}
 
-	// If editing, the first row is the first category. If not editing, the first 
-	//  row is "None", and the categories need to be shifted down one row.
+	// If not editing, the first row is "None", and the categories need to be shifted down one row.
 	if( self.editing )
 	{
-		if( notOnePastEnd )
-		{
-			Category *const c = [appDelegate.categories objectAtIndex:indexPath.row];
-			cell.text = [c categoryName];
-			((TextFieldCell*)cell).editedObject = c;
-		}
-		else
-			cell.text = @"Add New Category";
+		Category *const c = [appDelegate.categories objectAtIndex:indexPath.row];
+		cell.text = [c categoryName];
+		((TextFieldCell*)cell).editedObject = c;
 	}
 	else
 	{
@@ -147,17 +151,12 @@
 
 - (UITableViewCellEditingStyle) tableView:(UITableView*)tv editingStyleForRowAtIndexPath:(NSIndexPath*)path
 {
-	if( path.row >= [appDelegate.categories count] )
-		return UITableViewCellEditingStyleInsert;
-	else
-		return UITableViewCellEditingStyleDelete;
+	return UITableViewCellEditingStyleDelete;
 }
 
 - (BOOL) tableView:(UITableView*)tv canMoveRowAtIndexPath:(NSIndexPath*)path
 {
-	if( self.editing && (path.row < [appDelegate.categories count]) )
-		return YES;
-	return NO;
+	return self.editing;
 }
 
 - (NSIndexPath*) tableView:(UITableView*)tv targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath*)fromPath toProposedIndexPath:(NSIndexPath*)toPath
@@ -197,12 +196,6 @@
         // Animate the deletion from the table.
         [tv deleteRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
     }
-	if( editingStyle == UITableViewCellEditingStyleInsert )
-	{
-		// Append a new category record
-		[appDelegate addCategory:nil];	// Create a new Category record
-		[tv insertRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
-	}
 }
 
 - (void) tableView:(UITableView*)tv moveRowAtIndexPath:(NSIndexPath*)fromPath toIndexPath:(NSIndexPath*)toPath
