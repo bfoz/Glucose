@@ -205,16 +205,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 
 	NSArray* a = [[NSUserDefaults standardUserDefaults] objectForKey:@"DefaultInsulinTypes"];
 	for( NSNumber* typeID in a )
-	{
-		for( InsulinType* t in self.insulinTypes )
-		{
-			if( t.typeID == [typeID intValue] )
-			{
-				[self.defaultInsulinTypes addObject:t];
-				break;
-			}
-		}
-	}
+		[self.defaultInsulinTypes addObject:[self findInsulinTypeForID:[typeID intValue]]];
 }
 
 - (void) loadInsulinTypes
@@ -383,6 +374,21 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	return [self deleteLogEntry:[[s objectForKey:@"LogEntries"] objectAtIndex:entryIndex] fromSection:s withNotification:YES];
 }
 
+- (Category*) findCategoryForID:(unsigned)categoryID
+{
+	for( Category* c in categories )
+		if( c.categoryID == categoryID )
+			return c;
+	return nil;
+}
+
+- (InsulinType*) findInsulinTypeForID:(unsigned)typeID
+{
+	for( InsulinType* t in insulinTypes )
+		if( t.typeID == typeID )
+			return t;
+	return nil;
+}
 - (NSMutableDictionary*) findSectionForDate:(NSDate*)d
 {
 	NSCalendar *const calendar = [NSCalendar currentCalendar];

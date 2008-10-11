@@ -486,8 +486,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 					case 7:	// typeID1
 					{
 						const int a = sqlite3_column_int(statement, i);
-						// If insulinTypes is sorted typeID = index + 1
-						InsulinType* t = [appDelegate.insulinTypes objectAtIndex:a-1];
+						InsulinType* t = [appDelegate findInsulinTypeForID:a];
 						s = [t.shortName UTF8String];
 					}
 					break;

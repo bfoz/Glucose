@@ -41,6 +41,10 @@
 @property (nonatomic, readonly)	sqlite3*		database;
 @property (nonatomic, readonly) GDataServiceGoogleDocs*	docService;
 
+#pragma mark Array Management
+- (Category*) findCategoryForID:(unsigned)categoryID;
+- (InsulinType*) findInsulinTypeForID:(unsigned)typeID;
+
 - (NSMutableDictionary*) createSectionForDate:(NSDate*)date;
 //- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(NSMutableDictionary*)section;
 - (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(NSMutableDictionary*)section withNotification:(BOOL)notify;

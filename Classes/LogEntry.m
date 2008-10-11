@@ -111,15 +111,13 @@ else												\
 			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 4)) && 
 			    (SQLITE_NULL != sqlite3_column_type(init_statement, 6)) )
 			{
-				// If insulinTypes is sorted typeID = index + 1
-				[self.insulin addObject:[InsulinDose withType:[appDelegate.insulinTypes objectAtIndex:sqlite3_column_int(init_statement, 6)-1]]];
+				[self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 6)]]];
 				[[self.insulin lastObject] setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 4)]];
 			}
 			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 5)) && 
 			    (SQLITE_NULL != sqlite3_column_type(init_statement, 7)) )
 			{
-				// If insulinTypes is sorted typeID = index + 1
-				[self.insulin addObject:[InsulinDose withType:[appDelegate.insulinTypes objectAtIndex:sqlite3_column_int(init_statement, 7)-1]]];
+				[self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 7)]]];
 				[[self.insulin lastObject] setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 5)]];
 			}
 		}
@@ -255,8 +253,7 @@ else												\
 
 - (void) setCategoryWithID:(unsigned)cid
 {
-	// As long as the categories array is sorted the categoryID = index + 1
-	self.category = [appDelegate.categories objectAtIndex:cid-1];
+	self.category = [appDelegate findCategoryForID:cid];
 }
 
 - (void) setCategory:(Category*)c
