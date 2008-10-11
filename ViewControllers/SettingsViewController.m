@@ -8,15 +8,12 @@
 
 #import "AppDelegate.h"
 #import "Constants.h"
-#import "SettingsViewController.h"
+
 #import "CategoryViewController.h"
+#import "ExportViewController.h"
 #import "InsulinTypeViewController.h"
-
-@interface SettingsViewController ()
-
-//@property (nonatomic, retain) CategoryViewController* categoryViewController;
-
-@end
+#import "PurgeViewController.h"
+#import "SettingsViewController.h"
 
 @implementation SettingsViewController
 
@@ -34,7 +31,7 @@ static AppDelegate* appDelegate = nil;
 		self.navigationItem.hidesBackButton = YES;
 		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneAction:)];
 		self.title = @"Settings";
-		((UITableView*)self.view).separatorStyle = UITableViewCellSeparatorStyleNone;
+		self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 /*
         UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
 		[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
@@ -44,12 +41,13 @@ static AppDelegate* appDelegate = nil;
 	}
 	return self;
 }
-/*
+
 - (void)dealloc
 {
+	[exportViewController release];
+	[purgeViewController release];
 	[super dealloc];
 }
-*/
 
 - (void) doneAction:(id)sender
 {
@@ -75,7 +73,7 @@ static AppDelegate* appDelegate = nil;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return 3;
+	return 4;
 }
 
 
@@ -83,50 +81,35 @@ static AppDelegate* appDelegate = nil;
 {
     switch( section )
 	{
-        case 0: return 3;
-		case 1: return 3;
+		case 0: return 2;
+        case 1: return 3;
 		case 2: return 2;
+		case 3: return 3;
     }
 	return 0;
 }
 
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	
 	static NSString *MyIdentifier = @"MyIdentifier";
 	
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:MyIdentifier];
 	if( !cell )
 	{
 		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:MyIdentifier] autorelease];
 		cell.textAlignment = UITextAlignmentCenter;
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
 		cell.textColor = [UIColor darkTextColor];
-/*
-		switch( indexPath.section )
-		{
-			case 0:
-				cell.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-				if( (indexPath.row == 2) || (indexPath.row == 3) )
-					cell.textColor = [UIColor blueColor];	// Website and email links
-				break;
-			case 1:
-//				cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-				break;				
-		}
-*/	}
+	}
 
     switch( indexPath.section )
 	{
-        case 0:
-			cell.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-			if( (indexPath.row == 1) || (indexPath.row == 2) )
-				cell.textColor = [UIColor blueColor];	// Website and email links
-			switch(indexPath.row )
+		case 0:
+			cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+			switch( indexPath.row )
 			{
-				case 0: cell.text = @"Glucose Version 0.1"; break;
-				case 1: cell.text = @"bfoz@bfoz.net"; break;
-				case 2: cell.text = @"http://bfoz.net/projects/glucose"; break;
+				case 0: cell.text = @"Export"; break;
+				case 1: cell.text = @"Purge"; break;
 			}
 			break;
 		case 1:
@@ -163,6 +146,17 @@ static AppDelegate* appDelegate = nil;
 			}
 			cell.accessoryView = f;
 			break;
+        case 3:
+			cell.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+			if( indexPath.row )
+				cell.textColor = [UIColor blueColor];	// Website and email links
+			switch(indexPath.row )
+			{
+				case 0: cell.text = @"Glucose v0.1b2"; break;
+				case 1: cell.text = @"Brandon Fosdick <bfoz@bfoz.net>"; break;
+				case 2: cell.text = @"http://bfoz.net/projects/glucose"; break;
+			}
+			break;
     }
 
 	return cell;
@@ -183,43 +177,59 @@ static AppDelegate* appDelegate = nil;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	// Ignore all but sections 0 and 1
-	if( indexPath.section > 1 )
+	// Ignore section 2
+	if( indexPath.section == 2 )
 		return;
 
-	if( indexPath.section == 0 )
-	{
-		if( indexPath.row == 2 )
-		{
-			NSString* e = [@"mailto:bfoz@bfoz.net?subject=Glucose" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:e]];
-		}
-		if( indexPath.row == 3 )
-			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://bfoz.net/projects/glucose/"]];
-		return;
-	}
-
-	// Section 1
-	switch( indexPath.row )
+	switch(indexPath.section)
 	{
 		case 0:
-			if( !categoryViewController )	// Get the view controller from appDelegate
-				categoryViewController = appDelegate.categoryViewController;
-			[categoryViewController setEditing:YES];
-			[self.navigationController pushViewController:categoryViewController animated:YES];
+			switch( indexPath.row )
+			{
+				case 0:
+					if( !exportViewController )
+						exportViewController = [[ExportViewController alloc] initWithStyle:UITableViewStyleGrouped];
+					[self.navigationController pushViewController:exportViewController animated:YES];
+					break;
+				case 1:
+					if( !purgeViewController )
+						purgeViewController = [[PurgeViewController alloc] initWithStyle:UITableViewStyleGrouped];
+					[self.navigationController pushViewController:purgeViewController animated:YES];
+					break;
+			}
 			break;
 		case 1:
-			if( !insulinTypeViewController )
-				insulinTypeViewController = appDelegate.insulinTypeViewController;
-			[insulinTypeViewController setEditing:YES];
-			[self.navigationController pushViewController:insulinTypeViewController animated:YES];
+			switch( indexPath.row )
+			{
+				case 0:
+					if( !categoryViewController )	// Get the view controller from appDelegate
+						categoryViewController = appDelegate.categoryViewController;
+					[categoryViewController setEditing:YES];
+					[self.navigationController pushViewController:categoryViewController animated:YES];
+					break;
+				case 1:
+					if( !insulinTypeViewController )
+						insulinTypeViewController = appDelegate.insulinTypeViewController;
+					[insulinTypeViewController setEditing:YES];
+					[self.navigationController pushViewController:insulinTypeViewController animated:YES];
+					break;
+				case 2:
+					if( !insulinTypeViewController )
+						insulinTypeViewController = appDelegate.insulinTypeViewController;
+					[insulinTypeViewController setEditing:NO];
+					[insulinTypeViewController setMultiCheck:YES];
+					[self.navigationController pushViewController:insulinTypeViewController animated:YES];
+					break;
+			}
 			break;
-		case 2:
-			if( !insulinTypeViewController )
-				insulinTypeViewController = appDelegate.insulinTypeViewController;
-			[insulinTypeViewController setEditing:NO];
-			[insulinTypeViewController setMultiCheck:YES];
-			[self.navigationController pushViewController:insulinTypeViewController animated:YES];
+		case 3:
+			if( indexPath.row == 0 )
+			{
+				NSString* e = [@"mailto:bfoz@bfoz.net?subject=Glucose" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:e]];
+			}
+			if( indexPath.row == 1 )
+				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://bfoz.net/projects/glucose/"]];
 			break;
 	}
 }
@@ -251,16 +261,13 @@ static AppDelegate* appDelegate = nil;
 
 - (CGFloat) tableView:(UITableView*)tableView heightForFooterInSection:(NSInteger)section
 {
-	if( 2 == section )
-		return 40;
-	return 0;
+	return (3 == section) ? 40 : 0;
 }
 
 - (UIView*) tableView:(UITableView*)tableView viewForFooterInSection:(NSInteger)section
 {
-	if( 2 == section )
+	if( 3 == section )
 	{
-//		UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, 50)];
 		UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
 		label.text = @"Copyright 2008 Brandon Fosdick";
 		label.textAlignment = UITextAlignmentCenter;

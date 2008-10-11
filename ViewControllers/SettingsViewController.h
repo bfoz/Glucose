@@ -12,16 +12,18 @@
 @class CategoryViewController;
 @class InsulinTypeViewController;
 
-@interface SettingsViewController : SlidingViewController
+@interface SettingsViewController : SlidingViewController <UITextFieldDelegate>
 {
 	CategoryViewController*	categoryViewController;
 	InsulinTypeViewController*	insulinTypeViewController;
 	
 	UITableViewCell*	highGlucoseWarningCell;
 	UITableViewCell*	lowGlucoseWarningCell;
-//	UITextField*		editField;
 	UITextField*		highGlucoseWarningField;
 	UITextField*		lowGlucoseWarningField;
+
+	UITableViewController*	exportViewController;
+	UITableViewController*	purgeViewController;
 }
 
 @end
