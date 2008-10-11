@@ -103,8 +103,12 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 #if TARGET_IPHONE_SIMULATOR
 	self.keychainData = [[NSMutableDictionary alloc] init];
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-	[keychainData setObject:[defaults stringForKey:kGoogleDocUserName] forKey:kSecAttrAccount];	// Username
-	[keychainData setObject:[defaults stringForKey:kGoogleDocPassword] forKey:kSecValueData];	// Password
+	NSString *const userName = [defaults stringForKey:kGoogleDocUserName];
+	if( userName )
+		[keychainData setObject:userName forKey:kSecAttrAccount];	// Username
+	NSString *const password = [defaults stringForKey:kGoogleDocPassword];
+	if( password )
+		[keychainData setObject:password forKey:kSecValueData];	// Password
 #else
 	// Set up the keychain search dictionary
 	if( !gDocPasswordQuery )
