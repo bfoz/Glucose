@@ -56,6 +56,18 @@
 		dirty = NO;
 		[appDelegate updateInsulinTypeShortNameMaxWidth];
 	}
+    // Eanble the Add button while editing
+	if( e )
+		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(appendNewInsulinType)];
+	else
+		self.navigationItem.rightBarButtonItem = nil;
+}
+
+- (void) appendNewInsulinType
+{
+	NSIndexPath* path = [NSIndexPath indexPathForRow:[appDelegate.insulinTypes count] inSection:0];
+	[appDelegate addInsulinType:nil];	// Create a new Category record
+	[tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
@@ -94,19 +106,17 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	// In editing mode there is one extra row for "Add new type"
-	return self.editing ? [appDelegate.insulinTypes count] + 1 : [appDelegate.insulinTypes count];
+	return [appDelegate.insulinTypes count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {	
-	const BOOL notOnePastEnd = indexPath.row < [appDelegate.insulinTypes count];
-	NSString* cellID = self.editing && notOnePastEnd ? @"EditCellID" : @"MyIdentifier";
+	NSString* cellID = self.editing ? @"EditCellID" : @"MyIdentifier";
 
 	UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
 	{
-		if( self.editing && notOnePastEnd )
+		if( self.editing )
 		{
 			cell = [[[TextFieldCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
 			((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
@@ -118,15 +128,10 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 			cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
 	}
 
-	if( notOnePastEnd )
-	{
-		InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
-		cell.text = [type shortName];
-		if( self.editing )
-			((TextFieldCell*)cell).editedObject = type;
-	}
-	else
-		cell.text = @"Add New Category";
+	InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
+	cell.text = [type shortName];
+	if( self.editing )
+		((TextFieldCell*)cell).editedObject = type;
 
 	return cell;
 }
@@ -165,36 +170,19 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (void) tableView:(UITableView*)tv willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)path
 {
-	// No accessory for out of range rows
-	if( path.row >= [appDelegate.insulinTypes count] )
-	{
-		cell.accessoryType = UITableViewCellAccessoryNone;
-		return;
-	}
-
 	// Put a checkmark on the currently selected row
 	InsulinType* t = [appDelegate.insulinTypes objectAtIndex:path.row];
 	if( editedObject && (t == (InsulinType*)[[[editedObject insulin] objectAtIndex:self.editedIndex] type]) )
 		cell.accessoryType = UITableViewCellAccessoryCheckmark;
-	else if( !editedObject && [appDelegate.defaultInsulinTypes containsObject:t] )
+	else if( !editedObject && !self.editing && [appDelegate.defaultInsulinTypes containsObject:t] )
 		cell.accessoryType = UITableViewCellAccessoryCheckmark;
 	else
 		cell.accessoryType = UITableViewCellAccessoryNone;
 }
 
-- (UITableViewCellEditingStyle) tableView:(UITableView*)tv editingStyleForRowAtIndexPath:(NSIndexPath*)path
-{
-	if( path.row >= [appDelegate.insulinTypes count] )
-		return UITableViewCellEditingStyleInsert;
-	else
-		return UITableViewCellEditingStyleDelete;
-}
-
 - (BOOL) tableView:(UITableView*)tv canMoveRowAtIndexPath:(NSIndexPath*)path
 {
-	if( self.editing && (path.row < [appDelegate.insulinTypes count]) )
-		return YES;
-	return NO;
+	return self.editing;
 }
 
 - (NSIndexPath*) tableView:(UITableView*)tv targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath*)fromPath toProposedIndexPath:(NSIndexPath*)toPath
@@ -222,12 +210,6 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
         // Animate the deletion from the table.
         [tv deleteRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
     }
-	if( editingStyle == UITableViewCellEditingStyleInsert )
-	{
-		// Append a new category record
-		[appDelegate addInsulinType:nil];	// Create a new Category record
-		[tv insertRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
-	}
 }
 
 - (void) tableView:(UITableView*)tv moveRowAtIndexPath:(NSIndexPath*)fromPath toIndexPath:(NSIndexPath*)toPath
