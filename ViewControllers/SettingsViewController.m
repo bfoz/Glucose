@@ -152,7 +152,14 @@ static AppDelegate* appDelegate = nil;
 				cell.textColor = [UIColor blueColor];	// Website and email links
 			switch(indexPath.row )
 			{
-				case 0: cell.text = @"Glucose v0.1b2"; break;
+				case 0:
+				{
+					NSBundle *const mainBundle = [NSBundle mainBundle];
+					NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
+					NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
+					cell.text = [NSString stringWithFormat:@"%@ v%@", n, v];
+				}
+				break;
 				case 1: cell.text = @"Brandon Fosdick <bfoz@bfoz.net>"; break;
 				case 2: cell.text = @"http://bfoz.net/projects/glucose"; break;
 			}
