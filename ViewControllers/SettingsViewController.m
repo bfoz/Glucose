@@ -127,19 +127,20 @@ static AppDelegate* appDelegate = nil;
 			f.delegate = self;
 			f.keyboardType = UIKeyboardTypeNumberPad;
 			f.textAlignment = UITextAlignmentRight;
-			f.textColor = [UIColor grayColor];
 			NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 			switch( indexPath.row )
 			{
 				case 0:
 					cell.text = @"High Glucose Warning";
 					f.text = [defaults stringForKey:@"HighGlucoseWarning"];
+					f.textColor = [UIColor blueColor];
 					highGlucoseWarningCell = cell;
 					highGlucoseWarningField = f;
 					break;
 				case 1:
 					cell.text = @"Low Glucose Warning";
 					f.text = [defaults stringForKey:@"LowGlucoseWarning"];
+					f.textColor = [UIColor redColor];
 					lowGlucoseWarningCell = cell;
 					lowGlucoseWarningField = f;
 					break;
