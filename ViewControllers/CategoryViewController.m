@@ -142,7 +142,7 @@
 - (void) tableView:(UITableView*)tv willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)path
 {
 	// Put a checkmark on the currently selected row, or the None row if no category is set
-	if( editedObject && ((![editedObject category] && !path.row) || ([appDelegate.categories objectAtIndex:(path.row-1)] == [editedObject category])) )
+	if( editedObject && ((![editedObject category] && !path.row) || (path.row && ([appDelegate.categories objectAtIndex:(path.row-1)] == [editedObject category]))) )
 		cell.accessoryType = UITableViewCellAccessoryCheckmark;
 	else
 		cell.accessoryType = UITableViewCellAccessoryNone;
