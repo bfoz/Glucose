@@ -61,6 +61,7 @@
 		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(appendNewInsulinType)];
 	else
 		self.navigationItem.rightBarButtonItem = nil;
+	[tableView reloadData];
 }
 
 - (void) appendNewInsulinType

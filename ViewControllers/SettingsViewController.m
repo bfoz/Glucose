@@ -211,14 +211,18 @@ static AppDelegate* appDelegate = nil;
 				case 0:
 					if( !categoryViewController )	// Get the view controller from appDelegate
 						categoryViewController = appDelegate.categoryViewController;
-					[categoryViewController setEditing:YES animated:NO];
 					[self.navigationController pushViewController:categoryViewController animated:YES];
+					// Set editing mode after pushing the view controller. The UITableView doesn't exist
+					//  until loadView has been called. Until then, there's nothing to set editing mode on.
+					[categoryViewController setEditing:YES animated:NO];
 					break;
 				case 1:
 					if( !insulinTypeViewController )
 						insulinTypeViewController = appDelegate.insulinTypeViewController;
-					[insulinTypeViewController setEditing:YES animated:NO];
 					[self.navigationController pushViewController:insulinTypeViewController animated:YES];
+					// Set editing mode after pushing the view controller. The UITableView doesn't exist
+					//  until loadView has been called. Until then, there's nothing to set editing mode on.
+					[insulinTypeViewController setEditing:YES animated:NO];
 					break;
 				case 2:
 					if( !insulinTypeViewController )
