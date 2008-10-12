@@ -98,6 +98,7 @@
 			cell.showsReorderControl = YES;
 			((TextFieldCell*)cell).delegate = self;
 			cell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
+			((UITextField*)(((TextFieldCell*)cell).view)).returnKeyType = UIReturnKeyDone;
 		}
 		else
 			cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
