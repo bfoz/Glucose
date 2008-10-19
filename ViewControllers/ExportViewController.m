@@ -482,7 +482,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 					case 3:	// categoryID
 					{
 						const int a = sqlite3_column_int(statement, i);
-						Category* c = [appDelegate.categories objectAtIndex:a];
+						Category* c = [appDelegate findCategoryForID:a];
 						s = [c.categoryName UTF8String];
 					}
 					break;
