@@ -1,7 +1,7 @@
 /* Default SQLite database for Glucose application
    Copyright 2008 Brandon Fosdick <bfoz@bfoz.net>
 */
-
+/*
 CREATE TABLE GlucoseSettings
 ( 'key' TEXT,
   'value' TEXT
@@ -10,7 +10,7 @@ CREATE TABLE GlucoseSettings
 INSERT INTO GlucoseSettings VALUES ('DatabaseSchemaVersion', '0');
 -- INSERT INTO GlucoseSettings VALUES ('CategoriesVersion', '0');
 -- INSERT INTO GlucoseSettings VALUES ('InsulinTypesVersion', '0');
-
+*/
 CREATE TABLE InsulinTypes
 ( 'typeID' INTEGER PRIMARY KEY AUTOINCREMENT,
   'sequence' INTEGER UNIQUE,
