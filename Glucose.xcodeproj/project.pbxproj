@@ -51,7 +51,6 @@
 		15E822DB0E748613003322DC /* GDataFeedLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821720E748613003322DC /* GDataFeedLink.m */; };
 		15E822DC0E748613003322DC /* GDataCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821730E748613003322DC /* GDataCategory.m */; };
 		15E822DD0E748613003322DC /* GDataDeleted.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821760E748613003322DC /* GDataDeleted.m */; };
-		15E822DE0E748613003322DC /* GDataMoney.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821770E748613003322DC /* GDataMoney.m */; };
 		15E822DF0E748613003322DC /* GDataWho.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821790E748613003322DC /* GDataWho.m */; };
 		15E822E00E748613003322DC /* GDataWhere.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8217C0E748613003322DC /* GDataWhere.m */; };
 		15E822E10E748613003322DC /* GDataWhen.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8217E0E748613003322DC /* GDataWhen.m */; };
@@ -84,8 +83,6 @@
 		15E823190E748613003322DC /* GDataEntryDocBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821F90E748613003322DC /* GDataEntryDocBase.m */; };
 		15E8231A0E748613003322DC /* GDataEntryStandardDoc.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821FB0E748613003322DC /* GDataEntryStandardDoc.m */; };
 		15E8231B0E748613003322DC /* GDataEntrySpreadsheetDoc.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821FD0E748613003322DC /* GDataEntrySpreadsheetDoc.m */; };
-		15E8231C0E748613003322DC /* GDataEntryPresentationDoc.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821FF0E748613003322DC /* GDataEntryPresentationDoc.m */; };
-		15E8231D0E748613003322DC /* GDataEntryPDFDoc.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E822010E748613003322DC /* GDataEntryPDFDoc.m */; };
 		15E8231E0E748613003322DC /* GDataFeedDocList.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E822030E748613003322DC /* GDataFeedDocList.m */; };
 		15E8231F0E748613003322DC /* GDataServiceGoogleDocs.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E822050E748613003322DC /* GDataServiceGoogleDocs.m */; };
 		15E823200E748613003322DC /* GDataQueryDocs.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E822060E748613003322DC /* GDataQueryDocs.m */; };
@@ -779,7 +776,6 @@
 				15E822DB0E748613003322DC /* GDataFeedLink.m in Sources */,
 				15E822DC0E748613003322DC /* GDataCategory.m in Sources */,
 				15E822DD0E748613003322DC /* GDataDeleted.m in Sources */,
-				15E822DE0E748613003322DC /* GDataMoney.m in Sources */,
 				15E822DF0E748613003322DC /* GDataWho.m in Sources */,
 				15E822E00E748613003322DC /* GDataWhere.m in Sources */,
 				15E822E10E748613003322DC /* GDataWhen.m in Sources */,
@@ -812,8 +808,6 @@
 				15E823190E748613003322DC /* GDataEntryDocBase.m in Sources */,
 				15E8231A0E748613003322DC /* GDataEntryStandardDoc.m in Sources */,
 				15E8231B0E748613003322DC /* GDataEntrySpreadsheetDoc.m in Sources */,
-				15E8231C0E748613003322DC /* GDataEntryPresentationDoc.m in Sources */,
-				15E8231D0E748613003322DC /* GDataEntryPDFDoc.m in Sources */,
 				15E8231E0E748613003322DC /* GDataFeedDocList.m in Sources */,
 				15E8231F0E748613003322DC /* GDataServiceGoogleDocs.m in Sources */,
 				15E823200E748613003322DC /* GDataQueryDocs.m in Sources */,
@@ -864,7 +858,7 @@
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				OTHER_LDFLAGS = "-lxml2";
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7EF2EE56-B8E2-4C8A-BC05-7910F83E29E3";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "0C23EF47-A962-47AB-9828-A46A70C0DC30";
 				SDKROOT = iphoneos2.0;
 			};
 			name = Distribution;
