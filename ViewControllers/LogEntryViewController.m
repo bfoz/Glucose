@@ -414,12 +414,14 @@ static AppDelegate* appDelegate = nil;
 				[self toggleDatePicker];
 				break;
 			case 1: 
-				if( !categoryViewController )
+/*				if( !categoryViewController )
 				{
 					CategoryViewController* cvc = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain];
 					self.categoryViewController = cvc;
 					[cvc release];
-				}
+				}*/
+				if( !categoryViewController )	// Get the view controller from appDelegate
+					self.categoryViewController = appDelegate.categoryViewController;
 				categoryViewController.editedObject = entry;
 //				[self.navigationController pushViewController:categoryViewController animated:YES];
 				[self presentModalViewController:categoryViewController animated:YES];
