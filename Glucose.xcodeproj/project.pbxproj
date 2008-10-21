@@ -45,7 +45,6 @@
 		15E822D50E748613003322DC /* GDataBaseElements.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821650E748613003322DC /* GDataBaseElements.m */; };
 		15E822D60E748613003322DC /* GDataAtomPubControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821680E748613003322DC /* GDataAtomPubControl.m */; };
 		15E822D70E748613003322DC /* GDataLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8216A0E748613003322DC /* GDataLink.m */; };
-		15E822D80E748613003322DC /* GDataPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8216C0E748613003322DC /* GDataPerson.m */; };
 		15E822D90E748613003322DC /* GDataComment.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8216E0E748613003322DC /* GDataComment.m */; };
 		15E822DA0E748613003322DC /* GDataEntryLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821700E748613003322DC /* GDataEntryLink.m */; };
 		15E822DB0E748613003322DC /* GDataFeedLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821720E748613003322DC /* GDataFeedLink.m */; };
@@ -64,11 +63,8 @@
 		15E822E90E748613003322DC /* GDataRecurrence.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8218F0E748613003322DC /* GDataRecurrence.m */; };
 		15E822EA0E748613003322DC /* GDataRecurrenceException.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821900E748613003322DC /* GDataRecurrenceException.m */; };
 		15E822EB0E748613003322DC /* GDataEmail.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821930E748613003322DC /* GDataEmail.m */; };
-		15E822EC0E748613003322DC /* GDataGeoPt.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821950E748613003322DC /* GDataGeoPt.m */; };
 		15E822ED0E748613003322DC /* GDataIM.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821970E748613003322DC /* GDataIM.m */; };
 		15E822EE0E748613003322DC /* GDataOrganization.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821990E748613003322DC /* GDataOrganization.m */; };
-		15E822EF0E748613003322DC /* GDataPhoneNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8219B0E748613003322DC /* GDataPhoneNumber.m */; };
-		15E822F00E748613003322DC /* GDataPostalAddress.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8219D0E748613003322DC /* GDataPostalAddress.m */; };
 		15E822F10E748613003322DC /* GDataRating.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8219F0E748613003322DC /* GDataRating.m */; };
 		15E822F20E748613003322DC /* GDataDateTime.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821A10E748613003322DC /* GDataDateTime.m */; };
 		15E822F30E748613003322DC /* GDataBatchOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821A30E748613003322DC /* GDataBatchOperation.m */; };
@@ -87,6 +83,8 @@
 		15E8231F0E748613003322DC /* GDataServiceGoogleDocs.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E822050E748613003322DC /* GDataServiceGoogleDocs.m */; };
 		15E823200E748613003322DC /* GDataQueryDocs.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E822060E748613003322DC /* GDataQueryDocs.m */; };
 		15E823D50E74BA7E003322DC /* ExportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E823D40E74BA7E003322DC /* ExportViewController.m */; };
+		15E976AA0EAB0099000CF411 /* GDataGeoPt.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821950E748613003322DC /* GDataGeoPt.m */; };
+		15E976AD0EAB00BE000CF411 /* GDataPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8216C0E748613003322DC /* GDataPerson.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -770,7 +768,6 @@
 				15E822D50E748613003322DC /* GDataBaseElements.m in Sources */,
 				15E822D60E748613003322DC /* GDataAtomPubControl.m in Sources */,
 				15E822D70E748613003322DC /* GDataLink.m in Sources */,
-				15E822D80E748613003322DC /* GDataPerson.m in Sources */,
 				15E822D90E748613003322DC /* GDataComment.m in Sources */,
 				15E822DA0E748613003322DC /* GDataEntryLink.m in Sources */,
 				15E822DB0E748613003322DC /* GDataFeedLink.m in Sources */,
@@ -789,11 +786,8 @@
 				15E822E90E748613003322DC /* GDataRecurrence.m in Sources */,
 				15E822EA0E748613003322DC /* GDataRecurrenceException.m in Sources */,
 				15E822EB0E748613003322DC /* GDataEmail.m in Sources */,
-				15E822EC0E748613003322DC /* GDataGeoPt.m in Sources */,
 				15E822ED0E748613003322DC /* GDataIM.m in Sources */,
 				15E822EE0E748613003322DC /* GDataOrganization.m in Sources */,
-				15E822EF0E748613003322DC /* GDataPhoneNumber.m in Sources */,
-				15E822F00E748613003322DC /* GDataPostalAddress.m in Sources */,
 				15E822F10E748613003322DC /* GDataRating.m in Sources */,
 				15E822F20E748613003322DC /* GDataDateTime.m in Sources */,
 				15E822F30E748613003322DC /* GDataBatchOperation.m in Sources */,
@@ -813,6 +807,8 @@
 				15E823200E748613003322DC /* GDataQueryDocs.m in Sources */,
 				15E823D50E74BA7E003322DC /* ExportViewController.m in Sources */,
 				1595CF570E999E1C00DA7CC6 /* PurgeViewController.m in Sources */,
+				15E976AA0EAB0099000CF411 /* GDataGeoPt.m in Sources */,
+				15E976AD0EAB00BE000CF411 /* GDataPerson.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -922,11 +918,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Brandon Fosdick";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				OTHER_LDFLAGS = "-lxml2";
 				PREBINDING = NO;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "A2BA387F-0438-4913-A8CC-04D10D308674";
 				SDKROOT = iphoneos2.0;
 			};
 			name = Release;
