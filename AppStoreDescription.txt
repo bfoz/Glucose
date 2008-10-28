@@ -1,0 +1,23 @@
+Log blood glucose measurements and insulin doses.
+
+Glucose is meant to be a convenient and simple tool for helping diabetics record blood glucose measurements and insulin usage. It's built on the principle of doing one thing and doing it well, and should have everything needed for day to day use. If you find that a frequently needed feature is missing, please let me know.
+
+Thanks to everyone at Ars Technica's Mac forum who helped me test and refine Glucose.
+
+Features in version 0.3
+- Record blood glucose measurements
+- Record insulin doses
+- Categorize log entries
+- Color-coded display indicating high or low readings
+- Record a note with each entry
+- Customizable categories and insulin types
+- Export to Google Spreadsheets
+
+ToDo List
+- Graphs, plots and statistics
+- Synchronize logs with a personal server
+- Predictive entry
+- Import old records
+- "Travel Mode" for jaunts through far away lands with different units.
+
+Please send all bug reports and feature requests to bfoz@bfoz.net.
