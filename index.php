@@ -19,7 +19,7 @@
 		<div id="content">
 			<p>Glucose is an iPhone application that aids diabetics in monitoring and recording glucose measurements.</p>
 			<p>Glucose is meant to be a convenient and simple tool for helping diabetics record blood glucose measurements and insulin usage. It's built on the principle of doing one thing and doing it well, and should have everything needed for day to day use. If you find that a frequently needed feature is missing, please let me know.</p>
-
+			<p><strong>NOTE</strong>: Insulin is marketed under various brand names around the world. Instead of trying to keep track of the various brands for different regions, Glucose simply uses the scientific name for each insulin type. For example, if you're using <a href="http://www.novonordisk.com/">Novo Nordisk</a>'s <a href="http://www.novolog.com/">Novolog</a> branded <a href="http://en.wikipedia.org/wiki/Insulin_aspart">Insulin Aspart</a>, you'll choose Aspart in the insulin types list. If you're not sure of the proper name for the insulin you use look on the packaging or contact your doctor or pharmacist.</p>
 			<h2>Features</h2>
 			<ul>
 				<li>Log glucose readings and Insulin dosage</li>
