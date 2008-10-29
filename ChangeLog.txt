@@ -1,0 +1,11 @@
+Version 0.3 - October 20, 2008
+- Released to AppStore
+- Minor bug fixes from 0.2
+
+Version 0.2 - October 12, 2008
+- Export to Google Spreadsheets
+- Purge old records
+- Color glucose measurements according to high/low thresholds
+
+Version 0.1 - September 01, 2008
+- First release to Ars Technica's Macintoshian Achaia forum
