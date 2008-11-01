@@ -19,6 +19,7 @@
 	unsigned	entryID;
 	Category*	category;
     NSNumber*	glucose;
+	NSString*	glucoseUnits;
 	NSMutableArray*	insulin;
     NSString*	note;
     NSDate*		timestamp;
@@ -30,6 +31,7 @@
 @property (nonatomic, retain)	Category*	category;
 @property (nonatomic, readonly)	BOOL		dirty;
 @property (nonatomic, retain)	NSNumber*	glucose;
+@property (nonatomic, retain)	NSString*	glucoseUnits;
 @property (nonatomic, readonly)	NSMutableArray*	insulin;
 @property (nonatomic, copy)		NSString*	note;
 @property (nonatomic, retain)	NSDate*		timestamp;

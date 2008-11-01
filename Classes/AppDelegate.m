@@ -37,6 +37,7 @@
 @synthesize navController;
 @synthesize categories, defaultInsulinTypes, insulinTypes;
 @synthesize categoryViewController, insulinTypeViewController;
+@synthesize logViewController;
 @synthesize sections;
 @synthesize database;
 @synthesize docService;
@@ -57,8 +58,8 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	
 	// Register default defaults
 	NSArray* a = [NSArray arrayWithObjects:[NSNumber numberWithInt:6], [NSNumber numberWithInt:1], nil];	// NPH, Aspart
-	NSArray* keys = [NSArray arrayWithObjects:@"HighGlucoseWarning", @"LowGlucoseWarning", kDefaultInsulinTypes, nil];
-	NSArray* values = [NSArray arrayWithObjects:@"120", @"80", a, nil];
+	NSArray* keys = [NSArray arrayWithObjects:@"HighGlucoseWarning", @"LowGlucoseWarning", kDefaultGlucoseUnits, kDefaultInsulinTypes, nil];
+	NSArray* values = [NSArray arrayWithObjects:@"120", @"80", kGlucoseUnits_mgdL, a, nil];
 	NSDictionary* d = [NSDictionary dictionaryWithObjects:values forKeys:keys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:d];
 
@@ -73,7 +74,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 		[shortDateFormatter setDateStyle:NSDateFormatterShortStyle];
 	}
 
-    LogViewController *logViewController = [[LogViewController alloc] initWithStyle:UITableViewStylePlain];
+    logViewController = [[LogViewController alloc] initWithStyle:UITableViewStylePlain];
     UINavigationController* aNavigationController = [[UINavigationController alloc] initWithRootViewController:logViewController];
     self.navController = aNavigationController;
 	navController.navigationBar.topItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addLogEntry:)];
@@ -460,6 +461,10 @@ int compareLogEntriesByDate(id left, id right, void* context)
     unsigned entryID = [LogEntry insertNewLogEntryIntoDatabase:database];
 	LogEntry* newEntry = [[LogEntry alloc] initWithID:entryID database:database];
 //	LogEntry* newEntry = [[LogEntry alloc] initWithTimestamp:[NSDate date]];
+
+	// Set defaults for the new LogEntry
+	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+	newEntry.glucoseUnits = [defaults objectForKey:kDefaultGlucoseUnits];
 
 	// Find the proper section for the new LogEntry
 	unsigned sectionIndex = 0;

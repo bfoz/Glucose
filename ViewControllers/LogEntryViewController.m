@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "Constants.h"
 #import "CategoryViewController.h"
 //#import "DoseFieldCell.h"
 #import "DualTableViewCell.h"
@@ -17,9 +18,6 @@
 #import "LogEntry.h"
 #import "TextFieldCell.h"
 #import "TextViewCell.h"
-
-#define kToolbarHeight			0
-//#define kToolbarHeight			40.0
 
 @interface LogEntryViewController ()
 
@@ -66,8 +64,7 @@ static AppDelegate* appDelegate = nil;
 		
 		// A number formatter for glucose measurements
 		glucoseFormatter = [[NSNumberFormatter alloc] init];
-		[glucoseFormatter setPositiveSuffix:@" mg/dL"];
-		[glucoseFormatter setNegativeSuffix:@" mg/dL"];
+		[glucoseFormatter setMaximumFractionDigits:1];
 	}
     return self;
 }
@@ -207,7 +204,6 @@ static AppDelegate* appDelegate = nil;
 {
 	if( self.editing )
 	{
-		NSLog(@"Editing %d %d", section, row);
 		switch( section )
 		{
 			case 0:
@@ -224,9 +220,14 @@ static AppDelegate* appDelegate = nil;
 	}
 	else
 	{
-		if( 1 == section )
+		switch( section )
 		{
-			return @"DualCellID";
+			case 0:
+				if( 2 == row )
+					return @"Glucose";
+				break;
+			case 1:
+				return @"DualCellID";
 		}
 	}
 	return @"MyIdentifier";
@@ -319,19 +320,17 @@ static AppDelegate* appDelegate = nil;
 				cell.text = (entry.category == nil) ? @"Category" : entry.category.categoryName;
 				break;
 			case 2:
+				[glucoseFormatter setPositiveSuffix:entry.glucoseUnits];
+				[glucoseFormatter setNegativeSuffix:entry.glucoseUnits];
+				cell.text = entry.glucose ? [glucoseFormatter stringFromNumber:entry.glucose] : nil;
 				if( self.editing )
 				{
-					if( entry.glucose )
-						((TextFieldCell*)cell).view.text = [glucoseFormatter stringFromNumber:entry.glucose];
+					if( entry.glucoseUnits && (entry.glucoseUnits == kGlucoseUnits_mmolL) )
+						((TextFieldCell*)cell).view.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
 					else
-						((TextFieldCell*)cell).view.text = nil;
-
-//					((TextFieldCell*)cell).view.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
-					((TextFieldCell*)cell).view.keyboardType = UIKeyboardTypeNumberPad;
+						((TextFieldCell*)cell).view.keyboardType = UIKeyboardTypeNumberPad;
 //					((TextFieldCell*)cell).view.returnKeyType = UIReturnKeyDone;
 				}
-				else
-					cell.text = ( entry.glucose == nil ) ? @"Glucose" : [glucoseFormatter stringFromNumber:entry.glucose];
 				break;
 		}
 	}

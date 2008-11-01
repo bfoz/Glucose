@@ -46,9 +46,10 @@
 
 		// A number formatter for glucose measurements
 		glucoseFormatter = [[NSNumberFormatter alloc] init];
-		[glucoseFormatter setPositiveSuffix:@" mg/dL"];
-		[glucoseFormatter setNegativeSuffix:@" mg/dL"];
-		
+//		[glucoseFormatter setPositiveSuffix:@" mg/dL"];
+//		[glucoseFormatter setNegativeSuffix:@" mg/dL"];
+		[glucoseFormatter setMaximumFractionDigits:1];
+
 		// Register to be notified whenever the sections array changes
 		[appDelegate addObserver:self forKeyPath:@"sections" 
 							 options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
@@ -220,6 +221,8 @@
 //	cell.entry = entry;
 	cell.labelTimestamp.text = [dateFormatter stringFromDate:entry.timestamp];
 	cell.labelCategory.text = entry.category ? entry.category.categoryName : @"";
+	[glucoseFormatter setPositiveSuffix:entry.glucoseUnits];
+	[glucoseFormatter setNegativeSuffix:entry.glucoseUnits];
 	cell.labelGlucose.text = entry.glucose ? [glucoseFormatter stringFromNumber:entry.glucose] : @"";
 
 	// Color the glucose values accordingly

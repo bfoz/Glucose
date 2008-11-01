@@ -12,6 +12,7 @@
 #import "CategoryViewController.h"
 #import "ExportViewController.h"
 #import "InsulinTypeViewController.h"
+#import "LogViewController.h"
 #import "PurgeViewController.h"
 #import "SettingsViewController.h"
 
@@ -65,7 +66,18 @@ static AppDelegate* appDelegate = nil;
 						   forView:self.navigationController.view cache:YES];
     [self.navigationController popViewControllerAnimated:NO];	
 	[UIView commitAnimations];
-	
+}
+
+- (void) glucoseUnitsAction:(UISegmentedControl*)sender
+{
+	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+	switch( sender.selectedSegmentIndex )
+	{
+		case 0: [defaults setObject:kGlucoseUnits_mgdL forKey:kDefaultGlucoseUnits]; break;
+		case 1: [defaults setObject:kGlucoseUnits_mmolL forKey:kDefaultGlucoseUnits]; break;
+	}
+	// Force the LogViewController to reload the LogEntryViewController so it can pick up the change
+	appDelegate.logViewController.logEntryViewController = nil;
 }
 
 #pragma mark -
@@ -83,7 +95,7 @@ static AppDelegate* appDelegate = nil;
 	{
 		case 0: return 2;
         case 1: return 3;
-		case 2: return 2;
+		case 2: return 3;
 		case 3: return 3;
     }
 	return 0;
@@ -123,10 +135,15 @@ static AppDelegate* appDelegate = nil;
 			break;
 		case 2:
 			cell.textAlignment = UITextAlignmentLeft;
-			UITextField* f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
-			f.delegate = self;
-			f.keyboardType = UIKeyboardTypeNumberPad;
-			f.textAlignment = UITextAlignmentRight;
+			UITextField* f;
+			if( indexPath.row < 2 )
+			{
+				f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
+				f.delegate = self;
+				f.keyboardType = UIKeyboardTypeNumberPad;
+				f.textAlignment = UITextAlignmentRight;
+				cell.accessoryView = f;
+			}
 			NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 			switch( indexPath.row )
 			{
@@ -144,8 +161,18 @@ static AppDelegate* appDelegate = nil;
 					lowGlucoseWarningCell = cell;
 					lowGlucoseWarningField = f;
 					break;
+				case 2:
+					cell.text = @"Glucose Units";
+					UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:kGlucoseUnits_mgdL,kGlucoseUnits_mmolL,nil]];
+					s.segmentedControlStyle = UISegmentedControlStyleBar;
+					[s addTarget:self action:@selector(glucoseUnitsAction:) forControlEvents:UIControlEventValueChanged];
+					if( [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL])
+						s.selectedSegmentIndex = 0;
+					else
+						s.selectedSegmentIndex = 1;
+					cell.accessoryView = s;
+					break;
 			}
-			cell.accessoryView = f;
 			break;
         case 3:
 			cell.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];

@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "Constants.h"
+
 #import "LogEntry.h"
 #import "InsulinDose.h"
 #import "InsulinType.h"
@@ -32,6 +34,7 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
 
 @synthesize entryID, category, dirty;
 @synthesize glucose;
+@synthesize glucoseUnits;
 @synthesize insulin;
 @synthesize note;
 @synthesize	timestamp;
@@ -103,6 +106,17 @@ else												\
 			ASSIGN_NOT_NULL(init_statement, 8, self.note,
 							[NSString stringWithUTF8String:(const char*)sqlite3_column_text(init_statement, 8)]);
 
+			if( SQLITE_NULL == sqlite3_column_type(init_statement, 2) )
+				self.glucoseUnits = nil;
+			else
+			{
+				switch(sqlite3_column_int(init_statement, 2))
+				{
+					case 0: self.glucoseUnits = kGlucoseUnits_mgdL; break;
+					case 1: self.glucoseUnits = kGlucoseUnits_mmolL; break;
+					default: self.glucoseUnits = nil; break;
+				}
+			}			
 			if( SQLITE_NULL == sqlite3_column_type(init_statement, 3) )
 				self.category = nil;
 			else
