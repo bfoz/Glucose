@@ -185,10 +185,6 @@ static AppDelegate* appDelegate = nil;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	// Ignore section 2
-	if( indexPath.section == 2 )
-		return;
-
 	switch(indexPath.section)
 	{
 		case 0:
@@ -231,6 +227,17 @@ static AppDelegate* appDelegate = nil;
 					[insulinTypeViewController setEditing:NO];
 					[insulinTypeViewController setMultiCheck:YES];
 					[self.navigationController pushViewController:insulinTypeViewController animated:YES];
+					break;
+			}
+			break;
+		case 2:
+			switch( indexPath.row )
+			{
+				case 0:
+					[highGlucoseWarningField becomeFirstResponder];
+					break;
+				case 1:
+					[lowGlucoseWarningField becomeFirstResponder];
 					break;
 			}
 			break;
