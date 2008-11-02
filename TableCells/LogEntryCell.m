@@ -64,24 +64,28 @@
 	[labelDose0 release];
 	[labelDose1 release];
 	[labelGlucose release];
+	[labelNote release];
 	[labelTimestamp release];
 	[labelType0 release];
 	[labelType1 release];
 	[super dealloc];
 }
 
+// If the cell's entry has a Note field, but...
+//	insulin, glucose		don't display note
+//	no insulin, glucose		don't display note
+//	insulin, no glucose		don't display note
+//	no insulin, no glucose	display note
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
 	
 	CGRect contentRect = [self.contentView bounds];
 	CGRect insetRect = CGRectInset(contentRect, kCellLeftOffset, 0);
-//	CGRect insetRect = CGRectInset(contentRect, kCellLeftOffset, kCellTopOffset);
+
 //	NSLog(@"%f x %f\n", contentRect.size.width, contentRect.size.height);
 	const unsigned width = insetRect.size.width;	// Available width
 	const unsigned height = insetRect.size.height;	// Available height
-//	const unsigned width = contentRect.size.width - (kCellLeftOffset*2);	// Available width
-//	const unsigned height = contentRect.size.height - (kCellTopOffset*2);	// Available height
 //	NSLog(@"%d x %d\n", width, height);
 	const unsigned h = height/2;
 
@@ -108,15 +112,35 @@
 	// Column 0 - Category/Timestamp
 	labelTimestamp.frame = CGRectMake(x0, y0, w0, h);
 	labelCategory.frame  = CGRectMake(x0, y1, w0, h);
-	// Column 1 - Glucose (fills remaining width)
-	labelGlucose.frame = CGRectMake(x0 + w0, y0, width - w3 - w2 - w0, height);
-//	labelGlucose.frame = CGRectMake(x0 + w0, y0, w1, height);
-	// Column 2
-	labelDose0.frame = CGRectMake(x2, y0, w2, h);
-	labelDose1.frame  = CGRectMake(x2, y1, w2, h);
-	// Column 3
-	labelType0.frame = CGRectMake(x3, y0, w3, h);
-	labelType1.frame  = CGRectMake(x3, y1, w3, h);
+
+	if( labelNote && !labelGlucose.text && !labelDose0.text && !labelDose1.text )
+	{
+		// Column 1 - Note (fills remaining width)
+		labelNote.frame = CGRectMake(x0 + w0, y0, width - w0, height);
+		labelGlucose.hidden = YES;
+		labelDose0.hidden = YES;
+		labelDose1.hidden  = YES;
+		labelType0.hidden = YES;
+		labelType1.hidden  = YES;
+//		labelNote.backgroundColor = [UIColor lightGrayColor];
+	}
+	else
+	{
+		// Column 1 - Glucose (fills remaining width)
+		labelGlucose.frame = CGRectMake(x0 + w0, y0, width - w3 - w2 - w0, height);
+		// Column 2 - Insulin values
+		labelDose0.frame = CGRectMake(x2, y0, w2, h);
+		labelDose1.frame  = CGRectMake(x2, y1, w2, h);
+		// Column 3 - Insulin Types
+		labelType0.frame = CGRectMake(x3, y0, w3, h);
+		labelType1.frame  = CGRectMake(x3, y1, w3, h);
+
+		labelGlucose.hidden = NO;
+		labelDose0.hidden = NO;
+		labelDose1.hidden  = NO;
+		labelType0.hidden = NO;
+		labelType1.hidden  = NO;
+	}
 /*
 	labelGlucose.backgroundColor = [UIColor lightGrayColor];
 	labelType1.backgroundColor = [UIColor cyanColor];
@@ -125,6 +149,39 @@
 */
 }
 
+#pragma mark -
+#pragma mark Properties
 
+- (NSString*) note
+{
+	if( labelNote )
+		return labelNote.text;
+	return nil;
+}
+
+- (void) setNote:(NSString*)t
+{
+	const BOOL a = t && [t length];
+	// Lazily create a UILabel, but only if a non-nil, non-empty string is given
+	if( !labelNote && a )
+	{
+		labelNote = [[UILabel alloc] initWithFrame:CGRectZero];
+		[self.contentView addSubview:labelNote];
+		labelNote.textAlignment = UITextAlignmentLeft;
+		[self setNeedsLayout];
+	}
+	if( labelNote )
+	{
+		if( a )
+			labelNote.text = t;
+		else
+		{	// Delete the UILabel if a nil, or empty, string is given
+			[labelNote removeFromSuperview];
+			[labelNote release];
+			labelNote = nil;
+			[self setNeedsLayout];
+		}
+	}
+}
 
 @end

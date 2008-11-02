@@ -208,7 +208,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	
-	static NSString *MyIdentifier = @"MyIdentifier";
+	static NSString *MyIdentifier = @"CellID";
 	
 	LogEntryCell *cell = (LogEntryCell*)[tableView dequeueReusableCellWithIdentifier:MyIdentifier];
 	if( nil == cell )
@@ -223,7 +223,8 @@
 	cell.labelCategory.text = entry.category ? entry.category.categoryName : @"";
 	[glucoseFormatter setPositiveSuffix:entry.glucoseUnits];
 	[glucoseFormatter setNegativeSuffix:entry.glucoseUnits];
-	cell.labelGlucose.text = entry.glucose ? [glucoseFormatter stringFromNumber:entry.glucose] : @"";
+	cell.labelGlucose.text = entry.glucose ? [glucoseFormatter stringFromNumber:entry.glucose] : nil;
+	cell.note = entry.note;
 
 	// Color the glucose values accordingly
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];

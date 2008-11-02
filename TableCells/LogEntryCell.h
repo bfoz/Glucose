@@ -19,6 +19,7 @@
 	UILabel*	labelDose0;
 	UILabel*	labelDose1;
 	UILabel*	labelGlucose;
+	UILabel*	labelNote;
 	UILabel*	labelTimestamp;
 	UILabel*	labelType0;
 	UILabel*	labelType1;
@@ -33,5 +34,8 @@
 @property (nonatomic, readonly)	UILabel*	labelTimestamp;
 @property (nonatomic, readonly)	UILabel*	labelType0;
 @property (nonatomic, readonly)	UILabel*	labelType1;
+
+// Virtual properties
+@property (nonatomic, copy)	NSString*	note;
 
 @end
