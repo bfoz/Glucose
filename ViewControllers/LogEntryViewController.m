@@ -173,6 +173,20 @@ static AppDelegate* appDelegate = nil;
 		return 1 + ([entry.insulin count] ? 1 : 0) + (entry.note && [entry.note length] ? 1 : 0);
 }
 
+// Section 0 - Timestamp/Category/Glucose
+//	Row 0 => Row 0
+//	Row 2 (Glucose) => Row 1 if there is a glucose reading, but no category
+- (unsigned) translateRow:(unsigned)row inSection:(unsigned)section
+{
+	if( 0 == section )
+	{
+		if( (1==row) && !entry.category && entry.glucose )
+			return 2;
+		return row;
+	}
+	return row;
+}
+
 // Normally section 1 is the insulin does section. However, if there are no doses, section 1 becomes
 //  the Note section. So remap section 1 to section 2.
 - (unsigned) translateSection:(unsigned)section
@@ -239,18 +253,16 @@ static AppDelegate* appDelegate = nil;
 		return nil;
 
 	unsigned section = [self translateSection:indexPath.section];
+	unsigned row = [self translateRow:indexPath.row inSection:section];
 
-	UITableViewCell *cell = nil;
-	NSString*	cellID = [self cellIDForSection:section row:indexPath.row];
+	NSString*	cellID = [self cellIDForSection:section row:row];
 
-	NSLog(@"cellID = %@", cellID);
-	cell = [tv dequeueReusableCellWithIdentifier:cellID];	// Get the appropriate cell
+	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];	// Get the appropriate cell
 
-	if( nil == cell )	// Create a new cell if needed
+	if( !cell )	// Create a new cell if needed
 	{
 		if( @"DualCellID" == cellID )
 		{
-			NSLog(@"Creating DualTableViewCell");
 			// CGRectZero allows the cell to determine the appropriate size.
 			cell = [[[DualTableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
 			((DualTableViewCell*)cell).leftTextAlignment = UITextAlignmentRight;
@@ -262,7 +274,7 @@ static AppDelegate* appDelegate = nil;
 			cell = [[[DoseFieldCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
 			((DoseFieldCell*)cell).delegate = self;
 		}
-		else if( self.editing && (section==0) && (indexPath.row==2) )
+		else if( self.editing && (section==0) && (row==2) )
 		{
 			// CGRectZero allows the cell to determine the appropriate size.
 			TextFieldCell* c = [[[TextFieldCell alloc] initWithFrame:CGRectZero reuseIdentifier:@"EditCellID"] autorelease];
@@ -272,7 +284,7 @@ static AppDelegate* appDelegate = nil;
 			cell = c;
 			if( 0 == section )
 			{
-				switch (indexPath.row)
+				switch( row )
 				{
 					case 2:
 						c.placeholder = @"Glucose";
@@ -293,7 +305,7 @@ static AppDelegate* appDelegate = nil;
 			// CGRectZero allows the cell to determine the appropriate size.
 			cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
 			cell.textAlignment = (section == 2) ? UITextAlignmentLeft : UITextAlignmentCenter;
-			if( (0 == section) && (0 == indexPath.row) )	// Save a pointer to the timestamp cell
+			if( (0 == section) && (0 == row) )	// Save a pointer to the timestamp cell
 				self.cellTimestamp = cell;
 		}
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -301,7 +313,7 @@ static AppDelegate* appDelegate = nil;
 
 	if( 0 == section )
 	{
-		switch( indexPath.row )
+		switch( row )
 		{
 			case 0:	// Timestamp
 				cell.text = [dateFormatter stringFromDate:entry.timestamp];
@@ -338,7 +350,7 @@ static AppDelegate* appDelegate = nil;
 	{
 		// If the entry doesn't have a valid number for an insulin type use a regular cell and display the short name. 
 		// Otherwise, use a dual column cell.
-		InsulinDose* dose = [entry.insulin objectAtIndex:indexPath.row];
+		InsulinDose* dose = [entry.insulin objectAtIndex:row];
 
 		if( @"DualCellID" == cellID )
 		{
