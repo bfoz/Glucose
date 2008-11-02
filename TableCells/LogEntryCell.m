@@ -128,17 +128,32 @@
 	{
 		// Column 1 - Glucose (fills remaining width)
 		labelGlucose.frame = CGRectMake(x0 + w0, y0, width - w3 - w2 - w0, height);
-		// Column 2 - Insulin values
-		labelDose0.frame = CGRectMake(x2, y0, w2, h);
-		labelDose1.frame  = CGRectMake(x2, y1, w2, h);
-		// Column 3 - Insulin Types
-		labelType0.frame = CGRectMake(x3, y0, w3, h);
-		labelType1.frame  = CGRectMake(x3, y1, w3, h);
 
+		CGRect dose0 = CGRectMake(x2, y0, w2, h);
+		CGRect type0 = CGRectMake(x3, y0, w3, h);
+
+		if( labelDose0.text && labelType0.text )
+		{
+			// Column 2 - Insulin values
+			labelDose0.frame = dose0;
+			labelDose1.frame  = CGRectMake(x2, y1, w2, h);
+			// Column 3 - Insulin Types
+			labelType0.frame = type0;
+			labelType1.frame  = CGRectMake(x3, y1, w3, h);
+
+			labelDose0.hidden = NO;
+			labelType0.hidden = NO;
+		}
+		else	// Move the second dose up one slot if the first dose is empty
+		{
+			labelDose1.frame  = dose0;
+			labelType1.frame = type0;
+			labelDose0.hidden = YES;
+			labelType0.hidden = YES;
+		}
+		
 		labelGlucose.hidden = NO;
-		labelDose0.hidden = NO;
 		labelDose1.hidden  = NO;
-		labelType0.hidden = NO;
 		labelType1.hidden  = NO;
 	}
 /*

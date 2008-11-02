@@ -204,7 +204,16 @@ static AppDelegate* appDelegate = nil;
 			else
 				return 1 + (entry.glucose ? 1 : 0) + (entry.category ? 1 : 0);
         case 1:
-			return [entry.insulin count];
+			if( self.editing )
+				return [entry.insulin count];
+			else
+			{
+				unsigned i = 0;
+				for( InsulinDose* d in entry.insulin )
+					if( d.dose && d.type )
+						++i;
+				return i;
+			}
         case 2:
 			if( self.editing )
 				return 1;
@@ -244,7 +253,7 @@ static AppDelegate* appDelegate = nil;
 				return @"DualCellID";
 		}
 	}
-	return @"MyIdentifier";
+	return @"CellID";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -331,7 +340,7 @@ static AppDelegate* appDelegate = nil;
 				}
 				cell.text = (entry.category == nil) ? @"Category" : entry.category.categoryName;
 				break;
-			case 2:
+			case 2:	// Glucose
 				[glucoseFormatter setPositiveSuffix:entry.glucoseUnits];
 				[glucoseFormatter setNegativeSuffix:entry.glucoseUnits];
 				cell.text = entry.glucose ? [glucoseFormatter stringFromNumber:entry.glucose] : nil;
@@ -354,6 +363,8 @@ static AppDelegate* appDelegate = nil;
 
 		if( @"DualCellID" == cellID )
 		{
+			while( !(dose && dose.dose && dose.type) )
+				dose = [entry.insulin objectAtIndex:++row];
 			if( dose )
 			{
 				if( dose.dose )	// If the record has a valid value...

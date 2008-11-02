@@ -236,7 +236,7 @@
 		cell.labelGlucose.textColor = [UIColor redColor];
 
 	InsulinDose* dose = [entry.insulin count] ? [entry.insulin objectAtIndex:0] : nil;
-	if( dose && dose.type )
+	if( dose && dose.dose && dose.type )
 	{
 		cell.labelDose0.text = [dose.dose stringValue];
 		cell.labelType0.text = dose.type.shortName;
@@ -247,7 +247,7 @@
 		cell.labelType0.text = nil;
 	}
 	dose = ([entry.insulin count] > 1) ? [entry.insulin objectAtIndex:1] : nil;
-	if( dose && dose.type )
+	if( dose && dose.dose && dose.type )
 	{
 		cell.labelDose1.text = [dose.dose stringValue];
 		cell.labelType1.text = dose.type.shortName;

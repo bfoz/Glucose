@@ -102,7 +102,7 @@ else												\
 			ASSIGN_NOT_NULL(init_statement, 0, self.timestamp,
 							[NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(init_statement, 0)]);
 			ASSIGN_NOT_NULL(init_statement, 1, self.glucose,
-							[NSNumber numberWithInt:sqlite3_column_int(init_statement, 1)]);
+							[NSNumber numberWithDouble:sqlite3_column_double(init_statement, 1)]);
 			ASSIGN_NOT_NULL(init_statement, 8, self.note,
 							[NSString stringWithUTF8String:(const char*)sqlite3_column_text(init_statement, 8)]);
 
@@ -122,17 +122,17 @@ else												\
 			else
 				[self setCategoryWithID:sqlite3_column_int(init_statement, 3)];
 
-			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 4)) && 
+			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 4)) || 
 			    (SQLITE_NULL != sqlite3_column_type(init_statement, 6)) )
 			{
 				[self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 6)]]];
-				[[self.insulin lastObject] setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 4)]];
+				[self setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 4)] insulinDose:[self.insulin lastObject]];
 			}
-			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 5)) && 
+			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 5)) || 
 			    (SQLITE_NULL != sqlite3_column_type(init_statement, 7)) )
 			{
 				[self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 7)]]];
-				[[self.insulin lastObject] setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 5)]];
+				[self setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 5)] insulinDose:[self.insulin lastObject]];
 			}
 		}
         else
@@ -184,19 +184,6 @@ else												\
 	if( !flush_statement && (sqlite3_prepare_v2(db, flush_sql, -1, &flush_statement, NULL) != SQLITE_OK) )
 			NSAssert1(0, @"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(db));
 
-	// Remove invalid doses before writing to the database
-	{
-		// Enumerate a copy of the array because arrays can't be mutated while being enumerated
-		NSMutableArray* a = [NSArray arrayWithArray:insulin];
-		// Iterate backwards because deleting an element changes the indices of all subsequent elements
-		unsigned i = [insulin count];
-		NSEnumerator* j = [a reverseObjectEnumerator];
-		for( InsulinDose* d in j )
-		{
-			if( !d.dose || [d.dose isEqualToNumber:[NSNumber numberWithInt:0]])
-				[insulin removeObjectAtIndex:--i];
-		}
-	}
 	// Set note to nil if it has zero length
 	if( note && ![note length] )
 		self.note = nil;
@@ -216,8 +203,17 @@ else												\
 	{
 		if( i >= 2 )	// Limit to two doses for now
 			break;
-		sqlite3_bind_int(flush_statement, 5+i, [dose.dose intValue]);
-		sqlite3_bind_int(flush_statement, 7+i, [dose.type typeID]);
+
+		if( dose.dose && ![dose.dose isEqualToNumber:[NSNumber numberWithInt:0]])
+			sqlite3_bind_int(flush_statement, 5+i, [dose.dose intValue]);
+		else
+			sqlite3_bind_null(flush_statement, 5+i);
+
+		if( dose.type )
+			sqlite3_bind_int(flush_statement, 7+i, [dose.type typeID]);
+		else
+			sqlite3_bind_null(flush_statement, 7+i);
+
 		++i;
 	}
 
@@ -283,7 +279,7 @@ else												\
 
 - (void) setDose:(NSNumber*)d insulinDose:(InsulinDose*)dose
 {
-	if( dose && d && ![dose.dose isEqualToNumber:d] )
+	if( dose && d && [d intValue] && ![dose.dose isEqualToNumber:d] )
 	{
 		dose.dose = d;
 		dirty = YES;
