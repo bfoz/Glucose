@@ -103,16 +103,19 @@ static AppDelegate* appDelegate = nil;
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	
-	static NSString *MyIdentifier = @"MyIdentifier";
+	static NSString *cellID = @"CellID";
 	
-	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:MyIdentifier];
+	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
 	{
-		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:MyIdentifier] autorelease];
+		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
 		cell.textAlignment = UITextAlignmentCenter;
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
-		cell.textColor = [UIColor darkTextColor];
 	}
+
+	// Default all rows to bold, black and label-sized
+	cell.textColor = [UIColor darkTextColor];
+	cell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
 
     switch( indexPath.section )
 	{
