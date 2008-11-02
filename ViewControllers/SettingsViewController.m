@@ -73,8 +73,16 @@ static AppDelegate* appDelegate = nil;
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	switch( sender.selectedSegmentIndex )
 	{
-		case 0: [defaults setObject:kGlucoseUnits_mgdL forKey:kDefaultGlucoseUnits]; break;
-		case 1: [defaults setObject:kGlucoseUnits_mmolL forKey:kDefaultGlucoseUnits]; break;
+		case 0:
+			[defaults setObject:kGlucoseUnits_mgdL forKey:kDefaultGlucoseUnits];
+			highGlucoseWarningField.text = [defaults stringForKey:kHighGlucoseWarning0];
+			lowGlucoseWarningField.text = [defaults stringForKey:kLowGlucoseWarning0];
+			break;
+		case 1:
+			[defaults setObject:kGlucoseUnits_mmolL forKey:kDefaultGlucoseUnits];
+			highGlucoseWarningField.text = [defaults stringForKey:kHighGlucoseWarning1];
+			lowGlucoseWarningField.text = [defaults stringForKey:kLowGlucoseWarning1];
+			break;
 	}
 	// Force the LogViewController to reload the LogEntryViewController so it can pick up the change
 	appDelegate.logViewController.logEntryViewController = nil;
@@ -148,18 +156,19 @@ static AppDelegate* appDelegate = nil;
 				cell.accessoryView = f;
 			}
 			NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+			const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
 			switch( indexPath.row )
 			{
 				case 0:
 					cell.text = @"High Glucose Warning";
-					f.text = [defaults stringForKey:@"HighGlucoseWarning"];
+					f.text = [defaults stringForKey:(mgdL ? kHighGlucoseWarning0 : kHighGlucoseWarning1)];
 					f.textColor = [UIColor blueColor];
 					highGlucoseWarningCell = cell;
 					highGlucoseWarningField = f;
 					break;
 				case 1:
 					cell.text = @"Low Glucose Warning";
-					f.text = [defaults stringForKey:@"LowGlucoseWarning"];
+					f.text = [defaults stringForKey:(mgdL ? kLowGlucoseWarning0 : kLowGlucoseWarning1)];
 					f.textColor = [UIColor redColor];
 					lowGlucoseWarningCell = cell;
 					lowGlucoseWarningField = f;
@@ -169,10 +178,7 @@ static AppDelegate* appDelegate = nil;
 					UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:kGlucoseUnits_mgdL,kGlucoseUnits_mmolL,nil]];
 					s.segmentedControlStyle = UISegmentedControlStyleBar;
 					[s addTarget:self action:@selector(glucoseUnitsAction:) forControlEvents:UIControlEventValueChanged];
-					if( [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL])
-						s.selectedSegmentIndex = 0;
-					else
-						s.selectedSegmentIndex = 1;
+					s.selectedSegmentIndex = mgdL ? 0 : 1;
 					cell.accessoryView = s;
 					break;
 			}
@@ -381,13 +387,13 @@ static AppDelegate* appDelegate = nil;
 
 - (void)saveHighGlucoseWarningAction
 {
-	[[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:@"HighGlucoseWarning"];
+	[[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:kHighGlucoseWarning0];
 	[self saveAction];
 }
 
 - (void)saveLowGlucoseWarningAction
 {
-	[[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:@"LowGlucoseWarning"];
+	[[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:kLowGlucoseWarning0];
 	[self saveAction];
 }
 

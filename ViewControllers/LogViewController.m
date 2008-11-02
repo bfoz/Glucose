@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "Constants.h"
+
 #import "InsulinDose.h"
 #import "InsulinType.h"
 #import "LogViewController.h"
@@ -228,9 +230,9 @@
 
 	// Color the glucose values accordingly
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-	if( [entry.glucose compare:[NSNumber numberWithInt:[defaults integerForKey:@"HighGlucoseWarning"]]] == NSOrderedDescending )
+	if( [entry.glucose compare:[NSNumber numberWithFloat:[defaults floatForKey:kHighGlucoseWarning0]]] == NSOrderedDescending )
 		cell.labelGlucose.textColor = [UIColor blueColor];
-	else if( [entry.glucose compare:[NSNumber numberWithInt:[defaults integerForKey:@"LowGlucoseWarning"]]] == NSOrderedAscending )
+	else if( [entry.glucose compare:[NSNumber numberWithFloat:[defaults floatForKey:kLowGlucoseWarning0]]] == NSOrderedAscending )
 		cell.labelGlucose.textColor = [UIColor redColor];
 
 	InsulinDose* dose = [entry.insulin count] ? [entry.insulin objectAtIndex:0] : nil;

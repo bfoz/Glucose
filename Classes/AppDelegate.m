@@ -58,8 +58,8 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	
 	// Register default defaults
 	NSArray* a = [NSArray arrayWithObjects:[NSNumber numberWithInt:6], [NSNumber numberWithInt:1], nil];	// NPH, Aspart
-	NSArray* keys = [NSArray arrayWithObjects:@"HighGlucoseWarning", @"LowGlucoseWarning", kDefaultGlucoseUnits, kDefaultInsulinTypes, nil];
-	NSArray* values = [NSArray arrayWithObjects:@"120", @"80", kGlucoseUnits_mgdL, a, nil];
+	NSArray* keys = [NSArray arrayWithObjects:kHighGlucoseWarning0, kLowGlucoseWarning0, kHighGlucoseWarning1, kLowGlucoseWarning1, kDefaultGlucoseUnits, kDefaultInsulinTypes, nil];
+	NSArray* values = [NSArray arrayWithObjects:@"120", @"80", @"6.6", @"4.4", kGlucoseUnits_mgdL, a, nil];
 	NSDictionary* d = [NSDictionary dictionaryWithObjects:values forKeys:keys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:d];
 

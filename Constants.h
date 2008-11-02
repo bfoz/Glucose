@@ -107,6 +107,10 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 // Keys for NSUserDefaults
 #define	kDefaultGlucoseUnits	@"DefaultGlucoseUnits"
 #define	kDefaultInsulinTypes	@"DefaultInsulinTypes"
+#define	kHighGlucoseWarning0	@"HighGlucoseWarning0"
+#define	kLowGlucoseWarning0		@"LowGlucoseWarning0"
+#define	kHighGlucoseWarning1	@"HighGlucoseWarning1"
+#define	kLowGlucoseWarning1		@"LowGlucoseWarning1"
 #define kLastExportGoogleFromDate		@"LastExportGoogleFromDate"
 #define kLastExportGoogleToDate			@"LastExportGoogleToDate"
 #define kLastExportGoogleOnDate			@"LastExportGoogleOnDate"
