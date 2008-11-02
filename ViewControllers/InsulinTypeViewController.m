@@ -225,6 +225,14 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	dirty = YES;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+	if( multiCheck )
+		return @"Insulin Types for New Records";
+	else
+		return nil;
+}
+
 #pragma mark -
 #pragma mark <TextFieldCellDelegate>
 

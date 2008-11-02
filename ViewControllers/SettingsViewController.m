@@ -130,7 +130,7 @@ static AppDelegate* appDelegate = nil;
 			{
 				case 0: cell.text = @"Categories"; break;
 				case 1: cell.text = @"Insulin Types"; break;
-				case 2: cell.text = @"Default Dose Types"; break;
+				case 2: cell.text = @"Default Insulin Types"; break;
 			}
 			break;
 		case 2:
@@ -243,6 +243,7 @@ static AppDelegate* appDelegate = nil;
 				case 1:
 					if( !insulinTypeViewController )
 						insulinTypeViewController = appDelegate.insulinTypeViewController;
+					[insulinTypeViewController setMultiCheck:NO];
 					[self.navigationController pushViewController:insulinTypeViewController animated:YES];
 					// Set editing mode after pushing the view controller. The UITableView doesn't exist
 					//  until loadView has been called. Until then, there's nothing to set editing mode on.
