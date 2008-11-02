@@ -54,8 +54,6 @@
 		[self.contentView addSubview:labelType1];
 		labelType1.textAlignment = UITextAlignmentLeft;
 		labelType1.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
-
-		[self layoutSubviews];
 	}
 	return self;
 }
