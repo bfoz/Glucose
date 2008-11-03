@@ -134,6 +134,13 @@ else												\
 				[self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 7)]]];
 				[self setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 5)] insulinDose:[self.insulin lastObject]];
 			}
+			// Empty the array if there are no valid doses
+			unsigned count = 0;
+			for( InsulinDose* d in insulin )
+				if( d.dose )
+					++count;
+			if( !count )
+				[self.insulin removeAllObjects];
 		}
         else
 		{
