@@ -464,7 +464,13 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 	// Set defaults for the new LogEntry
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-	newEntry.glucoseUnits = [defaults objectForKey:kDefaultGlucoseUnits];
+	// Don't use the returned string directly because glucoseUnits is used elsewhere
+	//	in pointer comparisons for performance reasons. Consequently, it must be 
+	//	a pointer to one of the constants in Constants.h.
+	if( [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL] )
+		newEntry.glucoseUnits = kGlucoseUnits_mgdL;
+	else
+		newEntry.glucoseUnits = kGlucoseUnits_mmolL;
 
 	// Find the proper section for the new LogEntry
 	unsigned sectionIndex = 0;
