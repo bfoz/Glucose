@@ -13,8 +13,8 @@
 		</div>
 		<div style="text-align:center">
 			<h1>Glucose</h1>
-			<img src="./screenshots/release_0.3/main.jpg">
-			<img src="./screenshots/release_0.3/newentry.jpg">
+			<img src="./screenshots/release_0.4/main.jpg">
+			<img src="./screenshots/release_0.4/newentry.jpg">
 		</div>
 		<div id="content">
 			<p>Glucose is an iPhone application that aids diabetics in monitoring and recording glucose measurements.</p>
@@ -23,6 +23,7 @@
 			<h2>Features</h2>
 			<ul>
 				<li>Log glucose readings and Insulin dosage</li>
+				<li>Support for mg/dL and mmol/L</li>
 				<li>Export to Google Docs Spreadsheets</li>
 				<li>Customizable Categories and Insulin types</li>
 				<li>Color-coded display of high/low readings</li>
@@ -42,7 +43,7 @@
 			<h2>Download</h2>
 			<p>Starting with version 0.3, Glucose is only available through the App Store. I'll send future Beta releases directly to participants.</p>
 			<ul>
-				<li><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Glucose 0.3</a></li>
+				<li><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Glucose (latest)</a></li>
 				<li><a href="./release/glucose_0.2.zip">Beta 2 (v0.2)</a></li>
 				<li><a href="./release/GlucoseBeta1.zip">Beta 1 (v0.1)</a></li>
 			</ul>
@@ -52,6 +53,16 @@
 
 
 			<h2>History</h2>
+			<p><a href=http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.4</a> - Released November 3, 2008
+				<ul>
+					<li>Support for mmol/L (Settings screen)</li>
+					<li>Tap anywhere on glucose threshold rows to edit (Settings screen)</li>
+					<li>Display note-only records on the main log view</li>
+					<li>Configuring default insulin types for new records should be more intuitive now</li>
+					<li>Fixed a few minor display bugs</li>
+					<li>Google Data client library version 1.5</li>
+				</ul>
+			</p>
 			<p><a href=http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.3</a> - Released October 24, 2008
 				<ul>
 					<li>First version submitted to the App Store</li>
