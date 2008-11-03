@@ -1,3 +1,11 @@
+Version 0.4 - November 3, 2008
+- Support for mmol/L (Settings screen)
+- Tap anywhere on glucose threshold rows to edit (Settings screen)
+- Display note-only records on the main log view
+- Configuring default insulin types for new records should be more intuitive now
+- Fixed a few minor display bugs
+- Google Data client library version 1.5
+
 Version 0.3 - October 20, 2008
 - Released to AppStore
 - Minor bug fixes from 0.2
