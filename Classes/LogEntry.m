@@ -200,7 +200,8 @@ else												\
 	if( glucose && ![glucose isEqualToNumber:[NSNumber numberWithInt:0]] )
 		sqlite3_bind_double(flush_statement, 2, [glucose doubleValue]);
 
-	sqlite3_bind_int(flush_statement, 3, 0);	// glucoseUnits
+	const unsigned a = (glucoseUnits == kGlucoseUnits_mgdL) ? 0 : 1;
+	sqlite3_bind_int(flush_statement, 3, a);	// glucoseUnits
 
 	if( category )
 		sqlite3_bind_int(flush_statement, 4, [self.category categoryID]);
