@@ -28,6 +28,9 @@
 		159B8F510E7243A7002C3975 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 159B8F4F0E7243A7002C3975 /* SlidingViewController.m */; };
 		159E81980E5156A40097EA6F /* LogEntryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 159E81970E5156A40097EA6F /* LogEntryCell.m */; };
 		159E84410E5558BD0097EA6F /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */; };
+		15C85D820EBEA82A00A96C37 /* GDataACLRole.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821BD0E748613003322DC /* GDataACLRole.m */; };
+		15C85D830EBEA82B00A96C37 /* GDataACLScope.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821BB0E748613003322DC /* GDataACLScope.m */; };
+		15C85D840EBEA82F00A96C37 /* GDataEntryACL.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821B70E748613003322DC /* GDataEntryACL.m */; };
 		15E822C80E748613003322DC /* GDataFramework.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821490E748613003322DC /* GDataFramework.m */; };
 		15E822C90E748613003322DC /* GDataUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8214B0E748613003322DC /* GDataUtilities.m */; };
 		15E822CA0E748613003322DC /* GDataXMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8214C0E748613003322DC /* GDataXMLNode.m */; };
@@ -807,6 +810,9 @@
 				1595CF570E999E1C00DA7CC6 /* PurgeViewController.m in Sources */,
 				15E976AA0EAB0099000CF411 /* GDataGeoPt.m in Sources */,
 				15E976AD0EAB00BE000CF411 /* GDataPerson.m in Sources */,
+				15C85D820EBEA82A00A96C37 /* GDataACLRole.m in Sources */,
+				15C85D830EBEA82B00A96C37 /* GDataACLScope.m in Sources */,
+				15C85D840EBEA82F00A96C37 /* GDataEntryACL.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
