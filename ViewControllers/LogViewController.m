@@ -234,6 +234,8 @@
 		cell.labelGlucose.textColor = [UIColor blueColor];
 	else if( [entry.glucose compare:[NSNumber numberWithFloat:[defaults floatForKey:kLowGlucoseWarning0]]] == NSOrderedAscending )
 		cell.labelGlucose.textColor = [UIColor redColor];
+	else
+		cell.labelGlucose.textColor = [UIColor darkTextColor];
 
 	InsulinDose* dose = [entry.insulin count] ? [entry.insulin objectAtIndex:0] : nil;
 	if( dose && dose.dose && dose.type )
