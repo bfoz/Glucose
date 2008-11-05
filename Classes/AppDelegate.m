@@ -50,7 +50,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {	
     // Create the top level window (instead of using a default nib)
-//    window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
 	// Set the background color for the flip animation going to/from the settings view
 	//  The background color is what shows up behind the flipping views
