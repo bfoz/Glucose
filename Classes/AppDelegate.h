@@ -14,6 +14,7 @@
 @class InsulinType;
 @class InsulinTypeViewController;
 @class LogEntry;
+@class LogDay;
 @class LogViewController;
 
 @class GDataServiceGoogleDocs;
@@ -48,20 +49,15 @@
 - (Category*) findCategoryForID:(unsigned)categoryID;
 - (InsulinType*) findInsulinTypeForID:(unsigned)typeID;
 
-- (NSMutableDictionary*) createSectionForDate:(NSDate*)date;
-//- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(NSMutableDictionary*)section;
-- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(NSMutableDictionary*)section withNotification:(BOOL)notify;
-- (NSMutableDictionary*) findSectionForDate:(NSDate*)date;
-- (NSMutableDictionary*) getSectionForDate:(NSDate*)date;
-- (void) sortEntriesForSection:(NSMutableDictionary*)s;
+- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section withNotification:(BOOL)notify;
+- (LogDay*) findSectionForDate:(NSDate*)date;
+- (LogDay*) getSectionForDate:(NSDate*)date;
 
 // Create a new log entry in response to a button press
 - (void) addLogEntry:(id)sender;
 - (void) deleteCategoryID:(unsigned)path;
 - (void) deleteEntriesForCategoryID:(unsigned)categoryID;
 - (BOOL) deleteLogEntryAtIndexPath:(NSIndexPath*)indexPath;
-//- (void) updateStatisticsForSectionIndex:(unsigned)index;
-- (void) updateStatisticsForSection:(NSMutableDictionary*)s;
 
 - (void) addCategory:(NSString*)name;
 - (void) flushCategories;

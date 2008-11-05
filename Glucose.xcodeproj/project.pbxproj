@@ -28,6 +28,7 @@
 		159B8F510E7243A7002C3975 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 159B8F4F0E7243A7002C3975 /* SlidingViewController.m */; };
 		159E81980E5156A40097EA6F /* LogEntryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 159E81970E5156A40097EA6F /* LogEntryCell.m */; };
 		159E84410E5558BD0097EA6F /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */; };
+		15AF2FE20EC1799F00FC2403 /* LogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 15AF2FE10EC1799F00FC2403 /* LogDay.m */; };
 		15C85D820EBEA82A00A96C37 /* GDataACLRole.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821BD0E748613003322DC /* GDataACLRole.m */; };
 		15C85D830EBEA82B00A96C37 /* GDataACLScope.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821BB0E748613003322DC /* GDataACLScope.m */; };
 		15C85D840EBEA82F00A96C37 /* GDataEntryACL.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821B70E748613003322DC /* GDataEntryACL.m */; };
@@ -155,6 +156,8 @@
 		159E81960E5156A40097EA6F /* LogEntryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogEntryCell.h; path = TableCells/LogEntryCell.h; sourceTree = "<group>"; };
 		159E81970E5156A40097EA6F /* LogEntryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LogEntryCell.m; path = TableCells/LogEntryCell.m; sourceTree = "<group>"; };
 		159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		15AF2FE00EC1799F00FC2403 /* LogDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogDay.h; sourceTree = "<group>"; };
+		15AF2FE10EC1799F00FC2403 /* LogDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogDay.m; sourceTree = "<group>"; };
 		15E821460E748613003322DC /* GData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GData.h; path = ../GData/Source/GData.h; sourceTree = SOURCE_ROOT; };
 		15E821470E748613003322DC /* GDataDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GDataDefines.h; path = ../GData/Source/GDataDefines.h; sourceTree = SOURCE_ROOT; };
 		15E821480E748613003322DC /* GDataFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GDataFramework.h; path = ../GData/Source/GDataFramework.h; sourceTree = SOURCE_ROOT; };
@@ -329,6 +332,8 @@
 				150829D20E500B0500FB556A /* InsulinType.m */,
 				150829D30E500B0500FB556A /* LogEntry.h */,
 				150829D40E500B0500FB556A /* LogEntry.m */,
+				15AF2FE00EC1799F00FC2403 /* LogDay.h */,
+				15AF2FE10EC1799F00FC2403 /* LogDay.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -809,6 +814,7 @@
 				15C85D820EBEA82A00A96C37 /* GDataACLRole.m in Sources */,
 				15C85D830EBEA82B00A96C37 /* GDataACLScope.m in Sources */,
 				15C85D840EBEA82F00A96C37 /* GDataEntryACL.m in Sources */,
+				15AF2FE20EC1799F00FC2403 /* LogDay.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,6 +12,7 @@
 #import "InsulinDose.h"
 #import "InsulinType.h"
 #import "LogEntry.h"
+#import "LogDay.h"
 #import "CategoryViewController.h"
 #import "InsulinTypeViewController.h"
 #import "LogViewController.h"
@@ -28,7 +29,7 @@
 - (void) loadCategories;
 - (void) loadDefaultInsulinTypes;
 - (void) loadInsulinTypes;
-- (void) loadLogEntries;
+- (void) loadAllSections;
 @end
 
 @implementation AppDelegate
@@ -100,7 +101,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [self loadCategories];
     [self loadInsulinTypes];
 	[self loadDefaultInsulinTypes];	// Must be after loadInsulinTypes
-    [self loadLogEntries];
+    [self loadAllSections];
 
 	// Configure and display the window
     [window addSubview:[navController view]];
@@ -274,87 +275,36 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 		while( sqlite3_step(statement) == SQLITE_ROW )
 		{
 			NSDate *const day = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)];
-			[self.sections insertObject:[self createSectionForDate:day] atIndex:0];
+			LogDay *const  section = [[LogDay alloc] initWithDate:day count:sqlite3_column_int(statement, 1)];
+			section.name = [shortDateFormatter stringFromDate:day];
+			[self.sections insertObject:section atIndex:0];
 		}
 		sqlite3_finalize(statement);
-	}
-}
-
-- (void) loadSection:(unsigned)index
-{
-	const char* q = "SELECT ID FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') = date(?,'unixepoch','localtime') ORDER BY timestamp DESC";
-	sqlite3_stmt *statement;
-	
-	if( index >= [self.sections count] )	// Range check index
-		return;
-
-	if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
-	{
-		NSMutableDictionary *const s = [self.sections objectAtIndex:index];
-        sqlite3_bind_int(statement, 1, [[s objectForKey:@"SectionDate"] timeIntervalSince1970]);
-		NSMutableArray *const entries = [s objectForKey:@"LogEntries"];
-		float avgGlucose = 0;
-		unsigned i = 0;
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			LogEntry* newEntry = [[LogEntry alloc] initWithID:sqlite3_column_int(statement, 0) database:database];
-			[entries addObject:newEntry];
-			if( newEntry.glucose )
-			{
-				avgGlucose += [newEntry.glucose floatValue];
-				++i;
-			}
-		}
-		sqlite3_finalize(statement);
-		avgGlucose = i ? avgGlucose/i : 0;
-		[s setObject:[NSNumber numberWithFloat:avgGlucose] forKey:@"AverageGlucose"];
-	}
-}
-
-- (void)loadLogEntries
-{
-	[self loadAllSections];
-
-	unsigned i = 0;
-	for(NSMutableDictionary* s in self.sections)
-	{
-		[self loadSection:i];
-		++i;
 	}
 }
 
 #pragma mark -
 #pragma mark Array Management
 
-- (NSMutableDictionary*) createSectionForDate:(NSDate*)date
-{
-	NSMutableDictionary *const s = [NSMutableDictionary dictionaryWithCapacity:4];
-	[s setValue:[shortDateFormatter stringFromDate:date] forKey:@"SectionName"];
-	[s setObject:[[NSMutableArray alloc] init] forKey:@"LogEntries"];
-	[s setObject:date forKey:@"SectionDate"];
-	[s setObject:[NSNumber numberWithFloat:0] forKey:@"AverageGlucose"];
-	return s;
-}
-
 // Delete a LogEntry from memory and the database
 // This function is only called from commitEditingStyle:
 // Returns YES if the entry's section became empty and was deleted
 - (BOOL) deleteLogEntryAtIndexPath:(NSIndexPath*)indexPath
 {
-	NSMutableDictionary *const s = [sections objectAtIndex:indexPath.section];
-	LogEntry *const entry = [[s objectForKey:@"LogEntries"] objectAtIndex:indexPath.row];
+	LogDay *const s = [sections objectAtIndex:indexPath.section];
+	LogEntry *const entry = [s.entries objectAtIndex:indexPath.row];
 	[entry deleteFromDatabase:database];
 	return [self deleteLogEntry:entry fromSection:s withNotification:YES];
 }
 
 // Returns YES if the entry's section became empty and was deleted
-- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(NSMutableDictionary*)section withNotification:(BOOL)notify
+- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section withNotification:(BOOL)notify
 {
-	NSMutableArray* entries = [section objectForKey:@"LogEntries"];
+	NSMutableArray *const entries = section.entries;
 	[entries removeObjectIdenticalTo:entry];
 	
 	if( [entries count] )
-		[self updateStatisticsForSection:section];
+		[section updateStatistics];
 	else	// Delete the section if it's now empty
 	{
 		NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:[sections indexOfObjectIdenticalTo:section]];
@@ -371,8 +321,8 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 
 - (BOOL) deleteLogEntryIndex:(unsigned)entryIndex fromSectionIndex:(unsigned)sectionIndex
 {
-	NSMutableDictionary *const s = [sections objectAtIndex:sectionIndex];
-	return [self deleteLogEntry:[[s objectForKey:@"LogEntries"] objectAtIndex:entryIndex] fromSection:s withNotification:YES];
+	LogDay *const s = [sections objectAtIndex:sectionIndex];
+	return [self deleteLogEntry:[s.entries objectAtIndex:entryIndex] fromSection:s withNotification:YES];
 }
 
 - (Category*) findCategoryForID:(unsigned)categoryID
@@ -390,31 +340,31 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 			return t;
 	return nil;
 }
-- (NSMutableDictionary*) findSectionForDate:(NSDate*)d
+- (LogDay*) findSectionForDate:(NSDate*)d
 {
 	NSCalendar *const calendar = [NSCalendar currentCalendar];
 	static const unsigned components = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
 	NSDateComponents *const date = [calendar components:components fromDate:d];
 //	NSDate* today = [NSDate date];
 //	NSMutableDictionary* r = nil;
-	for( NSMutableDictionary* s in sections )
+	for( LogDay* s in sections )
 	{
-		NSDateComponents *const c = [calendar components:components fromDate:[s objectForKey:@"SectionDate"]];
-//		NSDateComponents* c = [calendar components:components fromDate:[s valueForKey:@"SectionDate"] toDate:today options:0];
+		NSDateComponents *const c = [calendar components:components fromDate:s.date];
+//		NSDateComponents* c = [calendar components:components fromDate:s.date toDate:today options:0];
 		if( (date.day == c.day) && (date.month == c.month) && (date.year == c.year) )
 			return s;
 	}
 	return nil;
 }
 
-- (NSMutableDictionary*) getSectionForDate:(NSDate*)date
+- (LogDay*) getSectionForDate:(NSDate*)date
 {
-	NSMutableDictionary* s = [self findSectionForDate:date];
+	LogDay* s = [self findSectionForDate:date];
 	if( s )
 		return s;
-	NSLog(@"Creating section 0");
-	s = [self createSectionForDate:date];
-	[sections insertObject:s atIndex:0];
+	s = [[LogDay alloc] initWithDate:date];
+	s.name = [shortDateFormatter stringFromDate:date];
+	[sections insertObject:s atIndex:0];	// FIXME add at sorted index
 	return s;
 }
 
@@ -424,29 +374,6 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	return [((LogEntry*)left).timestamp compare:((LogEntry*)right).timestamp];
 }
 */
-- (void) sortEntriesForSection:(NSMutableDictionary*)s
-{
-	[[s objectForKey:@"LogEntries"] sortUsingDescriptors:[NSArray arrayWithObject:[[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:YES selector:@selector(compare:)]]];
-//	[[s objectForKey:@"LogEntries"] sortUsingFunction:compareLogEntriesByDate context:NULL];
-}
-
-- (void) updateStatisticsForSection:(NSMutableDictionary*)s
-{
-	//	NSMutableDictionary *const s = [self.sections objectAtIndex:index];
-	NSMutableArray *const entries = [s objectForKey:@"LogEntries"];
-	float avgGlucose = 0;
-	unsigned i = 0;
-	for( LogEntry* entry in entries )
-	{
-		if( entry.glucose )
-		{
-			avgGlucose += [entry.glucose floatValue];
-			++i;
-		}
-	}
-	avgGlucose = i ? avgGlucose/i : 0;
-	[s setObject:[NSNumber numberWithFloat:avgGlucose] forKey:@"AverageGlucose"];
-}
 
 #pragma mark -
 #pragma mark Record Management
@@ -474,23 +401,15 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 	// Find the proper section for the new LogEntry
 	unsigned sectionIndex = 0;
-	NSMutableDictionary* s = [self getSectionForDate:newEntry.timestamp];
+	LogDay *const s = [self getSectionForDate:newEntry.timestamp];
 	sectionIndex = [sections indexOfObjectIdenticalTo:s];
-/*	NSMutableDictionary* s = [self findSectionForDate:newEntry.timestamp];
-	if( s )
-		sectionIndex = [sections indexOfObjectIdenticalTo:s];
-	else
-	{
-		s = [self createSectionForDate:newEntry.timestamp];
-		[sections insertObject:s atIndex:0];
-	}
-*/
+
 	// Create an index set to use in fine grained KVO notifications
 	NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:sectionIndex];
 
 	// Insert and post notifications of changes
 	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
-	[[s objectForKey:@"LogEntries"] insertObject:newEntry atIndex:0];
+	[s.entries insertObject:newEntry atIndex:0];
 	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
 //	[newEntry release];
 //	[navController.topViewController inspectLogEntry:newEntry];

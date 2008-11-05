@@ -17,11 +17,12 @@
 @class CategoryViewController;
 @class InsulinTypeViewController;
 @class LogEntry;
+@class LogDay;
 
 @interface LogEntryViewController : SlidingViewController <DoseFieldCellDelegate, TextViewCellDelegate, TextFieldCellDelegate>
 {
 	LogEntry* entry;
-	NSMutableDictionary*	entrySection;
+	LogDay*		entrySection;
 
 // Private
 	CategoryViewController*	categoryViewController;
@@ -36,6 +37,6 @@
 }
 
 @property (nonatomic, retain) LogEntry* entry;
-@property (nonatomic, retain) NSMutableDictionary* entrySection;
+@property (nonatomic, retain) LogDay* entrySection;
 
 @end

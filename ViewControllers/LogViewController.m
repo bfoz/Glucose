@@ -11,6 +11,7 @@
 
 #import "InsulinDose.h"
 #import "InsulinType.h"
+#import "LogDay.h"
 #import "LogViewController.h"
 #import "LogEntryCell.h"
 #import "SettingsViewController.h"
@@ -48,8 +49,6 @@
 
 		// A number formatter for glucose measurements
 		glucoseFormatter = [[NSNumberFormatter alloc] init];
-//		[glucoseFormatter setPositiveSuffix:@" mg/dL"];
-//		[glucoseFormatter setNegativeSuffix:@" mg/dL"];
 		[glucoseFormatter setMaximumFractionDigits:1];
 
 		// Register to be notified whenever the sections array changes
@@ -92,8 +91,8 @@
 			// Extract the section and row that changed
 			const unsigned sectionIndex = [[change valueForKey:NSKeyValueChangeIndexesKey] firstIndex];
 //			NSUInteger row = [[change valueForKey:NSKeyValueChangeIndexesKey] lastIndex];
-			NSMutableDictionary *const section = [appDelegate.sections objectAtIndex:sectionIndex];
-			LogEntry *const entry = [[section objectForKey:@"LogEntries"] objectAtIndex:0];
+			LogDay *const section = [appDelegate.sections objectAtIndex:sectionIndex];
+			LogEntry *const entry = [section.entries objectAtIndex:0];
             [self inspectLogEntry:entry inSection:section setEditing:YES];	// Display an editing view for the new LogEntry
 //            [logEntryViewController setEditing:YES animated:NO];
         }
@@ -114,12 +113,12 @@
 
 }
 
-- (void) inspectLogEntry:(LogEntry*)entry inSection:(NSMutableDictionary*)section;
+- (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;
 {
 	[self inspectLogEntry:entry inSection:section setEditing:NO];
 }
 
-- (void) inspectLogEntry:(LogEntry*)entry inSection:(NSMutableDictionary*)section setEditing:(BOOL)e
+- (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e
 {
     // Create the detail view lazily
     if( !logEntryViewController )
@@ -177,7 +176,8 @@
 {
 	if( ![appDelegate.sections count] )
 		return 0;
-	return [[[appDelegate.sections objectAtIndex:section] objectForKey:@"LogEntries"] count];
+	LogDay *const s = [appDelegate.sections objectAtIndex:section];
+	return s.count;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -185,27 +185,27 @@
 	if( ![appDelegate.sections count] )
 		return @"Today";
 
-	NSDictionary *const s = [appDelegate.sections objectAtIndex:section];
+	LogDay *const s = [appDelegate.sections objectAtIndex:section];
 
-	NSNumber* averageGlucose = [s objectForKey:@"AverageGlucose"];
+	float averageGlucose = s.averageGlucose;
 	NSString* avg = @"";
-	if( averageGlucose && ![averageGlucose isEqualToNumber:[NSNumber numberWithInt:0]] )
-		avg = [NSString stringWithFormat:@" (%@)", [glucoseFormatter stringFromNumber:averageGlucose],nil];
+	if( averageGlucose != 0 )
+		avg = [NSString stringWithFormat:@" (%@)", [glucoseFormatter stringFromNumber:[NSNumber numberWithFloat:averageGlucose]],nil];
 
 	// Only the first section could possibly be the "today" section
 	//  So return SectionName for all but the first section
 	if( section )
-		return [NSString stringWithFormat:@"%@%@", [s valueForKey:@"SectionName"], avg, nil];
+		return [NSString stringWithFormat:@"%@%@", s.name, avg, nil];
 
 	// Make sure it really is today
 	NSCalendar *const calendar = [NSCalendar currentCalendar];
 	static const unsigned components = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
 	NSDateComponents *const today = [calendar components:components fromDate:[NSDate date]];
-	NSDateComponents *const c = [calendar components:components fromDate:[s objectForKey:@"SectionDate"]];
+	NSDateComponents *const c = [calendar components:components fromDate:s.date];
 	if( (today.day == c.day) && (today.month == c.month) && (today.year == c.year) )
 		return [NSString stringWithFormat:@"%@%@", @"Today", avg, nil];
 
-	return [NSString stringWithFormat:@"%@%@", [s valueForKey:@"SectionName"], avg, nil];
+	return [NSString stringWithFormat:@"%@%@", s.name, avg, nil];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -218,8 +218,14 @@
 		cell = [[[LogEntryCell alloc] initWithFrame:CGRectZero reuseIdentifier:MyIdentifier] autorelease];
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	}
+
+	// Get the LogEntry for the cell
+	LogDay *const s = [self.appDelegate.sections objectAtIndex:indexPath.section];
+	if( s && s.count && ![s.entries count] )
+		[s hydrate:appDelegate.database];
+	LogEntry* entry = [s.entries objectAtIndex:indexPath.row];
+
 	// Configure the cell
-	LogEntry* entry = [[[self.appDelegate.sections objectAtIndex:indexPath.section] objectForKey:@"LogEntries"] objectAtIndex:indexPath.row];
 //	cell.entry = entry;
 	cell.labelTimestamp.text = [dateFormatter stringFromDate:entry.timestamp];
 	cell.labelCategory.text = entry.category ? entry.category.categoryName : @"";
@@ -267,8 +273,8 @@
 
 - (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSMutableDictionary *const s = [self.appDelegate.sections objectAtIndex:indexPath.section];
-	[self inspectLogEntry:[[s objectForKey:@"LogEntries"] objectAtIndex:indexPath.row]
+	LogDay *const s = [self.appDelegate.sections objectAtIndex:indexPath.section];
+	[self inspectLogEntry:[s.entries objectAtIndex:indexPath.row]
 				inSection:s];
 }
 

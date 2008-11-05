@@ -28,7 +28,7 @@
 //@property (nonatomic, retain) AppDelegate* appDelegate;
 @property (nonatomic, retain) LogEntryViewController* logEntryViewController;
 
-- (void) inspectLogEntry:(LogEntry*)entry inSection:(NSMutableDictionary*)section;
-- (void) inspectLogEntry:(LogEntry*)entry inSection:(NSMutableDictionary*)section setEditing:(BOOL)e;
+- (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;
+- (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e;
 
 @end
