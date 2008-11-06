@@ -91,7 +91,7 @@
 {
 	if( entry )
 	{
-		[entries insertObject:entry atIndex:0];
+		[entries insertObject:entry atIndex:index];
 		++count;
 		[self updateStatistics];
 	}
