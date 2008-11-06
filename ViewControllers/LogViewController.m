@@ -53,7 +53,9 @@
 
 		// Register to be notified whenever the sections array changes
 		[appDelegate addObserver:self forKeyPath:@"sections" 
-							 options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
+						 options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
+		[appDelegate addObserver:self forKeyPath:@"entries" 
+						 options:0 context:nil];
 	}
 	return self;
 }
@@ -82,11 +84,26 @@
 // Handle change notifications for observed key paths of other objects.
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    // Look for insertions on the "LogEntries" key
     if( [keyPath isEqual:@"sections"] )
 	{
+		const int kind = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
+		NSIndexSet *const indexSet = [change valueForKey:NSKeyValueChangeIndexesKey];
+		[indexSet retain];
+		switch( kind )
+		{
+			case NSKeyValueChangeInsertion:
+				[self.tableView insertSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
+				break;
+			case NSKeyValueChangeRemoval:
+				[self.tableView deleteSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
+				break;
+		}
+    }
+	else if( [keyPath isEqual:@"entries"] )
+	{
+		const int kind = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
         // Test the type of change. Insertions of new data receive special handling.
-        if( [[change valueForKey:NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeInsertion )
+        if( kind == NSKeyValueChangeInsertion )
 		{
 			// Extract the section and row that changed
 			const unsigned sectionIndex = [[change valueForKey:NSKeyValueChangeIndexesKey] firstIndex];
@@ -94,23 +111,14 @@
 			LogDay *const section = [appDelegate.sections objectAtIndex:sectionIndex];
 			LogEntry *const entry = [section.entries objectAtIndex:0];
             [self inspectLogEntry:entry inSection:section setEditing:YES];	// Display an editing view for the new LogEntry
-//            [logEntryViewController setEditing:YES animated:NO];
-        }
-        if( [[change valueForKey:NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeRemoval )
-		{
-			const unsigned sectionIndex = [[change valueForKey:NSKeyValueChangeIndexesKey] firstIndex];
-			NSLog(@"About to delete row for section %d", sectionIndex);
-			NSLog(@"sections has %d", [appDelegate.sections count]);
-			[self.tableView deleteSections:[[NSIndexSet alloc] initWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
-//			[self.tableView deleteSections:[change valueForKey:NSKeyValueChangeIndexesKey] withRowAnimation:UITableViewRowAnimationFade];
-		}
-    }
+			[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationFade];
+        }		
+	}
     // Verify that the superclass does indeed handle these notifications before actually invoking that method.
 	else if( [[self superclass] instancesRespondToSelector:@selector(observeValueForKeyPath:ofObject:change:context:)] )
 	{
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
-
 }
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;

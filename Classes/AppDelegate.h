@@ -49,7 +49,7 @@
 - (Category*) findCategoryForID:(unsigned)categoryID;
 - (InsulinType*) findInsulinTypeForID:(unsigned)typeID;
 
-- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section withNotification:(BOOL)notify;
+- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section;
 - (LogDay*) findSectionForDate:(NSDate*)date;
 - (LogDay*) getSectionForDate:(NSDate*)date;
 

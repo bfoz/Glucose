@@ -294,25 +294,20 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	LogDay *const s = [sections objectAtIndex:indexPath.section];
 	LogEntry *const entry = [s.entries objectAtIndex:indexPath.row];
 	[entry deleteFromDatabase:database];
-	return [self deleteLogEntry:entry fromSection:s withNotification:YES];
+	return [self deleteLogEntry:entry fromSection:s];
 }
 
 // Returns YES if the entry's section became empty and was deleted
-- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section withNotification:(BOOL)notify
+- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section
 {
-	NSMutableArray *const entries = section.entries;
-	[entries removeObjectIdenticalTo:entry];
-	
-	if( [entries count] )
-		[section updateStatistics];
-	else	// Delete the section if it's now empty
+	[section removeEntry:entry];
+
+	if( 0 == [section.entries count] )	// Delete the section if it's now empty
 	{
 		NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:[sections indexOfObjectIdenticalTo:section]];
-		if( notify )
-			[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
+		[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
 		[self.sections removeObjectIdenticalTo:section];
-		if( notify )
-			[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
+		[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
 		
 		return YES;
 	}
@@ -322,7 +317,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 - (BOOL) deleteLogEntryIndex:(unsigned)entryIndex fromSectionIndex:(unsigned)sectionIndex
 {
 	LogDay *const s = [sections objectAtIndex:sectionIndex];
-	return [self deleteLogEntry:[s.entries objectAtIndex:entryIndex] fromSection:s withNotification:YES];
+	return [self deleteLogEntry:[s.entries objectAtIndex:entryIndex] fromSection:s];
 }
 
 - (Category*) findCategoryForID:(unsigned)categoryID
@@ -340,6 +335,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 			return t;
 	return nil;
 }
+
 - (LogDay*) findSectionForDate:(NSDate*)d
 {
 	NSCalendar *const calendar = [NSCalendar currentCalendar];
@@ -362,9 +358,15 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	LogDay* s = [self findSectionForDate:date];
 	if( s )
 		return s;
+
 	s = [[LogDay alloc] initWithDate:date];
 	s.name = [shortDateFormatter stringFromDate:date];
+
+	NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:0];	// FIXME add at sorted index
+	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
 	[sections insertObject:s atIndex:0];	// FIXME add at sorted index
+	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
+
 	return s;
 }
 
@@ -408,9 +410,9 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:sectionIndex];
 
 	// Insert and post notifications of changes
-	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
-	[s.entries insertObject:newEntry atIndex:0];
-	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
+	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"entries"];
+	[s insertEntry:newEntry atIndex:0];
+	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"entries"];
 //	[newEntry release];
 //	[navController.topViewController inspectLogEntry:newEntry];
 //	[[navController.topViewController tableView] reloadData];
