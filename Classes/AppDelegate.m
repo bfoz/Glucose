@@ -362,9 +362,25 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	s = [[LogDay alloc] initWithDate:date];
 	s.name = [shortDateFormatter stringFromDate:date];
 
-	NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:0];	// FIXME add at sorted index
+	// At this point it's already known that the given date doesn't match 
+	//	anything in the array. So, only need to compare seconds; no need to 
+	//	create calendar components.
+	unsigned i = 0;
+	if( [sections count] )
+	{
+		// Find the index that entry should be inserted at
+		const double a = [date timeIntervalSince1970];
+		for( LogDay* s in sections )
+		{
+			if( a > [s.date timeIntervalSince1970] )
+				break;
+			++i;
+		}
+	}
+	
+	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:i];
 	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
-	[sections insertObject:s atIndex:0];	// FIXME add at sorted index
+	[sections insertObject:s atIndex:i];
 	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
 
 	return s;
