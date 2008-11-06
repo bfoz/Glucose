@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <sqlite3.h>
 
+@class LogEntry;
+
 @interface LogDay : NSObject
 {
 	float			averageGlucose;
@@ -28,6 +30,8 @@
 - (id) initWithDate:(NSDate*)d count:(unsigned)c;
 
 - (void) hydrate:(sqlite3*)db;
+- (void) insertEntry:(LogEntry*)entry atIndex:(unsigned)index;
+- (void) removeEntry:(LogEntry*)entry;
 - (void) sortEntries;
 - (void) updateStatistics;
 

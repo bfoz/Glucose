@@ -63,6 +63,27 @@
 	}
 }
 
+// May need to sortEntries after calling this
+- (void) insertEntry:(LogEntry*)entry atIndex:(unsigned)index
+{
+	if( entry )
+	{
+		[entries insertObject:entry atIndex:0];
+		++count;
+		[self updateStatistics];
+	}
+}
+
+- (void) removeEntry:(LogEntry*)entry
+{
+	if( entry && count )
+	{
+		[entries removeObjectIdenticalTo:entry];
+		--count;
+		[self updateStatistics];
+	}
+}
+
 - (void) sortEntries
 {
 	[entries sortUsingDescriptors:[NSArray arrayWithObject:[[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:YES selector:@selector(compare:)]]];
