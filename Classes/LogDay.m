@@ -77,7 +77,7 @@
 		const double a = [entry.timestamp timeIntervalSince1970];
 		for( LogEntry* e in entries )
 		{
-			if( a < [e.timestamp timeIntervalSince1970] )
+			if( a > [e.timestamp timeIntervalSince1970] )
 				break;
 			++i;
 		}
