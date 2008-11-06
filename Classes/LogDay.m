@@ -63,6 +63,29 @@
 	}
 }
 
+// Insert a new entry and maintain sort
+// NOTE: Assumes entries is already sorted
+- (void) insertEntry:(LogEntry*)entry
+{
+	if( !entry )
+		return;
+
+	unsigned i = 0;
+	if( count )
+	{
+		// Find the index that entry should be inserted at
+		const double a = [entry.timestamp timeIntervalSince1970];
+		for( LogEntry* e in entries )
+		{
+			if( a < [e.timestamp timeIntervalSince1970] )
+				break;
+			++i;
+		}
+	}
+	// Put the entry in its place
+	[self insertEntry:entry atIndex:i];
+}
+
 // May need to sortEntries after calling this
 - (void) insertEntry:(LogEntry*)entry atIndex:(unsigned)index
 {

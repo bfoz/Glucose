@@ -30,6 +30,7 @@
 - (id) initWithDate:(NSDate*)d count:(unsigned)c;
 
 - (void) hydrate:(sqlite3*)db;
+- (void) insertEntry:(LogEntry*)entry;
 - (void) insertEntry:(LogEntry*)entry atIndex:(unsigned)index;
 - (void) removeEntry:(LogEntry*)entry;
 - (void) sortEntries;
