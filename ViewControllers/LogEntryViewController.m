@@ -16,6 +16,7 @@
 #import "InsulinTypeViewController.h"
 #import "LogEntryViewController.h"
 #import "LogEntry.h"
+#import "LogDay.h"
 #import "TextFieldCell.h"
 #import "TextViewCell.h"
 
@@ -132,19 +133,16 @@ static AppDelegate* appDelegate = nil;
 		[entry setEditing];
 	else if( entry.dirty )
 	{
-		NSMutableDictionary *const s = [appDelegate getSectionForDate:entry.timestamp];
+		LogDay *const s = [appDelegate getSectionForDate:entry.timestamp];
 		if ( s != entrySection )
 		{
-			NSLog(@"numsections = %d", [appDelegate.sections count]);
-			// Add entry to new section
-			[[s objectForKey:@"LogEntries"] insertObject:entry atIndex:0];
-			[appDelegate sortEntriesForSection:s];	// Sort new section
-			// Remove from wrong section
-			NSLog(@"Deleting section %d", [appDelegate.sections indexOfObjectIdenticalTo:entrySection]);
-			[appDelegate deleteLogEntry:entry fromSection:entrySection withNotification:NO];
-//			[[entrySection objectForKey:@"LogEntries"] removeObjectIdenticalTo:entry];
+			[s insertEntry:entry];		// Add entry to new section
+			[s sortEntries];			// Sort new section
+			// Remove from old section
+			[appDelegate deleteLogEntry:entry fromSection:entrySection];
 		}
-		[appDelegate updateStatisticsForSection:s];
+		else	// Only need to update if above block was skipped
+			[s updateStatistics];
 		[entry flush:database];
 	}
     [self.tableView reloadData];
@@ -154,13 +152,6 @@ static AppDelegate* appDelegate = nil;
 	// Return YES for supported orientations
 	return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
-
-/*
-- (void)didReceiveMemoryWarning {
-	[super didReceiveMemoryWarning]; // Releases the view if it doesn't have a superview
-	// Release anything that's not essential, such as cached data
-}
-*/
 
 #pragma mark -
 #pragma mark <UITableViewDataSource>
