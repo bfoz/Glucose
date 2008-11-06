@@ -137,7 +137,6 @@ static AppDelegate* appDelegate = nil;
 		if ( s != entrySection )
 		{
 			[s insertEntry:entry];		// Add entry to new section
-			[s sortEntries];			// Sort new section
 			// Remove from old section
 			[appDelegate deleteLogEntry:entry fromSection:entrySection];
 		}
