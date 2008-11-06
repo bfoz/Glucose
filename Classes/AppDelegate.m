@@ -67,7 +67,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	categories = [[NSMutableArray alloc] init];
 	defaultInsulinTypes = [[NSMutableArray alloc] init];
 	insulinTypes = [[NSMutableArray alloc] init];
-	sections = [[NSMutableArray alloc] init];
 
 	if( !shortDateFormatter )
 	{
@@ -101,7 +100,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [self loadCategories];
     [self loadInsulinTypes];
 	[self loadDefaultInsulinTypes];	// Must be after loadInsulinTypes
-    [self loadAllSections];
+	sections = [LogDay loadAllSections:database];
 
 	// Configure and display the window
     [window addSubview:[navController view]];
@@ -265,23 +264,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	return days;
 }
 */
-- (void) loadAllSections
-{
-	const char *query = "SELECT timestamp, COUNT(timestamp) FROM localLogEntries GROUP BY date(timestamp,'unixepoch','localtime') ORDER BY timestamp ASC";
-	sqlite3_stmt *statement;
-
-	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
-	{
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			NSDate *const day = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)];
-			LogDay *const  section = [[LogDay alloc] initWithDate:day count:sqlite3_column_int(statement, 1)];
-			section.name = [shortDateFormatter stringFromDate:day];
-			[self.sections insertObject:section atIndex:0];
-		}
-		sqlite3_finalize(statement);
-	}
-}
 
 #pragma mark -
 #pragma mark Array Management

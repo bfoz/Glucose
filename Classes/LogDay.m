@@ -16,6 +16,30 @@
 @synthesize	entries;
 @synthesize name;
 
+static const char *init_sql = "SELECT timestamp, COUNT(timestamp) FROM localLogEntries GROUP BY date(timestamp,'unixepoch','localtime') ORDER BY timestamp ASC";
+
++ (NSMutableArray*) loadAllSections:(sqlite3*)db
+{
+	sqlite3_stmt *statement;
+	NSMutableArray *const sections = [[NSMutableArray alloc] init];
+	NSDateFormatter *const shortDateFormatter = [[NSDateFormatter alloc] init];
+	[shortDateFormatter setDateStyle:NSDateFormatterShortStyle];
+
+	if( sqlite3_prepare_v2(db, init_sql, -1, &statement, NULL) == SQLITE_OK )
+	{
+		while( sqlite3_step(statement) == SQLITE_ROW )
+		{
+			NSDate *const day = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)];
+			LogDay *const  section = [[LogDay alloc] initWithDate:day count:sqlite3_column_int(statement, 1)];
+			section.name = [shortDateFormatter stringFromDate:day];
+			[sections insertObject:section atIndex:0];
+		}
+		sqlite3_finalize(statement);
+	}
+	[shortDateFormatter release];
+	return sections;
+}
+
 - (id) initWithDate:(NSDate*)d
 {
 	if( self = [super init] )
