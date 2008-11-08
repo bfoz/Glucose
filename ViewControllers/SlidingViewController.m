@@ -62,6 +62,16 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil]; 
 }
 
+- (void)setEditing:(BOOL)e animated:(BOOL)animated
+{
+	// Finish any field editing that may be going on when edit mode is canceled
+	if( !e && editField )
+		[self performSelector:self.navigationItem.rightBarButtonItem.action];
+
+	// Call super last so rightBarButtonItem doesn't change too early
+    [super setEditing:e animated:animated];
+}
+
 #pragma mark -
 #pragma mark Common Delegate Editing Handlers
 
