@@ -583,7 +583,6 @@ static AppDelegate* appDelegate = nil;
 - (void)saveNoteAction:(id)sender
 {
 	entry.note = ((TextViewCell *)editCell).view.text;
-	[((TextViewCell *)editCell).view resignFirstResponder];
 	[self saveAction];
 }
 
