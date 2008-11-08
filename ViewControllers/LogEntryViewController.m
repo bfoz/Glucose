@@ -391,16 +391,6 @@ static AppDelegate* appDelegate = nil;
     return cell;
 }
 
-// Return the displayed title for the specified section.
-- (NSString *)tableView:(UITableView *)tv titleForHeaderInSection:(NSInteger)section
-{
-    switch( [self translateSection:section] )
-	{
-        case 1: return @"Insulin";
-    }
-    return nil;
-}
-
 #pragma mark -
 #pragma mark <UITableViewDelegate>
 
@@ -417,13 +407,11 @@ static AppDelegate* appDelegate = nil;
 - (UITableViewCellAccessoryType)tableView:(UITableView *)tv accessoryTypeForRowWithIndexPath:(NSIndexPath *)indexPath
 {
     // Show the disclosure indicator if editing.
-//	NSLog(@"editing? %@\n", (self.editing) ? @"Yes" : @"No");
     return (self.editing) ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 { 
-	NSLog(@"didSelectRowAtIndexPath @ %d %d", indexPath.section, indexPath.row);
 	unsigned section = [self translateSection:indexPath.section];
 	// Don't translate selectedIndexPath because it refers to a real table row
     self.selectedIndexPath = indexPath;	// State variable: indicate that the user is editing a particular field
