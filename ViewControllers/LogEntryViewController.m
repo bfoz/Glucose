@@ -14,11 +14,17 @@
 #import "InsulinDose.h"
 #import "InsulinType.h"
 #import "InsulinTypeViewController.h"
+#import "LabelCell.h"
 #import "LogEntryViewController.h"
 #import "LogEntry.h"
 #import "LogDay.h"
 #import "TextFieldCell.h"
 #import "TextViewCell.h"
+
+// Post-translation section numbers
+#define	kGlucoseSectionNum		0
+#define	kInsulinSectionNum		1
+#define	kNoteSectionNum			2
 
 @interface LogEntryViewController ()
 
@@ -239,8 +245,8 @@ static AppDelegate* appDelegate = nil;
 				if( 2 == row )
 					return @"Glucose";
 				break;
-			case 1:
-				return @"DualCellID";
+			case 1:	return @"DualCellID";
+			case 2: return @"NoteID";
 		}
 	}
 	return @"CellID";
@@ -251,10 +257,10 @@ static AppDelegate* appDelegate = nil;
     if( entry == nil )
 		return nil;
 
-	unsigned section = [self translateSection:indexPath.section];
+	const unsigned section = [self translateSection:indexPath.section];
 	unsigned row = [self translateRow:indexPath.row inSection:section];
 
-	NSString*	cellID = [self cellIDForSection:section row:row];
+	NSString *const	cellID = [self cellIDForSection:section row:row];
 
 	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];	// Get the appropriate cell
 
@@ -299,11 +305,15 @@ static AppDelegate* appDelegate = nil;
 			((TextViewCell*)cell).placeholder = @"Note";
 			((TextViewCell*)cell).delegate = self;
 		}
-		else	// Standard UITableView cell for Note, Timestamp and Category
+		else if( @"NoteID" == cellID )
+		{
+			cell = [[LabelCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID];
+		}
+		else	// Standard UITableView cell for Timestamp and Category
 		{
 			// CGRectZero allows the cell to determine the appropriate size.
 			cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
-			cell.textAlignment = (section == 2) ? UITextAlignmentLeft : UITextAlignmentCenter;
+			cell.textAlignment = UITextAlignmentCenter;
 			if( (0 == section) && (0 == row) )	// Save a pointer to the timestamp cell
 				self.cellTimestamp = cell;
 		}
@@ -468,6 +478,25 @@ static AppDelegate* appDelegate = nil;
 		return UITableViewCellEditingStyleInsert;
 	else
 		return UITableViewCellEditingStyleDelete;
+}
+
+- (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath*)path
+{
+	if( kNoteSectionNum == [self translateSection:path.section] )
+	{
+		const BOOL e = self.editing;
+		// If editing and there's no text, return a standard size
+		if( e && !entry.note )
+			return 44*2;
+		// Otherwise, resize for the text
+		CGSize s = [entry.note sizeWithFont:[UIFont boldSystemFontOfSize:[UIFont labelFontSize]]
+						  constrainedToSize:CGSizeMake(284, 2000) lineBreakMode:UILineBreakModeWordWrap];
+		CGFloat h = s.height+2*kCellTopOffset;
+		// If editing and the row started off with text, don't return smaller than two rows
+		// Otherwise, never return smaller than one row
+		return MAX(h, (e ? 44*2 : 44));
+	}
+	return 44;
 }
 
 #pragma mark -
