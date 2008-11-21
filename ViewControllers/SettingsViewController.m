@@ -77,11 +77,15 @@ static AppDelegate* appDelegate = nil;
 			[defaults setObject:kGlucoseUnits_mgdL forKey:kDefaultGlucoseUnits];
 			highGlucoseWarningField.text = [defaults stringForKey:kHighGlucoseWarning0];
 			lowGlucoseWarningField.text = [defaults stringForKey:kLowGlucoseWarning0];
+			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
+			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
 			break;
 		case 1:
 			[defaults setObject:kGlucoseUnits_mmolL forKey:kDefaultGlucoseUnits];
 			highGlucoseWarningField.text = [defaults stringForKey:kHighGlucoseWarning1];
 			lowGlucoseWarningField.text = [defaults stringForKey:kLowGlucoseWarning1];
+			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
 			break;
 	}
 	// Force the LogViewController to reload the LogEntryViewController so it can pick up the change
@@ -147,16 +151,16 @@ static AppDelegate* appDelegate = nil;
 		case 2:
 			cell.textAlignment = UITextAlignmentLeft;
 			UITextField* f;
+			NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+			const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
 			if( indexPath.row < 2 )
 			{
 				f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
 				f.delegate = self;
-				f.keyboardType = UIKeyboardTypeNumberPad;
+				f.keyboardType = mgdL ? UIKeyboardTypeNumberPad : UIKeyboardTypeNumbersAndPunctuation;
 				f.textAlignment = UITextAlignmentRight;
 				cell.accessoryView = f;
 			}
-			NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-			const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
 			switch( indexPath.row )
 			{
 				case 0:
