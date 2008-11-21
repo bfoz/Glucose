@@ -41,10 +41,12 @@ CREATE TABLE LogEntryCategories
 INSERT INTO LogEntryCategories(sequence, name) VALUES (0, 'Breakfast');
 INSERT INTO LogEntryCategories(sequence, name) VALUES (1, 'Lunch');
 INSERT INTO LogEntryCategories(sequence, name) VALUES (2, 'Dinner');
-INSERT INTO LogEntryCategories(sequence, name) VALUES (3, 'After Breakfast');
-INSERT INTO LogEntryCategories(sequence, name) VALUES (4, 'After Lunch');
-INSERT INTO LogEntryCategories(sequence, name) VALUES (5, 'After Dinner');
-INSERT INTO LogEntryCategories(sequence, name) VALUES (6, 'Bedtime');
+INSERT INTO LogEntryCategories(sequence, name) VALUES (3, 'Exercise');
+INSERT INTO LogEntryCategories(sequence, name) VALUES (4, 'After Breakfast');
+INSERT INTO LogEntryCategories(sequence, name) VALUES (5, 'After Lunch');
+INSERT INTO LogEntryCategories(sequence, name) VALUES (6, 'After Dinner');
+INSERT INTO LogEntryCategories(sequence, name) VALUES (7, 'After Exercise');
+INSERT INTO LogEntryCategories(sequence, name) VALUES (8, 'Bedtime');
 
 CREATE TABLE localLogEntries
 ( 'ID' INTEGER PRIMARY KEY AUTOINCREMENT,
