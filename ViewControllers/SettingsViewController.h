@@ -21,6 +21,8 @@
 	UITableViewCell*	lowGlucoseWarningCell;
 	UITextField*		highGlucoseWarningField;
 	UITextField*		lowGlucoseWarningField;
+	NSString*			highGlucoseWarningKey;
+	NSString*			lowGlucoseWarningKey;
 
 	UITableViewController*	exportViewController;
 	UITableViewController*	purgeViewController;

@@ -33,6 +33,13 @@ static AppDelegate* appDelegate = nil;
 		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneAction:)];
 		self.title = @"Settings";
 		self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+
+		NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+		const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
+
+		highGlucoseWarningKey = mgdL ? kHighGlucoseWarning0 : kHighGlucoseWarning1;
+		lowGlucoseWarningKey = mgdL ? kLowGlucoseWarning0 : kLowGlucoseWarning1;
+
 /*
         UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
 		[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
@@ -75,19 +82,21 @@ static AppDelegate* appDelegate = nil;
 	{
 		case 0:
 			[defaults setObject:kGlucoseUnits_mgdL forKey:kDefaultGlucoseUnits];
-			highGlucoseWarningField.text = [defaults stringForKey:kHighGlucoseWarning0];
-			lowGlucoseWarningField.text = [defaults stringForKey:kLowGlucoseWarning0];
+			highGlucoseWarningKey = kHighGlucoseWarning0;
+			lowGlucoseWarningKey = kLowGlucoseWarning0;
 			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
 			lowGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
 			break;
 		case 1:
 			[defaults setObject:kGlucoseUnits_mmolL forKey:kDefaultGlucoseUnits];
-			highGlucoseWarningField.text = [defaults stringForKey:kHighGlucoseWarning1];
-			lowGlucoseWarningField.text = [defaults stringForKey:kLowGlucoseWarning1];
+			highGlucoseWarningKey = kHighGlucoseWarning1;
+			lowGlucoseWarningKey = kLowGlucoseWarning1;
 			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
 			lowGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
 			break;
 	}
+	highGlucoseWarningField.text = [defaults stringForKey:highGlucoseWarningKey];
+	lowGlucoseWarningField.text = [defaults stringForKey:lowGlucoseWarningKey];
 	// Force the LogViewController to reload the LogEntryViewController so it can pick up the change
 	appDelegate.logViewController.logEntryViewController = nil;
 }
@@ -165,14 +174,14 @@ static AppDelegate* appDelegate = nil;
 			{
 				case 0:
 					cell.text = @"High Glucose Warning";
-					f.text = [defaults stringForKey:(mgdL ? kHighGlucoseWarning0 : kHighGlucoseWarning1)];
+					f.text = [defaults stringForKey:highGlucoseWarningKey];
 					f.textColor = [UIColor blueColor];
 					highGlucoseWarningCell = cell;
 					highGlucoseWarningField = f;
 					break;
 				case 1:
 					cell.text = @"Low Glucose Warning";
-					f.text = [defaults stringForKey:(mgdL ? kLowGlucoseWarning0 : kLowGlucoseWarning1)];
+					f.text = [defaults stringForKey:lowGlucoseWarningKey];
 					f.textColor = [UIColor redColor];
 					lowGlucoseWarningCell = cell;
 					lowGlucoseWarningField = f;
@@ -391,13 +400,13 @@ static AppDelegate* appDelegate = nil;
 
 - (void)saveHighGlucoseWarningAction
 {
-	[[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:kHighGlucoseWarning0];
+	[[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:highGlucoseWarningKey];
 	[self saveAction];
 }
 
 - (void)saveLowGlucoseWarningAction
 {
-	[[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:kLowGlucoseWarning0];
+	[[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:lowGlucoseWarningKey];
 	[self saveAction];
 }
 
