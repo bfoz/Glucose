@@ -325,9 +325,9 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 }
 
 
-- (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	
-	static NSString *MyIdentifier = @"MyIdentifier";
+- (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{	
+	static NSString *MyIdentifier = @"Cell";
 	
 	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:MyIdentifier];
 	if( !cell )
@@ -336,12 +336,14 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	}
 
-	UITextField* f = nil;
-	UILabel* label = nil;
-	switch( indexPath.section )
+	UITextField*	f	= nil;
+	UILabel*	label	= nil;
+	const unsigned	row		= indexPath.row;
+	const unsigned	section	= indexPath.section;
+	switch( section )
 	{
 		case 0:
-			switch( indexPath.row )
+			switch( row )
 			{
 				case 0:
 					cell.text = @"Username";
@@ -374,7 +376,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		{
 			label = [[UILabel alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 100, 20)];
 			label.textAlignment = UITextAlignmentRight;
-			switch( indexPath.row )
+			switch( row )
 			{
 				case 0:
 					// The From field defaults to the day after the last export
@@ -400,7 +402,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			cell.accessoryView = shareSwitch;
 			break;
 		case 3:
-			switch( indexPath.row )
+			switch( row )
 			{
 				case 0:
 					cell.text = @"Export";
@@ -486,12 +488,12 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (CGFloat) tableView:(UITableView*)tableView heightForFooterInSection:(NSInteger)section
 {
-	return (3 == section) ? 40 : 0;
+	return (SECTION_EXPORT == section) ? 40 : 0;
 }
 
 - (UIView*) tableView:(UITableView*)tableView viewForFooterInSection:(NSInteger)section
 {
-	if( 3 == section )
+	if( SECTION_EXPORT == section )
 	{
 		NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 		NSDate *const lastExportStart = [defaults objectForKey:kLastExportGoogleFromDate];
