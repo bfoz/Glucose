@@ -10,6 +10,10 @@
 
 #import "SlidingViewController.h"
 
+@class GDataEntryDocBase;
+@class GDataFeedACL;
+@class GDataServiceTicket;
+
 @interface ExportViewController : SlidingViewController <UITextFieldDelegate>
 {
 	NSDate*	exportStart;
@@ -26,14 +30,21 @@
 	UILabel*			exportStartField;
 	UILabel*			exportEndField;
 	UILabel*			exportLastField;
+	UISwitch*			shareSwitch;
 	UILabel*			spreadsheetLabel;
 
     NSMutableDictionary*	keychainData;            // The actual Keychain data backing store.
 	NSMutableDictionary*	gDocPasswordQuery;
+
+	NSURL*				aclURL;
+	NSMutableArray*		contacts;
+	NSEnumerator*		contactsEnumerator;
+	BOOL				showingContacts;
 }
 
 @property (nonatomic, retain) NSMutableDictionary *keychainData;
 
+- (void) addACLTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataFeedACL*)object;
 - (void) keychainInit;
 
 #if !TARGET_IPHONE_SIMULATOR

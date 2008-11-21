@@ -10,9 +10,11 @@
 #import "AppDelegate.h"
 #import "Category.h"
 #import "Constants.h"
+#import "Contact.h"
 #import "InsulinType.h"
 
 #import "ExportViewController.h"
+#import "ContactListViewController.h"
 
 #import "GDataDocs.h"
 
@@ -26,6 +28,11 @@
 #endif // TARGET_IPHONE_SIMULATOR
 
 #define	GENERIC_PASSWORD	0
+
+#define	SECTION_ACCOUNT		0
+#define	SECTION_DATE_RANGE	1
+#define	SECTION_SHARE		2
+#define	SECTION_EXPORT		3
 
 @implementation ExportViewController
 
@@ -60,6 +67,12 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		[exportEnd retain];
 		[exportStart retain];
 
+		shareSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
+		shareSwitch.on = [defaults boolForKey:kExportGoogleShareEnable];
+		[shareSwitch addTarget:self action:@selector(shareSwitchAction) forControlEvents:UIControlEventValueChanged];
+
+		showingContacts = NO;
+
 		[self keychainInit];
 	}
 	return self;
@@ -74,7 +87,65 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[keychainData release];
 	[progressAlert release];
 	[progressView release];
+	[shareSwitch release];
 	[super dealloc];
+}
+
+- (void) loadContactList
+{
+	if( contacts && (0 == [contacts count]) )
+	{
+		NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+		NSArray* email = [defaults arrayForKey:kExportGoogleShareEmailList];
+		NSArray* records = [defaults arrayForKey:kExportGoogleShareRecordList];
+
+		if( email && records )
+		{
+			NSAssert([email count]==[records count], @"Email array count != Record array count");
+			
+			NSEnumerator* i = [email objectEnumerator];
+			NSEnumerator* j = [records objectEnumerator];
+			NSNumber* e = nil;
+			NSNumber* r = nil;
+			while( (e = [i nextObject]) && (r = [j nextObject]) )
+			{
+				Contact* c = [[Contact alloc] initWithRecordID:[r intValue] emailID:[e intValue]];
+				[contacts addObject:c];
+			}
+			[email release];
+			[records release];
+		}
+	}
+}
+
+- (void) saveContactList
+{
+	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+	NSMutableArray* records = [[NSMutableArray alloc] init];
+	NSMutableArray* email = [[NSMutableArray alloc] init];
+	for( Contact* c in contacts )
+	{
+		[records addObject:[NSNumber numberWithInt:c.recordID]];
+		[email addObject:[NSNumber numberWithInt:c.emailID]];
+	}
+	[defaults setObject:email forKey:kExportGoogleShareEmailList];
+	[defaults setObject:records forKey:kExportGoogleShareRecordList];
+	[email release];
+	[records release];
+}
+
+- (void) shareSwitchAction
+{
+	[[NSUserDefaults standardUserDefaults] setBool:shareSwitch.on forKey:kExportGoogleShareEnable];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+	if( showingContacts )
+	{
+		[self saveContactList];
+		showingContacts = NO;
+	}
 }
 
 #pragma mark -
@@ -237,7 +308,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return 3;
+	return 4;
 }
 
 
@@ -245,9 +316,10 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 {
 	switch( section )
 	{
-		case 0: return 2;
-		case 1: return 2;
+		case 0: return 2;	// Account info
+		case 1: return 2;	// Date range
 		case 2: return 1;
+		case 3: return 1;	// Export button
 	}
 	return 0;
 }
@@ -324,6 +396,10 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			break;
 		}
 		case 2:
+			cell.text = @"Share Exported File";
+			cell.accessoryView = shareSwitch;
+			break;
+		case 3:
 			switch( indexPath.row )
 			{
 				case 0:
@@ -350,7 +426,8 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	if( indexPath.section == 0 )
+	const unsigned section = indexPath.section;
+	if( section == SECTION_ACCOUNT )
 	{
 		switch( indexPath.row )
 		{
@@ -358,7 +435,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			case 1: [passwordField becomeFirstResponder]; break;
 		}
 	}
-	else if( indexPath.section == 1 )
+	else if( section == SECTION_DATE_RANGE )
 	{
 		switch( indexPath.row )
 		{
@@ -366,7 +443,23 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			case 1: [self showDatePicker:exportEndCell mode:UIDatePickerModeDate initialDate:exportEnd changeAction:@selector(exportEndChangeAction)]; break;
 		}
 	}
-	else if( indexPath.section == 2 )
+	else if( section == SECTION_SHARE )
+	{
+		if( !shareSwitch.on )
+		{
+			[shareSwitch setOn:YES animated:YES];
+			[self shareSwitchAction];	// Fake an action message to update settings
+		}
+		if( !contacts )
+			contacts = [[NSMutableArray alloc] init];
+		[self loadContactList];
+		ContactListViewController* clvc = [[ContactListViewController alloc] initWithStyle:UITableViewStyleGrouped];
+		clvc.contacts = contacts;
+		[self.navigationController pushViewController:clvc animated:YES];
+		[clvc setEditing:YES animated:NO];
+		showingContacts = YES;
+	}
+	else if( section == SECTION_EXPORT )
 	{
 		// Refresh the service object's credentials in case they've changed
 		[appDelegate setUserCredentialsWithUsername:usernameField.text
@@ -393,12 +486,12 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (CGFloat) tableView:(UITableView*)tableView heightForFooterInSection:(NSInteger)section
 {
-	return (2 == section) ? 40 : 0;
+	return (3 == section) ? 40 : 0;
 }
 
 - (UIView*) tableView:(UITableView*)tableView viewForFooterInSection:(NSInteger)section
 {
-	if( 2 == section )
+	if( 3 == section )
 	{
 		NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 		NSDate *const lastExportStart = [defaults objectForKey:kLastExportGoogleFromDate];
@@ -423,14 +516,34 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (void) cleanupExport
 {
+	if( contactsEnumerator )
+	{
+		[contactsEnumerator release];
+		contactsEnumerator = nil;
+	}
+	
 	[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 	[progressAlert dismissWithClickedButtonIndex:0 animated:YES];
 }
 
+- (void) finishExport
+{
+	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+	[defaults setObject:[NSDate date] forKey:kLastExportGoogleOnDate];
+	[defaults setObject:exportStart forKey:kLastExportGoogleFromDate];
+	[defaults setObject:exportEnd forKey:kLastExportGoogleToDate];
+	// Update the "Last Export On" row
+	exportLastField.text = [shortDateFormatter stringFromDate:[NSDate date]];
+	
+	[self cleanupExport];
+}
+
+#pragma mark Document List feed
+
 - (void) listTicket:(GDataServiceTicket *)ticket finishedWithFeed:(GDataFeedDocList *)object
 {
 	GDataEntryDocBase *newEntry = [GDataEntrySpreadsheetDoc documentEntry];
-	
+
 	NSString *title = [NSString stringWithFormat:@"Glucose Export from %@ to %@", [shortDateFormatter stringFromDate:exportStart], [shortDateFormatter stringFromDate:exportEnd], nil];
 	[newEntry setTitleWithString:title];
 	
@@ -549,6 +662,8 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[self cleanupExport];
 }
 
+#pragma mark File Upload
+
 // progress callback
 - (void)inputStream:(GDataProgressMonitorInputStream *)stream hasDeliveredByteCount:(unsigned long long)numberOfBytesRead  ofTotalByteCount:(unsigned long long)dataLength
 {
@@ -559,13 +674,19 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 // upload finished successfully
 - (void)uploadFileTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataEntryDocBase *)entry
 {
-	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-	[defaults setObject:[NSDate date] forKey:kLastExportGoogleOnDate];
-	[defaults setObject:exportStart forKey:kLastExportGoogleFromDate];
-	[defaults setObject:exportEnd forKey:kLastExportGoogleToDate];
-	// Update the "Last Export On" row
-	exportLastField.text = [shortDateFormatter stringFromDate:[NSDate date]];
-	[self cleanupExport];
+	if( !shareSwitch.on )
+		[self finishExport];
+
+	if( !contacts )
+		contacts = [[NSMutableArray alloc] init];
+	[self loadContactList];
+	if( [contacts count] )
+	{
+		[appDelegate.docService fetchACLFeedWithURL:[[entry ACLFeedLink] URL]
+										   delegate:self
+								  didFinishSelector:@selector(aclTicket:finishedWithFeed:)
+									didFailSelector:@selector(aclTicket:failedWithError:)];
+	}
 }
 
 // upload failed
@@ -580,6 +701,79 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[alert release];
 	[self cleanupExport];
 }
+
+#pragma mark ACL feed
+
+- (void)aclTicket:(GDataServiceTicket *)ticket finishedWithFeed:(GDataFeedACL*)object
+{
+	aclURL = [[object postLink] URL];
+	[self addACLTicket:nil finishedWithEntry:nil];
+}
+
+- (void)aclTicket:(GDataServiceTicket *)ticket failedWithError:(NSError *)error
+{
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ACL Feed Failed"
+													message:[error localizedDescription]
+												   delegate:self
+										  cancelButtonTitle:@"OK"
+										  otherButtonTitles: nil];
+	[alert show];
+	[alert release];
+	[self cleanupExport];
+}
+
+#pragma mark Add ACL Entries
+
+- (void) addACLTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataFeedACL*)object
+{
+	if( !contactsEnumerator )
+	{
+		contactsEnumerator = [contacts objectEnumerator];
+		[contactsEnumerator retain];
+	}
+	Contact* c;
+	if( c = [contactsEnumerator nextObject] )
+	{
+		ABAddressBookRef book = ABAddressBookCreate();
+
+		ABRecordRef person = ABAddressBookGetPersonWithRecordID(book, c.recordID);
+		ABMultiValueRef email = ABRecordCopyValue(person, kABPersonEmailProperty);
+		CFIndex i = ABMultiValueGetIndexForIdentifier(email, c.emailID);
+		CFTypeRef v = ABMultiValueCopyValueAtIndex(email, i);
+
+		progressAlert.message = [NSString stringWithFormat:@"Sharing with %@", v];
+
+		GDataACLRole* role = [GDataACLRole roleWithValue:kGDataRoleReader];
+		GDataACLScope* scope = [GDataACLScope scopeWithType:kGDataScopeTypeUser value:(NSString*)v];
+		GDataEntryACL* acl = [GDataEntryACL ACLEntryWithScope:scope role:role];
+
+		GDataServiceGoogleDocs *const service = appDelegate.docService;
+		[service fetchACLEntryByInsertingEntry:acl
+									forFeedURL:aclURL
+									  delegate:self
+							 didFinishSelector:@selector(addACLTicket:finishedWithEntry:)
+							   didFailSelector:@selector(addACLTicket:failedWithError:)];
+
+		CFRelease(v);
+		CFRelease(email);
+		CFRelease(person);
+	}
+	else
+		[self finishExport];
+}
+
+- (void) addACLTicket:(GDataServiceTicket *)ticket failedWithError:(NSError *)error
+{
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Share Failed"
+													message:[error localizedDescription]
+												   delegate:self
+										  cancelButtonTitle:@"OK"
+										  otherButtonTitles: nil];
+	[alert show];
+	[alert release];
+	[self cleanupExport];
+}
+
 
 #pragma mark -
 #pragma mark <UITextFieldDelegate>
