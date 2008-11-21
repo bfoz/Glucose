@@ -43,6 +43,12 @@ static AppDelegate *appDelegate = nil;
     return self;
 }
 
+- (void) loadView
+{
+	[super loadView];
+	self.tableView.scrollEnabled = NO;	// Disable scrolling
+}
+
 - (void)dealloc
 {
 	[purgeStart release];
