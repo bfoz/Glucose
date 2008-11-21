@@ -405,8 +405,9 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			switch( row )
 			{
 				case 0:
-					cell.text = @"Export";
 					cell.textAlignment = UITextAlignmentCenter;
+					exportCell = cell;
+					[self updateExportRowText];
 					break;
 			}
 	}
@@ -460,7 +461,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		[clvc setEditing:YES animated:NO];
 		showingContacts = YES;
 	}
-	else if( section == SECTION_EXPORT )
+	else if( (section == SECTION_EXPORT) && exportEnabled )
 	{
 		// Refresh the service object's credentials in case they've changed
 		[appDelegate setUserCredentialsWithUsername:usernameField.text
@@ -537,6 +538,39 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	exportLastField.text = [shortDateFormatter stringFromDate:[NSDate date]];
 	
 	[self cleanupExport];
+}
+
+- (unsigned) numRowsForExport
+{
+	static const char* q = "SELECT COUNT(*) FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime') ORDER BY timestamp ASC";
+	sqlite3_stmt *statement;
+	unsigned numRows = 0;
+	if( sqlite3_prepare_v2(appDelegate.database, q, -1, &statement, NULL) == SQLITE_OK )
+	{
+		sqlite3_bind_int(statement, 1, [exportStart timeIntervalSince1970]);
+		sqlite3_bind_int(statement, 2, [exportEnd timeIntervalSince1970]);
+		while( sqlite3_step(statement) == SQLITE_ROW )
+			numRows = sqlite3_column_int(statement, 0);
+		sqlite3_finalize(statement);
+	}
+	return numRows;
+}
+
+- (void) updateExportRowText
+{
+	unsigned num = [self numRowsForExport];
+	if( num )
+	{
+		exportCell.text = [NSString stringWithFormat:@"Export %d Records", num];
+		exportCell.textColor = [UIColor blackColor];
+		exportEnabled = YES;
+	}
+	else
+	{
+		exportCell.text = @"Empty Date Range Selected";
+		exportCell.textColor = [UIColor grayColor];
+		exportEnabled = NO;
+	}
 }
 
 #pragma mark Document List feed
@@ -676,7 +710,10 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 - (void)uploadFileTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataEntryDocBase *)entry
 {
 	if( !shareSwitch.on )
+	{
 		[self finishExport];
+		return;
+	}
 
 	if( !contacts )
 		contacts = [[NSMutableArray alloc] init];
@@ -841,6 +878,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	exportStart = datePicker.date;
 	[exportStart retain];
 	exportStartField.text = [shortDateFormatter stringFromDate:exportStart];
+	[self updateExportRowText];
 }
 
 - (void) exportEndChangeAction
@@ -849,6 +887,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	exportEnd = datePicker.date;
 	[exportEnd retain];
 	exportEndField.text = [shortDateFormatter stringFromDate:exportEnd];
+	[self updateExportRowText];
 }
 
 @end

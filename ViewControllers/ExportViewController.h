@@ -18,11 +18,13 @@
 {
 	NSDate*	exportStart;
 	NSDate*	exportEnd;
+	BOOL	exportEnabled;
 
 	UIAlertView*		progressAlert;
 	UIProgressView*		progressView;
 	UITableViewCell*	usernameCell;
 	UITableViewCell*	passwordCell;
+	UITableViewCell*	exportCell;
 	UITableViewCell*	exportStartCell;
 	UITableViewCell*	exportEndCell;
 	UITextField*		usernameField;
@@ -46,6 +48,7 @@
 
 - (void) addACLTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataFeedACL*)object;
 - (void) keychainInit;
+- (void) updateExportRowText;
 
 #if !TARGET_IPHONE_SIMULATOR
 - (NSMutableDictionary *)dictionaryToSecItemFormat:(NSDictionary *)dictionaryToConvert;
