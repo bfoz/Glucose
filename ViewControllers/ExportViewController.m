@@ -418,7 +418,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
     switch( section )
 	{
         case 0: return @"Google Account Information";
-		case 1: return @"Date Range (inclusive)";
     }
     return nil;
 }
