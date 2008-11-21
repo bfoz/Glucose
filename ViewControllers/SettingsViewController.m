@@ -78,14 +78,14 @@ static AppDelegate* appDelegate = nil;
 			highGlucoseWarningField.text = [defaults stringForKey:kHighGlucoseWarning0];
 			lowGlucoseWarningField.text = [defaults stringForKey:kLowGlucoseWarning0];
 			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
-			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
+			lowGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
 			break;
 		case 1:
 			[defaults setObject:kGlucoseUnits_mmolL forKey:kDefaultGlucoseUnits];
 			highGlucoseWarningField.text = [defaults stringForKey:kHighGlucoseWarning1];
 			lowGlucoseWarningField.text = [defaults stringForKey:kLowGlucoseWarning1];
 			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
-			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+			lowGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
 			break;
 	}
 	// Force the LogViewController to reload the LogEntryViewController so it can pick up the change
