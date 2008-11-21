@@ -138,11 +138,13 @@ static AppDelegate* appDelegate = nil;
 	cell.textColor = [UIColor darkTextColor];
 	cell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
 
-    switch( indexPath.section )
+	const unsigned section = indexPath.section;
+	const unsigned row = indexPath.row;
+    switch( section )
 	{
 		case 0:
 			cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-			switch( indexPath.row )
+			switch( row )
 			{
 				case 0: cell.text = @"Export"; break;
 				case 1: cell.text = @"Purge"; break;
@@ -150,7 +152,7 @@ static AppDelegate* appDelegate = nil;
 			break;
 		case 1:
 			cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-			switch( indexPath.row )
+			switch( row )
 			{
 				case 0: cell.text = @"Categories"; break;
 				case 1: cell.text = @"Insulin Types"; break;
@@ -162,7 +164,7 @@ static AppDelegate* appDelegate = nil;
 			UITextField* f;
 			NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 			const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
-			if( indexPath.row < 2 )
+			if( row < 2 )
 			{
 				f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
 				f.delegate = self;
@@ -170,7 +172,7 @@ static AppDelegate* appDelegate = nil;
 				f.textAlignment = UITextAlignmentRight;
 				cell.accessoryView = f;
 			}
-			switch( indexPath.row )
+			switch( row )
 			{
 				case 0:
 					cell.text = @"High Glucose Warning";
@@ -198,9 +200,9 @@ static AppDelegate* appDelegate = nil;
 			break;
         case 3:
 			cell.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-			if( indexPath.row )
+			if( row )
 				cell.textColor = [UIColor blueColor];	// Website and email links
-			switch(indexPath.row )
+			switch( row )
 			{
 				case 0:
 				{
@@ -234,10 +236,12 @@ static AppDelegate* appDelegate = nil;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	switch(indexPath.section)
+	const unsigned section = indexPath.section;
+	const unsigned row = indexPath.row;
+	switch( section )
 	{
 		case 0:
-			switch( indexPath.row )
+			switch( row )
 			{
 				case 0:
 					if( !exportViewController )
@@ -252,7 +256,7 @@ static AppDelegate* appDelegate = nil;
 			}
 			break;
 		case 1:
-			switch( indexPath.row )
+			switch( row )
 			{
 				case 0:
 					if( !categoryViewController )	// Get the view controller from appDelegate
@@ -281,7 +285,7 @@ static AppDelegate* appDelegate = nil;
 			}
 			break;
 		case 2:
-			switch( indexPath.row )
+			switch( row )
 			{
 				case 0:
 					[highGlucoseWarningField becomeFirstResponder];
@@ -292,36 +296,26 @@ static AppDelegate* appDelegate = nil;
 			}
 			break;
 		case 3:
-			if( indexPath.row == 0 )
+			switch( row )
 			{
-				NSString* e = [@"mailto:bfoz@bfoz.net?subject=Glucose" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:e]];
+				case 1:
+				{
+					NSString* e = [@"mailto:bfoz@bfoz.net?subject=Glucose" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+					[[UIApplication sharedApplication] openURL:[NSURL URLWithString:e]];
+				}
+				break;
+				case 2:
+					[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://bfoz.net/projects/glucose/"]];
+					break;
 			}
-			if( indexPath.row == 1 )
-				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://bfoz.net/projects/glucose/"]];
 			break;
 	}
 }
-
-/*
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-	
-	if (editingStyle == UITableViewCellEditingStyleDelete) {
-	}
-	if (editingStyle == UITableViewCellEditingStyleInsert) {
-	}
-}
-*/
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	return NO;
 }
-
-/*
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -347,26 +341,6 @@ static AppDelegate* appDelegate = nil;
 	return nil;
 }
 
-/*
-- (void)viewDidLoad {
-	[super viewDidLoad];
-}
-
-
-- (void)viewWillAppear:(BOOL)animated {
-	[super viewWillAppear:animated];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-	[super viewDidAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-}
-
-- (void)viewDidDisappear:(BOOL)animated {
-}
-*/
 #pragma mark -
 #pragma mark <UITextFieldDelegate>
 
