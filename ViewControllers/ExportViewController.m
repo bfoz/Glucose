@@ -78,6 +78,12 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	return self;
 }
 
+- (void) loadView
+{
+	[super loadView];
+	self.tableView.scrollEnabled = NO;	// Disable scrolling
+}
+
 - (void)dealloc
 {
 	[exportEnd release];
