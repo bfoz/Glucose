@@ -123,13 +123,10 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 - (void)applicationWillTerminate:(UIApplication *)application
 {
 	// Flush all entries
-	for(NSMutableDictionary* s in self.sections)
-	{
-		for(LogEntry* e in [s objectForKey:@"LogEntries"])
-		{
+	for( LogDay* s in self.sections )
+		for( LogEntry* e in s.entries )
 			[e flush:database];
-		}
-	}
+
     [LogEntry finalizeStatements];
     [self closeLogDatabase];	// Close the database.
 }
