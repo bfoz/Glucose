@@ -14,7 +14,9 @@
 {
 	NSDate*	purgeStart;
 	NSDate*	purgeEnd;
+	BOOL	purgeEnabled;
 
+	UITableViewCell*	purgeCell;
 	UILabel*			purgeStartField;
 	UILabel*			purgeEndField;
 	UITableViewCell*	purgeStartCell;

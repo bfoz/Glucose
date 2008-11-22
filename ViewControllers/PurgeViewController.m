@@ -56,6 +56,23 @@ static AppDelegate *appDelegate = nil;
     [super dealloc];
 }
 
+- (void) updatePurgeRowText
+{
+	unsigned num = [appDelegate numLogEntriesFrom:purgeStart to:purgeEnd];
+	if( num )
+	{
+		purgeCell.text = [NSString stringWithFormat:@"Purge %u Records", num];
+		purgeCell.textColor = [UIColor blackColor];
+		purgeEnabled = YES;
+	}
+	else
+	{
+		purgeCell.text = @"Empty Date Range Selected";
+		purgeCell.textColor = [UIColor grayColor];
+		purgeEnabled = NO;
+	}
+}
+
 #pragma mark -
 #pragma mark <UITableViewDataSource>
 
@@ -124,8 +141,9 @@ static AppDelegate *appDelegate = nil;
 		break;
 		case 1:
 		{
-			cell.text = @"Purge";
 			cell.textAlignment = UITextAlignmentCenter;
+			purgeCell = cell;
+			[self updatePurgeRowText];
 		}
 		break;
 	}
@@ -220,6 +238,7 @@ static AppDelegate *appDelegate = nil;
 	purgeStart = datePicker.date;
 	[purgeStart retain];
 	purgeStartField.text = [shortDateFormatter stringFromDate:purgeStart];
+	[self updatePurgeRowText];
 }
 
 - (void) purgeEndChangeAction
@@ -228,6 +247,7 @@ static AppDelegate *appDelegate = nil;
 	purgeEnd = datePicker.date;
 	[purgeEnd retain];
 	purgeEndField.text = [shortDateFormatter stringFromDate:purgeEnd];
+	[self updatePurgeRowText];
 }
 
 
