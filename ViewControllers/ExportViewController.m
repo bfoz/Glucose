@@ -546,25 +546,9 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[self cleanupExport];
 }
 
-- (unsigned) numRowsForExport
-{
-	static const char* q = "SELECT COUNT(*) FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime') ORDER BY timestamp ASC";
-	sqlite3_stmt *statement;
-	unsigned numRows = 0;
-	if( sqlite3_prepare_v2(appDelegate.database, q, -1, &statement, NULL) == SQLITE_OK )
-	{
-		sqlite3_bind_int(statement, 1, [exportStart timeIntervalSince1970]);
-		sqlite3_bind_int(statement, 2, [exportEnd timeIntervalSince1970]);
-		while( sqlite3_step(statement) == SQLITE_ROW )
-			numRows = sqlite3_column_int(statement, 0);
-		sqlite3_finalize(statement);
-	}
-	return numRows;
-}
-
 - (void) updateExportRowText
 {
-	unsigned num = [self numRowsForExport];
+	unsigned num = [appDelegate numLogEntriesFrom:exportStart to:exportEnd];
 	if( num )
 	{
 		exportCell.text = [NSString stringWithFormat:@"Export %d Records", num];
