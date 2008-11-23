@@ -522,6 +522,33 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 #pragma mark Category Records
 
+// Create a new Category record and add it to the categories array
+- (void) addCategory:(NSString*)name
+{
+	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[categories count]];
+	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
+	[categories addObject:[Category insertNewCategoryIntoDatabase:database withName:name]];
+	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
+}
+
+// Purge a Category record from the database and the category array
+- (void) purgeCategoryAtIndex:(unsigned)index
+{
+	const unsigned categoryID = [[categories objectAtIndex:index] categoryID];
+	[self deleteEntriesForCategoryID:categoryID];
+	[self deleteCategoryID:categoryID];
+	[self removeCategoryAtIndex:index];
+}
+
+// Remove an Category record and generate a KV notification
+- (void) removeCategoryAtIndex:(unsigned)index
+{
+	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:index];
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"categories"];
+	[categories removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"categories"];
+}
+
 - (void) deleteEntriesForCategoryID:(unsigned)categoryID
 {
 	const char *query = "DELETE FROM localLogEntries WHERE categoryID=?";
@@ -550,12 +577,6 @@ int compareLogEntriesByDate(id left, id right, void* context)
 		if( success != SQLITE_DONE )
 			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(database));
 	}
-}
-
-// Create a new Category record and add it to the categories array
-- (void) addCategory:(NSString*)name
-{
-	[categories addObject:[Category insertNewCategoryIntoDatabase:database withName:name]];
 }
 
 - (void) updateCategory:(Category*)c

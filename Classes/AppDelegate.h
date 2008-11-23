@@ -60,6 +60,8 @@
 - (BOOL) deleteLogEntryAtIndexPath:(NSIndexPath*)indexPath;
 
 - (void) addCategory:(NSString*)name;
+- (void) purgeCategoryAtIndex:(unsigned)index;
+- (void) removeCategoryAtIndex:(unsigned)index;
 - (void) flushCategories;
 - (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
 - (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to;

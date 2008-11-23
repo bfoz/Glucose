@@ -29,6 +29,9 @@
 		self.title = @"Categories";
 		appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 		dirty = NO;
+		
+		// Register to be notified whenever the insulinTypes array changes
+		[appDelegate addObserver:self forKeyPath:@"categories" options:0 context:nil];
 	}
 	return self;
 }
@@ -37,6 +40,31 @@
 {
     [editedObject release];
 	[super dealloc];
+}
+
+// Handle change notifications for observed key paths of other objects.
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if( [keyPath isEqual:@"categories"] )
+	{
+		const int kind = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
+		const unsigned row = [[change valueForKey:NSKeyValueChangeIndexesKey] firstIndex];
+		switch( kind )
+		{
+			case NSKeyValueChangeSetting:
+				[[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:0]] setNeedsDisplay];
+				break;
+			case NSKeyValueChangeInsertion:
+				[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+				break;
+			case NSKeyValueChangeRemoval:
+				[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+				break;
+		}
+    }
+    // Verify that the superclass does indeed handle these notifications before actually invoking that method.
+	else if( [[self superclass] instancesRespondToSelector:@selector(observeValueForKeyPath:ofObject:change:context:)] )
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
 - (void) setEditing:(BOOL)e animated:(BOOL)animated
@@ -87,7 +115,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSString* cellID = self.editing ? @"EditCellID" : @"MyIdentifier";
+	NSString *const cellID = self.editing ? @"EditCellID" : @"Cell";
 
 	UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
@@ -170,8 +198,8 @@
     // If row is deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
 	{
-        unsigned categoryID = [[appDelegate.categories objectAtIndex:path.row] categoryID];
-/*		// Get number of records for the category
+/*        unsigned categoryID = [[appDelegate.categories objectAtIndex:path.row] categoryID];
+		// Get number of records for the category
 		NSInteger numRecords = [appDelegate numRowsForCategoryID:categoryID];
 		// Ask the user for confirmation if numRecords != 0
 		if( numRecords )
@@ -184,19 +212,14 @@
 			
 		}
 */
-		// Delete everything
-		[appDelegate deleteEntriesForCategoryID:categoryID];
-		[appDelegate deleteCategoryID:categoryID];
-		[appDelegate.categories removeObjectAtIndex:path.row];
-
-        // Animate the deletion from the table.
-        [tv deleteRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
-    }
+		// Purge the record from the database and the categories array
+		[appDelegate purgeCategoryAtIndex:path.row];
+	}
 }
 
 - (void) tableView:(UITableView*)tv moveRowAtIndexPath:(NSIndexPath*)fromPath toIndexPath:(NSIndexPath*)toPath
 {
-	NSLog(@"From Row %d to Row %d", fromPath.row, toPath.row);
+//	NSLog(@"From Row %d to Row %d", fromPath.row, toPath.row);
 	// Shuffle the categories array
 	Category* c = [[appDelegate.categories objectAtIndex:fromPath.row] retain];
 	[appDelegate.categories removeObjectAtIndex:fromPath.row];
@@ -230,10 +253,6 @@
 {
 	Category* c = cell.editedObject;
 	if( !c || !cell )
-		return;
-	if( !c.categoryName && !cell.text )
-		return;
-	if( [c.categoryName isEqualToString:cell.text] )
 		return;
 	c.categoryName = (cell.text && cell.text.length) ? cell.text : nil;
 	[appDelegate updateCategory:c];
