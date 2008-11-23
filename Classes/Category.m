@@ -52,4 +52,14 @@
 	[super dealloc];
 }
 
+#pragma mark -
+#pragma mark Properties
+
+- (void) setCategoryName:(NSString*)n
+{
+    if ((!categoryName && !n) || (categoryName && n && [categoryName isEqualToString:n])) return;
+    [categoryName release];
+    categoryName = [n copy];	
+}
+
 @end
