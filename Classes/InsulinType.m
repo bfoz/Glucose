@@ -54,4 +54,14 @@
 	[super dealloc];	
 }
 
+#pragma mark -
+#pragma mark Properties
+
+- (void) setShortName:(NSString*)n
+{
+    if ((!shortName && !n) || (shortName && n && [shortName isEqualToString:n])) return;
+    [shortName release];
+    shortName = [n copy];	
+}
+
 @end
