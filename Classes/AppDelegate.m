@@ -619,10 +619,31 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 #pragma mark InsulinType Records
 
-// Create a new Category record and add it to the categories array
+// Create a new InsulinType record and add it to the insulinTypes array
 - (void) addInsulinType:(NSString*)name
 {
+	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[insulinTypes count]];
+	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"insulinTypes"];
 	[insulinTypes addObject:[InsulinType insertNewInsulinTypeIntoDatabase:database withName:name]];
+	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"insulinTypes"];
+}
+
+// Purge an InsulinType record from the database and the insulinTypes array
+- (void) purgeInsulinTypeAtIndex:(unsigned)index
+{
+	const unsigned typeID = [[insulinTypes objectAtIndex:index] typeID];
+	[self deleteEntriesForInsulinTypeID:typeID];
+	[self deleteInsulinTypeID:typeID];
+	[self removeInsulinTypeAtIndex:index];
+}
+
+// Remove an InsulinType record and generate a KV notification
+- (void) removeInsulinTypeAtIndex:(unsigned)index
+{
+	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:index];
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"insulinTypes"];
+	[insulinTypes removeObjectAtIndex:index];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"insulinTypes"];
 }
 
 - (void) deleteEntriesForInsulinTypeID:(unsigned)typeID

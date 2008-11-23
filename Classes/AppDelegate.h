@@ -70,6 +70,8 @@
 - (void) updateCategoryNameMaxWidth;
 
 - (void) addInsulinType:(NSString*)name;
+- (void) purgeInsulinTypeAtIndex:(unsigned)index;
+- (void) removeInsulinTypeAtIndex:(unsigned)index;
 - (void) deleteEntriesForInsulinTypeID:(unsigned)typeID;
 - (void) deleteInsulinTypeID:(unsigned)typeID;
 - (void) flushInsulinTypes;

@@ -31,6 +31,9 @@
 		appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 		dirty = NO;
 		multiCheck = NO;
+
+		// Register to be notified whenever the insulinTypes array changes
+		[appDelegate addObserver:self forKeyPath:@"insulinTypes" options:0 context:nil];
 	}
 	return self;
 }
@@ -44,6 +47,31 @@
 {
     [editedObject release];
 	[super dealloc];
+}
+
+// Handle change notifications for observed key paths of other objects.
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if( [keyPath isEqual:@"insulinTypes"] )
+	{
+		const int kind = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
+		const unsigned row = [[change valueForKey:NSKeyValueChangeIndexesKey] firstIndex];
+		switch( kind )
+		{
+			case NSKeyValueChangeSetting:
+				[[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:0]] setNeedsDisplay];
+				break;
+			case NSKeyValueChangeInsertion:
+				[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+				break;
+			case NSKeyValueChangeRemoval:
+				[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+				break;
+		}
+    }
+    // Verify that the superclass does indeed handle these notifications before actually invoking that method.
+	else if( [[self superclass] instancesRespondToSelector:@selector(observeValueForKeyPath:ofObject:change:context:)] )
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
 - (void) setEditing:(BOOL)e animated:(BOOL)animated
@@ -112,7 +140,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {	
-	NSString* cellID = self.editing ? @"EditCellID" : @"MyIdentifier";
+	NSString* cellID = self.editing ? @"EditCellID" : @"Cell";
 
 	UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
@@ -202,22 +230,15 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     // If row is deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
 	{
-        unsigned typeID = [[appDelegate.insulinTypes objectAtIndex:path.row] typeID];
-
-		// Delete everything
-		[appDelegate deleteEntriesForInsulinTypeID:typeID];
-		[appDelegate deleteInsulinTypeID:typeID];
-		[appDelegate.insulinTypes removeObjectAtIndex:path.row];
-		
-        // Animate the deletion from the table.
-        [tv deleteRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
+		// Purge the record from the database and the insulinTypes array
+		[appDelegate purgeInsulinTypeAtIndex:path.row];
     }
 }
 
 - (void) tableView:(UITableView*)tv moveRowAtIndexPath:(NSIndexPath*)fromPath toIndexPath:(NSIndexPath*)toPath
 {
 	NSLog(@"From Row %d to Row %d", fromPath.row, toPath.row);
-	// Shuffle the categories array
+	// Shuffle the insulinTypes array
 	InsulinType* type = [[appDelegate.insulinTypes objectAtIndex:fromPath.row] retain];
 	[appDelegate.insulinTypes removeObjectAtIndex:fromPath.row];
 	[appDelegate.insulinTypes insertObject:type atIndex:toPath.row];
@@ -250,10 +271,6 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 {
 	InsulinType* type = cell.editedObject;
 	if( !type || !cell )
-		return;
-	if( !type.shortName && !cell.text )
-		return;
-	if( [type.shortName isEqualToString:cell.text] )
 		return;
 	type.shortName = (cell.text && cell.text.length) ? cell.text : nil;
 	[appDelegate updateInsulinType:type];
