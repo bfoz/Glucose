@@ -276,11 +276,12 @@ static AppDelegate* appDelegate = nil;
 					[insulinTypeViewController setEditing:YES animated:NO];
 					break;
 				case 2:
-					if( !insulinTypeViewController )
-						insulinTypeViewController = appDelegate.insulinTypeViewController;
-					[insulinTypeViewController setEditing:NO];
-					[insulinTypeViewController setMultiCheck:YES];
-					[self.navigationController pushViewController:insulinTypeViewController animated:YES];
+					if( !defaultInsulinTypeViewController )
+					{
+						defaultInsulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
+						[defaultInsulinTypeViewController setMultiCheck:YES];
+					}
+					[self.navigationController pushViewController:defaultInsulinTypeViewController animated:YES];
 					break;
 			}
 			break;
