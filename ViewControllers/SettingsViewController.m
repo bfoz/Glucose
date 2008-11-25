@@ -52,6 +52,7 @@ static AppDelegate* appDelegate = nil;
 
 - (void)dealloc
 {
+	[defaultInsulinTypeViewController release];
 	[exportViewController release];
 	[purgeViewController release];
 	[super dealloc];

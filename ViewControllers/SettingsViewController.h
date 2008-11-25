@@ -15,8 +15,9 @@
 @interface SettingsViewController : SlidingViewController <UITextFieldDelegate>
 {
 	CategoryViewController*	categoryViewController;
+	InsulinTypeViewController*	defaultInsulinTypeViewController;
 	InsulinTypeViewController*	insulinTypeViewController;
-	
+
 	UITableViewCell*	highGlucoseWarningCell;
 	UITableViewCell*	lowGlucoseWarningCell;
 	UITextField*		highGlucoseWarningField;
