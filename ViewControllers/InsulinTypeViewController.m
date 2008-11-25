@@ -117,6 +117,8 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 		[appDelegate.defaultInsulinTypes sortUsingFunction:sortDefaultInsulinTypes context:appDelegate.insulinTypes];
 		[appDelegate flushDefaultInsulinTypes];
 	}
+	if( !multiCheck && e )	// If mutlicheck mode is beginning
+		self.title = @"Default Insulin Types";
 	multiCheck = e;
 }
 
@@ -222,6 +224,26 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	return [NSIndexPath indexPathForRow:([appDelegate.insulinTypes count]-1) inSection:toPath.section];
 }
 
+- (CGFloat) tableView:(UITableView*)tv heightForHeaderInSection:(NSInteger)section
+{
+	return multiCheck ? 35 : 0;
+}
+
+- (UIView*) tableView:(UITableView*)tableView viewForHeaderInSection:(NSInteger)section
+{
+	if( multiCheck )
+	{
+		UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
+		label.numberOfLines = 2;
+		label.text = @"Choose up to 2 insulin types to be automatically added to new log entries";
+		label.textAlignment = UITextAlignmentCenter;
+		label.backgroundColor = [UIColor clearColor];
+		label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
+		return label;
+	}
+	return nil;
+}
+
 #pragma mark -
 #pragma mark <UITableViewDataSource>
 
@@ -244,14 +266,6 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	[appDelegate.insulinTypes insertObject:type atIndex:toPath.row];
 	[type release];
 	dirty = YES;
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-	if( multiCheck )
-		return @"Insulin Types for New Records";
-	else
-		return nil;
 }
 
 #pragma mark -
