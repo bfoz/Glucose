@@ -38,7 +38,7 @@
 
 + (unsigned)insertNewLogEntryIntoDatabase:(sqlite3*)database;	//Insert a new LogEntry
 + (void)finalizeStatements;		// Finalize (delete) all of the SQLite compiled queries
-
++ (NSData*) createCSV:(sqlite3*)database from:(NSDate*)from to:(NSDate*)to;
 
 - (id)initWithID:(unsigned)eid database:(sqlite3 *)db;
 - (void)deleteFromDatabase:(sqlite3 *)db;

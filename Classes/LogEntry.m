@@ -30,6 +30,8 @@ static const char *const flush_sql = "UPDATE localLogEntries SET timestamp=?, gl
 //static const char *const flush_sql = "UPDATE localLogEntries SET timestamp=datetime(?,'unixepoch'), glucose=?, glucoseUnits=?, categoryID=?, dose0=?, dose1=?, typeID0=?, typeID1=?, note=? WHERE ID=?";
 static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, categoryID, dose0, dose1, typeID0, typeID1, note FROM localLogEntries WHERE ID=?";
 
+#define	kHeaderString	@"timestamp,glucose,glucoseUnits,category,dose0,type0,dose1,type1,note\n"
+
 @implementation LogEntry
 
 @synthesize entryID, category, dirty;
@@ -65,6 +67,90 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
     if (delete_statement) sqlite3_finalize(delete_statement);
     if (hydrate_statement) sqlite3_finalize(hydrate_statement);
     if (flush_statement) sqlite3_finalize(flush_statement);
+}
+
++ (NSData*) createCSV:(sqlite3*)database from:(NSDate*)from to:(NSDate*)to
+{
+	NSMutableData *data = [NSMutableData dataWithCapacity:2048];
+	
+	if( !data )
+		return nil;
+	
+	// Fetch the entries for export
+	const char* q = "SELECT timestamp,glucose,glucoseUnits,categoryID,dose0,typeID0,dose1,typeID1,note FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime') ORDER BY timestamp ASC";
+	sqlite3_stmt *statement;
+	unsigned numRows = 0;
+	if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
+	{
+		sqlite3_bind_int(statement, 1, [from timeIntervalSince1970]);
+		sqlite3_bind_int(statement, 2, [to timeIntervalSince1970]);
+		
+		// Append the header row
+		const char* utfHeader = [kHeaderString UTF8String];
+		[data appendBytes:utfHeader length:strlen(utfHeader)];
+		
+		NSDateFormatter* f = [[NSDateFormatter alloc] init];
+		[f setDateStyle:NSDateFormatterMediumStyle];
+		[f setTimeStyle:NSDateFormatterMediumStyle];
+		const char* s;
+		while( sqlite3_step(statement) == SQLITE_ROW )
+		{
+			const int count = sqlite3_column_count(statement);
+			for( unsigned i=0; i < count; ++i )
+			{
+				if( i )
+					[data appendBytes:"," length:strlen(",")];
+				switch( i )
+				{
+					case 0:	//timestamp
+					{
+						const int a = sqlite3_column_int(statement, i);
+						s = [[f stringFromDate:[NSDate dateWithTimeIntervalSince1970:a]] UTF8String];
+					}
+						break;
+					case 2:	// glucoseUnits
+					{
+						const int a = sqlite3_column_int(statement, i);
+						s = a ? "mmol/L" : "mg/dL";
+					}
+						break;
+					case 3:	// categoryID
+					{
+						const int a = sqlite3_column_int(statement, i);
+						Category* c = [appDelegate findCategoryForID:a];
+						s = [c.categoryName UTF8String];
+					}
+						break;
+					case 5:	// typeID0
+					case 7:	// typeID1
+					{
+						const int a = sqlite3_column_int(statement, i);
+						InsulinType* t = [appDelegate findInsulinTypeForID:a];
+						s = [t.shortName UTF8String];
+					}
+						break;
+					default:
+						s = (char*)sqlite3_column_text(statement, i);
+				}
+				
+				[data appendBytes:"\"" length:strlen("\"")];
+				if( s )
+					[data appendBytes:s length:strlen(s)];
+				[data appendBytes:"\"" length:strlen("\"")];
+			}
+			[data appendBytes:"\n" length:strlen("\n")];
+			++numRows;
+		}
+		sqlite3_finalize(statement);
+		[f release];
+	}
+	
+	if( numRows )	// Return the data if there was any
+		return data;
+
+	// Return nil if now rows were retrieved
+	[data release];
+	return nil;
 }
 
 - (id)init
