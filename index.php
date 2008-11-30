@@ -37,9 +37,6 @@
 				<li>Synchronize with a personal server</li>
 			</ul>
 
-			<h2>License</h2>
-			<p>Glucose is Copyright 2008 by <a href="mailto:bfoz@bfoz.net">Brandon Fosdick</a>.</p>
-
 			<h2>Download</h2>
 			<p>Starting with version 0.3, Glucose is only available through the App Store. I'll send future Beta releases directly to participants.</p>
 			<ul>
@@ -49,11 +46,19 @@
 			</ul>
 
 			<h2>Installation</h2>
-			<p>Use the App Store</p>
+			<p>Use the <a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">iTunes App Store</a></p>
 
+			<h2>Support / Mailing lists</h2>
+			<table style="margin-left:2em">
+				<tr><td><a href="http://lists.bfoz.net/mailman/listinfo/glucose-announce">glucose-announce</a></td><td>Announcements (very low volume)</td></tr>
+				<tr><td><a href="http://lists.bfoz.net/mailman/listinfo/glucose-users">glucose-users</a></td><td>Users mailing list</td></tr>
+			</table>
+
+			<h2>License</h2>
+			<p>Glucose is Copyright 2008 by <a href="mailto:bfoz@bfoz.net">Brandon Fosdick</a>.</p>
 
 			<h2>History</h2>
-			<p><a href=http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.4</a> - Released November 3, 2008
+			<p><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.4</a> - Released November 3, 2008
 				<ul>
 					<li>Support for mmol/L (Settings screen)</li>
 					<li>Tap anywhere on glucose threshold rows to edit (Settings screen)</li>
@@ -63,7 +68,7 @@
 					<li>Google Data client library version 1.5</li>
 				</ul>
 			</p>
-			<p><a href=http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.3</a> - Released October 24, 2008
+			<p><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.3</a> - Released October 24, 2008
 				<ul>
 					<li>First version submitted to the App Store</li>
 					<li>Bug fixes and cleanups</li>
