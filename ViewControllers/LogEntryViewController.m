@@ -171,15 +171,11 @@ static AppDelegate* appDelegate = nil;
 
 // Section 0 - Timestamp/Category/Glucose
 //	Row 0 => Row 0
-//	Row 2 (Glucose) => Row 1 if there is a glucose reading, but no category
+//	Row 2 (Glucose) => Row 1 if not editing and there is a glucose reading, but no category
 - (unsigned) translateRow:(unsigned)row inSection:(unsigned)section
 {
-	if( 0 == section )
-	{
-		if( (1==row) && !entry.category && entry.glucose )
-			return 2;
-		return row;
-	}
+	if( !self.editing && (0 == section) && (1==row) && !entry.category && entry.glucose )
+		return 2;
 	return row;
 }
 
