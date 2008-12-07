@@ -434,9 +434,9 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 		// Delete the corresponding sections
 		NSMutableArray* a = [[NSMutableArray alloc] init];
-		for( NSMutableDictionary* s in sections )
+		for( LogDay* s in sections )
 		{
-			NSDate *const d = [s objectForKey:@"SectionDate"];
+			NSDate *const d = s.date;
 			NSComparisonResult b = [from compare:d];
 			NSComparisonResult c = [to compare:d];
 			
@@ -444,7 +444,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 			    ((c == NSOrderedDescending) || (c == NSOrderedSame)) )
 				[a addObject:s];
 		}
-		for( NSMutableDictionary* s in a )
+		for( LogDay* s in a )
 		{
 			NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:[sections indexOfObjectIdenticalTo:s]];
 			[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
