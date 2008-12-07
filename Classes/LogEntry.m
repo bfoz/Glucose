@@ -303,13 +303,8 @@ else												\
 		{
 			sqlite3_bind_int(flush_statement, 5+i, [dose.dose intValue]);
 			sqlite3_bind_int(flush_statement, 7+i, [dose.type typeID]);			
+			++i;
 		}
-		else
-		{
-			sqlite3_bind_null(flush_statement, 5+i);
-			sqlite3_bind_null(flush_statement, 7+i);
-		}
-		++i;
 	}
 
 	if( note && [note length] )
