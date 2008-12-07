@@ -54,12 +54,28 @@
 	[super dealloc];	
 }
 
+- (void) deleteFromDatabase:(sqlite3*)database
+{
+	const char *query = "DELETE FROM InsulinTypes WHERE typeID=?";
+	sqlite3_stmt *statement;
+	
+	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
+	{
+		sqlite3_bind_int(statement, 1, typeID);
+		int success = sqlite3_step(statement);
+		sqlite3_finalize(statement);
+		if( success != SQLITE_DONE )
+			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(database));
+	}
+}
+
 #pragma mark -
 #pragma mark Properties
 
 - (void) setShortName:(NSString*)n
 {
-    if ((!shortName && !n) || (shortName && n && [shortName isEqualToString:n])) return;
+    if ((!shortName && !n) || (shortName && n && [shortName isEqualToString:n]))
+		return;
     [shortName release];
     shortName = [n copy];	
 }

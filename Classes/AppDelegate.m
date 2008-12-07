@@ -659,7 +659,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	InsulinType *const type = [insulinTypes objectAtIndex:index];
 	const unsigned typeID = [type typeID];
 	[self deleteEntriesForInsulinTypeID:typeID];
-	[self deleteInsulinTypeID:typeID];
+	[type deleteFromDatabase:database];
 	[self removeInsulinTypeAtIndex:index];
 	[self removeDefaultInsulinType:type];
 }
@@ -680,21 +680,6 @@ int compareLogEntriesByDate(id left, id right, void* context)
 }
 
 - (void) deleteEntriesForInsulinTypeID:(unsigned)typeID
-{
-	const char *query = "DELETE FROM InsulinTypes WHERE typeID=?";
-	sqlite3_stmt *statement;
-	
-	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
-	{
-		sqlite3_bind_int(statement, 1, typeID);
-		int success = sqlite3_step(statement);
-		sqlite3_finalize(statement);
-		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(database));
-	}
-}
-
-- (void) deleteInsulinTypeID:(unsigned)typeID
 {
 	const char *query = "DELETE FROM InsulinTypes WHERE typeID=?";
 	sqlite3_stmt *statement;

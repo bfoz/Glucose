@@ -23,4 +23,6 @@
 // Initialize with a Name and ID
 - (id)initWithID:(NSInteger)type name:(NSString*)name;
 
+- (void) deleteFromDatabase:(sqlite3*)database;
+
 @end
