@@ -208,13 +208,13 @@ else												\
 			else
 				[self setCategoryWithID:sqlite3_column_int(init_statement, 3)];
 
-			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 4)) || 
+			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 4)) && 
 			    (SQLITE_NULL != sqlite3_column_type(init_statement, 6)) )
 			{
 				[self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 6)]]];
 				[self setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 4)] insulinDose:[self.insulin lastObject]];
 			}
-			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 5)) || 
+			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 5)) && 
 			    (SQLITE_NULL != sqlite3_column_type(init_statement, 7)) )
 			{
 				[self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 7)]]];
@@ -298,16 +298,17 @@ else												\
 		if( i >= 2 )	// Limit to two doses for now
 			break;
 
-		if( dose.dose && ![dose.dose isEqualToNumber:[NSNumber numberWithInt:0]])
+		// Dose and type are stored as a pair. If the pair is incomplete, store neither.
+		if( dose.dose && dose.type && ![dose.dose isEqualToNumber:[NSNumber numberWithInt:0]])
+		{
 			sqlite3_bind_int(flush_statement, 5+i, [dose.dose intValue]);
+			sqlite3_bind_int(flush_statement, 7+i, [dose.type typeID]);			
+		}
 		else
+		{
 			sqlite3_bind_null(flush_statement, 5+i);
-
-		if( dose.type )
-			sqlite3_bind_int(flush_statement, 7+i, [dose.type typeID]);
-		else
 			sqlite3_bind_null(flush_statement, 7+i);
-
+		}
 		++i;
 	}
 
