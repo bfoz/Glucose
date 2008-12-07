@@ -73,11 +73,12 @@
 
 - (void) addInsulinType:(NSString*)name;
 - (void) purgeInsulinTypeAtIndex:(unsigned)index;
-- (void) removeInsulinTypeAtIndex:(unsigned)index;
 - (void) deleteEntriesForInsulinTypeID:(unsigned)typeID;
 - (void) deleteInsulinTypeID:(unsigned)typeID;
 - (void) flushInsulinTypes;
 - (void) flushDefaultInsulinTypes;
+- (void) removeDefaultInsulinType:(InsulinType*)type;
+- (void) removeInsulinTypeAtIndex:(unsigned)index;
 - (void) updateInsulinType:(InsulinType*)type;
 - (void) updateInsulinTypeShortNameMaxWidth;
 

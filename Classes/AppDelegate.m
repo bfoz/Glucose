@@ -203,7 +203,11 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 
 	NSArray* a = [[NSUserDefaults standardUserDefaults] objectForKey:@"DefaultInsulinTypes"];
 	for( NSNumber* typeID in a )
-		[self.defaultInsulinTypes addObject:[self findInsulinTypeForID:[typeID intValue]]];
+	{
+		InsulinType* t = [self findInsulinTypeForID:[typeID intValue]];
+		if( t )
+			[self.defaultInsulinTypes addObject:t];
+	}
 }
 
 - (void) loadInsulinTypes
@@ -652,10 +656,18 @@ int compareLogEntriesByDate(id left, id right, void* context)
 // Purge an InsulinType record from the database and the insulinTypes array
 - (void) purgeInsulinTypeAtIndex:(unsigned)index
 {
-	const unsigned typeID = [[insulinTypes objectAtIndex:index] typeID];
+	InsulinType *const type = [insulinTypes objectAtIndex:index];
+	const unsigned typeID = [type typeID];
 	[self deleteEntriesForInsulinTypeID:typeID];
 	[self deleteInsulinTypeID:typeID];
 	[self removeInsulinTypeAtIndex:index];
+	[self removeDefaultInsulinType:type];
+}
+
+- (void) removeDefaultInsulinType:(InsulinType*)type
+{
+	[self.defaultInsulinTypes removeObjectIdenticalTo:type];
+	[self flushDefaultInsulinTypes];
 }
 
 // Remove an InsulinType record and generate a KV notification
