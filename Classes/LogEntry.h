@@ -37,6 +37,7 @@
 @property (nonatomic, retain)	NSDate*		timestamp;
 
 + (unsigned)insertNewLogEntryIntoDatabase:(sqlite3*)database;	//Insert a new LogEntry
++ (void) deleteLogEntriesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database;
 + (void)finalizeStatements;		// Finalize (delete) all of the SQLite compiled queries
 + (NSData*) createCSV:(sqlite3*)database from:(NSDate*)from to:(NSDate*)to;
 

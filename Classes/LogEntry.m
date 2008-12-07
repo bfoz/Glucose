@@ -59,6 +59,22 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
     return -1;
 }
 
++ (void) deleteLogEntriesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database
+{
+	const char *query = "DELETE FROM localLogEntries WHERE typeID0=? OR typeID1=?";
+	sqlite3_stmt *statement;
+	
+	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
+	{
+		sqlite3_bind_int(statement, 1, typeID);
+		sqlite3_bind_int(statement, 2, typeID);
+		int success = sqlite3_step(statement);
+		sqlite3_finalize(statement);
+		if( success != SQLITE_DONE )
+			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(database));
+	}
+}
+
 // Finalize (delete) all of the SQLite compiled queries.
 + (void)finalizeStatements
 {
