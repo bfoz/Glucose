@@ -32,7 +32,7 @@
 #define	SECTION_ACCOUNT		0
 #define	SECTION_DATE_RANGE	1
 #define	SECTION_SHARE		2
-#define	SECTION_EXPORT		3
+#define	SECTION_EXPORT		2
 
 @implementation ExportViewController
 
@@ -314,7 +314,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return 4;
+	return 3;
 }
 
 
@@ -404,11 +404,11 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			break;
 		}
 		case 2:
-			cell.text = @"Share Exported File";
+/*			cell.text = @"Share Exported File";
 			cell.accessoryView = shareSwitch;
 			break;
 		case 3:
-			switch( row )
+*/			switch( row )
 			{
 				case 0:
 					cell.textAlignment = UITextAlignmentCenter;
@@ -451,7 +451,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			case 1: [self showDatePicker:exportEndCell mode:UIDatePickerModeDate initialDate:exportEnd changeAction:@selector(exportEndChangeAction)]; break;
 		}
 	}
-	else if( section == SECTION_SHARE )
+/*	else if( section == SECTION_SHARE )
 	{
 		if( !shareSwitch.on )
 		{
@@ -467,7 +467,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		[clvc setEditing:YES animated:NO];
 		showingContacts = YES;
 	}
-	else if( (section == SECTION_EXPORT) && exportEnabled )
+*/	else if( (section == SECTION_EXPORT) && exportEnabled )
 	{
 		// Refresh the service object's credentials in case they've changed
 		[appDelegate setUserCredentialsWithUsername:usernameField.text
@@ -699,7 +699,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 // upload finished successfully
 - (void)uploadFileTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataEntryDocBase *)entry
 {
-	if( !shareSwitch.on )
+//	if( !shareSwitch.on )
 	{
 		[self finishExport];
 		return;
