@@ -58,6 +58,18 @@
 			<p>Glucose is Copyright 2008 by <a href="mailto:bfoz@bfoz.net">Brandon Fosdick</a>.</p>
 
 			<h2>History</h2>
+			<p><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.5</a> - Released December 7, 2008
+				<ul>
+					<li>Performance improvements for large datasets</li>
+					<li>Display correct keyboard for glucose threshold fields in mmol/L mode</li>
+					<li>Added 'Exercise' and 'After Exercise' to default categories for new installs</li>
+					<li>Fix glucose color-coding on Log view</li>
+					<li>Fix crash-on-restart that occurs after deleting insulin types that are on the default type list</li>
+					<li>Better handling of single-dose log entries</li>
+					<li>Deleting an insulin type deletes all doses of that type</li>
+					<li>Deleting a category deletes all log entries in the category</li>
+				</ul>
+			</p>
 			<p><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.4</a> - Released November 3, 2008
 				<ul>
 					<li>Support for mmol/L (Settings screen)</li>
