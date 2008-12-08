@@ -190,6 +190,26 @@
 	return [NSIndexPath indexPathForRow:([appDelegate.categories count]-1) inSection:toPath.section];
 }
 
+- (CGFloat) tableView:(UITableView*)tv heightForHeaderInSection:(NSInteger)section
+{
+	return self.editing ? 35 : 0;
+}
+
+- (UIView*) tableView:(UITableView*)tableView viewForHeaderInSection:(NSInteger)section
+{
+	if( self.editing )
+	{
+		UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
+		label.numberOfLines = 2;
+		label.text = @"Deleting a Category will delete all records in the category";
+		label.textAlignment = UITextAlignmentCenter;
+		label.backgroundColor = [UIColor clearColor];
+		label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
+		return label;
+	}
+	return nil;
+}
+
 #pragma mark -
 #pragma mark <UITableViewDataSource>
 
