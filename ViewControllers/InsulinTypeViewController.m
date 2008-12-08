@@ -226,7 +226,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (CGFloat) tableView:(UITableView*)tv heightForHeaderInSection:(NSInteger)section
 {
-	return multiCheck ? 35 : 0;
+	return (multiCheck || self.editing) ? 35 : 0;
 }
 
 - (UIView*) tableView:(UITableView*)tableView viewForHeaderInSection:(NSInteger)section
@@ -236,6 +236,16 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 		UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
 		label.numberOfLines = 2;
 		label.text = @"Choose up to 2 insulin types to be automatically added to new log entries";
+		label.textAlignment = UITextAlignmentCenter;
+		label.backgroundColor = [UIColor clearColor];
+		label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
+		return label;
+	}
+	else if( self.editing )
+	{
+		UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
+		label.numberOfLines = 2;
+		label.text = @"Deleting an Insulin Type will delete all doses of that type";
 		label.textAlignment = UITextAlignmentCenter;
 		label.backgroundColor = [UIColor clearColor];
 		label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;

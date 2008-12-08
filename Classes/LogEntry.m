@@ -59,6 +59,31 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
     return -1;
 }
 
++ (void) deleteDosesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database
+{
+	const char* q0 = "UPDATE localLogEntries SET dose0=NULL, typeID0=NULL WHERE typeID0=?";
+	const char* q1 = "UPDATE localLogEntries SET dose1=NULL, typeID1=NULL WHERE typeID1=?";
+	sqlite3_stmt* s0;
+	sqlite3_stmt* s1;
+	
+	if( sqlite3_prepare_v2(database, q0, -1, &s0, NULL) == SQLITE_OK )
+	{
+		sqlite3_bind_int(s0, 1, typeID);
+		int success = sqlite3_step(s0);
+		sqlite3_finalize(s0);
+		if( success != SQLITE_DONE )
+			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(database));
+	}
+	if( sqlite3_prepare_v2(database, q1, -1, &s1, NULL) == SQLITE_OK )
+	{
+		sqlite3_bind_int(s1, 1, typeID);
+		int success = sqlite3_step(s1);
+		sqlite3_finalize(s1);
+		if( success != SQLITE_DONE )
+			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(database));
+	}
+}
+
 + (void) deleteLogEntriesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database
 {
 	const char *query = "DELETE FROM localLogEntries WHERE typeID0=? OR typeID1=?";

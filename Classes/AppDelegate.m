@@ -670,20 +670,21 @@ int compareLogEntriesByDate(id left, id right, void* context)
 {
 	InsulinType *const type = [insulinTypes objectAtIndex:index];
 	const unsigned typeID = [type typeID];
-	[LogEntry deleteLogEntriesForInsulinTypeID:typeID fromDatabase:database];
+	[LogEntry deleteDosesForInsulinTypeID:typeID fromDatabase:database];
 	[type deleteFromDatabase:database];
 	[self removeInsulinTypeAtIndex:index];
 	[self removeDefaultInsulinType:type];
 
-	// Remove all of the LogEntry's with the deleted insulin type
-	NSArray* a = [NSArray arrayWithArray:sections];
-	for( LogDay* s in a )
+	// Remove all of the LogEntry doses with the deleted insulin type
+	for( LogDay* s in sections )
 	{
-		NSArray* entries = [NSArray arrayWithArray:s.entries];
-		for( LogEntry* e in entries )
-			for( InsulinDose* d in e.insulin )
+		for( LogEntry* e in s.entries )
+		{
+			NSArray* doses = [NSArray arrayWithArray:e.insulin];
+			for( InsulinDose* d in doses )
 				if( d.type && (d.type == type) )
-					[self deleteLogEntry:e fromSection:s];
+					[e.insulin removeObjectIdenticalTo:d];
+		}
 	}
 }
 
