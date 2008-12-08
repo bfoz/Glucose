@@ -271,30 +271,37 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 
 // Delete a LogEntry from memory and the database
 // This function is only called from commitEditingStyle:
-// Returns YES if the entry's section became empty and was deleted
-- (BOOL) deleteLogEntryAtIndexPath:(NSIndexPath*)indexPath
+- (void) deleteLogEntryAtIndexPath:(NSIndexPath*)indexPath
 {
 	LogDay *const s = [sections objectAtIndex:indexPath.section];
 	LogEntry *const entry = [s.entries objectAtIndex:indexPath.row];
 	[entry deleteFromDatabase:database];
-	return [self deleteLogEntry:entry fromSection:s];
+	[self deleteLogEntry:entry fromSection:s];
 }
 
-// Returns YES if the entry's section became empty and was deleted
-- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section
+- (void) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section
 {
+	const BOOL deleteSection = [section.entries count] <= 1;	// Delete the section if it will become empty
+	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[sections indexOfObjectIdenticalTo:section]];
+	NSSet* set;
+	
+	if( deleteSection )
+		[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
+	else
+	{
+		set = [NSSet setWithObject:[NSNumber numberWithInt:[section.entries indexOfObjectIdenticalTo:entry]]];
+		[self willChangeValueForKey:@"entries" withSetMutation:NSKeyValueMinusSetMutation usingObjects:set];
+	}
+
 	[section removeEntry:entry];
 
-	if( 0 == [section.entries count] )	// Delete the section if it's now empty
+	if( deleteSection )
 	{
-		NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:[sections indexOfObjectIdenticalTo:section]];
-		[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
 		[self.sections removeObjectIdenticalTo:section];
 		[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
-		
-		return YES;
 	}
-	return NO;
+	else
+		[self didChangeValueForKey:@"entries" withSetMutation:NSKeyValueMinusSetMutation usingObjects:set];
 }
 
 - (BOOL) deleteLogEntryIndex:(unsigned)entryIndex fromSectionIndex:(unsigned)sectionIndex
@@ -783,6 +790,12 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	if( !insulinTypeViewController )
 		insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain];
 	return insulinTypeViewController;
+}
+
+// This is a dummy property to get KVO to work on the dummy entries key
+- (NSMutableArray*)entries
+{
+	return nil;
 }
 
 @end

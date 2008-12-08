@@ -49,7 +49,7 @@
 - (Category*) findCategoryForID:(unsigned)categoryID;
 - (InsulinType*) findInsulinTypeForID:(unsigned)typeID;
 
-- (BOOL) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section;
+- (void) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section;
 - (LogDay*) findSectionForDate:(NSDate*)date;
 - (LogDay*) getSectionForDate:(NSDate*)date;
 
@@ -57,7 +57,7 @@
 - (void) addLogEntry:(id)sender;
 - (void) deleteCategoryID:(unsigned)path;
 - (void) deleteEntriesForCategoryID:(unsigned)categoryID;
-- (BOOL) deleteLogEntryAtIndexPath:(NSIndexPath*)indexPath;
+- (void) deleteLogEntryAtIndexPath:(NSIndexPath*)indexPath;
 
 - (void) addCategory:(NSString*)name;
 - (void) purgeCategoryAtIndex:(unsigned)index;
