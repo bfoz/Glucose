@@ -1,3 +1,13 @@
+Version 0.5 - December 7, 2008
+- Performance improvements for large datasets
+- Display correct keyboard for glucose threshold fields in mmol/L mode
+- Added 'Exercise' and 'After Exercise' to default categories for new installs
+- Fix glucose color-coding on Log view
+- Fix crash-on-restart that occurs after deleting insulin types that are on the default type list
+- Better handling of single-dose log entries
+- Deleting an insulin type deletes all doses of that type
+- Deleting a category deletes all log entries in the category
+
 Version 0.4 - November 3, 2008
 - Support for mmol/L (Settings screen)
 - Tap anywhere on glucose threshold rows to edit (Settings screen)
