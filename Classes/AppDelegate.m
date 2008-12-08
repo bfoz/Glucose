@@ -304,12 +304,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 		[self didChangeValueForKey:@"entries" withSetMutation:NSKeyValueMinusSetMutation usingObjects:set];
 }
 
-- (BOOL) deleteLogEntryIndex:(unsigned)entryIndex fromSectionIndex:(unsigned)sectionIndex
-{
-	LogDay *const s = [sections objectAtIndex:sectionIndex];
-	return [self deleteLogEntry:[s.entries objectAtIndex:entryIndex] fromSection:s];
-}
-
 - (Category*) findCategoryForID:(unsigned)categoryID
 {
 	for( Category* c in categories )
