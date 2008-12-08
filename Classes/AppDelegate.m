@@ -539,10 +539,21 @@ int compareLogEntriesByDate(id left, id right, void* context)
 // Purge a Category record from the database and the category array
 - (void) purgeCategoryAtIndex:(unsigned)index
 {
-	const unsigned categoryID = [[categories objectAtIndex:index] categoryID];
+	Category *const category = [categories objectAtIndex:index];
+	const unsigned categoryID = [category categoryID];
 	[self deleteEntriesForCategoryID:categoryID];
 	[self deleteCategoryID:categoryID];
 	[self removeCategoryAtIndex:index];
+
+	// Remove all of the LogEntry's with the deleted insulin type
+	NSArray* a = [NSArray arrayWithArray:sections];
+	for( LogDay* s in a )
+	{
+		NSArray* entries = [NSArray arrayWithArray:s.entries];
+		for( LogEntry* e in entries )
+			if( e.category && (e.category == category) )
+				[self deleteLogEntry:e fromSection:s];
+	}
 }
 
 // Remove an Category record and generate a KV notification
@@ -663,7 +674,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	[type deleteFromDatabase:database];
 	[self removeInsulinTypeAtIndex:index];
 	[self removeDefaultInsulinType:type];
-	
+
 	// Remove all of the LogEntry's with the deleted insulin type
 	NSArray* a = [NSArray arrayWithArray:sections];
 	for( LogDay* s in a )
