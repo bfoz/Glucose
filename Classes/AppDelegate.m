@@ -663,6 +663,17 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	[type deleteFromDatabase:database];
 	[self removeInsulinTypeAtIndex:index];
 	[self removeDefaultInsulinType:type];
+	
+	// Remove all of the LogEntry's with the deleted insulin type
+	NSArray* a = [NSArray arrayWithArray:sections];
+	for( LogDay* s in a )
+	{
+		NSArray* entries = [NSArray arrayWithArray:s.entries];
+		for( LogEntry* e in entries )
+			for( InsulinDose* d in e.insulin )
+				if( d.type && (d.type == type) )
+					[self deleteLogEntry:e fromSection:s];
+	}
 }
 
 - (void) removeDefaultInsulinType:(InsulinType*)type
