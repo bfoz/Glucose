@@ -31,6 +31,8 @@ INSERT INTO InsulinTypes(sequence, shortName) VALUES (8, 'UltraLente');
 INSERT INTO InsulinTypes(sequence, shortName) VALUES (9, '70/30');
 INSERT INTO InsulinTypes(sequence, shortName) VALUES (10, '50/50');
 
+UPDATE sqlite_sequence SET seq=100 WHERE name='InsulinTypes';
+
 CREATE TABLE LogEntryCategories
 ( 'categoryID' INTEGER PRIMARY KEY AUTOINCREMENT, 
   'sequence' INTEGER UNIQUE,
@@ -48,8 +50,10 @@ INSERT INTO LogEntryCategories(sequence, name) VALUES (6, 'After Dinner');
 INSERT INTO LogEntryCategories(sequence, name) VALUES (7, 'After Exercise');
 INSERT INTO LogEntryCategories(sequence, name) VALUES (8, 'Bedtime');
 
+UPDATE sqlite_sequence SET seq=100 WHERE name='LogEntryCategories';
+
 CREATE TABLE localLogEntries
-( 'ID' INTEGER PRIMARY KEY AUTOINCREMENT,
+( 'ID' INTEGER PRIMARY KEY,
   'timestamp' INTEGER,		-- UNIX time
   'glucose' REAL,
   'glucoseUnits' INTEGER,	-- 0=mg/dL 1=mmol/L
