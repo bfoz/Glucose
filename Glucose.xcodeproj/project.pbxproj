@@ -696,6 +696,7 @@
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
+				15E2F6F10EF36A0300EA2116 /* Create Zip File */,
 			);
 			buildRules = (
 			);
@@ -752,6 +753,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "rm -f glucose.sqlite\nsqlite3 glucose.sqlite < default.sql\n#sqlite3 glucose.sqlite < glucose_beta1.sql";
+		};
+		15E2F6F10EF36A0300EA2116 /* Create Zip File */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(PRODUCT_NAME).app",
+			);
+			name = "Create Zip File";
+			outputPaths = (
+				"$(SRCROOT)/$(PRODUCT_NAME).app",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $BUILT_PRODUCTS_DIR\nzip -qr $SRCROOT/$PRODUCT_NAME.zip $PRODUCT_NAME.app";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
