@@ -4,10 +4,11 @@ Glucose is meant to be a convenient and simple tool for helping diabetics record
 
 Thanks to everyone at Ars Technica's Mac forum who helped me test and refine Glucose.
 
-NOTE: Insulin is marketed under various brand names around the world. Instead of trying to keep track of the various brands for different regions, Glucose simply uses the scientific name for each insulin type. For example, if you're using Novo Nordisk's Novolog brand of Insulin Aspart, you'll choose Aspart in the insulin types list. If you're not sure of the proper name for the insulin you use look on the packaging or contact your doctor or pharmacist.
+NOTE: Insulin is marketed under many brand names around the world. Instead of trying to keep track of the various brands for different regions, Glucose simply uses the scientific name for each insulin type. For example, if you're using Novo Nordisk's Novolog brand of Insulin Aspart, you'll choose Aspart in the insulin types list. If you're not sure of the proper name for the insulin you use look on the packaging or contact your doctor or pharmacist.
 
-Features in version 0.3
+Features in version 0.5
 - Record blood glucose measurements
+- Support for mg/dL and mmol/L
 - Record insulin doses
 - Record a note with each entry
 - Categorize log entries
@@ -24,3 +25,5 @@ ToDo List
 - "Travel Mode" for jaunts through far away lands with different units.
 
 Please send all bug reports and feature requests to bfoz@bfoz.net.
+
+Sign up for the Glucose users' mailing list at http://lists.bfoz.net/mailman/listinfo/glucose-users
