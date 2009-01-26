@@ -435,8 +435,8 @@ else												\
 
 - (void) setGlucose:(NSNumber*)g
 {
-	if( (glucose == g) || [glucose isEqualToNumber:g] )
-		return;
+    if( g && ((glucose == g) || [glucose isEqualToNumber:g]) )
+	return;
 
 	[glucose release];
 	glucose = g;
