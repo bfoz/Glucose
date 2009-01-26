@@ -28,7 +28,6 @@
 - (void)dealloc
 {
     [input release];
-    [number release];
     [super dealloc];
 }
 

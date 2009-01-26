@@ -11,7 +11,6 @@
 @interface NumberField : UITextField
 {
     NSMutableString*	input;
-    NSNumber*	number;
     int	precision;
 }
 
