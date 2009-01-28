@@ -52,11 +52,11 @@
 
     const int i = input.length - 1;
     if( i > 0 )
-	self.text = [NSString stringWithFormat:@"%@.%@", [input substringToIndex:i], [input substringFromIndex:i]];
+	super.text = [NSString stringWithFormat:@"%@.%@", [input substringToIndex:i], [input substringFromIndex:i]];
     else if( i == 0 )
-	self.text = [NSString stringWithFormat:@"0.%@", input];
+	super.text = [NSString stringWithFormat:@"0.%@", input];
     else
-	self.text = nil;
+	super.text = nil;
     
     return NO;
 }
@@ -71,27 +71,27 @@
 
 - (NSNumber*) number
 {
-    return [self hasNumber] ? [NSNumber numberWithFloat:[self.text floatValue]] : nil;
+    return [self hasNumber] ? [NSNumber numberWithFloat:[super.text floatValue]] : nil;
 }
 
 - (BOOL) hasNumber
 {
-    return self.text && self.text.length;
+    return super.text && super.text.length;
 }
 
 - (void) setNumber:(NSNumber*)n
 {
     if( [n floatValue] )
-    {
 	self.text = [NSString localizedStringWithFormat:@"%.*f", precision, [n floatValue]];
-	self.input = [NSMutableString stringWithString:self.text];
-	[input replaceOccurrencesOfString:@"." withString:@"" options:0 range:NSMakeRange(0, input.length)];
-    }
     else
-    {
 	self.text = nil;
-	self.input = nil;
-    }
+}
+
+- (void) setText:(NSString*)t
+{
+    self.input = t ? [NSMutableString stringWithString:t] : nil;
+    [input replaceOccurrencesOfString:@"." withString:@"" options:0 range:NSMakeRange(0, input.length)];
+    super.text = t;
 }
 
 @end
