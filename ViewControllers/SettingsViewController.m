@@ -22,6 +22,46 @@
 
 static AppDelegate* appDelegate = nil;
 
+enum Sections
+{
+    kSectionExportPurge = 0,
+    kSectionCategoriesTypes,
+    kSectionThresholdsUnits,
+    kSectionAbout,
+    NUM_SECTIONS
+};
+
+enum ExportPurgeRows
+{
+    kExportRow = 0,
+    kPurgeRow,
+    NUM_EXPORTPURGE_ROWS
+};
+
+enum CategoriesTypesRows
+{
+    kCategoryRow = 0,
+    kInsulinTypeRow,
+    kDefaultInsulinRow,
+    NUM_CATEGORIESTYPES_ROWS
+};
+
+enum ThresholdsUnitsRows
+{
+    kHighGlucoseWarningRow = 0,
+    kLowGlucoseWarningRow,
+    kDefaultInsulinTypesRow,
+    NUM_THRESHOLDUNITS_ROWS
+};
+
+enum AboutSectionRows
+{
+    kAppNameVersionRow = 0,
+    kAuthorRow,
+    kWebsiteRow,
+    NUM_ABOUT_ROWS
+};
+
 - (id)initWithStyle:(UITableViewStyle)style
 {
     if( self = [super initWithStyle:style] )
@@ -107,7 +147,7 @@ static AppDelegate* appDelegate = nil;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 4;
+    return NUM_SECTIONS;
 }
 
 
@@ -115,10 +155,10 @@ static AppDelegate* appDelegate = nil;
 {
     switch( section )
     {
-	case 0: return 2;
-        case 1: return 3;
-	case 2: return 3;
-	case 3: return 3;
+	case kSectionExportPurge:	return NUM_EXPORTPURGE_ROWS;
+        case kSectionCategoriesTypes:	return NUM_CATEGORIESTYPES_ROWS;
+	case kSectionThresholdsUnits:	return NUM_THRESHOLDUNITS_ROWS;
+	case kSectionAbout:		return NUM_ABOUT_ROWS;
     }
     return 0;
 }
@@ -143,29 +183,29 @@ static AppDelegate* appDelegate = nil;
     const unsigned row = indexPath.row;
     switch( section )
     {
-	case 0:
+	case kSectionExportPurge:
 	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	    switch( row )
 	    {
-		case 0: cell.text = @"Export"; break;
-		case 1: cell.text = @"Purge"; break;
+		case kExportRow:    cell.text = @"Export"; break;
+		case kPurgeRow:	    cell.text = @"Purge"; break;
 	    }
 	    break;
-	case 1:
+	case kSectionCategoriesTypes:
 	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	    switch( row )
 	    {
-		case 0: cell.text = @"Categories"; break;
-		case 1: cell.text = @"Insulin Types"; break;
-		case 2: cell.text = @"Default Insulin Types"; break;
+		case kCategoryRow:	    cell.text = @"Categories"; break;
+		case kInsulinTypeRow:	    cell.text = @"Insulin Types"; break;
+		case kDefaultInsulinRow:    cell.text = @"Default Insulin Types"; break;
 	    }
 	    break;
-	case 2:
+	case kSectionThresholdsUnits:
 	    cell.textAlignment = UITextAlignmentLeft;
 	    UITextField* f;
 	    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	    const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
-	    if( row < 2 )
+	    if( row < kDefaultInsulinTypesRow )
 	    {
 		f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
 		f.delegate = self;
@@ -175,21 +215,21 @@ static AppDelegate* appDelegate = nil;
 	    }
 	    switch( row )
 	    {
-		case 0:
+		case kHighGlucoseWarningRow:
 		    cell.text = @"High Glucose Warning";
 		    f.text = [defaults stringForKey:highGlucoseWarningKey];
 		    f.textColor = [UIColor blueColor];
 		    highGlucoseWarningCell = cell;
 		    highGlucoseWarningField = f;
 		    break;
-		case 1:
+		case kLowGlucoseWarningRow:
 		    cell.text = @"Low Glucose Warning";
 		    f.text = [defaults stringForKey:lowGlucoseWarningKey];
 		    f.textColor = [UIColor redColor];
 		    lowGlucoseWarningCell = cell;
 		    lowGlucoseWarningField = f;
 		    break;
-		case 2:
+		case kDefaultInsulinTypesRow:
 		    cell.text = @"Glucose Units";
 		    UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:kGlucoseUnits_mgdL,kGlucoseUnits_mmolL,nil]];
 		    s.segmentedControlStyle = UISegmentedControlStyleBar;
@@ -199,13 +239,13 @@ static AppDelegate* appDelegate = nil;
 		    break;
 	    }
 	    break;
-        case 3:
+        case kSectionAbout:
 	    cell.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
 	    if( row )
 		cell.textColor = [UIColor blueColor];	// Website and email links
 	    switch( row )
 	    {
-		case 0:
+		case kAppNameVersionRow:
 		{
 		    NSBundle *const mainBundle = [NSBundle mainBundle];
 		    NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
@@ -213,8 +253,8 @@ static AppDelegate* appDelegate = nil;
 		    cell.text = [NSString stringWithFormat:@"%@ v%@", n, v];
 		}
 		break;
-		case 1: cell.text = @"Brandon Fosdick <bfoz@bfoz.net>"; break;
-		case 2: cell.text = @"http://bfoz.net/projects/glucose"; break;
+		case kAuthorRow: cell.text = @"Brandon Fosdick <bfoz@bfoz.net>"; break;
+		case kWebsiteRow: cell.text = @"http://bfoz.net/projects/glucose"; break;
 	    }
 	    break;
     }
@@ -241,25 +281,25 @@ static AppDelegate* appDelegate = nil;
     const unsigned row = indexPath.row;
     switch( section )
     {
-	case 0:
+	case kSectionExportPurge:
 	    switch( row )
 	    {
-		case 0:
+		case kExportRow:
 		    if( !exportViewController )
 			exportViewController = [[ExportViewController alloc] initWithStyle:UITableViewStyleGrouped];
 		    [self.navigationController pushViewController:exportViewController animated:YES];
 		    break;
-		case 1:
+		case kPurgeRow:
 		    if( !purgeViewController )
 			purgeViewController = [[PurgeViewController alloc] initWithStyle:UITableViewStyleGrouped];
 		    [self.navigationController pushViewController:purgeViewController animated:YES];
 		    break;
 	    }
 	    break;
-	case 1:
+	case kSectionCategoriesTypes:
 	    switch( row )
 	    {
-		case 0:
+		case kCategoryRow:
 		    if( !categoryViewController )	// Get the view controller from appDelegate
 			    categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStyleGrouped];
 		    [self.navigationController pushViewController:categoryViewController animated:YES];
@@ -267,7 +307,7 @@ static AppDelegate* appDelegate = nil;
 		    //  until loadView has been called. Until then, there's nothing to set editing mode on.
 		    [categoryViewController setEditing:YES animated:NO];
 		    break;
-		case 1:
+		case kInsulinTypeRow:
 		    if( !insulinTypeViewController )
 		    {
 			insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
@@ -278,7 +318,7 @@ static AppDelegate* appDelegate = nil;
 		    //  until loadView has been called. Until then, there's nothing to set editing mode on.
 		    [insulinTypeViewController setEditing:YES animated:NO];
 		    break;
-		case 2:
+		case kDefaultInsulinRow:
 		    if( !defaultInsulinTypeViewController )
 		    {
 			defaultInsulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
@@ -288,27 +328,27 @@ static AppDelegate* appDelegate = nil;
 		    break;
 	    }
 	    break;
-	case 2:
+	case kSectionThresholdsUnits:
 	    switch( row )
 	    {
-		case 0:
+		case kHighGlucoseWarningRow:
 		    [highGlucoseWarningField becomeFirstResponder];
 		    break;
-		case 1:
+		case kLowGlucoseWarningRow:
 		    [lowGlucoseWarningField becomeFirstResponder];
 		    break;
 	    }
 	    break;
-	case 3:
+	case kSectionAbout:
 	    switch( row )
 	    {
-		case 1:
+		case kAuthorRow:
 		{
 		    NSString* e = [@"mailto:bfoz@bfoz.net?subject=Glucose" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 		    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:e]];
 		}
 		break;
-		case 2:
+		case kWebsiteRow:
 		    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://bfoz.net/projects/glucose/"]];
 		    break;
 	    }
@@ -328,12 +368,12 @@ static AppDelegate* appDelegate = nil;
 
 - (CGFloat) tableView:(UITableView*)tableView heightForFooterInSection:(NSInteger)section
 {
-    return (3 == section) ? 40 : 0;
+    return (kSectionAbout == section) ? 40 : 0;
 }
 
 - (UIView*) tableView:(UITableView*)tableView viewForFooterInSection:(NSInteger)section
 {
-    if( 3 == section )
+    if( kSectionAbout == section )
     {
 	UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
 	label.text = @"Copyright 2008 Brandon Fosdick";
