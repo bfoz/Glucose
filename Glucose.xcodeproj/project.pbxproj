@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		150829AD0E5008B100FB556A /* TextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829AC0E5008B100FB556A /* TextFieldCell.m */; };
-		150829B80E50097100FB556A /* TextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829B70E50097100FB556A /* TextViewCell.m */; };
 		150829BD0E5009B400FB556A /* DoseFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829BA0E5009B400FB556A /* DoseFieldCell.m */; };
 		150829BE0E5009B400FB556A /* DualTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829BC0E5009B400FB556A /* DualTableViewCell.m */; };
 		150829CA0E500A9700FB556A /* CategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829C50E500A9700FB556A /* CategoryViewController.m */; };
@@ -21,6 +19,10 @@
 		150829F20E500DCA00FB556A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 150829F10E500DCA00FB556A /* CoreGraphics.framework */; };
 		150829FE0E500E1000FB556A /* LogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829FD0E500E1000FB556A /* LogViewController.m */; };
 		153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 153F26A00E7F70C000F75D9F /* Security.framework */; };
+		155A24660F2971160077FC20 /* NumberFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 155A24650F2971160077FC20 /* NumberFieldCell.m */; };
+		155A26970F29B04B0077FC20 /* TextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829B70E50097100FB556A /* TextViewCell.m */; };
+		155A26990F29B0610077FC20 /* TextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829AC0E5008B100FB556A /* TextFieldCell.m */; };
+		155A26A90F2AF5810077FC20 /* NumberField.m in Sources */ = {isa = PBXBuildFile; fileRef = 155A26A80F2AF5810077FC20 /* NumberField.m */; };
 		1576A8B60E6667F7004EBBC0 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1576A8B50E6667F7004EBBC0 /* Icon.png */; };
 		1585DEC10E6A217200FB9C39 /* glucose.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1585DEC00E6A217200FB9C39 /* glucose.sqlite */; };
 		1595CF570E999E1C00DA7CC6 /* PurgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1595CF560E999E1C00DA7CC6 /* PurgeViewController.m */; };
@@ -33,6 +35,7 @@
 		15A321940ED28A7E00C16388 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15A321930ED28A7E00C16388 /* AddressBookUI.framework */; };
 		15A322480ED35C9F00C16388 /* ContactListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A322470ED35C9F00C16388 /* ContactListViewController.m */; };
 		15A3225A0ED3E0D000C16388 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A322590ED3E0D000C16388 /* Contact.m */; };
+		15A326FF0ED7ED1300C16388 /* GDataEntryFolderDoc.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A326FE0ED7ED1300C16388 /* GDataEntryFolderDoc.m */; };
 		15AF2FE20EC1799F00FC2403 /* LogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 15AF2FE10EC1799F00FC2403 /* LogDay.m */; };
 		15C85D820EBEA82A00A96C37 /* GDataACLRole.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821BD0E748613003322DC /* GDataACLRole.m */; };
 		15C85D830EBEA82B00A96C37 /* GDataACLScope.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821BB0E748613003322DC /* GDataACLScope.m */; };
@@ -128,6 +131,10 @@
 		150829FC0E500E1000FB556A /* LogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogViewController.h; path = ViewControllers/LogViewController.h; sourceTree = "<group>"; };
 		150829FD0E500E1000FB556A /* LogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LogViewController.m; path = ViewControllers/LogViewController.m; sourceTree = "<group>"; };
 		153F26A00E7F70C000F75D9F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		155A24640F2971160077FC20 /* NumberFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NumberFieldCell.h; path = TableCells/NumberFieldCell.h; sourceTree = "<group>"; };
+		155A24650F2971160077FC20 /* NumberFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NumberFieldCell.m; path = TableCells/NumberFieldCell.m; sourceTree = "<group>"; };
+		155A26A70F2AF5810077FC20 /* NumberField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberField.h; sourceTree = "<group>"; };
+		155A26A80F2AF5810077FC20 /* NumberField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NumberField.m; sourceTree = "<group>"; };
 		155BF3730EA14022005123F6 /* GDataGeo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDataGeo.h; sourceTree = "<group>"; };
 		155BF3740EA14022005123F6 /* GDataGeo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDataGeo.m; sourceTree = "<group>"; };
 		155BF3770EA1403E005123F6 /* GDataMediaCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDataMediaCategory.h; sourceTree = "<group>"; };
@@ -169,6 +176,8 @@
 		15A322470ED35C9F00C16388 /* ContactListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContactListViewController.m; path = ViewControllers/ContactListViewController.m; sourceTree = "<group>"; };
 		15A322580ED3E0D000C16388 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contact.h; sourceTree = "<group>"; };
 		15A322590ED3E0D000C16388 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
+		15A326FD0ED7ED1300C16388 /* GDataEntryFolderDoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GDataEntryFolderDoc.h; path = ../GData/Source/Clients/Docs/GDataEntryFolderDoc.h; sourceTree = SOURCE_ROOT; };
+		15A326FE0ED7ED1300C16388 /* GDataEntryFolderDoc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GDataEntryFolderDoc.m; path = ../GData/Source/Clients/Docs/GDataEntryFolderDoc.m; sourceTree = SOURCE_ROOT; };
 		15AF2FE00EC1799F00FC2403 /* LogDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogDay.h; sourceTree = "<group>"; };
 		15AF2FE10EC1799F00FC2403 /* LogDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogDay.m; sourceTree = "<group>"; };
 		15E821460E748613003322DC /* GData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GData.h; path = ../GData/Source/GData.h; sourceTree = SOURCE_ROOT; };
@@ -351,6 +360,8 @@
 				150829D40E500B0500FB556A /* LogEntry.m */,
 				15AF2FE00EC1799F00FC2403 /* LogDay.h */,
 				15AF2FE10EC1799F00FC2403 /* LogDay.m */,
+				155A26A70F2AF5810077FC20 /* NumberField.h */,
+				155A26A80F2AF5810077FC20 /* NumberField.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -370,6 +381,8 @@
 				159E81970E5156A40097EA6F /* LogEntryCell.m */,
 				15A320700EC55E6500C16388 /* LabelCell.h */,
 				15A320710EC55E6500C16388 /* LabelCell.m */,
+				155A24640F2971160077FC20 /* NumberFieldCell.h */,
+				155A24650F2971160077FC20 /* NumberFieldCell.m */,
 			);
 			name = TableCells;
 			sourceTree = "<group>";
@@ -609,6 +622,8 @@
 				15E821F70E748613003322DC /* GDataDocs.h */,
 				15E821F80E748613003322DC /* GDataEntryDocBase.h */,
 				15E821F90E748613003322DC /* GDataEntryDocBase.m */,
+				15A326FD0ED7ED1300C16388 /* GDataEntryFolderDoc.h */,
+				15A326FE0ED7ED1300C16388 /* GDataEntryFolderDoc.m */,
 				15E821FA0E748613003322DC /* GDataEntryStandardDoc.h */,
 				15E821FB0E748613003322DC /* GDataEntryStandardDoc.m */,
 				15E821FC0E748613003322DC /* GDataEntrySpreadsheetDoc.h */,
@@ -780,8 +795,6 @@
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
-				150829AD0E5008B100FB556A /* TextFieldCell.m in Sources */,
-				150829B80E50097100FB556A /* TextViewCell.m in Sources */,
 				150829BD0E5009B400FB556A /* DoseFieldCell.m in Sources */,
 				150829BE0E5009B400FB556A /* DualTableViewCell.m in Sources */,
 				150829CA0E500A9700FB556A /* CategoryViewController.m in Sources */,
@@ -859,6 +872,11 @@
 				15A320720EC55E6500C16388 /* LabelCell.m in Sources */,
 				15A322480ED35C9F00C16388 /* ContactListViewController.m in Sources */,
 				15A3225A0ED3E0D000C16388 /* Contact.m in Sources */,
+				15A326FF0ED7ED1300C16388 /* GDataEntryFolderDoc.m in Sources */,
+				155A24660F2971160077FC20 /* NumberFieldCell.m in Sources */,
+				155A26970F29B04B0077FC20 /* TextViewCell.m in Sources */,
+				155A26990F29B0610077FC20 /* TextFieldCell.m in Sources */,
+				155A26A90F2AF5810077FC20 /* NumberField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

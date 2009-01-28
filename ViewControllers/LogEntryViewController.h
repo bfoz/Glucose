@@ -10,7 +10,7 @@
 #import <sqlite3.h>
 
 #import "DoseFieldCell.h"
-#import "TextFieldCell.h"
+#import "NumberFieldCell.h"			// For NumberFieldCellDelegate
 #import "TextViewCell.h"
 #import "SlidingViewController.h"
 
@@ -18,8 +18,9 @@
 @class InsulinTypeViewController;
 @class LogEntry;
 @class LogDay;
+@class NumberFieldCell;
 
-@interface LogEntryViewController : SlidingViewController <DoseFieldCellDelegate, TextViewCellDelegate, TextFieldCellDelegate>
+@interface LogEntryViewController : SlidingViewController <DoseFieldCellDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
 {
 	LogEntry* entry;
 	LogDay*		entrySection;
@@ -30,7 +31,7 @@
     NSDateFormatter*	dateFormatter;
     NSNumberFormatter*	glucoseFormatter;
     NSNumberFormatter*	numberFormatter;
-	UITextField*	glucoseTextField;
+    NumberFieldCell*	glucoseCell;
     NSIndexPath*	selectedIndexPath;
 	UITableViewCell*	cellTimestamp;
     sqlite3*	database;			// SQLite database handle

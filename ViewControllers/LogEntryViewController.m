@@ -9,7 +9,6 @@
 #import "AppDelegate.h"
 #import "Constants.h"
 #import "CategoryViewController.h"
-//#import "DoseFieldCell.h"
 #import "DualTableViewCell.h"
 #import "InsulinDose.h"
 #import "InsulinType.h"
@@ -18,7 +17,6 @@
 #import "LogEntryViewController.h"
 #import "LogEntry.h"
 #import "LogDay.h"
-#import "TextFieldCell.h"
 #import "TextViewCell.h"
 
 // Post-translation section numbers
@@ -28,7 +26,7 @@
 
 @interface LogEntryViewController ()
 
-@property (nonatomic, retain)	UITextField*	glucoseTextField;
+@property (nonatomic, retain)	NumberFieldCell*	glucoseCell;
 @property (nonatomic, readonly) NSDateFormatter* dateFormatter;
 @property (nonatomic, readonly) NSNumberFormatter* glucoseFormatter;
 @property (nonatomic, readonly) NSNumberFormatter* numberFormatter;
@@ -45,7 +43,7 @@
 
 @synthesize categoryViewController, dateFormatter, entry, entrySection;
 @synthesize glucoseFormatter, numberFormatter;
-@synthesize glucoseTextField;
+@synthesize glucoseCell;
 @synthesize selectedIndexPath, cellTimestamp;
 
 static AppDelegate* appDelegate = nil;
@@ -226,7 +224,7 @@ static AppDelegate* appDelegate = nil;
 				{
 					case 0: return @"Timestamp";
 					case 1: return @"Category";
-					case 2: return @"EditCellID";
+		    case 2: return @"eGlucose";
 				}
 				break;
 			case 1: return @"eDualCellID";
@@ -275,26 +273,15 @@ static AppDelegate* appDelegate = nil;
 			cell = [[[DoseFieldCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
 			((DoseFieldCell*)cell).delegate = self;
 		}
-		else if( self.editing && (section==0) && (row==2) )
-		{
-			// CGRectZero allows the cell to determine the appropriate size.
-			TextFieldCell* c = [[[TextFieldCell alloc] initWithFrame:CGRectZero reuseIdentifier:@"EditCellID"] autorelease];
-			c.textAlignment = UITextAlignmentCenter;
-			c.clearButtonMode = UITextFieldViewModeWhileEditing;
-			c.delegate = self;
-			cell = c;
-			if( 0 == section )
-			{
-				switch( row )
-				{
-					case 2:
-						c.placeholder = @"Glucose";
-						c.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
-						glucoseTextField = c.view;
-						break;
-				}
-			}
-		}
+	else if( @"eGlucose" == cellID )
+	{
+	    glucoseCell = [[[NumberFieldCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	    glucoseCell.clearButtonMode = UITextFieldViewModeWhileEditing;
+	    glucoseCell.delegate = self;
+	    glucoseCell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
+	    glucoseCell.placeholder = @"Glucose";
+	    cell = glucoseCell;
+	}
 		else if( @"NoteCellID" == cellID )
 		{
 			cell = [[[TextViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
@@ -336,19 +323,24 @@ static AppDelegate* appDelegate = nil;
 				}
 				cell.text = (entry.category == nil) ? @"Category" : entry.category.categoryName;
 				break;
-			case 2:	// Glucose
-				[glucoseFormatter setPositiveSuffix:entry.glucoseUnits];
-				[glucoseFormatter setNegativeSuffix:entry.glucoseUnits];
-				cell.text = entry.glucose ? [glucoseFormatter stringFromNumber:entry.glucose] : nil;
-				if( self.editing )
-				{
-					if( entry.glucoseUnits && (entry.glucoseUnits == kGlucoseUnits_mmolL) )
-						((TextFieldCell*)cell).view.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
-					else
-						((TextFieldCell*)cell).view.keyboardType = UIKeyboardTypeNumberPad;
-//					((TextFieldCell*)cell).view.returnKeyType = UIReturnKeyDone;
-				}
-				break;
+	    case 2:	// Glucose
+		if( self.editing )
+		{
+		    // precision must be set before number so the display text is formatted correctly
+		    if( entry.glucoseUnits && (entry.glucoseUnits == kGlucoseUnits_mmolL) )
+			glucoseCell.precision = 1;
+		    else
+			glucoseCell.precision = 0;
+		    glucoseCell.number = entry.glucose;
+		    glucoseCell.label = entry.glucoseUnits;
+		}
+		else
+		{
+		    [glucoseFormatter setPositiveSuffix:entry.glucoseUnits];
+		    [glucoseFormatter setNegativeSuffix:entry.glucoseUnits];
+		    cell.text = entry.glucose ? [glucoseFormatter stringFromNumber:entry.glucose] : nil;
+		}
+		break;
 		}
 	}
 	else if( 1 == section )
@@ -432,6 +424,9 @@ static AppDelegate* appDelegate = nil;
 //				[self.navigationController pushViewController:categoryViewController animated:YES];
 				[self presentModalViewController:categoryViewController animated:YES];
 				break;
+	    case 2: // Go into edit mode if the user taps anywhere on the row
+		[glucoseCell becomeFirstResponder];
+		break;
 		}
 	}
 	else if( 1 == section )
@@ -501,32 +496,27 @@ static AppDelegate* appDelegate = nil;
 }
 
 #pragma mark -
-#pragma mark <TextFieldCellDelegate>
+#pragma mark <NumberFieldCellDelegate>
 
-- (BOOL)textFieldCellShouldBeginEditing:(TextFieldCell*)cell
+- (BOOL)numberFieldCellShouldBeginEditing:(NumberFieldCell*)cell
 {
 	return [self shouldBeginEditing:cell];
 }
 
-- (void)textFieldCellDidBeginEditing:(TextFieldCell*)cell
+- (void)numberFieldCellDidBeginEditing:(NumberFieldCell*)cell
 {
-	[self didBeginEditing:cell field:cell.view action:@selector(saveGlucoseAction:)];
+    [self didBeginEditing:cell field:cell.field action:@selector(saveGlucoseAction:)];
 }
 
-- (void)textFieldCellDidEndEditing:(TextFieldCell*)cell
+- (void)numberFieldCellDidEndEditing:(NumberFieldCell*)cell
 {
-	if( cell.view == glucoseTextField )
-	{
-		if( cell.view.text.length == 0 )
-			entry.glucose = nil;
-		else
-			entry.glucose = [numberFormatter numberFromString:cell.view.text];
-	}	
+    if( cell == glucoseCell )
+	entry.glucose = cell.number;
 }
 
 - (void)saveGlucoseAction:(id)sender
 {
-	[((TextFieldCell*)editCell).view resignFirstResponder];
+    [(NumberFieldCell*)editCell resignFirstResponder];
 	[self saveAction];
 }
 
