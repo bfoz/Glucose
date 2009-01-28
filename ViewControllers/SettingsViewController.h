@@ -14,19 +14,19 @@
 
 @interface SettingsViewController : SlidingViewController <UITextFieldDelegate>
 {
-	CategoryViewController*	categoryViewController;
-	InsulinTypeViewController*	defaultInsulinTypeViewController;
-	InsulinTypeViewController*	insulinTypeViewController;
+    CategoryViewController*	categoryViewController;
+    InsulinTypeViewController*	defaultInsulinTypeViewController;
+    InsulinTypeViewController*	insulinTypeViewController;
 
-	UITableViewCell*	highGlucoseWarningCell;
-	UITableViewCell*	lowGlucoseWarningCell;
-	UITextField*		highGlucoseWarningField;
-	UITextField*		lowGlucoseWarningField;
-	NSString*			highGlucoseWarningKey;
-	NSString*			lowGlucoseWarningKey;
+    UITableViewCell*	highGlucoseWarningCell;
+    UITableViewCell*	lowGlucoseWarningCell;
+    UITextField*		highGlucoseWarningField;
+    UITextField*		lowGlucoseWarningField;
+    NSString*			highGlucoseWarningKey;
+    NSString*			lowGlucoseWarningKey;
 
-	UITableViewController*	exportViewController;
-	UITableViewController*	purgeViewController;
+    UITableViewController*	exportViewController;
+    UITableViewController*	purgeViewController;
 }
 
 @end

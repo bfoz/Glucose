@@ -24,21 +24,21 @@ static AppDelegate* appDelegate = nil;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
-	if( self = [super initWithStyle:style] )
-	{
-		if( !appDelegate )
-			appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if( self = [super initWithStyle:style] )
+    {
+	if( !appDelegate )
+	    appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
-		self.navigationItem.hidesBackButton = YES;
-		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneAction:)];
-		self.title = @"Settings";
-		self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+	self.navigationItem.hidesBackButton = YES;
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneAction:)];
+	self.title = @"Settings";
+	self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 
-		NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-		const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
+	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+	const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
 
-		highGlucoseWarningKey = mgdL ? kHighGlucoseWarning0 : kHighGlucoseWarning1;
-		lowGlucoseWarningKey = mgdL ? kLowGlucoseWarning0 : kLowGlucoseWarning1;
+	highGlucoseWarningKey = mgdL ? kHighGlucoseWarning0 : kHighGlucoseWarning1;
+	lowGlucoseWarningKey = mgdL ? kLowGlucoseWarning0 : kLowGlucoseWarning1;
 
 /*
         UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
@@ -46,60 +46,60 @@ static AppDelegate* appDelegate = nil;
 		self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:b];
 		[b release];
  */
-	}
-	return self;
+    }
+    return self;
 }
 
 - (void)dealloc
 {
-	[defaultInsulinTypeViewController release];
-	[exportViewController release];
-	[purgeViewController release];
-	[super dealloc];
+    [defaultInsulinTypeViewController release];
+    [exportViewController release];
+    [purgeViewController release];
+    [super dealloc];
 }
 
 - (void) doneAction:(id)sender
 {
-	// Cancel edit mode in case the controllers are reused later
-	[categoryViewController setEditing:NO animated:NO];	
-	[insulinTypeViewController setEditing:NO animated:NO];
-	[insulinTypeViewController setMultiCheck:NO];
+    // Cancel edit mode in case the controllers are reused later
+    [categoryViewController setEditing:NO animated:NO];	
+    [insulinTypeViewController setEditing:NO animated:NO];
+    [insulinTypeViewController setMultiCheck:NO];
 
-	// Persist changes to NSUserDefaults
-	[[NSUserDefaults standardUserDefaults] synchronize];
+    // Persist changes to NSUserDefaults
+    [[NSUserDefaults standardUserDefaults] synchronize];
 
-	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationDuration:0.75];
-	[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:0.75];
+    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight
 						   forView:self.navigationController.view cache:YES];
     [self.navigationController popViewControllerAnimated:NO];	
-	[UIView commitAnimations];
+    [UIView commitAnimations];
 }
 
 - (void) glucoseUnitsAction:(UISegmentedControl*)sender
 {
-	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-	switch( sender.selectedSegmentIndex )
-	{
-		case 0:
-			[defaults setObject:kGlucoseUnits_mgdL forKey:kDefaultGlucoseUnits];
-			highGlucoseWarningKey = kHighGlucoseWarning0;
-			lowGlucoseWarningKey = kLowGlucoseWarning0;
-			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
-			lowGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
-			break;
-		case 1:
-			[defaults setObject:kGlucoseUnits_mmolL forKey:kDefaultGlucoseUnits];
-			highGlucoseWarningKey = kHighGlucoseWarning1;
-			lowGlucoseWarningKey = kLowGlucoseWarning1;
-			highGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
-			lowGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
-			break;
-	}
-	highGlucoseWarningField.text = [defaults stringForKey:highGlucoseWarningKey];
-	lowGlucoseWarningField.text = [defaults stringForKey:lowGlucoseWarningKey];
-	// Force the LogViewController to reload the LogEntryViewController so it can pick up the change
-	appDelegate.logViewController.logEntryViewController = nil;
+    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+    switch( sender.selectedSegmentIndex )
+    {
+	case 0:
+	    [defaults setObject:kGlucoseUnits_mgdL forKey:kDefaultGlucoseUnits];
+	    highGlucoseWarningKey = kHighGlucoseWarning0;
+	    lowGlucoseWarningKey = kLowGlucoseWarning0;
+	    highGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
+	    lowGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
+	    break;
+	case 1:
+	    [defaults setObject:kGlucoseUnits_mmolL forKey:kDefaultGlucoseUnits];
+	    highGlucoseWarningKey = kHighGlucoseWarning1;
+	    lowGlucoseWarningKey = kLowGlucoseWarning1;
+	    highGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+	    lowGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+	    break;
+    }
+    highGlucoseWarningField.text = [defaults stringForKey:highGlucoseWarningKey];
+    lowGlucoseWarningField.text = [defaults stringForKey:lowGlucoseWarningKey];
+    // Force the LogViewController to reload the LogEntryViewController so it can pick up the change
+    appDelegate.logViewController.logEntryViewController = nil;
 }
 
 #pragma mark -
@@ -107,119 +107,119 @@ static AppDelegate* appDelegate = nil;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return 4;
+    return 4;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     switch( section )
-	{
-		case 0: return 2;
+    {
+	case 0: return 2;
         case 1: return 3;
-		case 2: return 3;
-		case 3: return 3;
+	case 2: return 3;
+	case 3: return 3;
     }
-	return 0;
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	
-	static NSString *cellID = @"CellID";
-	
-	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
-	if( !cell )
-	{
-		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
-		cell.textAlignment = UITextAlignmentCenter;
-		cell.selectionStyle = UITableViewCellSelectionStyleNone;
-	}
-
-	// Default all rows to bold, black and label-sized
-	cell.textColor = [UIColor darkTextColor];
-	cell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
-
-	const unsigned section = indexPath.section;
-	const unsigned row = indexPath.row;
-    switch( section )
-	{
-		case 0:
-			cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-			switch( row )
-			{
-				case 0: cell.text = @"Export"; break;
-				case 1: cell.text = @"Purge"; break;
-			}
-			break;
-		case 1:
-			cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-			switch( row )
-			{
-				case 0: cell.text = @"Categories"; break;
-				case 1: cell.text = @"Insulin Types"; break;
-				case 2: cell.text = @"Default Insulin Types"; break;
-			}
-			break;
-		case 2:
-			cell.textAlignment = UITextAlignmentLeft;
-			UITextField* f;
-			NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-			const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
-			if( row < 2 )
-			{
-				f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
-				f.delegate = self;
-				f.keyboardType = mgdL ? UIKeyboardTypeNumberPad : UIKeyboardTypeNumbersAndPunctuation;
-				f.textAlignment = UITextAlignmentRight;
-				cell.accessoryView = f;
-			}
-			switch( row )
-			{
-				case 0:
-					cell.text = @"High Glucose Warning";
-					f.text = [defaults stringForKey:highGlucoseWarningKey];
-					f.textColor = [UIColor blueColor];
-					highGlucoseWarningCell = cell;
-					highGlucoseWarningField = f;
-					break;
-				case 1:
-					cell.text = @"Low Glucose Warning";
-					f.text = [defaults stringForKey:lowGlucoseWarningKey];
-					f.textColor = [UIColor redColor];
-					lowGlucoseWarningCell = cell;
-					lowGlucoseWarningField = f;
-					break;
-				case 2:
-					cell.text = @"Glucose Units";
-					UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:kGlucoseUnits_mgdL,kGlucoseUnits_mmolL,nil]];
-					s.segmentedControlStyle = UISegmentedControlStyleBar;
-					[s addTarget:self action:@selector(glucoseUnitsAction:) forControlEvents:UIControlEventValueChanged];
-					s.selectedSegmentIndex = mgdL ? 0 : 1;
-					cell.accessoryView = s;
-					break;
-			}
-			break;
-        case 3:
-			cell.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-			if( row )
-				cell.textColor = [UIColor blueColor];	// Website and email links
-			switch( row )
-			{
-				case 0:
-				{
-					NSBundle *const mainBundle = [NSBundle mainBundle];
-					NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
-					NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
-					cell.text = [NSString stringWithFormat:@"%@ v%@", n, v];
-				}
-				break;
-				case 1: cell.text = @"Brandon Fosdick <bfoz@bfoz.net>"; break;
-				case 2: cell.text = @"http://bfoz.net/projects/glucose"; break;
-			}
-			break;
+    static NSString *cellID = @"CellID";
+    
+    UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
+    if( !cell )
+    {
+	cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	cell.textAlignment = UITextAlignmentCenter;
+	cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
-	return cell;
+    // Default all rows to bold, black and label-sized
+    cell.textColor = [UIColor darkTextColor];
+    cell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
+
+    const unsigned section = indexPath.section;
+    const unsigned row = indexPath.row;
+    switch( section )
+    {
+	case 0:
+	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	    switch( row )
+	    {
+		case 0: cell.text = @"Export"; break;
+		case 1: cell.text = @"Purge"; break;
+	    }
+	    break;
+	case 1:
+	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	    switch( row )
+	    {
+		case 0: cell.text = @"Categories"; break;
+		case 1: cell.text = @"Insulin Types"; break;
+		case 2: cell.text = @"Default Insulin Types"; break;
+	    }
+	    break;
+	case 2:
+	    cell.textAlignment = UITextAlignmentLeft;
+	    UITextField* f;
+	    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+	    const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
+	    if( row < 2 )
+	    {
+		f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
+		f.delegate = self;
+		f.keyboardType = mgdL ? UIKeyboardTypeNumberPad : UIKeyboardTypeNumbersAndPunctuation;
+		f.textAlignment = UITextAlignmentRight;
+		cell.accessoryView = f;
+	    }
+	    switch( row )
+	    {
+		case 0:
+		    cell.text = @"High Glucose Warning";
+		    f.text = [defaults stringForKey:highGlucoseWarningKey];
+		    f.textColor = [UIColor blueColor];
+		    highGlucoseWarningCell = cell;
+		    highGlucoseWarningField = f;
+		    break;
+		case 1:
+		    cell.text = @"Low Glucose Warning";
+		    f.text = [defaults stringForKey:lowGlucoseWarningKey];
+		    f.textColor = [UIColor redColor];
+		    lowGlucoseWarningCell = cell;
+		    lowGlucoseWarningField = f;
+		    break;
+		case 2:
+		    cell.text = @"Glucose Units";
+		    UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:kGlucoseUnits_mgdL,kGlucoseUnits_mmolL,nil]];
+		    s.segmentedControlStyle = UISegmentedControlStyleBar;
+		    [s addTarget:self action:@selector(glucoseUnitsAction:) forControlEvents:UIControlEventValueChanged];
+		    s.selectedSegmentIndex = mgdL ? 0 : 1;
+		    cell.accessoryView = s;
+		    break;
+	    }
+	    break;
+        case 3:
+	    cell.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+	    if( row )
+		cell.textColor = [UIColor blueColor];	// Website and email links
+	    switch( row )
+	    {
+		case 0:
+		{
+		    NSBundle *const mainBundle = [NSBundle mainBundle];
+		    NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
+		    NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
+		    cell.text = [NSString stringWithFormat:@"%@ v%@", n, v];
+		}
+		break;
+		case 1: cell.text = @"Brandon Fosdick <bfoz@bfoz.net>"; break;
+		case 2: cell.text = @"http://bfoz.net/projects/glucose"; break;
+	    }
+	    break;
+    }
+
+    return cell;
 }
 /*
 - (NSString *)tableView:(UITableView *)tv titleForHeaderInSection:(NSInteger)section
@@ -237,112 +237,112 @@ static AppDelegate* appDelegate = nil;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	const unsigned section = indexPath.section;
-	const unsigned row = indexPath.row;
-	switch( section )
-	{
+    const unsigned section = indexPath.section;
+    const unsigned row = indexPath.row;
+    switch( section )
+    {
+	case 0:
+	    switch( row )
+	    {
 		case 0:
-			switch( row )
-			{
-				case 0:
-					if( !exportViewController )
-						exportViewController = [[ExportViewController alloc] initWithStyle:UITableViewStyleGrouped];
-					[self.navigationController pushViewController:exportViewController animated:YES];
-					break;
-				case 1:
-					if( !purgeViewController )
-						purgeViewController = [[PurgeViewController alloc] initWithStyle:UITableViewStyleGrouped];
-					[self.navigationController pushViewController:purgeViewController animated:YES];
-					break;
-			}
-			break;
+		    if( !exportViewController )
+			exportViewController = [[ExportViewController alloc] initWithStyle:UITableViewStyleGrouped];
+		    [self.navigationController pushViewController:exportViewController animated:YES];
+		    break;
 		case 1:
-			switch( row )
-			{
-				case 0:
-					if( !categoryViewController )	// Get the view controller from appDelegate
-						categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStyleGrouped];
-					[self.navigationController pushViewController:categoryViewController animated:YES];
-					// Set editing mode after pushing the view controller. The UITableView doesn't exist
-					//  until loadView has been called. Until then, there's nothing to set editing mode on.
-					[categoryViewController setEditing:YES animated:NO];
-					break;
-				case 1:
-					if( !insulinTypeViewController )
-					{
-						insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
-						[insulinTypeViewController setMultiCheck:NO];
-					}
-					[self.navigationController pushViewController:insulinTypeViewController animated:YES];
-					// Set editing mode after pushing the view controller. The UITableView doesn't exist
-					//  until loadView has been called. Until then, there's nothing to set editing mode on.
-					[insulinTypeViewController setEditing:YES animated:NO];
-					break;
-				case 2:
-					if( !defaultInsulinTypeViewController )
-					{
-						defaultInsulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
-						[defaultInsulinTypeViewController setMultiCheck:YES];
-					}
-					[self.navigationController pushViewController:defaultInsulinTypeViewController animated:YES];
-					break;
-			}
-			break;
+		    if( !purgeViewController )
+			purgeViewController = [[PurgeViewController alloc] initWithStyle:UITableViewStyleGrouped];
+		    [self.navigationController pushViewController:purgeViewController animated:YES];
+		    break;
+	    }
+	    break;
+	case 1:
+	    switch( row )
+	    {
+		case 0:
+		    if( !categoryViewController )	// Get the view controller from appDelegate
+			    categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStyleGrouped];
+		    [self.navigationController pushViewController:categoryViewController animated:YES];
+		    // Set editing mode after pushing the view controller. The UITableView doesn't exist
+		    //  until loadView has been called. Until then, there's nothing to set editing mode on.
+		    [categoryViewController setEditing:YES animated:NO];
+		    break;
+		case 1:
+		    if( !insulinTypeViewController )
+		    {
+			insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
+			[insulinTypeViewController setMultiCheck:NO];
+		    }
+		    [self.navigationController pushViewController:insulinTypeViewController animated:YES];
+		    // Set editing mode after pushing the view controller. The UITableView doesn't exist
+		    //  until loadView has been called. Until then, there's nothing to set editing mode on.
+		    [insulinTypeViewController setEditing:YES animated:NO];
+		    break;
 		case 2:
-			switch( row )
-			{
-				case 0:
-					[highGlucoseWarningField becomeFirstResponder];
-					break;
-				case 1:
-					[lowGlucoseWarningField becomeFirstResponder];
-					break;
-			}
-			break;
-		case 3:
-			switch( row )
-			{
-				case 1:
-				{
-					NSString* e = [@"mailto:bfoz@bfoz.net?subject=Glucose" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-					[[UIApplication sharedApplication] openURL:[NSURL URLWithString:e]];
-				}
-				break;
-				case 2:
-					[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://bfoz.net/projects/glucose/"]];
-					break;
-			}
-			break;
-	}
+		    if( !defaultInsulinTypeViewController )
+		    {
+			defaultInsulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
+			[defaultInsulinTypeViewController setMultiCheck:YES];
+		    }
+		    [self.navigationController pushViewController:defaultInsulinTypeViewController animated:YES];
+		    break;
+	    }
+	    break;
+	case 2:
+	    switch( row )
+	    {
+		case 0:
+		    [highGlucoseWarningField becomeFirstResponder];
+		    break;
+		case 1:
+		    [lowGlucoseWarningField becomeFirstResponder];
+		    break;
+	    }
+	    break;
+	case 3:
+	    switch( row )
+	    {
+		case 1:
+		{
+		    NSString* e = [@"mailto:bfoz@bfoz.net?subject=Glucose" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+		    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:e]];
+		}
+		break;
+		case 2:
+		    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://bfoz.net/projects/glucose/"]];
+		    break;
+	    }
+	    break;
+    }
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return NO;
+    return NO;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return NO;
+    return NO;
 }
 
 - (CGFloat) tableView:(UITableView*)tableView heightForFooterInSection:(NSInteger)section
 {
-	return (3 == section) ? 40 : 0;
+    return (3 == section) ? 40 : 0;
 }
 
 - (UIView*) tableView:(UITableView*)tableView viewForFooterInSection:(NSInteger)section
 {
-	if( 3 == section )
-	{
-		UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
-		label.text = @"Copyright 2008 Brandon Fosdick";
-		label.textAlignment = UITextAlignmentCenter;
-		label.backgroundColor = [UIColor clearColor];
-		label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
-		return label;
-	}
-	return nil;
+    if( 3 == section )
+    {
+	UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
+	label.text = @"Copyright 2008 Brandon Fosdick";
+	label.textAlignment = UITextAlignmentCenter;
+	label.backgroundColor = [UIColor clearColor];
+	label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
+	return label;
+    }
+    return nil;
 }
 
 #pragma mark -
@@ -350,42 +350,42 @@ static AppDelegate* appDelegate = nil;
 
 - (UITableViewCell*) cellForField:(UITextField*)field
 {
-	if( field == highGlucoseWarningField )
-		return highGlucoseWarningCell;
-	else if( field == lowGlucoseWarningField )
-		return lowGlucoseWarningCell;
-	return nil;
+    if( field == highGlucoseWarningField )
+	return highGlucoseWarningCell;
+    else if( field == lowGlucoseWarningField )
+	return lowGlucoseWarningCell;
+    return nil;
 }
 
 - (SEL) selectorForField:(UITextField*)field
 {
-	if( field == highGlucoseWarningField )
-		return @selector(saveHighGlucoseWarningAction);
-	else if( field == lowGlucoseWarningField )
-		return @selector(saveLowGlucoseWarningAction);
-	return nil;
+    if( field == highGlucoseWarningField )
+	return @selector(saveHighGlucoseWarningAction);
+    else if( field == lowGlucoseWarningField )
+	return @selector(saveLowGlucoseWarningAction);
+    return nil;
 }
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField*)field
  {
-	 return [self shouldBeginEditing:[self cellForField:field]];
+     return [self shouldBeginEditing:[self cellForField:field]];
  }
  
 - (void)textFieldDidBeginEditing:(UITextField*)field
 {
-	[self didBeginEditing:[self cellForField:field] field:field action:[self selectorForField:field]];
+    [self didBeginEditing:[self cellForField:field] field:field action:[self selectorForField:field]];
 }
 
 - (void)saveHighGlucoseWarningAction
 {
-	[[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:highGlucoseWarningKey];
-	[self saveAction];
+    [[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:highGlucoseWarningKey];
+    [self saveAction];
 }
 
 - (void)saveLowGlucoseWarningAction
 {
-	[[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:lowGlucoseWarningKey];
-	[self saveAction];
+    [[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:lowGlucoseWarningKey];
+    [self saveAction];
 }
 
 @end
