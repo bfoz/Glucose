@@ -376,7 +376,7 @@ enum AboutSectionRows
     if( kSectionAbout == section )
     {
 	UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
-	label.text = @"Copyright 2008 Brandon Fosdick";
+	label.text = @"Copyright 2008-2009 Brandon Fosdick";
 	label.textAlignment = UITextAlignmentCenter;
 	label.backgroundColor = [UIColor clearColor];
 	label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
