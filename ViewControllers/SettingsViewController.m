@@ -13,6 +13,7 @@
 #import "ExportViewController.h"
 #import "InsulinTypeViewController.h"
 #import "LogViewController.h"
+#import "NumberField.h"
 #import "PurgeViewController.h"
 #import "SettingsViewController.h"
 
@@ -111,7 +112,8 @@ enum AboutSectionRows
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:0.75];
     [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight
-						   forView:self.navigationController.view cache:YES];
+			   forView:self.navigationController.view
+			     cache:YES];
     [self.navigationController popViewControllerAnimated:NO];	
     [UIView commitAnimations];
 }
@@ -125,15 +127,15 @@ enum AboutSectionRows
 	    [defaults setObject:kGlucoseUnits_mgdL forKey:kDefaultGlucoseUnits];
 	    highGlucoseWarningKey = kHighGlucoseWarning0;
 	    lowGlucoseWarningKey = kLowGlucoseWarning0;
-	    highGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
-	    lowGlucoseWarningField.keyboardType = UIKeyboardTypeNumberPad;
+	    highGlucoseWarningField.precision = 0;
+	    lowGlucoseWarningField.precision = 0;
 	    break;
 	case 1:
 	    [defaults setObject:kGlucoseUnits_mmolL forKey:kDefaultGlucoseUnits];
 	    highGlucoseWarningKey = kHighGlucoseWarning1;
 	    lowGlucoseWarningKey = kLowGlucoseWarning1;
-	    highGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
-	    lowGlucoseWarningField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+	    highGlucoseWarningField.precision = 1;
+	    lowGlucoseWarningField.precision = 1;
 	    break;
     }
     highGlucoseWarningField.text = [defaults stringForKey:highGlucoseWarningKey];
@@ -202,14 +204,14 @@ enum AboutSectionRows
 	    break;
 	case kSectionThresholdsUnits:
 	    cell.textAlignment = UITextAlignmentLeft;
-	    UITextField* f;
+	    NumberField* f;
 	    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	    const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
 	    if( row < kDefaultInsulinTypesRow )
 	    {
-		f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
+		f = [[NumberField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
 		f.delegate = self;
-		f.keyboardType = mgdL ? UIKeyboardTypeNumberPad : UIKeyboardTypeNumbersAndPunctuation;
+		f.precision = mgdL ? 0 : 1;
 		f.textAlignment = UITextAlignmentRight;
 		cell.accessoryView = f;
 	    }

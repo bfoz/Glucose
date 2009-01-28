@@ -20,8 +20,8 @@
 
     UITableViewCell*	highGlucoseWarningCell;
     UITableViewCell*	lowGlucoseWarningCell;
-    UITextField*		highGlucoseWarningField;
-    UITextField*		lowGlucoseWarningField;
+    NumberField*		highGlucoseWarningField;
+    NumberField*		lowGlucoseWarningField;
     NSString*			highGlucoseWarningKey;
     NSString*			lowGlucoseWarningKey;
 
