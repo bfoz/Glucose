@@ -13,10 +13,10 @@
 
 @interface DoseFieldCell : UITableViewCell <UITextFieldDelegate>
 {
-	id <DoseFieldCellDelegate> delegate;
-	InsulinDose* dose;
-	UITextField* doseField;
-	UILabel* typeField;
+    id <DoseFieldCellDelegate> delegate;
+    InsulinDose* dose;
+    UITextField* doseField;
+    UILabel* typeField;
 }
 
 @property (nonatomic, assign) id <DoseFieldCellDelegate> delegate;
