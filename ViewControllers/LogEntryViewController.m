@@ -47,6 +47,7 @@
 @synthesize selectedIndexPath, cellTimestamp;
 
 static AppDelegate* appDelegate = nil;
+static unsigned InsulinPrecision;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -70,6 +71,10 @@ static AppDelegate* appDelegate = nil;
 		// A number formatter for glucose measurements
 		glucoseFormatter = [[NSNumberFormatter alloc] init];
 		[glucoseFormatter setMaximumFractionDigits:1];
+
+	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+	NSNumber* p = [defaults objectForKey:kDefaultInsulinPrecision];
+	InsulinPrecision = p ? [p intValue] : 0;
 	}
     return self;
 }
@@ -371,6 +376,7 @@ static AppDelegate* appDelegate = nil;
 		{
 			DoseFieldCell *const dcell = (DoseFieldCell*)cell;
 			dcell.dose = dose;
+	    dcell.precision = InsulinPrecision;
 		}
 	}
 	else if( 2 == section )
