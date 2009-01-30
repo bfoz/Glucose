@@ -106,6 +106,7 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
 // Keys for NSUserDefaults
 #define	kDefaultGlucoseUnits	@"DefaultGlucoseUnits"
+#define	kDefaultInsulinPrecision   @"DefaultInsulinPrecision"
 #define	kDefaultInsulinTypes	@"DefaultInsulinTypes"
 #define	kHighGlucoseWarning0	@"HighGlucoseWarning0"
 #define	kLowGlucoseWarning0		@"LowGlucoseWarning0"

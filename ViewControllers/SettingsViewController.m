@@ -44,14 +44,15 @@ enum CategoriesTypesRows
     kCategoryRow = 0,
     kInsulinTypeRow,
     kDefaultInsulinRow,
+    kFractionalInsulin,
     NUM_CATEGORIESTYPES_ROWS
 };
 
 enum ThresholdsUnitsRows
 {
-    kHighGlucoseWarningRow = 0,
+    kGlucoseUnitsRow = 0,
+    kHighGlucoseWarningRow,
     kLowGlucoseWarningRow,
-    kGlucoseUnitsRow,
     NUM_THRESHOLDUNITS_ROWS
 };
 
@@ -144,6 +145,21 @@ enum AboutSectionRows
     appDelegate.logViewController.logEntryViewController = nil;
 }
 
+- (void) fractionalInsulinAction:(UISwitch*)sender
+{
+    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+    if( sender.on )
+    {
+	[defaults setObject:[NSNumber numberWithInt:1] forKey:kDefaultInsulinPrecision];
+    }
+    else
+    {
+	[defaults setObject:[NSNumber numberWithInt:0] forKey:kDefaultInsulinPrecision];	
+    }
+    // Force the LogViewController to reload the LogEntryViewController so it can pick up the change
+    appDelegate.logViewController.logEntryViewController = nil;
+}
+
 #pragma mark -
 #pragma mark <UITableViewDataSource>
 
@@ -200,6 +216,14 @@ enum AboutSectionRows
 		case kCategoryRow:	    cell.text = @"Categories"; break;
 		case kInsulinTypeRow:	    cell.text = @"Insulin Types"; break;
 		case kDefaultInsulinRow:    cell.text = @"Default Insulin Types"; break;
+		case kFractionalInsulin:
+		    cell.text = @"Fractional Insulin";
+		    cell.textAlignment = UITextAlignmentLeft;
+		    UISwitch* s = [[UISwitch alloc] initWithFrame:CGRectZero];
+		    [s addTarget:self action:@selector(fractionalInsulinAction:) forControlEvents:UIControlEventValueChanged];
+		    s.on = [[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultInsulinPrecision] boolValue];
+		    cell.accessoryView = s;
+		    break;
 	    }
 	    break;
 	case kSectionThresholdsUnits:
@@ -207,7 +231,7 @@ enum AboutSectionRows
 	    NumberField* f;
 	    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	    const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
-	    if( row < kGlucoseUnitsRow )
+	    if( row )
 	    {
 		f = [[NumberField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
 		f.delegate = self;
