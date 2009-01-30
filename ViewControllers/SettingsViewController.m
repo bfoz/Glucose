@@ -51,7 +51,7 @@ enum ThresholdsUnitsRows
 {
     kHighGlucoseWarningRow = 0,
     kLowGlucoseWarningRow,
-    kDefaultInsulinTypesRow,
+    kGlucoseUnitsRow,
     NUM_THRESHOLDUNITS_ROWS
 };
 
@@ -207,7 +207,7 @@ enum AboutSectionRows
 	    NumberField* f;
 	    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	    const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
-	    if( row < kDefaultInsulinTypesRow )
+	    if( row < kGlucoseUnitsRow )
 	    {
 		f = [[NumberField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
 		f.delegate = self;
@@ -231,7 +231,7 @@ enum AboutSectionRows
 		    lowGlucoseWarningCell = cell;
 		    lowGlucoseWarningField = f;
 		    break;
-		case kDefaultInsulinTypesRow:
+		case kGlucoseUnitsRow:
 		    cell.text = @"Glucose Units";
 		    UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:kGlucoseUnits_mgdL,kGlucoseUnits_mmolL,nil]];
 		    s.segmentedControlStyle = UISegmentedControlStyleBar;
