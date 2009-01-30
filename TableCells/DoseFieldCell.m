@@ -21,11 +21,10 @@
     {
 	self.selectionStyle = UITableViewCellSelectionStyleNone;
 
-	doseField = [[UITextField alloc] initWithFrame:CGRectZero];
+	doseField = [[NumberField alloc] initWithFrame:CGRectZero];
 
 	doseField.delegate = self;
 	doseField.textAlignment = UITextAlignmentRight;
-	doseField.keyboardType = UIKeyboardTypeNumberPad;
 	doseField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
 	doseField.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
 	doseField.clearButtonMode = UITextFieldViewModeWhileEditing;
@@ -77,7 +76,7 @@
     if( !dose )
 	return;
 
-    doseField.text = [d.dose stringValue];
+    doseField.number = d.dose;
     // Fake a placeholder type display for the UILabel when no insulin type is set for the row
     if( d && d.type && d.type.shortName && [d.type.shortName length] )
     {
@@ -123,6 +122,18 @@
 {
     [doseField resignFirstResponder];
     return YES;
+}
+
+#pragma mark Propertes
+
+- (int) precision
+{
+    return doseField.precision;
+}
+
+- (void) setPrecision:(int)p
+{
+    doseField.precision = p;
 }
 
 @end

@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "InsulinDose.h"
+#import "NumberField.h"
 
 @protocol DoseFieldCellDelegate;
 
@@ -15,13 +16,14 @@
 {
     id <DoseFieldCellDelegate> delegate;
     InsulinDose* dose;
-    UITextField* doseField;
+    NumberField* doseField;
     UILabel* typeField;
 }
 
 @property (nonatomic, assign) id <DoseFieldCellDelegate> delegate;
 @property (nonatomic, retain) InsulinDose* dose;
 @property (nonatomic, readonly) UITextField* doseField;
+@property (nonatomic, assign) int   precision;
 
 @end
 
