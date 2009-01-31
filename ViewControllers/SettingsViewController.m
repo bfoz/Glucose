@@ -215,7 +215,7 @@ enum AboutSectionRows
 	    {
 		case kCategoryRow:	    cell.text = @"Categories"; break;
 		case kInsulinTypeRow:	    cell.text = @"Insulin Types"; break;
-		case kDefaultInsulinRow:    cell.text = @"Default Insulin Types"; break;
+		case kDefaultInsulinRow:    cell.text = @"Insulins for New Entries"; break;
 		case kFractionalInsulin:
 		    cell.text = @"Fractional Insulin";
 		    UISwitch* s = [[UISwitch alloc] initWithFrame:CGRectZero];
