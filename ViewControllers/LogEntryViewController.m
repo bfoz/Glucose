@@ -30,7 +30,6 @@
 @property (nonatomic, readonly) NSDateFormatter* dateFormatter;
 @property (nonatomic, readonly) NSNumberFormatter* glucoseFormatter;
 @property (nonatomic, readonly) NSNumberFormatter* numberFormatter;
-@property (nonatomic, retain) CategoryViewController* categoryViewController;
 @property (nonatomic, retain)	NSIndexPath*	selectedIndexPath;
 @property (nonatomic, retain)	UITableViewCell*	cellTimestamp;
 
@@ -41,7 +40,7 @@
 
 @implementation LogEntryViewController
 
-@synthesize categoryViewController, dateFormatter, entry, entrySection;
+@synthesize dateFormatter, entry, entrySection;
 @synthesize glucoseFormatter, numberFormatter;
 @synthesize glucoseCell;
 @synthesize selectedIndexPath, cellTimestamp;
@@ -97,6 +96,7 @@ static unsigned InsulinPrecision;
 {
     [selectedIndexPath release];
     [categoryViewController release];
+    [insulinTypeViewController release];
     [numberFormatter release];
     [dateFormatter release];
     [super dealloc];
