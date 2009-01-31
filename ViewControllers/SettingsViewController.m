@@ -189,13 +189,13 @@ enum AboutSectionRows
     if( !cell )
     {
 	cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
-	cell.textAlignment = UITextAlignmentCenter;
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
     // Default all rows to bold, black and label-sized
     cell.textColor = [UIColor darkTextColor];
     cell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
+    cell.textAlignment = UITextAlignmentLeft;
 
     const unsigned section = indexPath.section;
     const unsigned row = indexPath.row;
@@ -218,7 +218,6 @@ enum AboutSectionRows
 		case kDefaultInsulinRow:    cell.text = @"Default Insulin Types"; break;
 		case kFractionalInsulin:
 		    cell.text = @"Fractional Insulin";
-		    cell.textAlignment = UITextAlignmentLeft;
 		    UISwitch* s = [[UISwitch alloc] initWithFrame:CGRectZero];
 		    [s addTarget:self action:@selector(fractionalInsulinAction:) forControlEvents:UIControlEventValueChanged];
 		    s.on = [[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultInsulinPrecision] boolValue];
@@ -227,7 +226,7 @@ enum AboutSectionRows
 	    }
 	    break;
 	case kSectionThresholdsUnits:
-	    cell.textAlignment = UITextAlignmentLeft;
+	{	    
 	    NumberField* f;
 	    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	    const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
@@ -264,9 +263,13 @@ enum AboutSectionRows
 		    cell.accessoryView = s;
 		    break;
 	    }
-	    break;
+	} break;
         case kSectionAbout:
 	    cell.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+	    // Work around the cell.textAlignment bug introduced in version 2.2 by
+	    //  getting the first child UILabel and settting its textAlignment 
+	    //  property directly
+	    [[[[cell contentView] subviews] objectAtIndex:0] setTextAlignment:UITextAlignmentCenter];
 	    if( row )
 		cell.textColor = [UIColor blueColor];	// Website and email links
 	    switch( row )
