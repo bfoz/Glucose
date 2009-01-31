@@ -16,6 +16,7 @@
 #import "ExportViewController.h"
 #import "ContactListViewController.h"
 
+#import "GDataACL.h"
 #import "GDataDocs.h"
 
 #import <Security/Security.h>
