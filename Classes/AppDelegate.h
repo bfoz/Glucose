@@ -27,7 +27,6 @@
 	CategoryViewController*	categoryViewController;
     NSMutableArray* defaultInsulinTypes;
     NSMutableArray* insulinTypes;
-	InsulinTypeViewController*	insulinTypeViewController;
 	LogViewController*	logViewController;
 	NSMutableArray* sections;
     sqlite3*	database;			// SQLite database handle
@@ -39,7 +38,6 @@
 @property (nonatomic, readonly)	CategoryViewController*	categoryViewController;
 @property (nonatomic, readonly)	NSMutableArray*		defaultInsulinTypes;
 @property (nonatomic, readonly)	NSMutableArray*		insulinTypes;
-@property (nonatomic, readonly)	InsulinTypeViewController*	insulinTypeViewController;
 @property (nonatomic, readonly)	LogViewController*	logViewController;
 @property (nonatomic, readonly)	NSMutableArray*		sections;
 @property (nonatomic, readonly)	sqlite3*		database;

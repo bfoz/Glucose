@@ -37,7 +37,7 @@
 @synthesize window;
 @synthesize navController;
 @synthesize categories, defaultInsulinTypes, insulinTypes;
-@synthesize categoryViewController, insulinTypeViewController;
+@synthesize categoryViewController;
 @synthesize logViewController;
 @synthesize sections;
 @synthesize database;
@@ -800,13 +800,6 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	if( !categoryViewController )
 		categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain];
 	return categoryViewController;
-}
-
-- (InsulinTypeViewController*) insulinTypeViewController
-{
-	if( !insulinTypeViewController )
-		insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain];
-	return insulinTypeViewController;
 }
 
 // This is a dummy property to get KVO to work on the dummy entries key
