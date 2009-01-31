@@ -418,16 +418,9 @@ static unsigned InsulinPrecision;
 		[self toggleDatePicker];
 		break;
 	    case 1: 
-/*		if( !categoryViewController )
-		{
-		    CategoryViewController* cvc = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain];
-		    self.categoryViewController = cvc;
-		    [cvc release];
-		}*/
-		if( !categoryViewController )	// Get the view controller from appDelegate
-		    self.categoryViewController = appDelegate.categoryViewController;
+		if( !categoryViewController )
+		    categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain];
 		categoryViewController.editedObject = entry;
-//		[self.navigationController pushViewController:categoryViewController animated:YES];
 		[self presentModalViewController:categoryViewController animated:YES];
 		break;
 	    case 2: // Go into edit mode if the user taps anywhere on the row

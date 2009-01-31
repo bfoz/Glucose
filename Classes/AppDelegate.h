@@ -24,7 +24,6 @@
     IBOutlet UIWindow *window;
     UINavigationController* navController;
     NSMutableArray* categories;
-	CategoryViewController*	categoryViewController;
     NSMutableArray* defaultInsulinTypes;
     NSMutableArray* insulinTypes;
 	LogViewController*	logViewController;
@@ -35,7 +34,6 @@
 @property (nonatomic, retain)	UIWindow*	window;
 @property (nonatomic, retain)	UINavigationController* navController;
 @property (nonatomic, readonly)	NSMutableArray*		categories;
-@property (nonatomic, readonly)	CategoryViewController*	categoryViewController;
 @property (nonatomic, readonly)	NSMutableArray*		defaultInsulinTypes;
 @property (nonatomic, readonly)	NSMutableArray*		insulinTypes;
 @property (nonatomic, readonly)	LogViewController*	logViewController;
