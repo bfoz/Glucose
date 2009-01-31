@@ -22,18 +22,18 @@
 
 @interface LogEntryViewController : SlidingViewController <DoseFieldCellDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
 {
-	LogEntry* entry;
-	LogDay*		entrySection;
+    LogEntry* entry;
+    LogDay*		entrySection;
 
 // Private
-	CategoryViewController*	categoryViewController;
-	InsulinTypeViewController*	insulinTypeViewController;
+    CategoryViewController*	categoryViewController;
+    InsulinTypeViewController*	insulinTypeViewController;
     NSDateFormatter*	dateFormatter;
     NSNumberFormatter*	glucoseFormatter;
     NSNumberFormatter*	numberFormatter;
     NumberFieldCell*	glucoseCell;
     NSIndexPath*	selectedIndexPath;
-	UITableViewCell*	cellTimestamp;
+    UITableViewCell*	cellTimestamp;
     sqlite3*	database;			// SQLite database handle
 }
 
