@@ -19,6 +19,7 @@
 @property (nonatomic, copy) NSString*	categoryName;
 
 + (Category*)insertNewCategoryIntoDatabase:(sqlite3*)database withName:(NSString*)n;
++ (unsigned)numRowsForCategoryID:(unsigned)cid database:(sqlite3*)database;
 
 // Initialize with a Name and ID
 - (id)initWithID:(NSInteger)type name:(NSString*)name;
