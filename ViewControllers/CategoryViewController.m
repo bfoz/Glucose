@@ -217,24 +217,26 @@
 {
     // If row is deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
+    {
+	const unsigned categoryID = [[appDelegate.categories objectAtIndex:path.row] categoryID];
+	// Get number of records for the category
+	const unsigned numRecords = [appDelegate numRowsForCategoryID:categoryID];
+	// Ask the user for confirmation if numRecords != 0
+	if( numRecords )
 	{
-/*        unsigned categoryID = [[appDelegate.categories objectAtIndex:path.row] categoryID];
-		// Get number of records for the category
-		NSInteger numRecords = [appDelegate numRowsForCategoryID:categoryID];
-		// Ask the user for confirmation if numRecords != 0
-		if( numRecords )
-		{
-			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" 
-															message:@"This will delete 1,000 record from the database"
-														   delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-			[alert show];
-			[alert release];
-			
-		}
-*/
-		// Purge the record from the database and the categories array
-		[appDelegate purgeCategoryAtIndex:path.row];
+	    deleteRowNum = path.row;
+	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" 
+							    message:[NSString stringWithFormat:@"This will delete %u log entries", numRecords]
+							   delegate:self
+						  cancelButtonTitle:@"Cancel"
+						  otherButtonTitles:@"OK", nil];
+	    [alert show];
+	    [alert release];		
 	}
+	else
+	    // Purge the record from the database and the categories array
+	    [appDelegate purgeCategoryAtIndex:path.row];
+    }
 }
 
 - (void) tableView:(UITableView*)tv moveRowAtIndexPath:(NSIndexPath*)fromPath toIndexPath:(NSIndexPath*)toPath
@@ -247,15 +249,22 @@
 	[c release];
 	dirty = YES;
 }
-/*
+
 #pragma mark -
 #pragma mark <UIAlertViewDelegate>
 
 - (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-	NSLog(@"Button index = %d", buttonIndex);
+    if( buttonIndex )
+    {
+	// Purge the record from the database and the categories array
+	[appDelegate purgeCategoryAtIndex:deleteRowNum];
+    }
+    else
+	// Reload the table on cancel to work around a display bug
+	[tableView reloadData];
 }
-*/
+
 #pragma mark -
 #pragma mark <TextFieldCellDelegate>
 

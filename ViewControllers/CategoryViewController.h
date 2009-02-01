@@ -13,12 +13,12 @@
 
 @class AppDelegate;
 
-//@interface CategoryViewController : UITableViewController <TextViewCellDelegate, UIAlertViewDelegate>
-@interface CategoryViewController : SlidingViewController <TextFieldCellDelegate>
+@interface CategoryViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
 	AppDelegate*	appDelegate;
     id				editedObject;
 	BOOL			dirty;
+    unsigned	deleteRowNum;
 }
 
 @property (nonatomic, retain) id editedObject;
