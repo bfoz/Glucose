@@ -61,7 +61,7 @@
 - (void) flushCategories;
 - (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
 - (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
-- (unsigned) numRowsForCategoryID:(NSInteger)catID;
+- (unsigned) numRowsForCategoryID:(unsigned)catID;
 - (NSDate*) earliestLogEntryDate;
 - (unsigned) numLogEntries;
 - (void) updateCategory:(Category*)c;

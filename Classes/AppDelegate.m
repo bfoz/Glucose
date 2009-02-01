@@ -518,9 +518,9 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	return num;
 }
 
-- (unsigned) numRowsForCategoryID:(NSInteger)catID
+- (unsigned) numRowsForCategoryID:(unsigned)catID
 {
-	return 0;
+    return [Category numRowsForCategoryID:catID database:database];
 }
 
 #pragma mark Category Records
