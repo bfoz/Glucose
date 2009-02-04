@@ -39,6 +39,8 @@
 + (unsigned)insertNewLogEntryIntoDatabase:(sqlite3*)database;	//Insert a new LogEntry
 + (void) deleteDosesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database;
 + (void) deleteLogEntriesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database;
++ (unsigned) numLogEntriesForInsulinTypeID:(unsigned)typeID database:(sqlite3*)database;
+
 + (void)finalizeStatements;		// Finalize (delete) all of the SQLite compiled queries
 + (NSData*) createCSV:(sqlite3*)database from:(NSDate*)from to:(NSDate*)to;
 

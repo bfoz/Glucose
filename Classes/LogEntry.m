@@ -100,6 +100,28 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
 	}
 }
 
++ (unsigned)numLogEntriesForInsulinTypeID:(unsigned)typeID database:(sqlite3*)database
+{
+    const char* q = "SELECT COUNT() from localLogEntries WHERE typeID0 = ? OR typeID1 = ?";
+    sqlite3_stmt *statement;
+    unsigned num = 0;
+    
+    if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
+    {
+	sqlite3_bind_int(statement, 1, typeID);
+	sqlite3_bind_int(statement, 2, typeID);
+	unsigned i = 0;
+	while( sqlite3_step(statement) == SQLITE_ROW )
+	{
+	    NSAssert(i==0, @"Too many rows returned for COUNT() in numLogEntriesForInsulinTypeID:");
+	    num = sqlite3_column_int(statement, 0);
+	    ++i;
+	}
+	sqlite3_finalize(statement);
+    }
+    return num;
+}
+
 // Finalize (delete) all of the SQLite compiled queries.
 + (void)finalizeStatements
 {
