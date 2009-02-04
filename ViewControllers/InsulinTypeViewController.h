@@ -15,11 +15,11 @@
 
 @interface InsulinTypeViewController : SlidingViewController <TextFieldCellDelegate>
 {
-	AppDelegate*	appDelegate;
-	BOOL			dirty;
+    AppDelegate*	appDelegate;
+    BOOL			dirty;
     LogEntry*		editedObject;
-	unsigned		editedIndex;
-	BOOL			multiCheck;
+    unsigned		editedIndex;
+    BOOL			multiCheck;
 }
 
 @property (nonatomic, retain) LogEntry* editedObject;
