@@ -108,6 +108,7 @@ enum AboutSectionRows
     [insulinTypeViewController setMultiCheck:NO];
 
     // Persist changes to NSUserDefaults
+    [appDelegate flushDefaultInsulinTypes];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
     [UIView beginAnimations:nil context:NULL];
