@@ -218,15 +218,15 @@
     // If row is deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	const unsigned categoryID = [[appDelegate.categories objectAtIndex:path.row] categoryID];
+	Category *const category = [appDelegate.categories objectAtIndex:path.row];
 	// Get number of records for the category
-	const unsigned numRecords = [appDelegate numRowsForCategoryID:categoryID];
+	const unsigned numRecords = [appDelegate numRowsForCategoryID:category.categoryID];
 	// Ask the user for confirmation if numRecords != 0
 	if( numRecords )
 	{
 	    deleteRowNum = path.row;
 	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" 
-							    message:[NSString stringWithFormat:@"This will delete %u log entries", numRecords]
+							    message:[NSString stringWithFormat:@"Deleting category %@ will delete %u log entr%@", category.categoryName, numRecords, ((numRecords>1)?@"ies":@"y")]
 							   delegate:self
 						  cancelButtonTitle:@"Cancel"
 						  otherButtonTitles:@"OK", nil];
