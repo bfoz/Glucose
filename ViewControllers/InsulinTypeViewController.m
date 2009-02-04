@@ -259,11 +259,26 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)path
 {
-    // If row is deleted, remove it from the list.
+    // If a row is deleted, remove it from the list
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	// Purge the record from the database and the insulinTypes array
-	[appDelegate purgeInsulinTypeAtIndex:path.row];
+	InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:path.row];
+	const unsigned numRecords = [appDelegate numLogEntriesForInsulinTypeID:type.typeID];
+	// Ask the user for confirmation if numRecords != 0
+	if( numRecords )
+	{
+	    deleteRowNum = path.row;
+	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" 
+							    message:[NSString stringWithFormat:@"Deleting Insulin %@ will delete dose information from %u log entr%@", type.shortName, numRecords, ((numRecords>1)?@"ies":@"y")]
+							   delegate:self
+						  cancelButtonTitle:@"Cancel"
+						  otherButtonTitles:@"OK", nil];
+	    [alert show];
+	    [alert release];		
+	}
+	else
+	    // Purge the record from the database and the insulinTypes array
+	    [appDelegate purgeInsulinTypeAtIndex:path.row];
     }
 }
 
@@ -276,6 +291,21 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     [appDelegate.insulinTypes insertObject:type atIndex:toPath.row];
     [type release];
     dirty = YES;
+}
+
+#pragma mark -
+#pragma mark <UIAlertViewDelegate>
+
+- (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if( buttonIndex )
+    {
+	// Purge the record from the database and the Insulin Types array
+	[appDelegate purgeInsulinTypeAtIndex:deleteRowNum];
+    }
+    else
+	// Reload the table on cancel to work around a display bug
+	[tableView reloadData];
 }
 
 #pragma mark -
