@@ -33,6 +33,10 @@
 	typeField = [[UILabel alloc] initWithFrame:CGRectZero];
 	typeField.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
 
+	self.text = @"New Insulin Dose";
+	self.textColor = [UIColor lightGrayColor];
+	self.textAlignment = UITextAlignmentCenter;
+
 	[self.contentView addSubview:doseField];
 	[self.contentView addSubview:typeField];
 	[self layoutSubviews];
@@ -52,23 +56,40 @@
     [super layoutSubviews];
     
     CGRect insetRect = CGRectInset([self.contentView bounds], kCellLeftOffset, 0);
-    
-    const unsigned w = (insetRect.size.width - kCellLeftOffset)/2;
-    
-    CGRect leftFrame = insetRect;
-    leftFrame.size.width = w;
 
-    CGRect rightFrame = leftFrame;
-    rightFrame.origin.x += w + kCellLeftOffset;
+    // If dose has been set, and the dose has a type, display both fields
+    //  The doseField will show it's placeholder and the typeField will show the
+    //  set type.
+    // If no dose has been set, or the dose doesn't have a type, display only
+    //  doseField centered in the cell. If no dose value has been set, display
+    //  the placeholder
+    if( dose && dose.type )
+    {
+	const unsigned w = (insetRect.size.width - kCellLeftOffset)/2;	
+	insetRect.size.width = w;
+	doseField.frame  = insetRect;
+	insetRect.origin.x += w + kCellLeftOffset;
+	typeField.frame  = insetRect;
+	doseField.hidden  = NO;
+	typeField.hidden = NO;
+	[[[self.contentView subviews] objectAtIndex:0] setHidden:YES];
+    }
+    else
+    {
+	doseField.hidden  = YES;
+	typeField.hidden = YES;
+	[[[self.contentView subviews] objectAtIndex:0] setHidden:NO];
+    }
     
-    doseField.frame  = leftFrame;
-    typeField.frame  = rightFrame;
 //    doseField.borderStyle = UITextBorderStyleLine;
-//    typeField.borderStyle = UITextBorderStyleLine;
 }
 
 - (void)setDose:(InsulinDose*)d
 {
+    // Need to redo layout if dose has changed
+    if( dose != d )
+	[self setNeedsLayout];
+
     [dose release];
     dose = d;
     [dose retain];
