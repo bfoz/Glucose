@@ -394,11 +394,6 @@ else												\
 			[insulin addObject:[InsulinDose withType:t]];
 		dirty = YES;
 	}
-	else while( [insulin count] < 2 )	// If the array is partially full, pad with blanks
-	{
-		[insulin addObject:[InsulinDose alloc]];
-		dirty = YES;
-	}
 }
 /*
 - (void)dehydrate:(sqlite3 *)db
@@ -411,6 +406,12 @@ else												\
  hydrated = NO;
 }
 */
+
+- (void) addDoseWithType:(InsulinType*)t
+{
+    [insulin addObject:[InsulinDose withType:t]];
+}
+
 #pragma mark -
 #pragma mark Properties
 

@@ -50,6 +50,8 @@
 - (void)flush:(sqlite3 *)db;		// Flush to database if dirty
 - (void) setEditing;
 
+- (void) addDoseWithType:(InsulinType*)t;
+
 - (void) setCategoryWithID:(unsigned)cid;
 - (void) setCategory:(Category*)c;
 - (void) setDose:(NSNumber*)d insulinDose:(InsulinDose*)dose;
