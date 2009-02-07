@@ -412,6 +412,11 @@ else												\
     [insulin addObject:[InsulinDose withType:t]];
 }
 
+- (void) removeDoseAtIndex:(unsigned)i
+{
+    [insulin removeObjectAtIndex:i];
+}
+
 #pragma mark -
 #pragma mark Properties
 
