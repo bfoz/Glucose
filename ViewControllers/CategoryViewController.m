@@ -201,10 +201,10 @@
 	{
 		UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
 		label.numberOfLines = 2;
-		label.text = @"Deleting a Category will delete all records in the category";
+		label.text = @"Add, delete, rename or reorder categories";
 		label.textAlignment = UITextAlignmentCenter;
 		label.backgroundColor = [UIColor clearColor];
-		label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
+		label.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];;
 		return label;
 	}
 	return nil;

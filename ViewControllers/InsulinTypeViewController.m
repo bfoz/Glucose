@@ -252,10 +252,10 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     {
 	UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
 	label.numberOfLines = 2;
-	label.text = @"Deleting an Insulin Type will delete all doses of that type";
+	label.text = @"Add, delete, rename or reorder insulin types";
 	label.textAlignment = UITextAlignmentCenter;
 	label.backgroundColor = [UIColor clearColor];
-	label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
+	label.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];;
 	return label;
     }
     return nil;
