@@ -170,10 +170,16 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    // If a row was selected while editing a LogEntry, update the insulin type
+    //  for the entry's dose. If the entry doesn't have a dose at the 
+    //  specified index, append a new dose object with the selected type.
     if( editedObject  && !self.editing )
     {
 	InsulinType* t = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
-	[self.editedObject setDoseType:t at:self.editedIndex];
+	if( editedIndex < [editedObject.insulin count] )
+	    [editedObject setDoseType:t at:self.editedIndex];
+	else
+	    [editedObject addDoseWithType:t];
     }
 
     // HI guidlines say row should be selected and then deselected
