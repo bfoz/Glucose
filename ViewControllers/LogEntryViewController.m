@@ -200,7 +200,15 @@ static unsigned InsulinPrecision;
 		return 1 + (entry.glucose ? 1 : 0) + (entry.category ? 1 : 0);
 	case 1:
 	    if( self.editing )
-		return [entry.insulin count];
+	    {
+		const unsigned count = [entry.insulin count];
+		switch( count )
+		{
+		    case 0: return 1;
+		    case 1: return 2;
+		    default: return count;
+		}
+	    }
 	    else
 	    {
 		unsigned i = 0;
@@ -352,7 +360,7 @@ static unsigned InsulinPrecision;
     {
 	// If the entry doesn't have a valid number for an insulin type use a regular cell and display the short name. 
 	// Otherwise, use a dual column cell.
-	InsulinDose* dose = [entry.insulin objectAtIndex:row];
+	InsulinDose* dose = ([entry.insulin count] > row) ? [entry.insulin objectAtIndex:row] : nil;
 
 	if( @"DualCellID" == cellID )
 	{
