@@ -209,8 +209,9 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 - (void) tableView:(UITableView*)tv willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)path
 {
     // Put a checkmark on the currently selected row
-    InsulinType* t = [appDelegate.insulinTypes objectAtIndex:path.row];
-    if( editedObject && (t == (InsulinType*)[[[editedObject insulin] objectAtIndex:self.editedIndex] type]) )
+    InsulinType *const t = [appDelegate.insulinTypes objectAtIndex:path.row];
+    const BOOL goodIndex = editedIndex < [editedObject.insulin count];
+    if( editedObject && goodIndex && (t == (InsulinType*)[[[editedObject insulin] objectAtIndex:self.editedIndex] type]) )
 	cell.accessoryType = UITableViewCellAccessoryCheckmark;
     else if( !editedObject && !self.editing && [appDelegate.defaultInsulinTypes containsObject:t] )
 	cell.accessoryType = UITableViewCellAccessoryCheckmark;
