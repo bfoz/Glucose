@@ -393,11 +393,27 @@ static unsigned InsulinPrecision;
     return cell;
 }
 
+- (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)path
+{
+    if( UITableViewCellEditingStyleDelete == editingStyle )
+    {
+	[entry removeDoseAtIndex:path.row];
+	[tv deleteRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
+    }
+    else if( UITableViewCellEditingStyleInsert == editingStyle )
+    {
+	// Fake a row selection to display the insulin picker
+	[self tableView:tv didSelectRowAtIndexPath:path];
+    }
+}
+
 #pragma mark -
 #pragma mark <UITableViewDelegate>
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)path
 {
+    if( 1 == path.section )
+	return YES;
     return NO;
 }
 
@@ -412,15 +428,15 @@ static unsigned InsulinPrecision;
     return (self.editing) ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)path
 {
-    unsigned section = [self translateSection:indexPath.section];
+    unsigned section = [self translateSection:path.section];
     // Don't translate selectedIndexPath because it refers to a real table row
-    self.selectedIndexPath = indexPath;	// State variable: indicate that the user is editing a particular field
+    self.selectedIndexPath = path;	// State variable: indicate that the user is editing a particular field
 
     if( 0 == section )
     {
-	switch( indexPath.row )
+	switch( path.row )
 	{
 	    case 0: 
 		[self toggleDatePicker];
@@ -441,7 +457,7 @@ static unsigned InsulinPrecision;
 	if( !insulinTypeViewController )
 	    insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain];
 	insulinTypeViewController.editedObject = entry;
-	insulinTypeViewController.editedIndex = indexPath.row;
+	insulinTypeViewController.editedIndex = path.row;
 	[self presentModalViewController:insulinTypeViewController animated:YES];
     }
     else if( 2 == section )
