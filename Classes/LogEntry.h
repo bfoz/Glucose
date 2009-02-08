@@ -48,7 +48,7 @@
 - (void)deleteFromDatabase:(sqlite3 *)db;
 //- (void)dehydrate:(sqlite3 *)db;	// Flush and reduce memory footprint
 - (void)flush:(sqlite3 *)db;		// Flush to database if dirty
-- (void) setEditing;
+- (void) setEditing:(BOOL)edit;
 
 - (void) addDoseWithType:(InsulinType*)t;
 - (void) removeDoseAtIndex:(unsigned)i;

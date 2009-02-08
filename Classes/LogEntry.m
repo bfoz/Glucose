@@ -385,15 +385,30 @@ else												\
 }
 
 // When entering edit mode setup defaults for any missing fields (like insulin doses)
-- (void) setEditing
+- (void) setEditing:(BOOL)edit
 {
+    if( edit )
+    {
 	// If the insulin array is empty, populate it with the list of default entries from the prefs bundle
 	if( ![insulin count] )
 	{
-		for( InsulinType* t in appDelegate.defaultInsulinTypes )
-			[insulin addObject:[InsulinDose withType:t]];
-		dirty = YES;
+	    for( InsulinType* t in appDelegate.defaultInsulinTypes )
+		[insulin addObject:[InsulinDose withType:t]];
+	    dirty = YES;
 	}
+    }
+    else    // Flush incomplete doses when edit mode ends
+    {
+	NSMutableIndexSet* indexes = [[NSMutableIndexSet alloc] init];
+	unsigned i = 0;
+	for( InsulinDose* d in insulin )
+	{
+	    if( !d.dose || !d.type || ([d.dose floatValue] == 0) )
+		[indexes addIndex:i];
+	    ++i;
+	}
+	[insulin removeObjectsAtIndexes:indexes];
+    }
 }
 /*
 - (void)dehydrate:(sqlite3 *)db
