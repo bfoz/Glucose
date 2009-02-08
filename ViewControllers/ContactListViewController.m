@@ -18,7 +18,6 @@
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
-    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
     if (self = [super initWithStyle:style])
 	{
 		self.title = @"Contact List";
@@ -35,7 +34,14 @@
 - (void) setEditing:(BOOL)e animated:(BOOL)animated
 {
 	if( e )
+	{
 		self.tableView.allowsSelectionDuringEditing = YES;
+		// Eanble the Add button while editing
+		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showPeoplePicker)];
+	}
+	else
+		self.navigationItem.rightBarButtonItem = nil;
+
 	[super setEditing:e animated:animated];
 }
 
@@ -49,9 +55,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	if( contacts )
-		return self.editing ? [contacts count]+1 : [contacts count];
-    return self.editing ? 1 : 0;
+    return [contacts count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -66,25 +70,30 @@
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
-	if( self.editing && ( !contacts || (row == [contacts count]) ) )
-		cell.text = @"Add New Contact";
-	else
-	{
-		Contact *const c = [contacts objectAtIndex:row];
-		cell.text = (NSString*)ABRecordCopyCompositeName(ABAddressBookGetPersonWithRecordID(ABAddressBookCreate(), c.recordID));
-	}
+    Contact *const c = [contacts objectAtIndex:row];
+#if 0
+    ABRecordRef person = ABAddressBookGetPersonWithRecordID(ABAddressBookCreate(), c.recordID);
+    ABMultiValueRef email = ABRecordCopyValue(person, kABPersonEmailProperty);
+    CFIndex i = ABMultiValueGetIndexForIdentifier(email, c.emailID);
+    CFTypeRef v = ABMultiValueCopyValueAtIndex(email, i);
+    cell.text = [NSString stringWithFormat:@"%@ <%@>", ABRecordCopyCompositeName(person), v];
+#else
+    cell.textAlignment = UITextAlignmentCenter;
+    cell.text = (NSString*)ABRecordCopyCompositeName(ABAddressBookGetPersonWithRecordID(ABAddressBookCreate(), c.recordID));
+#endif
+
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {    
-    if (editingStyle == UITableViewCellEditingStyleDelete)
+    if( editingStyle == UITableViewCellEditingStyleDelete )
 	{
 		const unsigned row = indexPath.row;
 		[contacts removeObjectAtIndex:row];
 		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:YES];
     }
-    if (editingStyle == UITableViewCellEditingStyleInsert)
+    if( editingStyle == UITableViewCellEditingStyleInsert )
 		[self showPeoplePicker];
 }
 
@@ -94,12 +103,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	const unsigned row = indexPath.row;
-
-	if( self.editing && ( !contacts || (row == [contacts count]) ) )
-	{
-		[self showPeoplePicker];
-		return;
-	}
 
 	if( contacts && (row < [contacts count]) )
 	{
@@ -118,9 +121,9 @@
 
 - (UITableViewCellEditingStyle) tableView:(UITableView*)tv editingStyleForRowAtIndexPath:(NSIndexPath*)path
 {
-	if( self.editing && ( !contacts || (path.row == [contacts count]) ) )
-		return UITableViewCellEditingStyleInsert;
+    if( self.editing )
 	return UITableViewCellEditingStyleDelete;
+    return UITableViewCellEditingStyleNone;
 }
 
 #pragma mark -
@@ -128,11 +131,30 @@
 
 - (void) addPerson:(ABRecordRef)person identifier:(ABMultiValueIdentifier)identifier
 {
-	Contact *const c = [[Contact alloc] init];
-	c.recordID = ABRecordGetRecordID(person);
-	c.emailID = identifier;
-	if( !contacts )
-		contacts = [[NSMutableArray alloc] init];
+    const ABRecordID recordID = ABRecordGetRecordID(person);
+
+    if( !contacts )
+	contacts = [[NSMutableArray alloc] init];
+    else    // Nothing to do if the contact is already in the array
+    {
+	unsigned i = 0;
+	for( Contact* c in contacts )
+	{
+	    if( (c.recordID == recordID) && (c.emailID == identifier) )
+	    {
+		// Scroll to and highlight the duplicate row so the user knows what's happening
+		[self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
+		return;
+	    }
+	    else
+		++i;
+	}
+    }
+    
+    Contact *const c = [[Contact alloc] init];
+    c.recordID = recordID;
+    c.emailID = identifier;
+    
 	[contacts addObject:c];
 	// insertRowsAtIndexPath calls cellForRowAtIndexPath before returning so
 	//  contacts array must be changed first. Unfortunately, this means count
@@ -156,10 +178,6 @@
 
 - (BOOL) peoplePickerNavigationController:(ABPeoplePickerNavigationController*)picker shouldContinueAfterSelectingPerson:(ABRecordRef)person
 {
-	NSString* name = (NSString*)ABRecordCopyCompositeName(person);
-	NSLog(@"picked person %@", name);
-	[name release];
-	
 	ABMultiValueRef email = ABRecordCopyValue(person, kABPersonEmailProperty);
 	// If the record has only one email address, use it. Otherwise the user must choose.
 	if( ABMultiValueGetCount(email) == 1 )
