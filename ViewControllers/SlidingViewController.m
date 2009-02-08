@@ -113,18 +113,18 @@
 
 - (void)keyboardWillShow:(NSNotification *)notif
 {
-	CGRect r;
-	[[notif.userInfo objectForKey:UIKeyboardBoundsUserInfoKey] getValue:&r];
-	keyboardHeight = r.size.height;
-	if( editCellBottom )
-        [self setViewMovedUp:YES];
+    if( keyboardShown )
+	return;
+
+    keyboardHeight = [[notif.userInfo objectForKey:UIKeyboardBoundsUserInfoKey] CGRectValue].size.height;
+    [self setViewMovedUp:YES];
+    keyboardShown = YES;
 }
 
 - (void)keyboardWillHide:(NSNotification*)notif
 {
-	if( editCellBottom )
-		[self setViewMovedUp:NO];
-	editCellBottom = 0;	// Clear this to indicate that nothing is being edited that needs the view moved
+    [self setViewMovedUp:NO];
+    keyboardShown = NO;
 }
 
 #pragma mark -
@@ -133,31 +133,22 @@
 // Animate the entire view up or down, to prevent the keyboard from covering the edited row
 - (void)setViewMovedUp:(BOOL)movedUp
 {
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.3];
-    // Make changes to the view's frame inside the animation block. They will be animated instead
-    // of taking place immediately.
-    CGRect rect = self.view.frame;
-
-	CGFloat h = keyboardHeight - editCellBottom;
-	h = (h<0) ? 0 : h;
-	
     if (movedUp)
-	{
-        // If moving up, not only decrease the origin but increase the height so the view 
-        // covers the entire screen behind the keyboard.
-        rect.origin.y -= h;
-        rect.size.height += h;
+    {
+	// Make changes to the view's frame inside an animation block
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationDuration:0.3];
+	CGRect rect = [self.tableView frame];
+	rect.size.height -= keyboardHeight;	// Make room for the keyboard
+	self.tableView.frame = rect;	
+	[UIView commitAnimations];
     }
-	else
-	{
-        // If moving down, not only increase the origin but decrease the height.
-        rect.origin.y += h;
-        rect.size.height -= h;
+    else
+    {
+	CGRect rect = [self.tableView frame];
+        rect.size.height += keyboardHeight;	// Put the height back to where it was
+	self.tableView.frame = rect;
     }
-    self.view.frame = rect;
-    
-    [UIView commitAnimations];
 }
 
 #pragma mark -

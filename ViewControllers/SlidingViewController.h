@@ -12,6 +12,7 @@
 {
 	CGFloat			editCellBottom;
 	CGFloat			keyboardHeight;
+    BOOL		    keyboardShown;
 	UITableViewCell*	editCell;
 	id				editField;
 	UIBarButtonItem*	oldRightBarButtonItem;
