@@ -19,7 +19,6 @@
 {
 	AppDelegate* appDelegate;
     NSDateFormatter *dateFormatter;
-    NSNumberFormatter*	glucoseFormatter;
 //	unsigned	inspectingSectionID;
 //	NSMutableDictionary*	inspectingSection;
 	LogEntryViewController* logEntryViewController;

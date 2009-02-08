@@ -20,14 +20,13 @@
 
 @property (nonatomic, readonly)	AppDelegate*	appDelegate;
 @property (nonatomic, retain)	NSDateFormatter*	dateFormatter;
-@property (nonatomic, readonly) NSNumberFormatter* glucoseFormatter;
 @property (nonatomic, retain) SettingsViewController* settingsViewController;
 
 @end
 
 @implementation LogViewController
 
-@synthesize appDelegate, dateFormatter, glucoseFormatter;
+@synthesize appDelegate, dateFormatter;
 @synthesize logEntryViewController, settingsViewController;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -46,10 +45,6 @@
 		// Create a date formatter to convert the date to a string format.
 		self.dateFormatter = [[NSDateFormatter alloc] init];
 		[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-
-		// A number formatter for glucose measurements
-		glucoseFormatter = [[NSNumberFormatter alloc] init];
-		[glucoseFormatter setMaximumFractionDigits:1];
 
 		// Register to be notified whenever the sections array changes
 		[appDelegate addObserver:self forKeyPath:@"sections" 
@@ -250,9 +245,9 @@
 //	cell.entry = entry;
 	cell.labelTimestamp.text = [dateFormatter stringFromDate:entry.timestamp];
 	cell.labelCategory.text = entry.category ? entry.category.categoryName : @"";
-	[glucoseFormatter setPositiveSuffix:entry.glucoseUnits];
-	[glucoseFormatter setNegativeSuffix:entry.glucoseUnits];
-	cell.labelGlucose.text = entry.glucose ? [glucoseFormatter stringFromNumber:entry.glucose] : nil;
+    NSString *const units = entry.glucoseUnits;
+    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
+    cell.labelGlucose.text = entry.glucose ? [NSString localizedStringWithFormat:@"%.*f%@", precision, [entry.glucose floatValue], units] : nil;
 	cell.note = entry.note;
 
 	// Color the glucose values accordingly
