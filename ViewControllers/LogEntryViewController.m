@@ -28,7 +28,6 @@
 
 @property (nonatomic, retain)	NumberFieldCell*	glucoseCell;
 @property (nonatomic, readonly) NSDateFormatter* dateFormatter;
-@property (nonatomic, readonly) NSNumberFormatter* numberFormatter;
 @property (nonatomic, retain)	NSIndexPath*	selectedIndexPath;
 @property (nonatomic, retain)	UITableViewCell*	cellTimestamp;
 
@@ -40,7 +39,6 @@
 @implementation LogEntryViewController
 
 @synthesize dateFormatter, entry, entrySection;
-@synthesize numberFormatter;
 @synthesize glucoseCell;
 @synthesize selectedIndexPath, cellTimestamp;
 
@@ -62,9 +60,6 @@ static unsigned InsulinPrecision;
 	dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-	
-	// Create a date formatter to convert the date to a string format.
-	numberFormatter = [[NSNumberFormatter alloc] init];
 	
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	NSNumber* p = [defaults objectForKey:kDefaultInsulinPrecision];
@@ -92,7 +87,6 @@ static unsigned InsulinPrecision;
     [selectedIndexPath release];
     [categoryViewController release];
     [insulinTypeViewController release];
-    [numberFormatter release];
     [dateFormatter release];
     [super dealloc];
 }
@@ -578,8 +572,7 @@ static unsigned InsulinPrecision;
 
 - (void)doseDidEndEditing:(DoseFieldCell *)cell
 {
-    [entry setDose:[numberFormatter numberFromString:cell.doseField.text] insulinDose:cell.dose];
-//  cell.dose.dose = [numberFormatter numberFromString:cell.doseField.text];
+    [entry setDose:[cell.doseField number] insulinDose:cell.dose];
 }
 
 - (void)saveDoseAction:(id)sender
