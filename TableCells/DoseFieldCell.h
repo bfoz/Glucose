@@ -22,7 +22,7 @@
 
 @property (nonatomic, assign) id <DoseFieldCellDelegate> delegate;
 @property (nonatomic, retain) InsulinDose* dose;
-@property (nonatomic, readonly) UITextField* doseField;
+@property (nonatomic, readonly) NumberField* doseField;
 @property (nonatomic, assign) int   precision;
 
 @end
