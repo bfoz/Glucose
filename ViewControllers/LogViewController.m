@@ -252,9 +252,21 @@
 
 	// Color the glucose values accordingly
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-	if( [entry.glucose compare:[NSNumber numberWithFloat:[defaults floatForKey:kHighGlucoseWarning0]]] == NSOrderedDescending )
+    NSString* keyHigh;
+    NSString* keyLow;
+    if( units == kGlucoseUnits_mgdL )
+    {
+	keyHigh = kHighGlucoseWarning0;
+	keyLow = kLowGlucoseWarning0;
+    }
+    else
+    {
+	keyHigh = kHighGlucoseWarning1;
+	keyLow = kLowGlucoseWarning1;
+    }
+    if( [entry.glucose floatValue] > [defaults floatForKey:keyHigh] )
 		cell.labelGlucose.textColor = [UIColor blueColor];
-	else if( [entry.glucose compare:[NSNumber numberWithFloat:[defaults floatForKey:kLowGlucoseWarning0]]] == NSOrderedAscending )
+    else if( [entry.glucose floatValue] < [defaults floatForKey:keyLow] )
 		cell.labelGlucose.textColor = [UIColor redColor];
 	else
 		cell.labelGlucose.textColor = [UIColor darkTextColor];
