@@ -46,7 +46,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	
+
     // Watch the keyboard so the user interface can be moved up or down
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) 
 												 name:UIKeyboardWillShowNotification object:self.view.window]; 
@@ -140,7 +140,7 @@
 	[UIView setAnimationDuration:0.3];
 	CGRect rect = [self.tableView frame];
 	rect.size.height -= keyboardHeight;	// Make room for the keyboard
-	self.tableView.frame = rect;	
+	[self.tableView setFrame:rect];
 	[UIView commitAnimations];
     }
     else
