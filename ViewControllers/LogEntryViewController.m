@@ -28,7 +28,6 @@
 
 @property (nonatomic, retain)	NumberFieldCell*	glucoseCell;
 @property (nonatomic, readonly) NSDateFormatter* dateFormatter;
-@property (nonatomic, readonly) NSNumberFormatter* glucoseFormatter;
 @property (nonatomic, readonly) NSNumberFormatter* numberFormatter;
 @property (nonatomic, retain)	NSIndexPath*	selectedIndexPath;
 @property (nonatomic, retain)	UITableViewCell*	cellTimestamp;
@@ -41,7 +40,7 @@
 @implementation LogEntryViewController
 
 @synthesize dateFormatter, entry, entrySection;
-@synthesize glucoseFormatter, numberFormatter;
+@synthesize numberFormatter;
 @synthesize glucoseCell;
 @synthesize selectedIndexPath, cellTimestamp;
 
@@ -67,10 +66,6 @@ static unsigned InsulinPrecision;
 	// Create a date formatter to convert the date to a string format.
 	numberFormatter = [[NSNumberFormatter alloc] init];
 	
-	// A number formatter for glucose measurements
-	glucoseFormatter = [[NSNumberFormatter alloc] init];
-	[glucoseFormatter setMaximumFractionDigits:1];
-
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	NSNumber* p = [defaults objectForKey:kDefaultInsulinPrecision];
 	InsulinPrecision = p ? [p intValue] : 0;
@@ -349,9 +344,9 @@ static unsigned InsulinPrecision;
 		}
 		else
 		{
-		    [glucoseFormatter setPositiveSuffix:entry.glucoseUnits];
-		    [glucoseFormatter setNegativeSuffix:entry.glucoseUnits];
-		    cell.text = entry.glucose ? [glucoseFormatter stringFromNumber:entry.glucose] : nil;
+		    NSString *const units = entry.glucoseUnits;
+		    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
+		    cell.text = entry.glucose ? [NSString localizedStringWithFormat:@"%.*f%@", precision, [entry.glucose floatValue], units] : nil;
 		}
 		break;
 	}

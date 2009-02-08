@@ -29,7 +29,6 @@
     CategoryViewController*	categoryViewController;
     InsulinTypeViewController*	insulinTypeViewController;
     NSDateFormatter*	dateFormatter;
-    NSNumberFormatter*	glucoseFormatter;
     NSNumberFormatter*	numberFormatter;
     NumberFieldCell*	glucoseCell;
     NSIndexPath*	selectedIndexPath;
