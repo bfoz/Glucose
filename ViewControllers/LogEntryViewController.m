@@ -127,9 +127,8 @@ static unsigned InsulinPrecision;
     //  used as a state variable in viewWillDisapper
     if( !e && self.selectedIndexPath )
 	self.selectedIndexPath = nil;
-    if( e )
-	[entry setEditing];
-    else if( entry.dirty )
+    [entry setEditing:e];
+    if( !e && entry.dirty )
     {
 	LogDay *const s = [appDelegate getSectionForDate:entry.timestamp];
 	if ( s != entrySection )
