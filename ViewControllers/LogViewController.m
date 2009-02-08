@@ -202,10 +202,16 @@
 
 	LogDay *const s = [appDelegate.sections objectAtIndex:section];
 
-	float averageGlucose = s.averageGlucose;
+    const float averageGlucose = s.averageGlucose;
 	NSString* avg = @"";
 	if( averageGlucose != 0 )
-		avg = [NSString stringWithFormat:@" (%@)", [glucoseFormatter stringFromNumber:[NSNumber numberWithFloat:averageGlucose]],nil];
+    {
+	// Use the units from the section's first entry and hope the user
+	//  hasn't been switching units within a section
+	NSString *const units = [[s.entries objectAtIndex:0] glucoseUnits];
+	const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
+	avg = [NSString localizedStringWithFormat:@" (%.*f%@)", precision, averageGlucose, units];
+    }
 
 	// Only the first section could possibly be the "today" section
 	//  So return SectionName for all but the first section
