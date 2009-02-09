@@ -877,6 +877,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[exportStart retain];
 	exportStartField.text = [shortDateFormatter stringFromDate:exportStart];
 	[self updateExportRowText];
+	[[NSUserDefaults standardUserDefaults] setObject:exportStart forKey:kLastExportGoogleFromDate];
 }
 
 - (void) exportEndChangeAction
@@ -886,6 +887,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[exportEnd retain];
 	exportEndField.text = [shortDateFormatter stringFromDate:exportEnd];
 	[self updateExportRowText];
+	[[NSUserDefaults standardUserDefaults] setObject:exportEnd forKey:kLastExportGoogleToDate];
 }
 
 @end
