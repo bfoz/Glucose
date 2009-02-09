@@ -340,9 +340,9 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 	switch( section )
 	{
-		case 2: cellID = @"Share";
-		case 3: cellID = @"Export";
-		default: cellID = @"CellID";
+		case 2: cellID = @"Share"; break;
+		case 3: cellID = @"Export"; break;
+		default: cellID = @"CellID"; break;
 	}
 
 	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
