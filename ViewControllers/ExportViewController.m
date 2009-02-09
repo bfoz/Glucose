@@ -334,19 +334,26 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {	
-	static NSString *MyIdentifier = @"Cell";
-	
-	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:MyIdentifier];
+	NSString* cellID;
+	const unsigned	row		= indexPath.row;
+	const unsigned	section	= indexPath.section;
+
+	switch( section )
+	{
+		case 2: cellID = @"Share";
+		case 3: cellID = @"Export";
+		default: cellID = @"CellID";
+	}
+
+	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
 	{
-		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:MyIdentifier] autorelease];
+		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	}
 
 	UITextField*	f	= nil;
 	UILabel*	label	= nil;
-	const unsigned	row		= indexPath.row;
-	const unsigned	section	= indexPath.section;
 	switch( section )
 	{
 		case 0:
