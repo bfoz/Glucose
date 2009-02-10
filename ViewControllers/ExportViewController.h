@@ -19,6 +19,7 @@
 	NSDate*	exportStart;
 	NSDate*	exportEnd;
 	BOOL	exportEnabled;
+	NSString*	failureTitle;
 
 	UIAlertView*		progressAlert;
 	UIProgressView*		progressView;
@@ -44,9 +45,11 @@
 	BOOL				showingContacts;
 }
 
-@property (nonatomic, retain) NSMutableDictionary *keychainData;
+@property (nonatomic, retain) NSMutableDictionary*	keychainData;
+@property (nonatomic, retain) NSString*	failureTitle;
 
 - (void) addACLTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataFeedACL*)object;
+- (void) findExportFolder;
 - (void) keychainInit;
 - (void) updateExportRowText;
 

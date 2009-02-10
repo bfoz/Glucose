@@ -12,6 +12,7 @@
 #import "Constants.h"
 #import "Contact.h"
 #import "InsulinType.h"
+#import "LogEntry.h"
 
 #import "ExportViewController.h"
 #import "ContactListViewController.h"
@@ -28,19 +29,21 @@
 #define	kSecValueData	@"kSecValueData"
 #endif // TARGET_IPHONE_SIMULATOR
 
+#define	kGoogleExportFolder	@"Glucose Export"
+
 #define	GENERIC_PASSWORD	0
 
 #define	SECTION_ACCOUNT		0
 #define	SECTION_DATE_RANGE	1
 #define	SECTION_SHARE		2
-#define	SECTION_EXPORT		2
+#define	SECTION_EXPORT		3
 
 @implementation ExportViewController
 
 static AppDelegate *appDelegate = nil;
 static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
-@synthesize keychainData;
+@synthesize keychainData, failureTitle;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -73,7 +76,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		[shareSwitch addTarget:self action:@selector(shareSwitchAction) forControlEvents:UIControlEventValueChanged];
 
 		showingContacts = NO;
-
 		[self keychainInit];
 	}
 	return self;
@@ -151,6 +153,12 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	if( showingContacts )
 	{
 		[self saveContactList];
+		if( ![contacts count] )
+		{
+			// Animate this so the user can see what happened
+			[shareSwitch setOn:NO animated:YES];
+			[self shareSwitchAction];	// setOn:animated: doesn't generate an action
+		}
 		showingContacts = NO;
 	}
 }
@@ -315,7 +323,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return 3;
+    return 4;
 }
 
 
@@ -325,7 +333,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	{
 		case 0: return 2;	// Account info
 		case 1: return 2;	// Date range
-		case 2: return 1;
+		case 2: return 1;	// Sharing
 		case 3: return 1;	// Export button
 	}
 	return 0;
@@ -412,11 +420,11 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			break;
 		}
 		case 2:
-/*			cell.text = @"Share Exported File";
+			cell.text = @"Share Exported File";
 			cell.accessoryView = shareSwitch;
 			break;
 		case 3:
-*/			switch( row )
+			switch( row )
 			{
 				case 0:
 					cell.textAlignment = UITextAlignmentCenter;
@@ -459,7 +467,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			case 1: [self showDatePicker:exportEndCell mode:UIDatePickerModeDate initialDate:exportEnd changeAction:@selector(exportEndChangeAction)]; break;
 		}
 	}
-/*	else if( section == SECTION_SHARE )
+	else if( section == SECTION_SHARE )
 	{
 		if( !shareSwitch.on )
 		{
@@ -475,7 +483,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		[clvc setEditing:YES animated:NO];
 		showingContacts = YES;
 	}
-*/	else if( (section == SECTION_EXPORT) && exportEnabled )
+	else if( (section == SECTION_EXPORT) && exportEnabled )
 	{
 		// Refresh the service object's credentials in case they've changed
 		[appDelegate setUserCredentialsWithUsername:usernameField.text
@@ -493,10 +501,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		// Show the network activity indicator
 		[UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 
-		[appDelegate.docService fetchDocsFeedWithURL:[NSURL URLWithString:kGDataGoogleDocsDefaultPrivateFullFeed]
-							 delegate:self
-					didFinishSelector:@selector(listTicket:finishedWithFeed:)
-					  didFailSelector:@selector(listTicket:failedWithError:)];
+	[self findExportFolder];
 	}
 }
 
@@ -571,128 +576,123 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	}
 }
 
-#pragma mark Document List feed
-
-- (void) listTicket:(GDataServiceTicket *)ticket finishedWithFeed:(GDataFeedDocList *)object
+- (void) exportFail:(NSString*)title message:(NSString*)message
 {
-	GDataEntryDocBase *newEntry = [GDataEntrySpreadsheetDoc documentEntry];
-
-	NSString *title = [NSString stringWithFormat:@"Glucose Export from %@ to %@", [shortDateFormatter stringFromDate:exportStart], [shortDateFormatter stringFromDate:exportEnd], nil];
-	[newEntry setTitleWithString:title];
-	
-	NSMutableData *uploadData = [NSMutableData dataWithCapacity:1024];
-	NSAssert(uploadData, @"Could not create NSMutableData");
-
-	if( !uploadData )
-		[self cleanupExport];
-
-	// Append the header row
-	NSString* headerString = @"timestamp,glucose,glucoseUnits,category,dose0,type0,dose1,type1,note\n";
-	const char* utfHeader = [headerString UTF8String];
-	[uploadData appendBytes:utfHeader length:strlen(utfHeader)];
-	
-	// Fetch the entries for export
-	const char* q = "SELECT timestamp,glucose,glucoseUnits,categoryID,dose0,typeID0,dose1,typeID1,note FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime') ORDER BY timestamp ASC";
-	sqlite3_stmt *statement;
-	unsigned numRows = 0;
-	if( sqlite3_prepare_v2(appDelegate.database, q, -1, &statement, NULL) == SQLITE_OK )
-	{
-		sqlite3_bind_int(statement, 1, [exportStart timeIntervalSince1970]);
-		sqlite3_bind_int(statement, 2, [exportEnd timeIntervalSince1970]);
-
-		NSDateFormatter* f = [[NSDateFormatter alloc] init];
-		[f setDateStyle:NSDateFormatterMediumStyle];
-		[f setTimeStyle:NSDateFormatterMediumStyle];
-		const char* s;
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			const int count = sqlite3_column_count(statement);
-			for( unsigned i=0; i < count; ++i )
-			{
-				if( i )
-					[uploadData appendBytes:"," length:strlen(",")];
-				switch( i )
-				{
-					case 0:	//timestamp
-					{
-						const int a = sqlite3_column_int(statement, i);
-						s = [[f stringFromDate:[NSDate dateWithTimeIntervalSince1970:a]] UTF8String];
-					}
-					break;
-					case 2:	// glucoseUnits
-					{
-						const int a = sqlite3_column_int(statement, i);
-						s = a ? "mmol/L" : "mg/dL";
-					}
-					break;
-					case 3:	// categoryID
-					{
-						const int a = sqlite3_column_int(statement, i);
-						Category* c = [appDelegate findCategoryForID:a];
-						s = [c.categoryName UTF8String];
-					}
-					break;
-					case 5:	// typeID0
-					case 7:	// typeID1
-					{
-						const int a = sqlite3_column_int(statement, i);
-						InsulinType* t = [appDelegate findInsulinTypeForID:a];
-						s = [t.shortName UTF8String];
-					}
-					break;
-					default:
-						s = (char*)sqlite3_column_text(statement, i);
-				}
-
-				[uploadData appendBytes:"\"" length:strlen("\"")];
-				if( s )
-					[uploadData appendBytes:s length:strlen(s)];
-				[uploadData appendBytes:"\"" length:strlen("\"")];
-			}
-			[uploadData appendBytes:"\n" length:strlen("\n")];
-			++numRows;
-		}
-		sqlite3_finalize(statement);
-		[f release];
-	}
-
-	if( !numRows )	// Bail out if no rows
-	{
-		[self cleanupExport];
-		return;
-	}
-
-	[newEntry setUploadData:uploadData];
-	[newEntry setUploadMIMEType:@"text/csv"];
-	[newEntry setUploadSlug:title];
-	
-	// make service tickets call back into our upload progress selector
-	GDataServiceGoogleDocs *const service = appDelegate.docService;
-	
-	SEL progressSel = @selector(inputStream:hasDeliveredByteCount:ofTotalByteCount:);
-	[service setServiceUploadProgressSelector:progressSel];
-	
-	// insert the entry into the docList feed
-	[service fetchDocEntryByInsertingEntry:newEntry
-								forFeedURL:[[object postLink] URL]
-								  delegate:self
-						 didFinishSelector:@selector(uploadFileTicket:finishedWithEntry:)
-						   didFailSelector:@selector(uploadFileTicket:failedWithError:)];
-	
-	[service setServiceUploadProgressSelector:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
+						    message:message
+						   delegate:self
+					  cancelButtonTitle:@"OK"
+					  otherButtonTitles: nil];
+    [alert show];
+    [alert release];
+    [self cleanupExport];
 }
 
-- (void) listTicket:(GDataServiceTicket *)ticket failedWithError:(NSError *)error
+- (void) ticket:(GDataServiceTicket *)ticket failedWithError:(NSError *)error
 {
-	NSLog(@"fail: %@", [error localizedDescription]);
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"DocsFeed Failure"
-													message:[error localizedDescription]
-												   delegate:self
-										  cancelButtonTitle:@"OK"
-										  otherButtonTitles: nil];
-	[alert show];
-	[alert release];
+    [self exportFail:failureTitle message:[error localizedDescription]];
+}
+
+#pragma mark Folder Handling
+
+- (void) exportToFolderDoc:(GDataEntryFolderDoc*)folder
+{
+    NSString *const uri = [[folder content] sourceURI];
+    if( !uri )
+	return;
+
+    self.failureTitle = @"Folder Feed";
+    [appDelegate.docService fetchDocsFeedWithURL:[NSURL URLWithString:uri]
+					delegate:self
+			       didFinishSelector:@selector(docsFeedTicket:finishedWithFeed:)
+				 didFailSelector:@selector(ticket:failedWithError:)];
+}
+
+- (void) createFolder:(NSString*)name url:(NSURL*)url
+{
+    // add a category that includes a "folder" label to work around the server issue
+    GDataCategory *category = [GDataCategory categoryWithScheme:kGDataCategoryScheme
+							   term:kGDataCategoryFolderDoc];
+    [category setLabel:@"folder"];
+
+    GDataEntryFolderDoc *docEntry = [GDataEntryFolderDoc documentEntry];
+    [docEntry setCategories:[NSArray arrayWithObject:category]];
+    [docEntry setTitleWithString:name];
+
+    progressAlert.message = [NSString stringWithFormat:@"Creating folder '%@'", kGoogleExportFolder];
+    self.failureTitle = @"Folder Create Failure";
+    [appDelegate.docService fetchDocEntryByInsertingEntry:docEntry
+					       forFeedURL:url
+						 delegate:self
+					didFinishSelector:@selector(createFolderTicket:finishedWithEntry:)
+					  didFailSelector:@selector(ticket:failedWithError:)]; 
+}
+
+- (void) createFolderTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataEntryFolderDoc *)folder
+{
+    [self exportToFolderDoc:folder];
+}
+
+- (void) findExportFolder
+{
+    NSURL *const url = [NSURL URLWithString:@"http://docs.google.com/feeds/documents/private/full/-/folder?max-results=1&showfolders=true&title=Glucose+Export&title-exact=true"];
+    GDataQueryDocs *const q = [GDataQueryDocs documentQueryWithFeedURL:url];
+
+    progressAlert.message = @"Fetching Folder Feed";
+    self.failureTitle = @"Find Export Folder";
+    [appDelegate.docService fetchDocsQuery:q
+				  delegate:self
+			 didFinishSelector:@selector(findExportFolderTicket:finishedWithFeed:)
+			   didFailSelector:@selector(ticket:failedWithError:)];
+}
+
+- (void) findExportFolderTicket:(GDataServiceTicket *)ticket finishedWithFeed:(GDataFeedDocList *)feed
+{
+    unsigned count = [[feed entries] count];
+    if( 0 == count )	// Create a new folder if none was found
+	[self createFolder:kGoogleExportFolder url:[[feed postLink] URL]];
+    else if( count > 1 )
+	[self exportFail:failureTitle message:@"Too many folders returned"];
+    else
+	[self exportToFolderDoc:[[feed entries] objectAtIndex:0]];
+}
+
+#pragma mark Document List feed
+
+- (void) docsFeedTicket:(GDataServiceTicket *)ticket finishedWithFeed:(GDataFeedDocList *)feed
+{
+    NSData *const data = [LogEntry createCSV:appDelegate.database from:exportStart to:exportEnd];
+    if( !data )
+    {
 	[self cleanupExport];
+	return;
+    }
+
+    NSString *const title = [NSString stringWithFormat:@"Glucose Export from %@ to %@", [shortDateFormatter stringFromDate:exportStart], [shortDateFormatter stringFromDate:exportEnd], nil];
+
+    GDataEntryDocBase *docEntry = [GDataEntrySpreadsheetDoc documentEntry];
+    [docEntry setUploadMIMEType:@"text/csv"];
+
+    [docEntry setTitleWithString:title];
+    [docEntry setUploadData:data];
+    [docEntry setUploadSlug:title];
+
+	GDataServiceGoogleDocs *const service = appDelegate.docService;
+	
+    // Have new service tickets call back into an upload progress selector
+	SEL progressSel = @selector(inputStream:hasDeliveredByteCount:ofTotalByteCount:);
+	[service setServiceUploadProgressSelector:progressSel];
+
+	// Do the insert
+	self.failureTitle = @"Export Failed";
+	[service fetchDocEntryByInsertingEntry:docEntry
+								forFeedURL:[[feed postLink] URL]
+								  delegate:self
+						 didFinishSelector:@selector(uploadFileTicket:finishedWithEntry:)
+						   didFailSelector:@selector(ticket:failedWithError:)];
+
+	// Disable the progress callback for new tickets
+	[service setServiceUploadProgressSelector:nil];
 }
 
 #pragma mark File Upload
@@ -704,10 +704,11 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	progressView.progress = ((float)numberOfBytesRead)/dataLength;
 }
 
-// upload finished successfully
+// The spreadsheet has been successfuly uploaded. Now update the ACL entryies if
+//  sharing has been enabled, otherwise clean up and return
 - (void)uploadFileTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataEntryDocBase *)entry
 {
-//	if( !shareSwitch.on )
+    if( !shareSwitch.on )
 	{
 		[self finishExport];
 		return;
@@ -718,24 +719,12 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[self loadContactList];
 	if( [contacts count] )
 	{
-		[appDelegate.docService fetchACLFeedWithURL:[[entry ACLFeedLink] URL]
+	self.failureTitle = @"ACL Feed Failed";
+	[appDelegate.docService fetchACLFeedWithURL:[[entry ACLFeedLink] URL]
 										   delegate:self
 								  didFinishSelector:@selector(aclTicket:finishedWithFeed:)
-									didFailSelector:@selector(aclTicket:failedWithError:)];
+									didFailSelector:@selector(ticket:failedWithError:)];
 	}
-}
-
-// upload failed
-- (void)uploadFileTicket:(GDataServiceTicket *)ticket failedWithError:(NSError *)error
-{
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Export Failed"
-													message:[error localizedDescription]
-												   delegate:self
-										  cancelButtonTitle:@"OK"
-										  otherButtonTitles: nil];
-	[alert show];
-	[alert release];
-	[self cleanupExport];
 }
 
 #pragma mark ACL feed
@@ -744,18 +733,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 {
 	aclURL = [[object postLink] URL];
 	[self addACLTicket:nil finishedWithEntry:nil];
-}
-
-- (void)aclTicket:(GDataServiceTicket *)ticket failedWithError:(NSError *)error
-{
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ACL Feed Failed"
-													message:[error localizedDescription]
-												   delegate:self
-										  cancelButtonTitle:@"OK"
-										  otherButtonTitles: nil];
-	[alert show];
-	[alert release];
-	[self cleanupExport];
 }
 
 #pragma mark Add ACL Entries
@@ -784,11 +761,12 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		GDataEntryACL* acl = [GDataEntryACL ACLEntryWithScope:scope role:role];
 
 		GDataServiceGoogleDocs *const service = appDelegate.docService;
+		self.failureTitle = @"Share Failed";
 		[service fetchACLEntryByInsertingEntry:acl
 									forFeedURL:aclURL
 									  delegate:self
 							 didFinishSelector:@selector(addACLTicket:finishedWithEntry:)
-							   didFailSelector:@selector(addACLTicket:failedWithError:)];
+							   didFailSelector:@selector(ticket:failedWithError:)];
 
 		CFRelease(v);
 		CFRelease(email);
@@ -797,19 +775,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	else
 		[self finishExport];
 }
-
-- (void) addACLTicket:(GDataServiceTicket *)ticket failedWithError:(NSError *)error
-{
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Share Failed"
-													message:[error localizedDescription]
-												   delegate:self
-										  cancelButtonTitle:@"OK"
-										  otherButtonTitles: nil];
-	[alert show];
-	[alert release];
-	[self cleanupExport];
-}
-
 
 #pragma mark -
 #pragma mark <UITextFieldDelegate>
