@@ -1,4 +1,4 @@
-Log blood glucose measurements and insulin doses.
+Log blood glucose measurements and insulin doses for diabetes management.
 
 Glucose is meant to be a convenient and simple tool for helping diabetics record blood glucose measurements and insulin usage. It's built on the principle of doing one thing and doing it well, and should have everything needed for day to day use. If you find that a frequently needed feature is missing, please let me know.
 
@@ -6,16 +6,18 @@ Thanks to everyone at Ars Technica's Mac forum who helped me test and refine Glu
 
 NOTE: Insulin is marketed under many brand names around the world. Instead of trying to keep track of the various brands for different regions, Glucose simply uses the scientific name for each insulin type. For example, if you're using Novo Nordisk's Novolog brand of Insulin Aspart, you'll choose Aspart in the insulin types list. If you're not sure of the proper name for the insulin you use look on the packaging or contact your doctor or pharmacist.
 
-Features in version 0.5
+Features in version 0.6
 - Record blood glucose measurements
 - Support for mg/dL and mmol/L
 - Record insulin doses
+- Support for fractional insulin doses
 - Record a note with each entry
 - Categorize log entries
 - Color-coded display of high/low readings
 - Customizable categories
 - Customizable insulin types
 - Export to Google Spreadsheets
+- Automatically share exported data with a list of contacts
 
 ToDo List
 - Graphs, plots and statistics

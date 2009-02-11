@@ -1,3 +1,16 @@
+Version 0.6 - February 10, 2009
+- Support for sharing exported files with a list of contacts
+- Exports to Google Docs are now uploaded to the 'Glucose Export' folder
+- Switched to "cash-register" style input for fractional values in mmol/L mode
+- Support for fractional insulin doses. Enabled with the "Fractional Insulin" switch on the Settings screen.
+- Google Data client library version 1.6
+- Requires iPhone OS 2.2 or later (fixes a few layout issues)
+- Deleting an in-use category displays a warning and requires user confirmation
+- Deleting an in-use insulin type displays a warning and requires user confirmation
+- New-entry default insulin selection is now saved properly
+- Glucose values are properly colored in mmol/L mode
+- Export date range is now saved properly
+
 Version 0.5 - December 7, 2008
 - Performance improvements for large datasets
 - Display correct keyboard for glucose threshold fields in mmol/L mode
