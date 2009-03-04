@@ -329,6 +329,26 @@ static unsigned InsulinPrecision;
 		    NSString *const units = entry.glucoseUnits;
 		    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
 		    cell.text = entry.glucose ? [NSString localizedStringWithFormat:@"%.*f%@", precision, [entry.glucose floatValue], units] : nil;
+		    // Color the glucose values accordingly
+		    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+		    NSString* keyHigh;
+		    NSString* keyLow;
+		    if( units == kGlucoseUnits_mgdL )
+		    {
+			keyHigh = kHighGlucoseWarning0;
+			keyLow = kLowGlucoseWarning0;
+		    }
+		    else
+		    {
+			keyHigh = kHighGlucoseWarning1;
+			keyLow = kLowGlucoseWarning1;
+		    }
+		    if( [entry.glucose floatValue] > [defaults floatForKey:keyHigh] )
+			cell.textColor = [UIColor blueColor];
+		    else if( [entry.glucose floatValue] < [defaults floatForKey:keyLow] )
+			cell.textColor = [UIColor redColor];
+		    else
+			cell.textColor = [UIColor darkTextColor];
 		}
 		break;
 	}
