@@ -13,8 +13,8 @@
 		</div>
 		<div style="text-align:center">
 			<h1>Glucose</h1>
-			<img src="./screenshots/release_0.4/main.jpg">
-			<img src="./screenshots/release_0.4/newentry.jpg">
+			<img src="./screenshots/release_0.6/main.jpg">
+			<img src="./screenshots/release_0.6/newentry.jpg">
 		</div>
 		<div id="content">
 			<p>Glucose is an iPhone application that aids diabetics in monitoring and recording glucose measurements.</p>
@@ -25,6 +25,8 @@
 				<li>Log glucose readings and Insulin dosage</li>
 				<li>Support for mg/dL and mmol/L</li>
 				<li>Export to Google Docs Spreadsheets</li>
+				<li>Automatically share exported data with a list of contacts</li>
+				<li>Support for fractional insulin doses</li>
 				<li>Customizable Categories and Insulin types</li>
 				<li>Color-coded display of high/low readings</li>
 			</ul>
@@ -58,6 +60,21 @@
 			<p>Glucose is Copyright 2008 by <a href="mailto:bfoz@bfoz.net">Brandon Fosdick</a>.</p>
 
 			<h2>History</h2>
+			<p><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.6</a> - Released February 10, 2009
+				<ul>
+					<li>Support for sharing exported files with a list of contacts</li>
+					<li>Exports to Google Docs are now uploaded to the 'Glucose Export' folder</li>
+					<li>Switched to "cash-register" style input for fractional values in mmol/L mode</li>
+					<li>Support for fractional insulin doses. Enabled with the "Fractional Insulin" switch on the Settings screen.</li>
+					<li>Google Data client library version 1.6</li>
+					<li>Requires iPhone OS 2.2 or later (fixes a few layout issues)</li>
+					<li>Deleting an in-use category displays a warning and requires user confirmation</li>
+					<li>Deleting an in-use insulin type displays a warning and requires user confirmation</li>
+					<li>New-entry default insulin selection is now saved properly</li>
+					<li>Glucose values are properly colored in mmol/L mode</li>
+					<li>Export date range is now saved properly</li>
+				</ul>
+			</p>
 			<p><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.5</a> - Released December 7, 2008
 				<ul>
 					<li>Performance improvements for large datasets</li>
