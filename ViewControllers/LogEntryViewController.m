@@ -135,7 +135,8 @@ static unsigned InsulinPrecision;
 	{
 	    [s insertEntry:entry];		// Add entry to new section
 	    // Remove from old section
-	    [appDelegate deleteLogEntry:entry fromSection:entrySection];
+	    if( entrySection )
+		[appDelegate deleteLogEntry:entry fromSection:entrySection];
 	}
 	else	// Only need to update if above block was skipped
 	    [s updateStatistics];

@@ -76,7 +76,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     logViewController = [[LogViewController alloc] initWithStyle:UITableViewStylePlain];
     UINavigationController* aNavigationController = [[UINavigationController alloc] initWithRootViewController:logViewController];
     self.navController = aNavigationController;
-	navController.navigationBar.topItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addLogEntry:)];
 /*
 	UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
 	[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
@@ -377,45 +376,6 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 #pragma mark -
 #pragma mark Record Management
-
-// Create a new log entry in response to a button press
-//  Always creates with current date and time, and therefore prepends
-- (void) addLogEntry:(id)sender
-{
-	NSLog(@"addLogEntry");
-
-	// Create a new record in the database and get its automatically generated primary key.
-    unsigned entryID = [LogEntry insertNewLogEntryIntoDatabase:database];
-	LogEntry* newEntry = [[LogEntry alloc] initWithID:entryID database:database];
-//	LogEntry* newEntry = [[LogEntry alloc] initWithTimestamp:[NSDate date]];
-
-	// Set defaults for the new LogEntry
-	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-	// Don't use the returned string directly because glucoseUnits is used elsewhere
-	//	in pointer comparisons for performance reasons. Consequently, it must be 
-	//	a pointer to one of the constants in Constants.h.
-	if( [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL] )
-		newEntry.glucoseUnits = kGlucoseUnits_mgdL;
-	else
-		newEntry.glucoseUnits = kGlucoseUnits_mmolL;
-
-	// Find the proper section for the new LogEntry
-	unsigned sectionIndex = 0;
-	LogDay *const s = [self getSectionForDate:newEntry.timestamp];
-	sectionIndex = [sections indexOfObjectIdenticalTo:s];
-
-	// Create an index set to use in fine grained KVO notifications
-	NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:sectionIndex];
-
-	// Insert and post notifications of changes
-	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"entries"];
-	[s insertEntry:newEntry atIndex:0];
-	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"entries"];
-//	[newEntry release];
-//	[navController.topViewController inspectLogEntry:newEntry];
-//	[[navController.topViewController tableView] reloadData];
-
-}
 
 - (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to
 {
