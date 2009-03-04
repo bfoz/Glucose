@@ -6,7 +6,7 @@ Thanks to everyone at Ars Technica's Mac forum who helped me test and refine Glu
 
 NOTE: Insulin is marketed under many brand names around the world. Instead of trying to keep track of the various brands for different regions, Glucose simply uses the scientific name for each insulin type. For example, if you're using Novo Nordisk's Novolog brand of Insulin Aspart, you'll choose Aspart in the insulin types list. If you're not sure of the proper name for the insulin you use look on the packaging or contact your doctor or pharmacist.
 
-Features in version 0.6
+Features in version 0.6.1
 - Record blood glucose measurements
 - Support for mg/dL and mmol/L
 - Record insulin doses
