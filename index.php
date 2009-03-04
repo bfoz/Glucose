@@ -57,9 +57,15 @@
 			</table>
 
 			<h2>License</h2>
-			<p>Glucose is Copyright 2008 by <a href="mailto:bfoz@bfoz.net">Brandon Fosdick</a>.</p>
+			<p>Glucose is Copyright 2008-2009 by <a href="mailto:bfoz@bfoz.net">Brandon Fosdick</a>.</p>
 
 			<h2>History</h2>
+			<p><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.6.1</a> - Released March 3, 2009
+				<ul>
+					<li>Fixed crash when creating an entry with a timestamp in the past</li>
+					<li>Glucose values are color coded on the entry detail view</li>
+				</ul>
+			</p>
 			<p><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.6</a> - Released February 10, 2009
 				<ul>
 					<li>Support for sharing exported files with a list of contacts</li>
