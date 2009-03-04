@@ -30,9 +30,9 @@
     InsulinTypeViewController*	insulinTypeViewController;
     NSDateFormatter*	dateFormatter;
     NumberFieldCell*	glucoseCell;
-    NSIndexPath*	selectedIndexPath;
     UITableViewCell*	cellTimestamp;
     sqlite3*	database;			// SQLite database handle
+    BOOL	didSelectRow;
 }
 
 @property (nonatomic, retain) LogEntry* entry;

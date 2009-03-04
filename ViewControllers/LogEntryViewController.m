@@ -28,7 +28,6 @@
 
 @property (nonatomic, retain)	NumberFieldCell*	glucoseCell;
 @property (nonatomic, readonly) NSDateFormatter* dateFormatter;
-@property (nonatomic, retain)	NSIndexPath*	selectedIndexPath;
 @property (nonatomic, retain)	UITableViewCell*	cellTimestamp;
 
 
@@ -40,7 +39,7 @@
 
 @synthesize dateFormatter, entry, entrySection;
 @synthesize glucoseCell;
-@synthesize selectedIndexPath, cellTimestamp;
+@synthesize cellTimestamp;
 
 static AppDelegate* appDelegate = nil;
 static unsigned InsulinPrecision;
@@ -84,7 +83,6 @@ static unsigned InsulinPrecision;
 */
 - (void)dealloc
 {
-    [selectedIndexPath release];
     [categoryViewController release];
     [insulinTypeViewController release];
     [dateFormatter release];
@@ -101,19 +99,13 @@ static unsigned InsulinPrecision;
 {
     [super viewWillAppear:animated];
 
-    // Remove any existing selection.
-    if( self.selectedIndexPath )
-    {
-	[self.tableView deselectRowAtIndexPath:selectedIndexPath animated:NO];
-	self.selectedIndexPath = nil;
-    }
-    // Redisplay the data.
-    [self.tableView reloadData];
+    didSelectRow = NO;		    // Remove any existing selection
+    [self.tableView reloadData];    // Redisplay the data
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    if( self.selectedIndexPath == nil )
+    if( !didSelectRow && self.editing )
 	[self setEditing:NO animated:YES];
 
     [super viewWillDisappear:animated];
@@ -122,12 +114,8 @@ static unsigned InsulinPrecision;
 - (void)setEditing:(BOOL)e animated:(BOOL)animated
 {
     [super setEditing:e animated:animated];
-    // Clear the selected index path whenever editing mode is cancelled
-    //  because this view only uses selection in editing mode. Therefore, selectedIndexPath can be
-    //  used as a state variable in viewWillDisapper
-    if( !e && self.selectedIndexPath )
-	self.selectedIndexPath = nil;
     [entry setEditing:e];
+
     if( !e && entry.dirty )
     {
 	LogDay *const s = [appDelegate getSectionForDate:entry.timestamp];
@@ -420,11 +408,10 @@ static unsigned InsulinPrecision;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)path
 {
     unsigned section = [self translateSection:path.section];
-    // Don't translate selectedIndexPath because it refers to a real table row
-    self.selectedIndexPath = path;	// State variable: indicate that the user is editing a particular field
 
     if( 0 == section )
     {
+	didSelectRow = YES; // The next viewWillDisapper is from a push, not a pop
 	switch( path.row )
 	{
 	    case 0: 
@@ -443,6 +430,7 @@ static unsigned InsulinPrecision;
     }
     else if( 1 == section )
     {
+	didSelectRow = YES; // The next viewWillDisapper is from a push, not a pop
 	if( !insulinTypeViewController )
 	    insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain];
 	insulinTypeViewController.editedObject = entry;
