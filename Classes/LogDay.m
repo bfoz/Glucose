@@ -16,28 +16,52 @@
 @synthesize	entries;
 @synthesize name;
 
-static const char *init_sql = "SELECT timestamp, COUNT(timestamp) FROM localLogEntries GROUP BY date(timestamp,'unixepoch','localtime') ORDER BY timestamp ASC";
+static const char *sqlLoadSections = "SELECT timestamp, COUNT(timestamp) FROM localLogEntries GROUP BY date(timestamp,'unixepoch','localtime') ORDER BY timestamp DESC LIMIT ? OFFSET ?";
+static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(timestamp,'unixepoch','localtime') FROM localLogEntries)";
 
-+ (NSMutableArray*) loadAllSections:(sqlite3*)db
+// Load a subset of sections given by limit and offset
+//  All sections can be loaded by passing limit=-1 and offset=0
++ (NSMutableArray*) loadSections:(sqlite3*)db limit:(unsigned)limit offset:(unsigned)offset
 {
-	sqlite3_stmt *statement;
-	NSMutableArray *const sections = [[NSMutableArray alloc] init];
-	NSDateFormatter *const shortDateFormatter = [[NSDateFormatter alloc] init];
-	[shortDateFormatter setDateStyle:NSDateFormatterShortStyle];
+    sqlite3_stmt *statement;
+    NSMutableArray *const sections = [[NSMutableArray alloc] init];
+    NSDateFormatter *const shortDateFormatter = [[NSDateFormatter alloc] init];
+    [shortDateFormatter setDateStyle:NSDateFormatterShortStyle];
 
-	if( sqlite3_prepare_v2(db, init_sql, -1, &statement, NULL) == SQLITE_OK )
+    if( sqlite3_prepare_v2(db, sqlLoadSections, -1, &statement, NULL) == SQLITE_OK )
+    {
+	sqlite3_bind_int(statement, 1, limit);
+	sqlite3_bind_int(statement, 2, offset);
+	while( sqlite3_step(statement) == SQLITE_ROW )
 	{
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			NSDate *const day = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)];
-			LogDay *const  section = [[LogDay alloc] initWithDate:day count:sqlite3_column_int(statement, 1)];
-			section.name = [shortDateFormatter stringFromDate:day];
-			[sections insertObject:section atIndex:0];
-		}
-		sqlite3_finalize(statement);
+	    NSDate *const day = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)];
+	    LogDay *const  section = [[LogDay alloc] initWithDate:day count:sqlite3_column_int(statement, 1)];
+	    section.name = [shortDateFormatter stringFromDate:day];
+	    [sections addObject:section];
 	}
-	[shortDateFormatter release];
-	return sections;
+	sqlite3_finalize(statement);
+    }
+    [shortDateFormatter release];
+    return sections;
+}
+
++ (unsigned) numberOfDays:(sqlite3*)db
+{
+    sqlite3_stmt *statement;
+    unsigned num = 0;
+
+    if( sqlite3_prepare_v2(db, sqlNumDays, -1, &statement, NULL) == SQLITE_OK )
+    {
+	unsigned i = 0;
+	while( sqlite3_step(statement) == SQLITE_ROW )
+	{
+	    NSAssert(i==0, @"Too many rows returned for COUNT() in numberOfDays:");
+	    num = sqlite3_column_int(statement, 0);
+	    ++i;
+	}
+	sqlite3_finalize(statement);
+    }
+    return num;
 }
 
 - (id) initWithDate:(NSDate*)d

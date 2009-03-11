@@ -43,6 +43,7 @@
 @synthesize docService;
 
 NSDateFormatter* shortDateFormatter = nil;
+BOOL partialTableLoad = NO;
 
 unsigned maxCategoryNameWidth = 0;
 unsigned maxInsulinTypeShortNameWidth = 0;
@@ -98,7 +99,9 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [self loadCategories];
     [self loadInsulinTypes];
 	[self loadDefaultInsulinTypes];	// Must be after loadInsulinTypes
-	sections = [LogDay loadAllSections:database];
+    // Load the most recent 30 days
+    sections = [LogDay loadSections:database limit:30 offset:0];
+    partialTableLoad = [LogDay numberOfDays:database] > [sections count];
 
 	// Configure and display the window
     [window addSubview:[navController view]];

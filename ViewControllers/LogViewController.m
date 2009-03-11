@@ -213,6 +213,9 @@
 {
 	if( ![appDelegate.sections count] )
 		return 0;
+    // If the table hasn't been fully loaded the last section has an extra row for loading more rows
+    if( partialTableLoad && (section == ([appDelegate.sections count]-1)) )
+	return [[appDelegate.sections objectAtIndex:section] count] + 1;
 	LogDay *const s = [appDelegate.sections objectAtIndex:section];
 	return s.count;
 }
@@ -251,16 +254,33 @@
 	return [NSString stringWithFormat:@"%@%@", s.name, avg, nil];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	
-	static NSString *MyIdentifier = @"CellID";
-	
-	LogEntryCell *cell = (LogEntryCell*)[tableView dequeueReusableCellWithIdentifier:MyIdentifier];
-	if( nil == cell )
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *cellID = @"CellID";
+    const unsigned section = indexPath.section;
+    const unsigned row = indexPath.row;
+
+    if( (section == ([self.appDelegate.sections count]-1)) && (row == [[appDelegate.sections objectAtIndex:section] count]) )
+	cellID = @"MoreCell";
+
+    LogEntryCell *cell = (LogEntryCell*)[tableView dequeueReusableCellWithIdentifier:cellID];
+    if( nil == cell )
+    {
+	if( @"MoreCell" == cellID )
+	    cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	else
 	{
-		cell = [[[LogEntryCell alloc] initWithFrame:CGRectZero reuseIdentifier:MyIdentifier] autorelease];
-		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	    cell = [[[LogEntryCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	}
+    }
+
+    if( @"MoreCell" == cellID )
+    {
+	cell.text = @"Display More Log Entries";
+	cell.textAlignment = UITextAlignmentCenter;
+	return cell;
+    }
 
 	// Get the LogEntry for the cell
 	LogDay *const s = [self.appDelegate.sections objectAtIndex:indexPath.section];
@@ -326,11 +346,23 @@
 
 #pragma mark <UITableViewDelegate>
 
-- (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)path
 {
-	LogDay *const s = [self.appDelegate.sections objectAtIndex:indexPath.section];
-	[self inspectLogEntry:[s.entries objectAtIndex:indexPath.row]
-				inSection:s];
+    const unsigned section = path.section;
+    const unsigned row = path.row;
+    LogDay *const s = [appDelegate.sections objectAtIndex:section];
+
+    // HI guidlines say row should be selected and then deselected
+    [tv deselectRowAtIndexPath:path animated:YES];
+
+    if( (section == ([appDelegate.sections count]-1)) && (row == [s count]) )
+    {
+	[appDelegate.sections addObjectsFromArray:[LogDay loadSections:appDelegate.database limit:30 offset:[appDelegate.sections count]]];
+	partialTableLoad = [LogDay numberOfDays:appDelegate.database] > [appDelegate.sections count];
+	[tv reloadData];
+    }
+    else
+	[self inspectLogEntry:[s.entries objectAtIndex:row] inSection:s];
 }
 
 - (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
