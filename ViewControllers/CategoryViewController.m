@@ -87,9 +87,7 @@
 
 - (void) appendNewCategory
 {
-	NSIndexPath* path = [NSIndexPath indexPathForRow:[appDelegate.categories count] inSection:0];
 	[appDelegate addCategory:nil];	// Create a new Category record
-	[tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)viewWillAppear:(BOOL)animated
