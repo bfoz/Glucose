@@ -68,6 +68,13 @@
 			<p>Glucose is Copyright 2008-2009 by <a href="mailto:bfoz@bfoz.net">Brandon Fosdick</a>.</p>
 
 			<h2>History</h2>
+			<p><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.6.2</a> - Released April 1, 2009
+				<ul>
+					<li>Only display last 30 days of records at startup. More can be displayed by selecting "Display More Log Entries".</li>
+					<li>Fixed crash when creating a new category</li>
+					<li>Google Data client library version 1.7</li>
+				</ul>
+			</p>
 			<p><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">Version 0.6.1</a> - Released March 3, 2009
 				<ul>
 					<li>Fixed crash when creating an entry with a timestamp in the past</li>
