@@ -29,7 +29,7 @@
 
 @protocol DoseFieldCellDelegate <NSObject>
 
-// Invoked before editing begins. The delegate may return NO to prevent editing.
+@optional
 - (BOOL)doseShouldBeginEditing:(DoseFieldCell*)cell;
 - (void)doseDidBeginEditing:(DoseFieldCell*)cell;
 - (void)doseDidEndEditing:(DoseFieldCell *)cell;

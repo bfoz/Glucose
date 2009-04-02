@@ -318,11 +318,6 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 #pragma mark -
 #pragma mark <TextFieldCellDelegate>
 
-- (BOOL)textFieldCellShouldBeginEditing:(TextFieldCell*)cell
-{
-    return [self shouldBeginEditing:cell];
-}
-
 - (void)textFieldCellDidBeginEditing:(TextFieldCell*)cell
 {
     [self didBeginEditing:cell field:cell.view action:@selector(saveAction)];

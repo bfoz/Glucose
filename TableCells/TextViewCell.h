@@ -31,7 +31,7 @@
 
 @protocol TextViewCellDelegate <NSObject>
 
-// Invoked before editing begins. The delegate may return NO to prevent editing.
+@optional
 - (BOOL)textViewCellShouldBeginEditing:(TextViewCell*)cell;
 - (void)textViewCellDidBeginEditing:(TextViewCell*)cell;
 //- (void)textViewCellDidEndEditing:(TextViewCell*)cell;

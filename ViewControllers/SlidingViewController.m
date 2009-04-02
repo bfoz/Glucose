@@ -56,16 +56,6 @@
 #pragma mark -
 #pragma mark Common Delegate Editing Handlers
 
-- (BOOL)shouldBeginEditing:(UITableViewCell*)cell
-{
-	if( !editCellBottom )	// Ignore repeat calls
-	{
-		CGPoint bottom = CGPointMake(0, cell.frame.origin.y + cell.bounds.size.height);
-		editCellBottom = [UIScreen mainScreen].bounds.size.height - [self.view convertPoint:bottom toView:nil].y;
-	}
-	return YES;
-}
-
 // The action selector is called when the Save button is tapped
 - (void)didBeginEditing:(UITableViewCell*)cell field:(id)field action:(SEL)action
 {
@@ -137,7 +127,6 @@
 	[UIView commitAnimations];
 	
 	[self setViewMovedUp:NO];	// Do this before clearing editCellBottom
-	editCellBottom = 0;	// Clear this to indicate that nothing is being edited that needs the view moved
 }
 
 - (void) showDatePicker:(UITableViewCell*)cell mode:(UIDatePickerMode)mode initialDate:(NSDate*)date changeAction:(SEL)action
@@ -164,14 +153,14 @@
 	if( !datePicker.hidden )
 		return;
 	
-	[self shouldBeginEditing:cell];	// Fake a delegate call
-	
 	[datePicker setDate:date animated:NO];
 	datePicker.hidden = NO;	// State change
 	CGRect rect = datePicker.frame;
 	oldDatePickerRect = rect;
 	keyboardHeight = [datePicker sizeThatFits:CGSizeZero].height;
 	
+    CGPoint bottom = CGPointMake(0, cell.frame.origin.y + cell.bounds.size.height);
+    CGFloat editCellBottom = [UIScreen mainScreen].bounds.size.height - [self.view convertPoint:bottom toView:nil].y;
 	if( editCellBottom <= keyboardHeight )
 		rect.origin.y = cell.frame.origin.y + cell.bounds.size.height;
 	else

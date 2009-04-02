@@ -38,6 +38,7 @@
 
 @protocol NumberFieldCellDelegate <NSObject>
 
+@optional
 - (BOOL)numberFieldCellShouldBeginEditing:(NumberFieldCell*)cell;
 - (void)numberFieldCellDidBeginEditing:(NumberFieldCell*)cell;
 - (void)numberFieldCellDidEndEditing:(NumberFieldCell*)cell;

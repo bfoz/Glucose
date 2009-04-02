@@ -34,7 +34,7 @@
 
 @protocol TextFieldCellDelegate <NSObject>
 
-// Invoked before editing begins. The delegate may return NO to prevent editing.
+@optional
 - (BOOL)textFieldCellShouldBeginEditing:(TextFieldCell*)cell;
 - (void)textFieldCellDidBeginEditing:(TextFieldCell*)cell;
 - (void)textFieldCellDidEndEditing:(TextFieldCell*)cell;

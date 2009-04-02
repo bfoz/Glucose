@@ -518,11 +518,6 @@ static unsigned InsulinPrecision;
 #pragma mark -
 #pragma mark <NumberFieldCellDelegate>
 
-- (BOOL)numberFieldCellShouldBeginEditing:(NumberFieldCell*)cell
-{
-    return [self shouldBeginEditing:cell];
-}
-
 - (void)numberFieldCellDidBeginEditing:(NumberFieldCell*)cell
 {
     [self didBeginEditing:cell field:cell.field action:@selector(saveGlucoseAction:)];
@@ -568,11 +563,6 @@ static unsigned InsulinPrecision;
 #pragma mark -
 #pragma mark <DoseFieldCellDelegate>
 
-- (BOOL)doseShouldBeginEditing:(DoseFieldCell*)cell
-{
-    return [self shouldBeginEditing:cell];
-}
-
 - (void)doseDidBeginEditing:(DoseFieldCell*)cell
 {
     [self didBeginEditing:cell field:cell.doseField action:@selector(saveDoseAction:)];
@@ -591,11 +581,6 @@ static unsigned InsulinPrecision;
 
 #pragma mark -
 #pragma mark <TextViewCellDelegate>
-
-- (BOOL) textViewCellShouldBeginEditing:(TextViewCell*)cell
-{
-    return [self shouldBeginEditing:cell];
-}
 
 - (void)textViewCellDidBeginEditing:(TextViewCell*)cell
 {

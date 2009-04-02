@@ -436,11 +436,6 @@ enum AboutSectionRows
     return nil;
 }
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField*)field
- {
-     return [self shouldBeginEditing:[self cellForField:field]];
- }
- 
 - (void)textFieldDidBeginEditing:(UITextField*)field
 {
     [self didBeginEditing:[self cellForField:field] field:field action:[self selectorForField:field]];
