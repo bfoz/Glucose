@@ -43,25 +43,6 @@
 	[super dealloc];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-
-    // Watch the keyboard so the user interface can be moved up or down
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) 
-												 name:UIKeyboardWillShowNotification object:self.view.window]; 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) 
-												 name:UIKeyboardWillHideNotification object:self.view.window]; 
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
-    // Unregister for keyboard notifications while not visible.
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil]; 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil]; 
-}
-
 - (void)setEditing:(BOOL)e animated:(BOOL)animated
 {
 	// Finish any field editing that may be going on when edit mode is canceled
@@ -106,25 +87,6 @@
 	[editField resignFirstResponder];
 	editCell = nil;	//Not editing anything
 	editField = nil;
-}
-
-#pragma mark -
-#pragma mark Keyboard Notifications
-
-- (void)keyboardWillShow:(NSNotification *)notif
-{
-    if( keyboardShown )
-	return;
-
-    keyboardHeight = [[notif.userInfo objectForKey:UIKeyboardBoundsUserInfoKey] CGRectValue].size.height;
-    [self setViewMovedUp:YES];
-    keyboardShown = YES;
-}
-
-- (void)keyboardWillHide:(NSNotification*)notif
-{
-    [self setViewMovedUp:NO];
-    keyboardShown = NO;
 }
 
 #pragma mark -
