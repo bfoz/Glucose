@@ -1,0 +1,17 @@
+div#verticleScreenShots
+{
+	text-align: center;
+}
+
+div#verticleScreenShots img
+{
+	border: 0;
+	width: 75px;
+}
+
+div#verticleScreenShots ul
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
