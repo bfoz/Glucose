@@ -313,7 +313,6 @@ static NSUserDefaults* defaults = nil;
 		    cell.text = @"Category";
 		    cell.textColor = [UIColor lightGrayColor];
 		}
-		cell.text = (entry.category == nil) ? @"Category" : entry.category.categoryName;
 		break;
 	    case 2:	// Glucose
 		if( self.editing )
