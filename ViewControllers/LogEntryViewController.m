@@ -43,6 +43,7 @@
 
 static AppDelegate* appDelegate = nil;
 static unsigned InsulinPrecision;
+static NSUserDefaults* defaults = nil;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -60,7 +61,8 @@ static unsigned InsulinPrecision;
 	[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
 	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	
-	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+	if( !defaults )
+	    defaults = [NSUserDefaults standardUserDefaults];
 	NSNumber* p = [defaults objectForKey:kDefaultInsulinPrecision];
 	InsulinPrecision = p ? [p intValue] : 0;
     }
@@ -330,7 +332,6 @@ static unsigned InsulinPrecision;
 		    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
 		    cell.text = entry.glucose ? [NSString localizedStringWithFormat:@"%.*f%@", precision, [entry.glucose floatValue], units] : nil;
 		    // Color the glucose values accordingly
-		    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 		    NSString* keyHigh;
 		    NSString* keyLow;
 		    if( units == kGlucoseUnits_mgdL )
