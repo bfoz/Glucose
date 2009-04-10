@@ -179,15 +179,7 @@ static NSUserDefaults* defaults = nil;
 		return 1 + (entry.glucose ? 1 : 0) + (entry.category ? 1 : 0);
 	case 1:
 	    if( self.editing )
-	    {
-		const unsigned count = [entry.insulin count];
-		switch( count )
-		{
-		    case 0: return 1;
-		    case 1: return 2;
-		    default: return count;
-		}
-	    }
+		return [entry.insulin count];
 	    else
 	    {
 		unsigned i = 0;
