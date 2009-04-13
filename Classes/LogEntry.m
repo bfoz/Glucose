@@ -362,9 +362,9 @@ else												\
 			break;
 
 		// Dose and type are stored as a pair. If the pair is incomplete, store neither.
-		if( dose.dose && dose.type && ![dose.dose isEqualToNumber:[NSNumber numberWithInt:0]])
+		if( dose.dose && dose.type && ([dose.dose floatValue] != 0) )
 		{
-			sqlite3_bind_int(flush_statement, 5+i, [dose.dose intValue]);
+			sqlite3_bind_double(flush_statement, 5+i, [dose.dose doubleValue]);
 			sqlite3_bind_int(flush_statement, 7+i, [dose.type typeID]);			
 			++i;
 		}
@@ -453,7 +453,7 @@ else												\
 
 - (void) setDose:(NSNumber*)d insulinDose:(InsulinDose*)dose
 {
-	if( dose && d && [d intValue] && ![dose.dose isEqualToNumber:d] )
+    if( dose && d && ![dose.dose isEqualToNumber:d] )
 	{
 		dose.dose = d;
 		dirty = YES;
