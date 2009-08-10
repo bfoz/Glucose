@@ -869,7 +869,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		15417D1B0EB021F400C7E51E /* Distribution */ = {
+		15417D1B0EB021F400C7E51E /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
@@ -883,9 +883,9 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "ED3C208A-8794-462C-87A5-1FE41EE29DB9";
 				SDKROOT = iphoneos2.2.1;
 			};
-			name = Distribution;
+			name = AdHoc;
 		};
-		15417D1C0EB021F400C7E51E /* Distribution */ = {
+		15417D1C0EB021F400C7E51E /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -895,7 +895,7 @@
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = Glucose;
 			};
-			name = Distribution;
+			name = AdHoc;
 		};
 		159E81AD0E51634C0097EA6F /* Device Debug */ = {
 			isa = XCBuildConfiguration;
@@ -992,7 +992,7 @@
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				159E81AE0E51634C0097EA6F /* Device Debug */,
 				1D6058950D05DD3E006BFB54 /* AppStore */,
-				15417D1C0EB021F400C7E51E /* Distribution */,
+				15417D1C0EB021F400C7E51E /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = AppStore;
@@ -1003,7 +1003,7 @@
 				C01FCF4F08A954540054247B /* Debug */,
 				159E81AD0E51634C0097EA6F /* Device Debug */,
 				C01FCF5008A954540054247B /* AppStore */,
-				15417D1B0EB021F400C7E51E /* Distribution */,
+				15417D1B0EB021F400C7E51E /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = AppStore;
