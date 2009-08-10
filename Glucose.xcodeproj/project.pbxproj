@@ -880,7 +880,7 @@
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				OTHER_LDFLAGS = "-lxml2";
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "A2BA387F-0438-4913-A8CC-04D10D308674";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "ED3C208A-8794-462C-87A5-1FE41EE29DB9";
 				SDKROOT = iphoneos2.2.1;
 			};
 			name = Distribution;
@@ -978,7 +978,7 @@
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				OTHER_LDFLAGS = "-lxml2";
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "A2BA387F-0438-4913-A8CC-04D10D308674";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "71D3E2D4-7385-4515-8E20-76BD897B4A3E";
 				SDKROOT = iphoneos2.2.1;
 			};
 			name = AppStore;
