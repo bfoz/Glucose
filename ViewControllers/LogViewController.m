@@ -205,14 +205,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return [appDelegate.sections count] ? [appDelegate.sections count] : 1;
+    return [appDelegate.sections count];
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	if( ![appDelegate.sections count] )
-		return 0;
     // If the table hasn't been fully loaded the last section has an extra row for loading more rows
     if( partialTableLoad && (section == ([appDelegate.sections count]-1)) )
 	return [[appDelegate.sections objectAtIndex:section] count] + 1;
@@ -222,9 +220,6 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	if( ![appDelegate.sections count] )
-		return @"Today";
-
 	LogDay *const s = [appDelegate.sections objectAtIndex:section];
 
     const float averageGlucose = s.averageGlucose;

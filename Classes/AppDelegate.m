@@ -103,6 +103,15 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     sections = [LogDay loadSections:database limit:30 offset:0];
     partialTableLoad = [LogDay numberOfDays:database] > [sections count];
 
+    // Create an empty "Today" object if no LogDays were loaded
+    if( 0 == [sections count] )
+    {
+	NSDate *const day = [NSDate date];
+	LogDay *const section = [[LogDay alloc] initWithDate:day];
+	section.name = [shortDateFormatter stringFromDate:day];
+	[sections addObject:section];
+    }
+
 	// Configure and display the window
     [window addSubview:[navController view]];
     [window makeKeyAndVisible];
