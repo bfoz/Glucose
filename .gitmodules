@@ -1,0 +1,3 @@
+[submodule "GData"]
+	path = GData
+	url = git://github.com/bfoz/gdata-objectivec-client.git
