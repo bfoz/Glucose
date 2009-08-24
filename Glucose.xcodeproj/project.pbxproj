@@ -770,11 +770,11 @@
 			);
 			name = "Create Zip File";
 			outputPaths = (
-				"$(SRCROOT)/$(PRODUCT_NAME).app",
+				"$(PRODUCT_NAME).app",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd $BUILT_PRODUCTS_DIR\nzip -qr $SRCROOT/$PRODUCT_NAME.zip $PRODUCT_NAME.app";
+			shellScript = "cd $BUILT_PRODUCTS_DIR\nzip -qry $PRODUCT_NAME.zip $PRODUCT_NAME.app";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
