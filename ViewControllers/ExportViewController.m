@@ -602,10 +602,9 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	return;
 
     self.failureTitle = @"Folder Feed";
-    [appDelegate.docService fetchDocsFeedWithURL:[NSURL URLWithString:uri]
-					delegate:self
-			       didFinishSelector:@selector(docsFeedTicket:finishedWithFeed:)
-				 didFailSelector:@selector(ticket:failedWithError:)];
+    [appDelegate.docService fetchFeedWithURL:[NSURL URLWithString:uri]
+				    delegate:self
+			   didFinishSelector:@selector(docsFeedTicket:finishedWithFeed:error:)];
 }
 
 - (void) createFolder:(NSString*)name url:(NSURL*)url
@@ -621,16 +620,18 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
     progressAlert.message = [NSString stringWithFormat:@"Creating folder '%@'", kGoogleExportFolder];
     self.failureTitle = @"Folder Create Failure";
-    [appDelegate.docService fetchDocEntryByInsertingEntry:docEntry
-					       forFeedURL:url
-						 delegate:self
-					didFinishSelector:@selector(createFolderTicket:finishedWithEntry:)
-					  didFailSelector:@selector(ticket:failedWithError:)]; 
+    [appDelegate.docService fetchEntryByInsertingEntry:docEntry
+					    forFeedURL:url
+					      delegate:self
+				     didFinishSelector:@selector(createFolderTicket:finishedWithEntry:error:)];
 }
 
-- (void) createFolderTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataEntryFolderDoc *)folder
+- (void) createFolderTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataEntryFolderDoc *)folder error:(NSError *)error
 {
-    [self exportToFolderDoc:folder];
+    if( error )
+	[self ticket:ticket failedWithError:error];
+    else
+	[self exportToFolderDoc:folder];
 }
 
 - (void) findExportFolder
@@ -640,14 +641,19 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
     progressAlert.message = @"Fetching Folder Feed";
     self.failureTitle = @"Find Export Folder";
-    [appDelegate.docService fetchDocsQuery:q
-				  delegate:self
-			 didFinishSelector:@selector(findExportFolderTicket:finishedWithFeed:)
-			   didFailSelector:@selector(ticket:failedWithError:)];
+    [appDelegate.docService fetchFeedWithQuery:q
+				      delegate:self
+			     didFinishSelector:@selector(findExportFolderTicket:finishedWithFeed:error:)];
 }
 
-- (void) findExportFolderTicket:(GDataServiceTicket *)ticket finishedWithFeed:(GDataFeedDocList *)feed
+- (void) findExportFolderTicket:(GDataServiceTicket *)ticket finishedWithFeed:(GDataFeedDocList *)feed error:(NSError *)error
 {
+    if( error )
+    {
+	[self ticket:ticket failedWithError:error];
+	return;
+    }
+
     unsigned count = [[feed entries] count];
     if( 0 == count )	// Create a new folder if none was found
 	[self createFolder:kGoogleExportFolder url:[[feed postLink] URL]];
@@ -659,8 +665,14 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 #pragma mark Document List feed
 
-- (void) docsFeedTicket:(GDataServiceTicket *)ticket finishedWithFeed:(GDataFeedDocList *)feed
+- (void) docsFeedTicket:(GDataServiceTicket *)ticket finishedWithFeed:(GDataFeedDocList *)feed error:(NSError *)error
 {
+    if( error )
+    {
+	[self ticket:ticket failedWithError:error];
+	return;
+    }
+
     NSData *const data = [LogEntry createCSV:appDelegate.database from:exportStart to:exportEnd];
     if( !data )
     {
@@ -685,11 +697,10 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 	// Do the insert
 	self.failureTitle = @"Export Failed";
-	[service fetchDocEntryByInsertingEntry:docEntry
-								forFeedURL:[[feed postLink] URL]
-								  delegate:self
-						 didFinishSelector:@selector(uploadFileTicket:finishedWithEntry:)
-						   didFailSelector:@selector(ticket:failedWithError:)];
+	[service fetchEntryByInsertingEntry:docEntry
+				 forFeedURL:[[feed postLink] URL]
+				   delegate:self
+			  didFinishSelector:@selector(uploadFileTicket:finishedWithEntry:error:)];
 
 	// Disable the progress callback for new tickets
 	[service setServiceUploadProgressSelector:nil];
@@ -706,8 +717,14 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 // The spreadsheet has been successfuly uploaded. Now update the ACL entryies if
 //  sharing has been enabled, otherwise clean up and return
-- (void)uploadFileTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataEntryDocBase *)entry
+- (void)uploadFileTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataEntryDocBase *)entry error:(NSError *)error
 {
+    if( error )
+    {
+	[self ticket:ticket failedWithError:error];
+	return;
+    }
+
     if( !shareSwitch.on )
 	{
 		[self finishExport];
@@ -721,24 +738,35 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	{
 	self.failureTitle = @"ACL Feed Failed";
 	[appDelegate.docService fetchACLFeedWithURL:[[entry ACLFeedLink] URL]
-										   delegate:self
-								  didFinishSelector:@selector(aclTicket:finishedWithFeed:)
-									didFailSelector:@selector(ticket:failedWithError:)];
+					   delegate:self
+				  didFinishSelector:@selector(aclTicket:finishedWithFeed:error:)];
 	}
 }
 
 #pragma mark ACL feed
 
-- (void)aclTicket:(GDataServiceTicket *)ticket finishedWithFeed:(GDataFeedACL*)object
+- (void)aclTicket:(GDataServiceTicket *)ticket finishedWithFeed:(GDataFeedACL*)object error:(NSError *)error
 {
-	aclURL = [[object postLink] URL];
-	[self addACLTicket:nil finishedWithEntry:nil];
+    if( error )
+    {
+	[self ticket:ticket failedWithError:error];
+	return;
+    }
+
+    aclURL = [[object postLink] URL];
+    [self addACLTicket:nil finishedWithEntry:nil error:nil];
 }
 
 #pragma mark Add ACL Entries
 
-- (void) addACLTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataFeedACL*)object
+- (void) addACLTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataFeedACL*)object error:(NSError *)error
 {
+    if( error )
+    {
+	[self ticket:ticket failedWithError:error];
+	return;
+    }
+
 	if( !contactsEnumerator )
 	{
 		contactsEnumerator = [contacts objectEnumerator];
@@ -762,11 +790,10 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 		GDataServiceGoogleDocs *const service = appDelegate.docService;
 		self.failureTitle = @"Share Failed";
-		[service fetchACLEntryByInsertingEntry:acl
-									forFeedURL:aclURL
-									  delegate:self
-							 didFinishSelector:@selector(addACLTicket:finishedWithEntry:)
-							   didFailSelector:@selector(ticket:failedWithError:)];
+	[service fetchACLEntryByInsertingEntry:acl
+				    forFeedURL:aclURL
+				      delegate:self
+			     didFinishSelector:@selector(addACLTicket:finishedWithEntry:error:)];
 
 		CFRelease(v);
 		CFRelease(email);

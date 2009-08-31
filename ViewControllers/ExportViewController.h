@@ -48,7 +48,7 @@
 @property (nonatomic, retain) NSMutableDictionary*	keychainData;
 @property (nonatomic, retain) NSString*	failureTitle;
 
-- (void) addACLTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataFeedACL*)object;
+- (void) addACLTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataFeedACL*)object error:(NSError *)error;
 - (void) findExportFolder;
 - (void) keychainInit;
 - (void) updateExportRowText;

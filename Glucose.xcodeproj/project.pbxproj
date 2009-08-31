@@ -23,6 +23,7 @@
 		155A26970F29B04B0077FC20 /* TextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829B70E50097100FB556A /* TextViewCell.m */; };
 		155A26990F29B0610077FC20 /* TextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829AC0E5008B100FB556A /* TextFieldCell.m */; };
 		155A26A90F2AF5810077FC20 /* NumberField.m in Sources */ = {isa = PBXBuildFile; fileRef = 155A26A80F2AF5810077FC20 /* NumberField.m */; };
+		15712A391047A7450065B96C /* GDataDocConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 15712A381047A7450065B96C /* GDataDocConstants.m */; };
 		1576A8B60E6667F7004EBBC0 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1576A8B50E6667F7004EBBC0 /* Icon.png */; };
 		1585DEC10E6A217200FB9C39 /* glucose.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1585DEC00E6A217200FB9C39 /* glucose.sqlite */; };
 		1595CF570E999E1C00DA7CC6 /* PurgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1595CF560E999E1C00DA7CC6 /* PurgeViewController.m */; };
@@ -71,25 +72,19 @@
 		15E822E40E748613003322DC /* GDataGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821840E748613003322DC /* GDataGenerator.m */; };
 		15E822E50E748613003322DC /* GDataTextConstruct.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821870E748613003322DC /* GDataTextConstruct.m */; };
 		15E822E60E748613003322DC /* GDataValueConstruct.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821890E748613003322DC /* GDataValueConstruct.m */; };
-		15E822E70E748613003322DC /* GDataExtendedProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8218B0E748613003322DC /* GDataExtendedProperty.m */; };
 		15E822E80E748613003322DC /* GDataEntryContent.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8218D0E748613003322DC /* GDataEntryContent.m */; };
 		15E822EB0E748613003322DC /* GDataEmail.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821930E748613003322DC /* GDataEmail.m */; };
-		15E822ED0E748613003322DC /* GDataIM.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821970E748613003322DC /* GDataIM.m */; };
-		15E822EE0E748613003322DC /* GDataOrganization.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821990E748613003322DC /* GDataOrganization.m */; };
-		15E822F10E748613003322DC /* GDataRating.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8219F0E748613003322DC /* GDataRating.m */; };
 		15E822F20E748613003322DC /* GDataDateTime.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821A10E748613003322DC /* GDataDateTime.m */; };
 		15E822F30E748613003322DC /* GDataBatchOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821A30E748613003322DC /* GDataBatchOperation.m */; };
 		15E822F40E748613003322DC /* GDataBatchID.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821A50E748613003322DC /* GDataBatchID.m */; };
 		15E822F50E748613003322DC /* GDataBatchStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821A70E748613003322DC /* GDataBatchStatus.m */; };
 		15E822F60E748613003322DC /* GDataBatchInterrupted.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821A90E748613003322DC /* GDataBatchInterrupted.m */; };
 		15E823190E748613003322DC /* GDataEntryDocBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821F90E748613003322DC /* GDataEntryDocBase.m */; };
-		15E8231A0E748613003322DC /* GDataEntryStandardDoc.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821FB0E748613003322DC /* GDataEntryStandardDoc.m */; };
 		15E8231B0E748613003322DC /* GDataEntrySpreadsheetDoc.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821FD0E748613003322DC /* GDataEntrySpreadsheetDoc.m */; };
 		15E8231E0E748613003322DC /* GDataFeedDocList.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E822030E748613003322DC /* GDataFeedDocList.m */; };
 		15E8231F0E748613003322DC /* GDataServiceGoogleDocs.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E822050E748613003322DC /* GDataServiceGoogleDocs.m */; };
 		15E823200E748613003322DC /* GDataQueryDocs.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E822060E748613003322DC /* GDataQueryDocs.m */; };
 		15E823D50E74BA7E003322DC /* ExportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E823D40E74BA7E003322DC /* ExportViewController.m */; };
-		15E976AA0EAB0099000CF411 /* GDataGeoPt.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E821950E748613003322DC /* GDataGeoPt.m */; };
 		15E976AD0EAB00BE000CF411 /* GDataPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E8216C0E748613003322DC /* GDataPerson.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -152,6 +147,8 @@
 		155BF3880EA1403E005123F6 /* GDataMediaThumbnail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDataMediaThumbnail.m; sourceTree = "<group>"; };
 		155BF3890EA1403E005123F6 /* GDataNormalPlayTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDataNormalPlayTime.h; sourceTree = "<group>"; };
 		155BF38A0EA1403E005123F6 /* GDataNormalPlayTime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDataNormalPlayTime.m; sourceTree = "<group>"; };
+		15712A371047A7450065B96C /* GDataDocConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GDataDocConstants.h; path = GData/Source/Clients/Docs/GDataDocConstants.h; sourceTree = "<group>"; };
+		15712A381047A7450065B96C /* GDataDocConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GDataDocConstants.m; path = GData/Source/Clients/Docs/GDataDocConstants.m; sourceTree = "<group>"; };
 		1576A8B50E6667F7004EBBC0 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		1585DEC00E6A217200FB9C39 /* glucose.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = glucose.sqlite; sourceTree = "<group>"; };
 		1595CF550E999E1C00DA7CC6 /* PurgeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PurgeViewController.h; path = ViewControllers/PurgeViewController.h; sourceTree = "<group>"; };
@@ -610,6 +607,8 @@
 		15E821F60E748613003322DC /* Docs */ = {
 			isa = PBXGroup;
 			children = (
+				15712A371047A7450065B96C /* GDataDocConstants.h */,
+				15712A381047A7450065B96C /* GDataDocConstants.m */,
 				15E821F70E748613003322DC /* GDataDocs.h */,
 				15E821F80E748613003322DC /* GDataEntryDocBase.h */,
 				15E821F90E748613003322DC /* GDataEntryDocBase.m */,
@@ -822,26 +821,20 @@
 				15E822E40E748613003322DC /* GDataGenerator.m in Sources */,
 				15E822E50E748613003322DC /* GDataTextConstruct.m in Sources */,
 				15E822E60E748613003322DC /* GDataValueConstruct.m in Sources */,
-				15E822E70E748613003322DC /* GDataExtendedProperty.m in Sources */,
 				15E822E80E748613003322DC /* GDataEntryContent.m in Sources */,
 				15E822EB0E748613003322DC /* GDataEmail.m in Sources */,
-				15E822ED0E748613003322DC /* GDataIM.m in Sources */,
-				15E822EE0E748613003322DC /* GDataOrganization.m in Sources */,
-				15E822F10E748613003322DC /* GDataRating.m in Sources */,
 				15E822F20E748613003322DC /* GDataDateTime.m in Sources */,
 				15E822F30E748613003322DC /* GDataBatchOperation.m in Sources */,
 				15E822F40E748613003322DC /* GDataBatchID.m in Sources */,
 				15E822F50E748613003322DC /* GDataBatchStatus.m in Sources */,
 				15E822F60E748613003322DC /* GDataBatchInterrupted.m in Sources */,
 				15E823190E748613003322DC /* GDataEntryDocBase.m in Sources */,
-				15E8231A0E748613003322DC /* GDataEntryStandardDoc.m in Sources */,
 				15E8231B0E748613003322DC /* GDataEntrySpreadsheetDoc.m in Sources */,
 				15E8231E0E748613003322DC /* GDataFeedDocList.m in Sources */,
 				15E8231F0E748613003322DC /* GDataServiceGoogleDocs.m in Sources */,
 				15E823200E748613003322DC /* GDataQueryDocs.m in Sources */,
 				15E823D50E74BA7E003322DC /* ExportViewController.m in Sources */,
 				1595CF570E999E1C00DA7CC6 /* PurgeViewController.m in Sources */,
-				15E976AA0EAB0099000CF411 /* GDataGeoPt.m in Sources */,
 				15E976AD0EAB00BE000CF411 /* GDataPerson.m in Sources */,
 				15AF2FE20EC1799F00FC2403 /* LogDay.m in Sources */,
 				15A320720EC55E6500C16388 /* LabelCell.m in Sources */,
@@ -863,6 +856,7 @@
 				15AC4E6D0F341A1500250324 /* GDataEntryACL.m in Sources */,
 				15AC4E6E0F341A1500250324 /* GDataFeedACL.m in Sources */,
 				15AC4E6F0F341A1500250324 /* GDataServiceACL.m in Sources */,
+				15712A391047A7450065B96C /* GDataDocConstants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
