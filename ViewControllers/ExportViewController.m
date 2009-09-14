@@ -356,7 +356,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
 	{
-		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	}
 

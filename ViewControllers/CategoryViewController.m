@@ -120,7 +120,7 @@
 	{
 		if( self.editing )
 		{
-			cell = [[[TextFieldCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+			cell = [[[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 			((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
 			cell.showsReorderControl = YES;
 			((TextFieldCell*)cell).delegate = self;
@@ -128,7 +128,7 @@
 			((UITextField*)(((TextFieldCell*)cell).view)).returnKeyType = UIReturnKeyDone;
 		}
 		else
-			cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+			cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 	}
 
 	// If not editing, the first row is "None", and the categories need to be shifted down one row.

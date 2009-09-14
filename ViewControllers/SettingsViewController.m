@@ -189,7 +189,7 @@ enum AboutSectionRows
     UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
     if( !cell )
     {
-	cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 

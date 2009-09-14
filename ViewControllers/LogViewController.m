@@ -262,10 +262,10 @@
     if( nil == cell )
     {
 	if( @"MoreCell" == cellID )
-	    cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 	else
 	{
-	    cell = [[[LogEntryCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	    cell = [[[LogEntryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	}
     }

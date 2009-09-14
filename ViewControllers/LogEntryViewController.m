@@ -247,19 +247,19 @@ static NSUserDefaults* defaults = nil;
 	if( @"DualCellID" == cellID )
 	{
 	    // CGRectZero allows the cell to determine the appropriate size.
-	    cell = [[[DualTableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	    cell = [[[DualTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 	    ((DualTableViewCell*)cell).leftTextAlignment = UITextAlignmentRight;
 	    ((DualTableViewCell*)cell).rightTextAlignment = UITextAlignmentLeft;
 	}
 	else if( @"eDualCellID" == cellID )
 	{
 	    // CGRectZero allows the cell to determine the appropriate size.
-	    cell = [[[DoseFieldCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	    cell = [[[DoseFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 	    ((DoseFieldCell*)cell).delegate = self;
 	}
 	else if( @"eGlucose" == cellID )
 	{
-	    glucoseCell = [[[NumberFieldCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	    glucoseCell = [[[NumberFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 	    glucoseCell.clearButtonMode = UITextFieldViewModeWhileEditing;
 	    glucoseCell.delegate = self;
 	    glucoseCell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
@@ -268,18 +268,18 @@ static NSUserDefaults* defaults = nil;
 	}
 	else if( @"NoteCellID" == cellID )
 	{
-	    cell = [[[TextViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	    cell = [[[TextViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 	    ((TextViewCell*)cell).placeholder = @"Note";
 	    ((TextViewCell*)cell).delegate = self;
 	}
 	else if( @"NoteID" == cellID )
 	{
-	    cell = [[LabelCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID];
+	    cell = [[LabelCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	}
 	else	// Standard UITableView cell for Timestamp and Category
 	{
 	    // CGRectZero allows the cell to determine the appropriate size.
-	    cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 	    cell.textLabel.textAlignment = UITextAlignmentCenter;
 	    if( (0 == section) && (0 == row) )	// Save a pointer to the timestamp cell
 		self.cellTimestamp = cell;

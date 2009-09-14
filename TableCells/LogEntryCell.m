@@ -14,9 +14,9 @@
 
 @synthesize	labelCategory, labelDose0, labelDose1, labelGlucose, labelTimestamp, labelType0, labelType1;
 
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
-	if (self = [super initWithFrame:frame reuseIdentifier:reuseIdentifier])
+    if( self = [super initWithStyle:style reuseIdentifier:reuseIdentifier] )
 	{
 		self.selectionStyle = UITableViewCellSelectionStyleNone;
 		

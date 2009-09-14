@@ -149,7 +149,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     {
 	if( self.editing )
 	{
-	    cell = [[[TextFieldCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	    cell = [[[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 	    ((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
 	    cell.showsReorderControl = YES;
 	    ((TextFieldCell*)cell).delegate = self;
@@ -157,7 +157,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	    ((UITextField*)(((TextFieldCell*)cell).view)).returnKeyType = UIReturnKeyDone;
 	}
 	else
-	    cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
+	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
     }
 
     InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:indexPath.row];

@@ -108,7 +108,7 @@ static AppDelegate *appDelegate = nil;
     UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:CellIdentifier];
     if( !cell )
 	{
-        cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
