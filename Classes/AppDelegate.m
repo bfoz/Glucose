@@ -40,7 +40,6 @@
 @synthesize logViewController;
 @synthesize sections;
 @synthesize database;
-@synthesize docService;
 
 NSDateFormatter* shortDateFormatter = nil;
 BOOL partialTableLoad = NO;
