@@ -194,9 +194,9 @@ enum AboutSectionRows
     }
 
     // Default all rows to bold, black and label-sized
-    cell.textColor = [UIColor darkTextColor];
-    cell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
-    cell.textAlignment = UITextAlignmentLeft;
+    cell.textLabel.textColor = [UIColor darkTextColor];
+    cell.textLabel.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
+    cell.textLabel.textAlignment = UITextAlignmentLeft;
 
     const unsigned section = indexPath.section;
     const unsigned row = indexPath.row;
@@ -206,19 +206,19 @@ enum AboutSectionRows
 	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	    switch( row )
 	    {
-		case kExportRow:    cell.text = @"Export"; break;
-		case kPurgeRow:	    cell.text = @"Purge"; break;
+		case kExportRow:    cell.textLabel.text = @"Export"; break;
+		case kPurgeRow:	    cell.textLabel.text = @"Purge"; break;
 	    }
 	    break;
 	case kSectionCategoriesTypes:
 	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	    switch( row )
 	    {
-		case kCategoryRow:	    cell.text = @"Categories"; break;
-		case kInsulinTypeRow:	    cell.text = @"Insulin Types"; break;
-		case kDefaultInsulinRow:    cell.text = @"Insulins for New Entries"; break;
+		case kCategoryRow:	    cell.textLabel.text = @"Categories"; break;
+		case kInsulinTypeRow:	    cell.textLabel.text = @"Insulin Types"; break;
+		case kDefaultInsulinRow:    cell.textLabel.text = @"Insulins for New Entries"; break;
 		case kFractionalInsulin:
-		    cell.text = @"Fractional Insulin";
+		    cell.textLabel.text = @"Fractional Insulin";
 		    UISwitch* s = [[UISwitch alloc] initWithFrame:CGRectZero];
 		    [s addTarget:self action:@selector(fractionalInsulinAction:) forControlEvents:UIControlEventValueChanged];
 		    s.on = [[[NSUserDefaults standardUserDefaults] objectForKey:kDefaultInsulinPrecision] boolValue];
@@ -242,21 +242,21 @@ enum AboutSectionRows
 	    switch( row )
 	    {
 		case kHighGlucoseWarningRow:
-		    cell.text = @"High Glucose Warning";
+		    cell.textLabel.text = @"High Glucose Warning";
 		    f.text = [defaults stringForKey:highGlucoseWarningKey];
 		    f.textColor = [UIColor blueColor];
 		    highGlucoseWarningCell = cell;
 		    highGlucoseWarningField = f;
 		    break;
 		case kLowGlucoseWarningRow:
-		    cell.text = @"Low Glucose Warning";
+		    cell.textLabel.text = @"Low Glucose Warning";
 		    f.text = [defaults stringForKey:lowGlucoseWarningKey];
 		    f.textColor = [UIColor redColor];
 		    lowGlucoseWarningCell = cell;
 		    lowGlucoseWarningField = f;
 		    break;
 		case kGlucoseUnitsRow:
-		    cell.text = @"Glucose Units";
+		    cell.textLabel.text = @"Glucose Units";
 		    UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:kGlucoseUnits_mgdL,kGlucoseUnits_mmolL,nil]];
 		    s.segmentedControlStyle = UISegmentedControlStyleBar;
 		    [s addTarget:self action:@selector(glucoseUnitsAction:) forControlEvents:UIControlEventValueChanged];
@@ -266,13 +266,13 @@ enum AboutSectionRows
 	    }
 	} break;
         case kSectionAbout:
-	    cell.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+	    cell.textLabel.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
 	    // Work around the cell.textAlignment bug introduced in version 2.2 by
 	    //  getting the first child UILabel and settting its textAlignment 
 	    //  property directly
 	    [[[[cell contentView] subviews] objectAtIndex:0] setTextAlignment:UITextAlignmentCenter];
 	    if( row )
-		cell.textColor = [UIColor blueColor];	// Website and email links
+		cell.textLabel.textColor = [UIColor blueColor];	// Website and email links
 	    switch( row )
 	    {
 		case kAppNameVersionRow:
@@ -280,11 +280,11 @@ enum AboutSectionRows
 		    NSBundle *const mainBundle = [NSBundle mainBundle];
 		    NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
 		    NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
-		    cell.text = [NSString stringWithFormat:@"%@ v%@", n, v];
+		    cell.textLabel.text = [NSString stringWithFormat:@"%@ v%@", n, v];
 		}
 		break;
-		case kAuthorRow: cell.text = @"Brandon Fosdick <bfoz@bfoz.net>"; break;
-		case kWebsiteRow: cell.text = @"http://bfoz.net/projects/glucose"; break;
+		case kAuthorRow: cell.textLabel.text = @"Brandon Fosdick <bfoz@bfoz.net>"; break;
+		case kWebsiteRow: cell.textLabel.text = @"http://bfoz.net/projects/glucose"; break;
 	    }
 	    break;
     }

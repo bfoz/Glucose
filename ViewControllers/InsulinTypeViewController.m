@@ -153,7 +153,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	    ((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
 	    cell.showsReorderControl = YES;
 	    ((TextFieldCell*)cell).delegate = self;
-	    cell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
+	    cell.textLabel.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
 	    ((UITextField*)(((TextFieldCell*)cell).view)).returnKeyType = UIReturnKeyDone;
 	}
 	else
@@ -161,7 +161,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     }
 
     InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
-    cell.text = [type shortName];
+    cell.textLabel.text = [type shortName];
     if( self.editing )
 	((TextFieldCell*)cell).editedObject = type;
 

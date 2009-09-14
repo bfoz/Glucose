@@ -280,7 +280,7 @@ static NSUserDefaults* defaults = nil;
 	{
 	    // CGRectZero allows the cell to determine the appropriate size.
 	    cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellID] autorelease];
-	    cell.textAlignment = UITextAlignmentCenter;
+	    cell.textLabel.textAlignment = UITextAlignmentCenter;
 	    if( (0 == section) && (0 == row) )	// Save a pointer to the timestamp cell
 		self.cellTimestamp = cell;
 	}
@@ -292,18 +292,18 @@ static NSUserDefaults* defaults = nil;
 	switch( row )
 	{
 	    case 0:	// Timestamp
-		cell.text = [dateFormatter stringFromDate:entry.timestamp];
+		cell.textLabel.text = [dateFormatter stringFromDate:entry.timestamp];
 		break;
 	    case 1:	// Category
 		if( entry.category )
 		{
-		    cell.text = entry.category.categoryName;
-		    cell.textColor = [UIColor darkTextColor];		
+		    cell.textLabel.text = entry.category.categoryName;
+		    cell.textLabel.textColor = [UIColor darkTextColor];
 		}
 		else
 		{
-		    cell.text = @"Category";
-		    cell.textColor = [UIColor lightGrayColor];
+		    cell.textLabel.text = @"Category";
+		    cell.textLabel.textColor = [UIColor lightGrayColor];
 		}
 		break;
 	    case 2:	// Glucose
@@ -321,7 +321,7 @@ static NSUserDefaults* defaults = nil;
 		{
 		    NSString *const units = entry.glucoseUnits;
 		    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
-		    cell.text = entry.glucose ? [NSString localizedStringWithFormat:@"%.*f%@", precision, [entry.glucose floatValue], units] : nil;
+		    cell.textLabel.text = entry.glucose ? [NSString localizedStringWithFormat:@"%.*f%@", precision, [entry.glucose floatValue], units] : nil;
 		    // Color the glucose values accordingly
 		    NSString* keyHigh;
 		    NSString* keyLow;
@@ -336,11 +336,11 @@ static NSUserDefaults* defaults = nil;
 			keyLow = kLowGlucoseWarning1;
 		    }
 		    if( [entry.glucose floatValue] > [defaults floatForKey:keyHigh] )
-			cell.textColor = [UIColor blueColor];
+			cell.textLabel.textColor = [UIColor blueColor];
 		    else if( [entry.glucose floatValue] < [defaults floatForKey:keyLow] )
-			cell.textColor = [UIColor redColor];
+			cell.textLabel.textColor = [UIColor redColor];
 		    else
-			cell.textColor = [UIColor darkTextColor];
+			cell.textLabel.textColor = [UIColor darkTextColor];
 		}
 		break;
 	}
@@ -366,7 +366,7 @@ static NSUserDefaults* defaults = nil;
 			dcell.rightText = dose.type.shortName;	// Name
 		}
 		else if(dose.type)
-		    cell.text = dose.type.shortName;
+		    cell.textLabel.text = dose.type.shortName;
 	    }
 	}
 	else if( @"eDualCellID" == cellID )
@@ -377,7 +377,7 @@ static NSUserDefaults* defaults = nil;
 	}
     }
     else if( 2 == section )
-	cell.text = entry.note;
+	cell.textLabel.text = entry.note;
 
     return cell;
 }
@@ -504,7 +504,7 @@ static NSUserDefaults* defaults = nil;
 - (void)dateChangeAction
 {
     entry.timestamp = datePicker.date;
-    cellTimestamp.text = [dateFormatter stringFromDate:entry.timestamp];
+    cellTimestamp.textLabel.text = [dateFormatter stringFromDate:entry.timestamp];
 }
 
 #pragma mark -

@@ -124,7 +124,7 @@
 			((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
 			cell.showsReorderControl = YES;
 			((TextFieldCell*)cell).delegate = self;
-			cell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
+			cell.textLabel.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
 			((UITextField*)(((TextFieldCell*)cell).view)).returnKeyType = UIReturnKeyDone;
 		}
 		else
@@ -135,15 +135,15 @@
 	if( self.editing )
 	{
 		Category *const c = [appDelegate.categories objectAtIndex:indexPath.row];
-		cell.text = [c categoryName];
+		cell.textLabel.text = [c categoryName];
 		((TextFieldCell*)cell).editedObject = c;
 	}
 	else
 	{
 		if( indexPath.row )
-			cell.text = [[appDelegate.categories objectAtIndex:(indexPath.row-1)] categoryName];
+			cell.textLabel.text = [[appDelegate.categories objectAtIndex:(indexPath.row-1)] categoryName];
 		else
-			cell.text = @"None";	// Dummy "none" category so the user can select no category			
+			cell.textLabel.text = @"None";	// Dummy "none" category so the user can select no category			
 	}
 
 	return cell;

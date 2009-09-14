@@ -33,9 +33,9 @@
 	typeField = [[UILabel alloc] initWithFrame:CGRectZero];
 	typeField.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
 
-	self.text = @"New Insulin Dose";
-	self.textColor = [UIColor lightGrayColor];
-	self.textAlignment = UITextAlignmentCenter;
+	self.textLabel.text = @"New Insulin Dose";
+	self.textLabel.textColor = [UIColor lightGrayColor];
+	self.textLabel.textAlignment = UITextAlignmentCenter;
 
 	[self.contentView addSubview:doseField];
 	[self.contentView addSubview:typeField];

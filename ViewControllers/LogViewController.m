@@ -272,8 +272,8 @@
 
     if( @"MoreCell" == cellID )
     {
-	cell.text = @"Display More Log Entries";
-	cell.textAlignment = UITextAlignmentCenter;
+	cell.textLabel.text = @"Display More Log Entries";
+	cell.textLabel.textAlignment = UITextAlignmentCenter;
 	return cell;
     }
 

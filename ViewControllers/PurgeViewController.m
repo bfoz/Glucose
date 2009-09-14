@@ -61,14 +61,14 @@ static AppDelegate *appDelegate = nil;
 	unsigned num = [appDelegate numLogEntriesFrom:purgeStart to:purgeEnd];
 	if( num )
 	{
-		purgeCell.text = [NSString stringWithFormat:@"Purge %u Records", num];
-		purgeCell.textColor = [UIColor blackColor];
+		purgeCell.textLabel.text = [NSString stringWithFormat:@"Purge %u Records", num];
+		purgeCell.textLabel.textColor = [UIColor blackColor];
 		purgeEnabled = YES;
 	}
 	else
 	{
-		purgeCell.text = @"Empty Date Range Selected";
-		purgeCell.textColor = [UIColor grayColor];
+		purgeCell.textLabel.text = @"Empty Date Range Selected";
+		purgeCell.textLabel.textColor = [UIColor grayColor];
 		purgeEnabled = NO;
 	}
 }
@@ -123,14 +123,14 @@ static AppDelegate *appDelegate = nil;
 				case 0:
 					// The From field defaults to the day after the end of last purge
 					//  or the beginning of the LogEntry table if no last export
-					cell.text = @"From";
+					cell.textLabel.text = @"From";
 					label.text = [shortDateFormatter stringFromDate:purgeStart];
 					purgeStartField = label;
 					purgeStartCell = cell;
 					break;
 				case 1:
 					// The To field defaults to Today
-					cell.text = @"To";
+					cell.textLabel.text = @"To";
 					label.text = @"Today";
 					purgeEndField = label;
 					purgeEndCell = cell;
@@ -141,7 +141,7 @@ static AppDelegate *appDelegate = nil;
 		break;
 		case 1:
 		{
-			cell.textAlignment = UITextAlignmentCenter;
+			cell.textLabel.textAlignment = UITextAlignmentCenter;
 			purgeCell = cell;
 			[self updatePurgeRowText];
 		}

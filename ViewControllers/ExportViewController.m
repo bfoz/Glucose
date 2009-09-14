@@ -368,7 +368,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			switch( row )
 			{
 				case 0:
-					cell.text = @"Username";
+					cell.textLabel.text = @"Username";
 					f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 175, 20)];
 					f.clearButtonMode = UITextFieldViewModeWhileEditing;
 					f.delegate = self;
@@ -380,7 +380,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 					usernameField = f;
 					break;
 				case 1:
-					cell.text = @"Password";
+					cell.textLabel.text = @"Password";
 					f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 175, 20)];
 					f.clearButtonMode = UITextFieldViewModeWhileEditing;
 					f.delegate = self;
@@ -403,14 +403,14 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 				case 0:
 					// The From field defaults to the day after the last export
 					//  or the beginning of the LogEntry table if no last export
-					cell.text = @"From";
+					cell.textLabel.text = @"From";
 					label.text = [shortDateFormatter stringFromDate:exportStart];
 					exportStartField = label;
 					exportStartCell = cell;
 					break;
 				case 1:
 					// The To field defaults to Today
-					cell.text = @"To";
+					cell.textLabel.text = @"To";
 					label.text = @"Today";
 					exportEndField = label;
 					exportEndCell = cell;
@@ -420,14 +420,14 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			break;
 		}
 		case 2:
-			cell.text = @"Share Exported File";
+			cell.textLabel.text = @"Share Exported File";
 			cell.accessoryView = shareSwitch;
 			break;
 		case 3:
 			switch( row )
 			{
 				case 0:
-					cell.textAlignment = UITextAlignmentCenter;
+					cell.textLabel.textAlignment = UITextAlignmentCenter;
 					exportCell = cell;
 					[self updateExportRowText];
 					break;
@@ -564,14 +564,14 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	unsigned num = [appDelegate numLogEntriesFrom:exportStart to:exportEnd];
 	if( num )
 	{
-		exportCell.text = [NSString stringWithFormat:@"Export %d Records", num];
-		exportCell.textColor = [UIColor blackColor];
+		exportCell.textLabel.text = [NSString stringWithFormat:@"Export %d Records", num];
+		exportCell.textLabel.textColor = [UIColor blackColor];
 		exportEnabled = YES;
 	}
 	else
 	{
-		exportCell.text = @"Empty Date Range Selected";
-		exportCell.textColor = [UIColor grayColor];
+		exportCell.textLabel.text = @"Empty Date Range Selected";
+		exportCell.textLabel.textColor = [UIColor grayColor];
 		exportEnabled = NO;
 	}
 }
