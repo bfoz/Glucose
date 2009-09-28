@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-// Import the AppDelegate because it owns the entries array
-#import "AppDelegate.h"
 #import "LogEntry.h"
 #import "LogEntryViewController.h"
 
@@ -17,14 +15,12 @@
 
 @interface LogViewController : UITableViewController
 {
-	AppDelegate* appDelegate;
     NSDateFormatter *dateFormatter;
 //	unsigned	inspectingSectionID;
 //	NSMutableDictionary*	inspectingSection;
 	LogEntryViewController* logEntryViewController;
 	SettingsViewController*	settingsViewController;
 }
-//@property (nonatomic, retain) AppDelegate* appDelegate;
 @property (nonatomic, retain) LogEntryViewController* logEntryViewController;
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;

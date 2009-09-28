@@ -16,9 +16,10 @@
 #import "LogEntryCell.h"
 #import "SettingsViewController.h"
 
+static AppDelegate *appDelegate = nil;
+
 @interface LogViewController ()
 
-@property (nonatomic, readonly)	AppDelegate*	appDelegate;
 @property (nonatomic, retain)	NSDateFormatter*	dateFormatter;
 @property (nonatomic, retain) SettingsViewController* settingsViewController;
 
@@ -26,7 +27,7 @@
 
 @implementation LogViewController
 
-@synthesize appDelegate, dateFormatter;
+@synthesize dateFormatter;
 @synthesize logEntryViewController, settingsViewController;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -255,7 +256,7 @@
     const unsigned section = indexPath.section;
     const unsigned row = indexPath.row;
 
-    if( (section == ([self.appDelegate.sections count]-1)) && (row == [[appDelegate.sections objectAtIndex:section] count]) )
+    if( (section == ([appDelegate.sections count]-1)) && (row == [[appDelegate.sections objectAtIndex:section] count]) )
 	cellID = @"MoreCell";
 
     LogEntryCell *cell = (LogEntryCell*)[tableView dequeueReusableCellWithIdentifier:cellID];
@@ -278,7 +279,7 @@
     }
 
 	// Get the LogEntry for the cell
-	LogDay *const s = [self.appDelegate.sections objectAtIndex:indexPath.section];
+	LogDay *const s = [appDelegate.sections objectAtIndex:indexPath.section];
 	if( s && s.count && ![s.entries count] )
 		[s hydrate:appDelegate.database];
 	LogEntry* entry = [s.entries objectAtIndex:indexPath.row];

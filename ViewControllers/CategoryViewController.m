@@ -12,15 +12,11 @@
 #import "Constants.h"
 #import "LogEntry.h"
 
-@interface CategoryViewController ()
-
-@property (nonatomic, readonly) AppDelegate *appDelegate;
-
-@end
+static AppDelegate *appDelegate = nil;
 
 @implementation CategoryViewController
 
-@synthesize appDelegate, editedObject;
+@synthesize editedObject;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {

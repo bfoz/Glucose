@@ -13,15 +13,11 @@
 #import "InsulinTypeViewController.h"
 #import "LogEntry.h"
 
-@interface InsulinTypeViewController ()
-
-@property (nonatomic, readonly) AppDelegate *appDelegate;
-
-@end
+static AppDelegate *appDelegate = nil;
 
 @implementation InsulinTypeViewController
 
-@synthesize appDelegate, editedObject, editedIndex;
+@synthesize editedObject, editedIndex;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {

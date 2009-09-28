@@ -9,13 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "SlidingViewController.h"
 
-@class AppDelegate;
 @class LogEntry;
 @class TextFieldCell;
 
 @interface InsulinTypeViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
-    AppDelegate*	appDelegate;
     BOOL			dirty;
     LogEntry*		editedObject;
     unsigned		editedIndex;

@@ -11,11 +11,8 @@
 #import "SlidingViewController.h"
 #import "TextFieldCell.h"	// Needed for TextFieldCellDelegate
 
-@class AppDelegate;
-
 @interface CategoryViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
-	AppDelegate*	appDelegate;
     id				editedObject;
 	BOOL			dirty;
     unsigned	deleteRowNum;
