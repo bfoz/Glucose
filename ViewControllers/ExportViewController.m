@@ -802,9 +802,15 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[self didBeginEditing:[self cellForField:field] field:field action:[self selectorForField:field]];
 }
 
+- (void)textFieldDidEndEditing:(UITextField*)field
+{
+    if( self.navigationItem.rightBarButtonItem )
+	[self performSelector:self.navigationItem.rightBarButtonItem.action];
+}
+
 - (BOOL) textFieldShouldReturn:(UITextField*)textField
 {
-	[textField resignFirstResponder];
+    if( self.navigationItem.rightBarButtonItem )
 	[self performSelector:self.navigationItem.rightBarButtonItem.action];
 	return NO;
 }
