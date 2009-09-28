@@ -124,6 +124,28 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     [self.tableView reloadData];	// Redisplay the data to update the checkmark
 }
 
+- (void) purgeInsulinTypeAtIndex:(unsigned)index
+{
+    InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:index];
+    const unsigned numRecords = [appDelegate numLogEntriesForInsulinTypeID:type.typeID];
+    // Ask the user for confirmation if numRecords != 0
+    if( numRecords )
+    {
+	alertReason = ALERT_REASON_TYPE_NOT_EMPTY;
+	deleteRowNum = index;
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?"
+							message:[NSString stringWithFormat:@"Deleting Insulin %@ will delete dose information from %u log entr%@", type.shortName, numRecords, ((numRecords>1)?@"ies":@"y")]
+						       delegate:self
+					      cancelButtonTitle:@"Cancel"
+					      otherButtonTitles:@"OK", nil];
+	[alert show];
+	[alert release];
+    }
+    else
+	// Purge the record from the database and the insulinTypes array
+	[appDelegate purgeInsulinTypeAtIndex:index];
+}
+
 #pragma mark <UITableViewDelegate>
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -265,23 +287,23 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     // If a row is deleted, remove it from the list
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
+	// If the row corresponds to a type that's used as a default insulin
+	//  type for new log entries, then ask the user for confirmation first
 	InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:path.row];
-	const unsigned numRecords = [appDelegate numLogEntriesForInsulinTypeID:type.typeID];
-	// Ask the user for confirmation if numRecords != 0
-	if( numRecords )
+	if( NSNotFound != [appDelegate.defaultInsulinTypes indexOfObjectIdenticalTo:type] )
 	{
+	    alertReason = ALERT_REASON_DEFAULT_NEW_ENTRY_TYPE;
 	    deleteRowNum = path.row;
 	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" 
-							    message:[NSString stringWithFormat:@"Deleting Insulin %@ will delete dose information from %u log entr%@", type.shortName, numRecords, ((numRecords>1)?@"ies":@"y")]
+							    message:[NSString stringWithFormat:@"Insulin %@ is used for new log entries. If you delete this insulin type it will no longer be displayed for new log entries.", type.shortName]
 							   delegate:self
 						  cancelButtonTitle:@"Cancel"
 						  otherButtonTitles:@"OK", nil];
 	    [alert show];
-	    [alert release];		
+	    [alert release];
 	}
-	else
-	    // Purge the record from the database and the insulinTypes array
-	    [appDelegate purgeInsulinTypeAtIndex:path.row];
+	else	// Otherwise, carry on
+	    [self purgeInsulinTypeAtIndex:deleteRowNum];
     }
 }
 
@@ -303,8 +325,16 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 {
     if( buttonIndex )
     {
-	// Purge the record from the database and the Insulin Types array
-	[appDelegate purgeInsulinTypeAtIndex:deleteRowNum];
+	switch( alertReason )
+	{
+	    case ALERT_REASON_DEFAULT_NEW_ENTRY_TYPE:
+		[self purgeInsulinTypeAtIndex:deleteRowNum];
+		break;
+	    case ALERT_REASON_TYPE_NOT_EMPTY:
+		// Purge the record from the database and the Insulin Types array
+		[appDelegate purgeInsulinTypeAtIndex:deleteRowNum];
+		break;
+	}
     }
     else
 	// Reload the table on cancel to work around a display bug

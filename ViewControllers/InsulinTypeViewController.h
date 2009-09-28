@@ -19,6 +19,11 @@
     unsigned		editedIndex;
     BOOL			multiCheck;
     unsigned	    deleteRowNum;
+    enum
+    {
+	ALERT_REASON_DEFAULT_NEW_ENTRY_TYPE,
+	ALERT_REASON_TYPE_NOT_EMPTY
+    } alertReason;
 }
 
 @property (nonatomic, retain) LogEntry* editedObject;
