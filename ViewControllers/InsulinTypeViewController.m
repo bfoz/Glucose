@@ -178,8 +178,16 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
     }
 
+    // Get the row's insulin type object
     InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
     cell.textLabel.text = [type shortName];
+
+    // Highlight the row if its insulin type is on the list of types used for new entries
+    if( NSNotFound == [appDelegate.defaultInsulinTypes indexOfObjectIdenticalTo:type] )
+	cell.textLabel.textColor = [UIColor blackColor];
+    else
+	cell.textLabel.textColor = [UIColor blueColor];
+
     if( self.editing )
 	((TextFieldCell*)cell).editedObject = type;
 
