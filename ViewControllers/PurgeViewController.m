@@ -107,36 +107,36 @@ static AppDelegate *appDelegate = nil;
     
     UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:CellIdentifier];
     if( !cell )
-	{
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
-		cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    {
+	if( 0 == indexPath.section )	// Use an attribute-style cell
+	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"DateRange"] autorelease];
+	else
+	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+	cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
 	switch( indexPath.section )
 	{
 		case 0:
 		{
-			UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 100, 20)];
-			label.textAlignment = UITextAlignmentRight;
 			switch( indexPath.row )
 			{
 				case 0:
 					// The From field defaults to the day after the end of last purge
 					//  or the beginning of the LogEntry table if no last export
 					cell.textLabel.text = @"From";
-					label.text = [shortDateFormatter stringFromDate:purgeStart];
-					purgeStartField = label;
+					cell.detailTextLabel.text = [shortDateFormatter stringFromDate:purgeStart];
+					purgeStartField = cell.detailTextLabel;
 					purgeStartCell = cell;
 					break;
 				case 1:
 					// The To field defaults to Today
 					cell.textLabel.text = @"To";
-					label.text = @"Today";
-					purgeEndField = label;
+					cell.detailTextLabel.text = @"Today";
+					purgeEndField = cell.detailTextLabel;
 					purgeEndCell = cell;
 					break;
 			}
-			cell.accessoryView = label;
 		}
 		break;
 		case 1:

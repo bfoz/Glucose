@@ -348,6 +348,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 	switch( section )
 	{
+	case 1: cellID = @"DateRange"; break;
 		case 2: cellID = @"Share"; break;
 		case 3: cellID = @"Export"; break;
 		default: cellID = @"CellID"; break;
@@ -356,12 +357,14 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
 	{
+	if( 1 == section )	// Use an attribute-style cell
+	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID] autorelease];
+	else
 		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	}
 
 	UITextField*	f	= nil;
-	UILabel*	label	= nil;
 	switch( section )
 	{
 		case 0:
@@ -396,27 +399,24 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			break;
 		case 1:
 		{
-			label = [[UILabel alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 100, 20)];
-			label.textAlignment = UITextAlignmentRight;
 			switch( row )
 			{
 				case 0:
 					// The From field defaults to the day after the last export
 					//  or the beginning of the LogEntry table if no last export
 					cell.textLabel.text = @"From";
-					label.text = [shortDateFormatter stringFromDate:exportStart];
-					exportStartField = label;
+					cell.detailTextLabel.text = [shortDateFormatter stringFromDate:exportStart];
+					exportStartField = cell.detailTextLabel;
 					exportStartCell = cell;
 					break;
 				case 1:
 					// The To field defaults to Today
 					cell.textLabel.text = @"To";
-					label.text = @"Today";
-					exportEndField = label;
+					cell.detailTextLabel.text = @"Today";
+					exportEndField = cell.detailTextLabel;
 					exportEndCell = cell;
 					break;
 			}
-			cell.accessoryView = label;
 			break;
 		}
 		case 2:
