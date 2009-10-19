@@ -90,9 +90,7 @@ static AppDelegate *appDelegate = nil;
 
 - (void) appendNewInsulinType
 {
-    NSIndexPath* path = [NSIndexPath indexPathForRow:[appDelegate.insulinTypes count] inSection:0];
     [appDelegate addInsulinType:nil];	// Create a new Category record
-    [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
