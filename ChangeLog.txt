@@ -1,5 +1,5 @@
 Version 0.6.3 - October 3, 2009
-- Ask before deleting an insulin type that's used for new log entries
+- On the "Insulin Types" settings screen, ask before deleting an insulin type that's used for new log entries
 - Google Data client library version 1.8
 - Requires iPhone OS 3.0 or later
 
