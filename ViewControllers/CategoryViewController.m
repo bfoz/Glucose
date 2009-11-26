@@ -12,8 +12,6 @@
 #import "Constants.h"
 #import "LogEntry.h"
 
-static AppDelegate *appDelegate = nil;
-
 @implementation CategoryViewController
 
 @synthesize editedObject;
@@ -23,7 +21,6 @@ static AppDelegate *appDelegate = nil;
 	if (self = [super initWithStyle:style])
 	{
 		self.title = @"Categories";
-		appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 		dirty = NO;
 		
 		// Register to be notified whenever the insulinTypes array changes

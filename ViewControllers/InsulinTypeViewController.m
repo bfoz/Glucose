@@ -13,8 +13,6 @@
 #import "InsulinTypeViewController.h"
 #import "LogEntry.h"
 
-static AppDelegate *appDelegate = nil;
-
 @implementation InsulinTypeViewController
 
 @synthesize editedObject, editedIndex;
@@ -24,7 +22,6 @@ static AppDelegate *appDelegate = nil;
     if (self = [super initWithStyle:style])
     {
 	self.title = @"Insulin Types";
-	appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 	dirty = NO;
 	multiCheck = NO;
 

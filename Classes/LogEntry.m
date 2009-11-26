@@ -13,7 +13,6 @@
 #import "InsulinDose.h"
 #import "InsulinType.h"
 
-static AppDelegate* appDelegate;
 
 // Static variables for compiled SQL queries. This implementation choice is to be able to share a one time
 // compilation of each query across all instances of the class. Each time a query is used, variables may be bound
@@ -221,8 +220,6 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
 	if( self = [super init] )
     {
 		insulin = [[NSMutableArray alloc] init];
-		if( !appDelegate )
-			appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 	}
     return self;		
 }

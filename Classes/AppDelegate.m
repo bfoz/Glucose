@@ -21,6 +21,8 @@
 
 #define	LOG_SQL		@"glucose.sqlite"
 
+AppDelegate* appDelegate = nil;
+
 @interface AppDelegate (Private)
 - (void) createEditableCopyOfDatabaseIfNeeded;
 - (BOOL) openLogDatabase;
@@ -51,6 +53,9 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 {	
     // Create the top level window (instead of using a default nib)
     window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+
+    // Initialize the global application delegate pointer
+    appDelegate = self;
 
 	// Set the background color for the flip animation going to/from the settings view
 	//  The background color is what shows up behind the flipping views

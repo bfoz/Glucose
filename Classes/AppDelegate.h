@@ -85,4 +85,5 @@ extern unsigned maxCategoryNameWidth;
 extern unsigned maxInsulinTypeShortNameWidth;
 extern NSDateFormatter* shortDateFormatter;
 extern BOOL partialTableLoad;
+extern AppDelegate* appDelegate;
 

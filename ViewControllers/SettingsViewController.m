@@ -21,8 +21,6 @@
 
 //@synthesize categoryViewController;
 
-static AppDelegate* appDelegate = nil;
-
 enum Sections
 {
     kSectionExportPurge = 0,
@@ -68,9 +66,6 @@ enum AboutSectionRows
 {
     if( self = [super initWithStyle:style] )
     {
-	if( !appDelegate )
-	    appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-
 	self.navigationItem.hidesBackButton = YES;
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneAction:)];
 	self.title = @"Settings";

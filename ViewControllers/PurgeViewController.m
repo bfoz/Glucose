@@ -13,16 +13,12 @@
 
 @implementation PurgeViewController
 
-static AppDelegate *appDelegate = nil;
-
 - (id)initWithStyle:(UITableViewStyle)style
 {
     // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
     if (self = [super initWithStyle:style])
 	{
 		self.title = @"Purge Records";
-		if( !appDelegate )
-			appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
 		// purgeStart defaults to the day after the last purge
 		//  or the current date if no last purge date is stored

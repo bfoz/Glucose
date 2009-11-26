@@ -16,8 +16,6 @@
 #import "LogEntryCell.h"
 #import "SettingsViewController.h"
 
-static AppDelegate *appDelegate = nil;
-
 @interface LogViewController ()
 
 @property (nonatomic, retain)	NSDateFormatter*	dateFormatter;
@@ -35,7 +33,6 @@ static AppDelegate *appDelegate = nil;
 	if( self = [super initWithStyle:style] )
 	{
 		self.title = @"Log";
-		appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
         UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
 		[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];

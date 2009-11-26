@@ -40,7 +40,6 @@
 
 @implementation ExportViewController
 
-static AppDelegate *appDelegate = nil;
 static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 @synthesize keychainData, failureTitle;
@@ -50,8 +49,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	if( self = [super initWithStyle:style] )
 	{
 		self.title = @"Export";
-		if( !appDelegate )
-			appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
 		// exportStart defaults to the day after the last export
 		//  or the beginning of the LogEntry table if no last export

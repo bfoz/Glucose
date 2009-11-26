@@ -41,7 +41,6 @@
 @synthesize glucoseCell;
 @synthesize cellTimestamp;
 
-static AppDelegate* appDelegate = nil;
 static unsigned InsulinPrecision;
 static NSUserDefaults* defaults = nil;
 
@@ -52,8 +51,6 @@ static NSUserDefaults* defaults = nil;
     {
 	self.title = @"Detail";
 
-	if( !appDelegate )
-	    appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 	database = appDelegate.database;
 	
 	// Create a date formatter to convert the date to a string format.
