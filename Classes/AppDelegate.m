@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "Category.h"
 #import "Constants.h"
+#import	"GlucoseWindow.h"
 #import "InsulinDose.h"
 #import "InsulinType.h"
 #import "LogEntry.h"
@@ -52,7 +53,8 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {	
     // Create the top level window (instead of using a default nib)
-    window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    // Use a subclass of UIWindow for capturing shake events
+    window = [[GlucoseWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
     // Initialize the global application delegate pointer
     appDelegate = self;
