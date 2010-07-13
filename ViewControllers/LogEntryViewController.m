@@ -376,6 +376,11 @@ static NSUserDefaults* defaults = nil;
     else if( 2 == section )
 	cell.textLabel.text = entry.note;
 
+    if( self.editing )
+	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    else
+	cell.accessoryType = UITableViewCellAccessoryNone;
+
     return cell;
 }
 
@@ -406,12 +411,6 @@ static NSUserDefaults* defaults = nil;
 - (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Only allow selection if editing.
     return (self.editing) ? indexPath : nil;
-}
-
-- (UITableViewCellAccessoryType)tableView:(UITableView *)tv accessoryTypeForRowWithIndexPath:(NSIndexPath *)indexPath
-{
-    // Show the disclosure indicator if editing.
-    return (self.editing) ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)path
