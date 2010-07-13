@@ -229,74 +229,7 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
     if( self = [self init] )
     {
 		entryID = eid;
-
-        if( !init_statement && (sqlite3_prepare_v2(db, init_sql, -1, &init_statement, NULL) != SQLITE_OK) )
-			NSAssert1(0, @"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(db));
-
-        // For this query, we bind the primary key to the first (and only) placeholder in the statement.
-        // Note that the parameters are numbered from 1, not from 0.
-        sqlite3_bind_int(init_statement, 1, entryID);
-
-#define ASSIGN_NOT_NULL(_s, _c, _var, _val)			\
-if( SQLITE_NULL == sqlite3_column_type(_s, _c) )	\
-		_var = nil;									\
-else												\
-		_var = _val;
-		
-        if( sqlite3_step(init_statement) == SQLITE_ROW )
-		{
-			ASSIGN_NOT_NULL(init_statement, 0, self.timestamp,
-							[NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(init_statement, 0)]);
-			ASSIGN_NOT_NULL(init_statement, 1, self.glucose,
-							[NSNumber numberWithDouble:sqlite3_column_double(init_statement, 1)]);
-			ASSIGN_NOT_NULL(init_statement, 8, self.note,
-							[NSString stringWithUTF8String:(const char*)sqlite3_column_text(init_statement, 8)]);
-
-			if( SQLITE_NULL == sqlite3_column_type(init_statement, 2) )
-				self.glucoseUnits = nil;
-			else
-			{
-				switch(sqlite3_column_int(init_statement, 2))
-				{
-					case 0: self.glucoseUnits = kGlucoseUnits_mgdL; break;
-					case 1: self.glucoseUnits = kGlucoseUnits_mmolL; break;
-					default: self.glucoseUnits = nil; break;
-				}
-			}			
-			if( SQLITE_NULL == sqlite3_column_type(init_statement, 3) )
-				self.category = nil;
-			else
-				[self setCategoryWithID:sqlite3_column_int(init_statement, 3)];
-
-			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 4)) && 
-			    (SQLITE_NULL != sqlite3_column_type(init_statement, 6)) )
-			{
-				[self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 6)]]];
-				[self setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 4)] insulinDose:[self.insulin lastObject]];
-			}
-			if( (SQLITE_NULL != sqlite3_column_type(init_statement, 5)) && 
-			    (SQLITE_NULL != sqlite3_column_type(init_statement, 7)) )
-			{
-				[self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 7)]]];
-				[self setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 5)] insulinDose:[self.insulin lastObject]];
-			}
-			// Empty the array if there are no valid doses
-			unsigned count = 0;
-			for( InsulinDose* d in insulin )
-				if( d.dose )
-					++count;
-			if( !count )
-				[self.insulin removeAllObjects];
-		}
-        else
-		{
-            self.timestamp = nil;
-			self.glucose = nil;
-			self.category = nil;
-		}
-
-        sqlite3_reset(init_statement);	// Reset the statement for future reuse
-        dirty = NO;
+	[self load:db];
 	}
     return self;
 }
@@ -379,6 +312,81 @@ else												\
 		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(db));
 	
 	dirty = NO;		// Squeaky clean
+}
+
+- (void)load:(sqlite3*)db
+{
+    if( !init_statement && (sqlite3_prepare_v2(db, init_sql, -1, &init_statement, NULL) != SQLITE_OK) )
+	NSAssert1(0, @"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(db));
+
+    // For this query, we bind the primary key to the first (and only) placeholder in the statement.
+    // Note that the parameters are numbered from 1, not from 0.
+    sqlite3_bind_int(init_statement, 1, entryID);
+
+    // Start with a clean insulin array in case this is a reload
+    [self.insulin removeAllObjects];
+
+#define ASSIGN_NOT_NULL(_s, _c, _var, _val)		\
+if( SQLITE_NULL == sqlite3_column_type(_s, _c) )	\
+_var = nil;						\
+else							\
+_var = _val;
+
+    if( sqlite3_step(init_statement) == SQLITE_ROW )
+    {
+	ASSIGN_NOT_NULL(init_statement, 0, self.timestamp,
+			[NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(init_statement, 0)]);
+	ASSIGN_NOT_NULL(init_statement, 1, self.glucose,
+			[NSNumber numberWithDouble:sqlite3_column_double(init_statement, 1)]);
+	ASSIGN_NOT_NULL(init_statement, 8, self.note,
+			[NSString stringWithUTF8String:(const char*)sqlite3_column_text(init_statement, 8)]);
+
+	if( SQLITE_NULL == sqlite3_column_type(init_statement, 2) )
+	    self.glucoseUnits = nil;
+	else
+	{
+	    switch(sqlite3_column_int(init_statement, 2))
+	    {
+		case 0: self.glucoseUnits = kGlucoseUnits_mgdL; break;
+		case 1: self.glucoseUnits = kGlucoseUnits_mmolL; break;
+		default: self.glucoseUnits = nil; break;
+	    }
+	}
+
+	if( SQLITE_NULL == sqlite3_column_type(init_statement, 3) )
+	    self.category = nil;
+	else
+	    [self setCategoryWithID:sqlite3_column_int(init_statement, 3)];
+
+	if( (SQLITE_NULL != sqlite3_column_type(init_statement, 4)) &&
+	    (SQLITE_NULL != sqlite3_column_type(init_statement, 6)) )
+	{
+	    [self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 6)]]];
+	    [self setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 4)] insulinDose:[self.insulin lastObject]];
+	}
+	if( (SQLITE_NULL != sqlite3_column_type(init_statement, 5)) &&
+	   (SQLITE_NULL != sqlite3_column_type(init_statement, 7)) )
+	{
+	    [self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 7)]]];
+	    [self setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 5)] insulinDose:[self.insulin lastObject]];
+	}
+	// Empty the array if there are no valid doses
+	unsigned count = 0;
+	for( InsulinDose* d in insulin )
+	    if( d.dose )
+		++count;
+	if( !count )
+	    [self.insulin removeAllObjects];
+    }
+    else
+    {
+	self.timestamp = nil;
+	self.glucose = nil;
+	self.category = nil;
+    }
+
+    sqlite3_reset(init_statement);	// Reset the statement for future reuse
+    dirty = NO;
 }
 
 // When entering edit mode setup defaults for any missing fields (like insulin doses)
