@@ -52,6 +52,7 @@ static NSUserDefaults* defaults = nil;
 	self.title = @"Detail";
 
 	database = appDelegate.database;
+	didUndo = NO;
 	
 	// Create a date formatter to convert the date to a string format.
 	dateFormatter = [[NSDateFormatter alloc] init];
@@ -98,6 +99,11 @@ static NSUserDefaults* defaults = nil;
 {
     [super viewWillAppear:animated];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+					     selector:@selector(shaken)
+						 name:@"shaken"
+					       object:nil];
+
     didSelectRow = NO;		    // Remove any existing selection
     [self.tableView reloadData];    // Redisplay the data
 }
@@ -135,6 +141,28 @@ static NSUserDefaults* defaults = nil;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+#pragma mark Shake handling
+
+- (void)shaken
+{
+    // Ignore shakes when not editing
+    if( !self.editing )
+	return;
+
+    // If editing a field, revert that field
+    if( editCell )
+    {
+	didUndo = YES;	    // Flag that an undo operation is happening
+	[self saveAction];  // Cancel the edit
+	[self.tableView reloadData];
+    }
+    else // otherwise revert the record and cancel editing
+    {
+	[entry load:database];		    // Reload the entry from the database
+	[self setEditing:NO animated:NO];   // Cancel edit mode
+    }
 }
 
 #pragma mark -
@@ -513,7 +541,9 @@ static NSUserDefaults* defaults = nil;
 
 - (void)numberFieldCellDidEndEditing:(NumberFieldCell*)cell
 {
-    if( cell == glucoseCell )
+    if( didUndo )
+	didUndo = NO;	// Undo handled
+    else if( cell == glucoseCell )
 	entry.glucose = cell.number;
 }
 
@@ -558,7 +588,10 @@ static NSUserDefaults* defaults = nil;
 
 - (void)doseDidEndEditing:(DoseFieldCell *)cell
 {
-    [entry setDose:[cell.doseField number] insulinDose:cell.dose];
+    if( didUndo )
+	didUndo = NO;	// Undo handled
+    else
+	[entry setDose:[cell.doseField number] insulinDose:cell.dose];
 }
 
 - (void)saveDoseAction:(id)sender
@@ -577,8 +610,13 @@ static NSUserDefaults* defaults = nil;
 
 - (void)saveNoteAction:(id)sender
 {
-    entry.note = ((TextViewCell *)editCell).view.text;
-    [self saveAction];
+    if( didUndo )
+	didUndo = NO;	// Undo handled
+    else
+    {
+	entry.note = ((TextViewCell *)editCell).view.text;
+	[self saveAction];
+    }
 }
 
 @end

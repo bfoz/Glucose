@@ -33,9 +33,12 @@
     UITableViewCell*	cellTimestamp;
     sqlite3*	database;			// SQLite database handle
     BOOL	didSelectRow;
+    BOOL	didUndo;
 }
 
 @property (nonatomic, retain) LogEntry* entry;
 @property (nonatomic, retain) LogDay* entrySection;
+
+- (void)shaken;
 
 @end
