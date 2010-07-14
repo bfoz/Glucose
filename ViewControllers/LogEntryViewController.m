@@ -130,6 +130,7 @@ static NSUserDefaults* defaults = nil;
 	    // Remove from old section
 	    if( entrySection )
 		[appDelegate deleteLogEntry:entry fromSection:entrySection];
+	    entrySection = s;
 	}
 	else	// Only need to update if above block was skipped
 	    [s updateStatistics];
