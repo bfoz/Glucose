@@ -13,6 +13,29 @@
 
 @synthesize categoryID, categoryName;
 
++ (BOOL) insertCategory:(Category*)c intoDatabase:(sqlite3*)database
+{
+    static char *sql = "INSERT INTO LogEntryCategories (categoryID, sequence, name) SELECT ?,MAX(sequence)+1,? FROM LogEntryCategories";
+    sqlite3_stmt *statement;
+
+    if( sqlite3_prepare_v2(database, sql, -1, &statement, NULL) != SQLITE_OK )
+    {
+	NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+	return NO;
+    }
+
+    if( !(c.categoryName && [c.categoryName length]) )
+	c.categoryName = [NSString stringWithString:@"New Category"];
+
+    sqlite3_bind_int(statement, 1, c.categoryID);
+    sqlite3_bind_text(statement, 2, [c.categoryName UTF8String], -1, SQLITE_TRANSIENT);
+    int success = sqlite3_step(statement);
+    if( SQLITE_ERROR == success )
+	NSLog(@"Failed to insert: '%s'.", sqlite3_errmsg(database));
+    sqlite3_finalize(statement);
+    return success != SQLITE_ERROR;
+}
+
 // Create a new Category record in the database and return an new Category object
 + (Category*)insertNewCategoryIntoDatabase:(sqlite3*)database withName:(NSString*)n
 {

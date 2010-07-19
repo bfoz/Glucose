@@ -12,6 +12,9 @@
 #import "Constants.h"
 #import "LogEntry.h"
 
+#define	kCategoriesSectionNumber		0
+#define	kRestoreDefaultsSectionNumber		1
+
 @implementation CategoryViewController
 
 @synthesize editedObject;
@@ -83,6 +86,11 @@
 	[appDelegate addCategory:nil];	// Create a new Category record
 }
 
+- (void)viewDidLoad
+{
+    self.tableView.allowsSelectionDuringEditing = YES;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
@@ -93,12 +101,16 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return 1;
+    // Edit mode shows an extra section for restoring defaults
+    return self.editing ? 2 : 1;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if( kRestoreDefaultsSectionNumber == section )
+	return 1;
+
 	// When not in editing mode there is one extra row for "None"
 	return self.editing ? [appDelegate.categories count] : [appDelegate.categories count] + 1;
 }
@@ -107,18 +119,27 @@
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	NSString *const cellID = self.editing ? @"EditCellID" : @"Cell";
+    const unsigned section = indexPath.section;
 
 	UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
 	{
 		if( self.editing )
 		{
+	    switch( section )
+	    {
+		case kCategoriesSectionNumber:
 			cell = [[[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
 			((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
 			cell.showsReorderControl = YES;
 			((TextFieldCell*)cell).delegate = self;
 			cell.textLabel.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
 			((UITextField*)(((TextFieldCell*)cell).view)).returnKeyType = UIReturnKeyDone;
+		    break;
+		case kRestoreDefaultsSectionNumber:
+		    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+		    break;
+	    }
 		}
 		else
 			cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
@@ -127,9 +148,20 @@
 	// If not editing, the first row is "None", and the categories need to be shifted down one row.
 	if( self.editing )
 	{
+	switch( section )
+	{
+	    case kCategoriesSectionNumber:
+	    {
 		Category *const c = [appDelegate.categories objectAtIndex:indexPath.row];
 		cell.textLabel.text = [c categoryName];
 		((TextFieldCell*)cell).editedObject = c;
+		break;
+	    }
+	    case kRestoreDefaultsSectionNumber:
+		cell.textLabel.text = @"Restore Default Categories";
+		cell.textLabel.textAlignment = UITextAlignmentCenter;
+		break;
+	}
 	}
 	else
 	{
@@ -144,20 +176,28 @@
 
 - (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	if( editedObject && !self.editing )
+    if( self.editing )
+    {
+	if( kRestoreDefaultsSectionNumber == indexPath.section )
+	    [appDelegate appendDefaultCategories];    // Restore the missing defaults
+    }
+    else
+    {
+	if( editedObject )
 	{
 		// Row 0 is the "None" row
 		Category* c = indexPath.row ? [appDelegate.categories objectAtIndex:indexPath.row-1] : nil;
 		[editedObject setCategory:c];
 	}
 
-	// HI guidlines say row should be selected and then deselected
-	[tv deselectRowAtIndexPath:indexPath animated:YES];
-
 	if( self.parentViewController.modalViewController == self )
-		[self.parentViewController dismissModalViewControllerAnimated:YES];
+	    [self.parentViewController dismissModalViewControllerAnimated:YES];
 	else
-		[self.navigationController popViewControllerAnimated:YES];
+	    [self.navigationController popViewControllerAnimated:YES];
+    }
+
+    // HI guidlines say row should be selected and then deselected
+    [tv deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 - (void) tableView:(UITableView*)tv willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)path
@@ -169,9 +209,14 @@
 		cell.accessoryType = UITableViewCellAccessoryNone;
 }
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)path
+{
+    return kRestoreDefaultsSectionNumber != path.section;
+}
+
 - (BOOL) tableView:(UITableView*)tv canMoveRowAtIndexPath:(NSIndexPath*)path
 {
-	return self.editing;
+	return self.editing && (path.section != kRestoreDefaultsSectionNumber);
 }
 
 - (NSIndexPath*) tableView:(UITableView*)tv targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath*)fromPath toProposedIndexPath:(NSIndexPath*)toPath
@@ -188,7 +233,7 @@
 
 - (UIView*) tableView:(UITableView*)tableView viewForHeaderInSection:(NSInteger)section
 {
-	if( self.editing )
+	if( self.editing && (section != kRestoreDefaultsSectionNumber) )
 	{
 		UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
 		label.numberOfLines = 2;
