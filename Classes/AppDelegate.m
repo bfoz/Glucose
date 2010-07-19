@@ -29,7 +29,7 @@ AppDelegate* appDelegate = nil;
 - (BOOL) openLogDatabase;
 - (void) closeLogDatabase;
 
-- (void) loadCategories;
+- (void) loadCategories:(NSMutableArray*)result fromDB:(sqlite3*)db;
 - (void) loadDefaultInsulinTypes;
 - (void) loadInsulinTypes;
 - (void) loadAllSections;
@@ -102,7 +102,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	[self openLogDatabase];
 	
 	// Call these in this order
-    [self loadCategories];
+    [self loadCategories:self.categories fromDB:database];
     [self loadInsulinTypes];
 	[self loadDefaultInsulinTypes];	// Must be after loadInsulinTypes
     // Load the most recent 30 days
@@ -191,19 +191,19 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	sqlite3_close(database);
 }
 
-- (void) loadCategories
+- (void) loadCategories:(NSMutableArray*)result fromDB:(sqlite3*)db
 {
 	const char *query = "SELECT categoryID, sequence, name FROM LogEntryCategories ORDER BY sequence";
 	sqlite3_stmt *statement;
 
-	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
+	if( sqlite3_prepare_v2(db, query, -1, &statement, NULL) == SQLITE_OK )
 	{
 		while( sqlite3_step(statement) == SQLITE_ROW )
 		{
 			int categoryID = sqlite3_column_int(statement, 0);
 			const unsigned char *const s = sqlite3_column_text(statement, 2);
 			NSString* name = s ? [NSString stringWithUTF8String:(const char*)s] : @"";
-			[self.categories addObject:[[Category alloc] initWithID:categoryID name:name]];
+			[result addObject:[[Category alloc] initWithID:categoryID name:name]];
 		}
 		sqlite3_finalize(statement);
 	}
