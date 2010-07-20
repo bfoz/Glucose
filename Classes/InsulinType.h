@@ -18,6 +18,7 @@
 @property (nonatomic, readonly)	NSInteger	typeID;
 @property (nonatomic, copy)	NSString*	shortName;
 
++ (BOOL) insertInsulinType:(InsulinType*)t intoDatabase:(sqlite3*)database;
 + (InsulinType*)insertNewInsulinTypeIntoDatabase:(sqlite3*)database withName:(NSString*)n;
 
 // Initialize with a Name and ID

@@ -13,6 +13,9 @@
 #import "InsulinTypeViewController.h"
 #import "LogEntry.h"
 
+#define	kInsulinTypesSectionNumber		0
+#define	kRestoreDefaultsSectionNumber		1
+
 @implementation InsulinTypeViewController
 
 @synthesize editedObject, editedIndex;
@@ -145,56 +148,85 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    // Edit mode shows an extra section for restoring defaults
+    return self.editing ? 2 : 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if( kRestoreDefaultsSectionNumber == section )
+	return 1;
+
     return [appDelegate.insulinTypes count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {	
-    NSString* cellID = self.editing ? @"EditCellID" : @"Cell";
+    const unsigned section = indexPath.section;
+    NSString* cellID = self.editing && (section != kRestoreDefaultsSectionNumber) ? @"EditCellID" : @"Cell";
 
     UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
     if( !cell )
     {
 	if( self.editing )
 	{
-	    cell = [[[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-	    ((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
-	    cell.showsReorderControl = YES;
-	    ((TextFieldCell*)cell).delegate = self;
-	    cell.textLabel.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
-	    ((UITextField*)(((TextFieldCell*)cell).view)).returnKeyType = UIReturnKeyDone;
+	    switch( section )
+	    {
+		case kInsulinTypesSectionNumber:
+		    cell = [[[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+		    ((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
+		    cell.showsReorderControl = YES;
+		    ((TextFieldCell*)cell).delegate = self;
+		    cell.textLabel.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
+		    ((UITextField*)(((TextFieldCell*)cell).view)).returnKeyType = UIReturnKeyDone;
+		    break;
+		case kRestoreDefaultsSectionNumber:
+		    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+		    break;
+	    }
 	}
 	else
 	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
     }
 
-    // Get the row's insulin type object
-    InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
-    cell.textLabel.text = [type shortName];
+    switch( section )
+    {
+	case kInsulinTypesSectionNumber:
+	{
+	    // Get the row's insulin type object
+	    InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
+	    cell.textLabel.text = [type shortName];
 
-    // Highlight the row if its insulin type is on the list of types used for new entries
-    if( NSNotFound == [appDelegate.defaultInsulinTypes indexOfObjectIdenticalTo:type] )
-	cell.textLabel.textColor = [UIColor blackColor];
-    else
-	cell.textLabel.textColor = [UIColor blueColor];
+	    // Highlight the row if its insulin type is on the list of types used for new entries
+	    if( NSNotFound == [appDelegate.defaultInsulinTypes indexOfObjectIdenticalTo:type] )
+		cell.textLabel.textColor = [UIColor blackColor];
+	    else
+		cell.textLabel.textColor = [UIColor blueColor];
 
-    if( self.editing )
-	((TextFieldCell*)cell).editedObject = type;
+	    if( self.editing )
+		((TextFieldCell*)cell).editedObject = type;
+	    break;
+	}
+	case kRestoreDefaultsSectionNumber:
+	    cell.textLabel.text = @"Restore Default Types";
+	    cell.textLabel.textAlignment = UITextAlignmentCenter;
+	    break;
+    }
 
     return cell;
 }
 
 - (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if( self.editing )
+    {
+	if( kRestoreDefaultsSectionNumber == indexPath.section )
+	    [appDelegate appendBundledInsulinTypes];	// Restore the missing defaults
+    }
     // If a row was selected while editing a LogEntry, update the insulin type
     //  for the entry's dose. If the entry doesn't have a dose at the 
     //  specified index, append a new dose object with the selected type.
-    if( editedObject  && !self.editing )
+    else if( editedObject )
     {
 	InsulinType* t = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
 	if( editedIndex < [editedObject.insulin count] )
@@ -240,9 +272,14 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	cell.accessoryType = UITableViewCellAccessoryNone;
 }
 
+- (BOOL) tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)path
+{
+    return kRestoreDefaultsSectionNumber != path.section;
+}
+
 - (BOOL) tableView:(UITableView*)tv canMoveRowAtIndexPath:(NSIndexPath*)path
 {
-    return self.editing;
+    return self.editing && (path.section != kRestoreDefaultsSectionNumber);
 }
 
 - (NSIndexPath*) tableView:(UITableView*)tv targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath*)fromPath toProposedIndexPath:(NSIndexPath*)toPath
@@ -269,7 +306,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
 	return label;
     }
-    else if( self.editing )
+    else if( self.editing  && (section != kRestoreDefaultsSectionNumber) )
     {
 	UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
 	label.numberOfLines = 2;

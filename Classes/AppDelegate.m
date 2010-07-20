@@ -171,6 +171,21 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     }
 }
 
+sqlite3* openBundledDatabase()
+{
+    sqlite3*	db;
+
+    // Open the default databse from the main bundle
+    NSString *defaultDBPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:LOG_SQL];
+    if( sqlite3_open([defaultDBPath UTF8String], &db) != SQLITE_OK )
+    {
+	sqlite3_close(db);	// Cleanup after failure (release resources)
+	NSLog(@"Failed to open database with message '%s'.", sqlite3_errmsg(db));
+	return NULL;
+    }
+    return db;
+}
+
 - (BOOL) openLogDatabase
 {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -244,6 +259,38 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	// Find the max width of the shortName strings so it can be used for layout
 	[self updateInsulinTypeShortNameMaxWidth];
 }
+
+- (void) appendBundledInsulinTypes
+{
+    sqlite3* db = openBundledDatabase();
+    if( !db )
+	return;
+
+    // Load the default insulin types
+    NSMutableArray* a = [NSMutableArray arrayWithCapacity:1];
+    [self loadInsulinTypes:a fromDB:db];
+
+    sqlite3_close(db);	    // Close the database
+
+    // Loop through the items to add
+    for( InsulinType* t in a )
+    {
+	// See if the category already exists
+	if( ![self findInsulinTypeForID:t.typeID] )
+	{
+	    [InsulinType insertInsulinType:t intoDatabase:database];
+
+	    NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[insulinTypes count]];
+	    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"insulinTypes"];
+	    [insulinTypes addObject:t];
+	    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"insulinTypes"];
+	}
+    }
+
+    // Find the max width of the shortName strings so it can be used for layout
+    [self updateInsulinTypeShortNameMaxWidth];
+}
+
 /*
 // Return the number of days worth of log entries in the database
 - (unsigned) getNumDays

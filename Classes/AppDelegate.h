@@ -55,6 +55,7 @@
 - (void) deleteLogEntryAtIndexPath:(NSIndexPath*)indexPath;
 
 - (void) addCategory:(NSString*)name;
+- (void) appendBundledInsulinTypes;
 - (void) appendDefaultCategories;
 - (void) purgeCategoryAtIndex:(unsigned)index;
 - (void) removeCategoryAtIndex:(unsigned)index;

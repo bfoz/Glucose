@@ -13,6 +13,29 @@
 
 @synthesize typeID, shortName;
 
++ (BOOL) insertInsulinType:(InsulinType*)t intoDatabase:(sqlite3*)database
+{
+    static char *sql = "INSERT INTO InsulinTypes (typeID, sequence, shortName) SELECT ?,MAX(sequence)+1,? FROM InsulinTypes";
+    sqlite3_stmt *statement;
+
+    if( sqlite3_prepare_v2(database, sql, -1, &statement, NULL) != SQLITE_OK )
+    {
+	NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+	return NO;
+    }
+
+    if( !(t.shortName && [t.shortName length]) )
+	t.shortName = [NSString stringWithString:@"New Insulin Type"];
+
+    sqlite3_bind_int(statement, 1, t.typeID);
+    sqlite3_bind_text(statement, 2, [t.shortName UTF8String], -1, SQLITE_TRANSIENT);
+    int success = sqlite3_step(statement);
+    if( SQLITE_ERROR == success )
+	NSLog(@"Failed to insert: '%s'.", sqlite3_errmsg(database));
+    sqlite3_finalize(statement);
+    return success != SQLITE_ERROR;
+}
+
 // Create a new InsulinType record in the database and return an new InsulinType object
 + (InsulinType*)insertNewInsulinTypeIntoDatabase:(sqlite3*)database withName:(NSString*)n;
 {
