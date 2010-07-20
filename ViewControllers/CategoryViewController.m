@@ -179,7 +179,7 @@
     if( self.editing )
     {
 	if( kRestoreDefaultsSectionNumber == indexPath.section )
-	    [appDelegate appendDefaultCategories];    // Restore the missing defaults
+	    [appDelegate appendBundledCategories];    // Restore the missing defaults
     }
     else
     {

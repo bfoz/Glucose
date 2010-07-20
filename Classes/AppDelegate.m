@@ -260,6 +260,37 @@ sqlite3* openBundledDatabase()
 	[self updateInsulinTypeShortNameMaxWidth];
 }
 
+// Add the categories from the bundled defaults database
+- (void) appendBundledCategories
+{
+    sqlite3* db = openBundledDatabase();
+    if( !db )
+	return;
+
+    // Load the default categories
+    NSMutableArray* a = [NSMutableArray arrayWithCapacity:1];
+    [self loadCategories:a fromDB:db];
+
+    sqlite3_close(db);	    // Close the database
+
+    // Loop through the items to add
+    for( Category* c in a )
+    {
+	// See if the category already exists
+	if( ![self findCategoryForID:c.categoryID] )
+	{
+	    [Category insertCategory:c intoDatabase:database];
+	    NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[categories count]];
+	    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
+	    [categories addObject:c];
+	    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
+	}
+    }
+
+    // Find the max width of the categoryName strings so it can be used for layout
+    [self updateCategoryNameMaxWidth];
+}
+
 - (void) appendBundledInsulinTypes
 {
     sqlite3* db = openBundledDatabase();
@@ -562,44 +593,6 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
 	[categories addObject:[Category insertNewCategoryIntoDatabase:database withName:name]];
 	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
-}
-
-// Add the categories from the bundled defaults database
-- (void) appendDefaultCategories
-{
-    sqlite3*	db;
-
-    // Open the default databse from the main bundle
-    NSString *defaultDBPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:LOG_SQL];
-    if( sqlite3_open([defaultDBPath UTF8String], &db) != SQLITE_OK )
-    {
-        sqlite3_close(db);	// Cleanup after failure (release resources)
-        NSLog(@"Failed to open database with message '%s'.", sqlite3_errmsg(database));
-	return;
-    }
-
-    // Load the default categories
-    NSMutableArray* a = [NSMutableArray arrayWithCapacity:1];
-    [self loadCategories:a fromDB:db];
-
-    sqlite3_close(db);	    // Close the database
-
-    // Loop through the items to add
-    for( Category* c in a )
-    {
-	// See if the category already exists
-	if( ![self findCategoryForID:c.categoryID] )
-	{
-	    [Category insertCategory:c intoDatabase:database];
-	    NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[categories count]];
-	    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
-	    [categories addObject:c];
-	    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
-	}
-    }
-
-    // Find the max width of the categoryName strings so it can be used for layout
-    [self updateCategoryNameMaxWidth];
 }
 
 // Purge a Category record from the database and the category array
