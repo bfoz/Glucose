@@ -32,13 +32,16 @@
 {
 	if( self = [super initWithStyle:style] )
 	{
-		self.title = @"Log";
+		self.title = @"Glucose";
 
         UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
 		[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
 		self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:b];
 		[b release];
 
+	UIBarButtonItem* back = [[UIBarButtonItem alloc] initWithTitle: @"Log" style:UIBarButtonItemStyleBordered target: nil action: nil];
+	self.navigationItem.backBarButtonItem = back;
+	[back release];
 
 		// Create a date formatter to convert the date to a string format.
 		self.dateFormatter = [[NSDateFormatter alloc] init];
