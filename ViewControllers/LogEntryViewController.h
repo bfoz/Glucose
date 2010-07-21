@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <sqlite3.h>
 
+#import "CategoryViewController.h"	// For CategoryViewControllerDelegate
 #import "DoseFieldCell.h"
 #import "NumberFieldCell.h"			// For NumberFieldCellDelegate
 #import "TextViewCell.h"
@@ -20,7 +21,7 @@
 @class LogDay;
 @class NumberFieldCell;
 
-@interface LogEntryViewController : SlidingViewController <DoseFieldCellDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
+@interface LogEntryViewController : SlidingViewController <CategoryViewControllerDelegate, DoseFieldCellDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
 {
     LogEntry* entry;
     LogDay*		entrySection;

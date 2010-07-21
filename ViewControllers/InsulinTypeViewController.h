@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "SlidingViewController.h"
+#import "TextFieldCell.h"	// Needed for TextFieldCellDelegate
 
 @class LogEntry;
 @class TextFieldCell;

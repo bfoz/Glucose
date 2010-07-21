@@ -17,6 +17,7 @@
 
 @implementation CategoryViewController
 
+@synthesize delegate;
 @synthesize editedObject;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -183,12 +184,10 @@
     }
     else
     {
-	if( editedObject )
-	{
-		// Row 0 is the "None" row
-		Category* c = indexPath.row ? [appDelegate.categories objectAtIndex:indexPath.row-1] : nil;
-		[editedObject setCategory:c];
-	}
+	// Row 0 is the "None" row
+	Category *const c = indexPath.row ? [appDelegate.categories objectAtIndex:indexPath.row-1] : nil;
+	if( [delegate respondsToSelector:@selector(categoryViewControllerDidSelectCategory:)] )
+	    [delegate categoryViewControllerDidSelectCategory:c];
 
 	if( self.parentViewController.modalViewController == self )
 	    [self.parentViewController dismissModalViewControllerAnimated:YES];

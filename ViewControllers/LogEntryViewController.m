@@ -8,7 +8,6 @@
 
 #import "AppDelegate.h"
 #import "Constants.h"
-#import "CategoryViewController.h"
 #import "DualTableViewCell.h"
 #import "InsulinDose.h"
 #import "InsulinType.h"
@@ -456,7 +455,10 @@ static NSUserDefaults* defaults = nil;
 		break;
 	    case 1: 
 		if( !categoryViewController )
+		{
 		    categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain];
+		    categoryViewController.delegate = self;
+		}
 		categoryViewController.editedObject = entry;
 		[self presentModalViewController:categoryViewController animated:YES];
 		break;
@@ -578,6 +580,14 @@ static NSUserDefaults* defaults = nil;
 	return YES;
 }
 */
+
+#pragma mark -
+#pragma mark <CategoryViewControllerDelegate>
+
+- (void) categoryViewControllerDidSelectCategory:(Category *)category
+{
+    entry.category = category;
+}
 
 #pragma mark -
 #pragma mark <DoseFieldCellDelegate>
