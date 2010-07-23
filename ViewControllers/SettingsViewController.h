@@ -12,7 +12,7 @@
 @class CategoryViewController;
 @class InsulinTypeViewController;
 
-@interface SettingsViewController : SlidingViewController <UITextFieldDelegate>
+@interface SettingsViewController : SlidingViewController <InsulinTypeViewControllerDelegate, UITextFieldDelegate>
 {
     CategoryViewController*	categoryViewController;
     InsulinTypeViewController*	defaultInsulinTypeViewController;

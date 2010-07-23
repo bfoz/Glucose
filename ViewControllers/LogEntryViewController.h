@@ -11,6 +11,7 @@
 
 #import "CategoryViewController.h"	// For CategoryViewControllerDelegate
 #import "DoseFieldCell.h"
+#import "InsulinTypeViewController.h"	// For InsulinTypeViewControllerDelegate
 #import "NumberFieldCell.h"			// For NumberFieldCellDelegate
 #import "TextViewCell.h"
 #import "SlidingViewController.h"
@@ -21,7 +22,7 @@
 @class LogDay;
 @class NumberFieldCell;
 
-@interface LogEntryViewController : SlidingViewController <CategoryViewControllerDelegate, DoseFieldCellDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
+@interface LogEntryViewController : SlidingViewController <CategoryViewControllerDelegate, DoseFieldCellDelegate, InsulinTypeViewControllerDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
 {
     LogEntry* entry;
     LogDay*		entrySection;
@@ -35,6 +36,7 @@
     sqlite3*	database;			// SQLite database handle
     BOOL	didSelectRow;
     BOOL	didUndo;
+    unsigned	editedIndex;
 }
 
 @property (nonatomic, retain) LogEntry* entry;

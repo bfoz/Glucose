@@ -13,8 +13,11 @@
 @class LogEntry;
 @class TextFieldCell;
 
+@protocol InsulinTypeViewControllerDelegate;
+
 @interface InsulinTypeViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
+    id <InsulinTypeViewControllerDelegate>  delegate;
     BOOL			dirty;
     LogEntry*		editedObject;
     unsigned		editedIndex;
@@ -27,9 +30,18 @@
     } alertReason;
 }
 
+@property (nonatomic, assign) id <InsulinTypeViewControllerDelegate>   delegate;
 @property (nonatomic, retain) LogEntry* editedObject;
 @property (nonatomic, assign) unsigned editedIndex;
 
 - (void) setMultiCheck:(BOOL)e;
+
+@end
+
+@protocol InsulinTypeViewControllerDelegate <NSObject>
+
+@optional
+- (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type;
+- (void) insulinTypeViewControllerDidUnselectInsulinType:(InsulinType*)type;
 
 @end

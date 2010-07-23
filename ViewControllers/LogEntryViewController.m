@@ -471,7 +471,11 @@ static NSUserDefaults* defaults = nil;
     {
 	didSelectRow = YES; // The next viewWillDisapper is from a push, not a pop
 	if( !insulinTypeViewController )
+	{
 	    insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain];
+	    insulinTypeViewController.delegate = self;
+	}
+	editedIndex = path.row;
 	insulinTypeViewController.editedObject = entry;
 	insulinTypeViewController.editedIndex = path.row;
 	[self presentModalViewController:insulinTypeViewController animated:YES];
@@ -609,6 +613,21 @@ static NSUserDefaults* defaults = nil;
 {
     [((DoseFieldCell*)editCell).doseField resignFirstResponder];
     [self saveAction];
+}
+
+#pragma mark -
+#pragma mark <InsulinTypeViewControllerDelegate>
+
+- (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type
+{
+    // Update the insulin type for the entry's dose. If the entry doesn't have
+    //	a dose at the specified index, append a new dose object with the
+    //	selected type.
+    if( editedIndex < [entry.insulin count] )
+	[entry setDoseType:type at:editedIndex];
+    else
+	[entry addDoseWithType:type];
+    return YES;
 }
 
 #pragma mark -

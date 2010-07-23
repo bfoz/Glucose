@@ -18,6 +18,7 @@
 
 @implementation InsulinTypeViewController
 
+@synthesize delegate;
 @synthesize editedObject, editedIndex;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -218,45 +219,40 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if( self.editing )
-    {
-	if( kRestoreDefaultsSectionNumber == indexPath.section )
-	    [appDelegate appendBundledInsulinTypes];	// Restore the missing defaults
-    }
-    // If a row was selected while editing a LogEntry, update the insulin type
-    //  for the entry's dose. If the entry doesn't have a dose at the 
-    //  specified index, append a new dose object with the selected type.
-    else if( editedObject )
-    {
-	InsulinType* t = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
-	if( editedIndex < [editedObject.insulin count] )
-	    [editedObject setDoseType:t at:self.editedIndex];
-	else
-	    [editedObject addDoseWithType:t];
-    }
-
     // HI guidlines say row should be selected and then deselected
     [tv deselectRowAtIndexPath:indexPath animated:YES];
 
-    if( multiCheck )
+    if( kRestoreDefaultsSectionNumber == indexPath.section )
+	[appDelegate appendBundledInsulinTypes];	// Restore the missing defaults
+    else
     {
-	InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
 	UITableViewCell *const cell = [tv cellForRowAtIndexPath:indexPath];
-	if( [appDelegate.defaultInsulinTypes containsObject:type] )
+	InsulinType *const t = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
+
+	// Toggle the checkmark on the selected row and notify the delegate
+	//  The delegate can block the selection event by returning NO
+	if( UITableViewCellAccessoryNone == cell.accessoryType )
+	{
+	    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidSelectInsulinType:)] )
+		if( [delegate insulinTypeViewControllerDidSelectInsulinType:t] )
+		    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+	}
+	else
 	{
 	    cell.accessoryType = UITableViewCellAccessoryNone;
-	    [appDelegate.defaultInsulinTypes removeObjectIdenticalTo:type];
-	}
-	else if( [appDelegate.defaultInsulinTypes count] < 2 )
-	{
-	    cell.accessoryType = UITableViewCellAccessoryCheckmark;
-	    [appDelegate.defaultInsulinTypes addObject:type];
+	    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidUnselectInsulinType:)] )
+		[delegate insulinTypeViewControllerDidUnselectInsulinType:t];
 	}
     }
-    else if( self.parentViewController.modalViewController == self )
-	[self.parentViewController dismissModalViewControllerAnimated:YES];
-    else
-	[self.navigationController popViewControllerAnimated:YES];
+
+    // Don't need to pop/dismiss when in multicheck mode (the nav controller handles it)
+    if( !multiCheck )
+    {
+	if( self.parentViewController.modalViewController == self )
+	    [self.parentViewController dismissModalViewControllerAnimated:YES];
+	else
+	    [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 - (void) tableView:(UITableView*)tv willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)path

@@ -347,6 +347,7 @@ enum AboutSectionRows
 		    if( !defaultInsulinTypeViewController )
 		    {
 			defaultInsulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
+			defaultInsulinTypeViewController.delegate = self;
 			[defaultInsulinTypeViewController setMultiCheck:YES];
 		    }
 		    [self.navigationController pushViewController:defaultInsulinTypeViewController animated:YES];
@@ -446,6 +447,23 @@ enum AboutSectionRows
 {
     [[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:lowGlucoseWarningKey];
     [self saveAction];
+}
+
+#pragma mark -
+#pragma mark <InsulinTypeViewControllerDelegate>
+
+- (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type
+{
+    if( [appDelegate.defaultInsulinTypes count] >= 2 )
+	return NO;
+    [appDelegate.defaultInsulinTypes addObject:type];
+    return YES;
+}
+
+- (void) insulinTypeViewControllerDidUnselectInsulinType:(InsulinType*)type
+{
+    if( [appDelegate.defaultInsulinTypes containsObject:type] )
+	[appDelegate.defaultInsulinTypes removeObjectIdenticalTo:type];
 }
 
 @end
