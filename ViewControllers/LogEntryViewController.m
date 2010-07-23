@@ -112,6 +112,7 @@ static NSUserDefaults* defaults = nil;
     if( !didSelectRow && self.editing )
 	[self setEditing:NO animated:YES];
 
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"shaken" object:nil];
     [super viewWillDisappear:animated];
 }
 
