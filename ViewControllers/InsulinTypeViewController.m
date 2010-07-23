@@ -204,6 +204,15 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	    else
 		cell.textLabel.textColor = [UIColor blackColor];
 
+	    // Put a checkmark on the currently selected row
+	    const BOOL goodIndex = editedIndex < [editedObject.insulin count];
+	    if( editedObject && goodIndex && (type == (InsulinType*)[[[editedObject insulin] objectAtIndex:self.editedIndex] type]) )
+		cell.accessoryType = UITableViewCellAccessoryCheckmark;
+	    else if( !editedObject && !self.editing && [appDelegate.defaultInsulinTypes containsObject:type] )
+		cell.accessoryType = UITableViewCellAccessoryCheckmark;
+	    else
+		cell.accessoryType = UITableViewCellAccessoryNone;
+
 	    if( self.editing )
 		((TextFieldCell*)cell).editedObject = type;
 	    break;
@@ -253,19 +262,6 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	else
 	    [self.navigationController popViewControllerAnimated:YES];
     }
-}
-
-- (void) tableView:(UITableView*)tv willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)path
-{
-    // Put a checkmark on the currently selected row
-    InsulinType *const t = [appDelegate.insulinTypes objectAtIndex:path.row];
-    const BOOL goodIndex = editedIndex < [editedObject.insulin count];
-    if( editedObject && goodIndex && (t == (InsulinType*)[[[editedObject insulin] objectAtIndex:self.editedIndex] type]) )
-	cell.accessoryType = UITableViewCellAccessoryCheckmark;
-    else if( !editedObject && !self.editing && [appDelegate.defaultInsulinTypes containsObject:t] )
-	cell.accessoryType = UITableViewCellAccessoryCheckmark;
-    else
-	cell.accessoryType = UITableViewCellAccessoryNone;
 }
 
 - (BOOL) tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)path
