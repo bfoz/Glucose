@@ -199,10 +199,10 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	    cell.textLabel.text = [type shortName];
 
 	    // Highlight the row if its insulin type is on the list of types used for new entries
-	    if( NSNotFound == [appDelegate.defaultInsulinTypes indexOfObjectIdenticalTo:type] )
-		cell.textLabel.textColor = [UIColor blackColor];
-	    else
+	    if( self.editing && (NSNotFound != [appDelegate.defaultInsulinTypes indexOfObjectIdenticalTo:type]) )
 		cell.textLabel.textColor = [UIColor blueColor];
+	    else
+		cell.textLabel.textColor = [UIColor blackColor];
 
 	    if( self.editing )
 		((TextFieldCell*)cell).editedObject = type;
