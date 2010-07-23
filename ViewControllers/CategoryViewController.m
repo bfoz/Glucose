@@ -18,7 +18,7 @@
 @implementation CategoryViewController
 
 @synthesize delegate;
-@synthesize editedObject;
+@synthesize selectedCategory;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -31,12 +31,6 @@
 		[appDelegate addObserver:self forKeyPath:@"categories" options:0 context:nil];
 	}
 	return self;
-}
-
-- (void)dealloc
-{
-    [editedObject release];
-	[super dealloc];
 }
 
 // Handle change notifications for observed key paths of other objects.
@@ -161,16 +155,20 @@
 		}
 		else
 		{
-		    if( row )
-			cell.textLabel.text = [[appDelegate.categories objectAtIndex:(row-1)] categoryName];
-		    else
-			cell.textLabel.text = @"None";	// Dummy "none" category so the user can select no category
-
 		    // Put a checkmark on the currently selected row, or the None row if no category is set
-		    if( editedObject && ((![editedObject category] && !row) || (row && ([appDelegate.categories objectAtIndex:(row-1)] == [editedObject category]))) )
-			cell.accessoryType = UITableViewCellAccessoryCheckmark;
-		    else
-			cell.accessoryType = UITableViewCellAccessoryNone;
+		    cell.accessoryType = UITableViewCellAccessoryNone;
+		    if( row )	// A regular category row
+		    {
+			cell.textLabel.text = [[appDelegate.categories objectAtIndex:(row-1)] categoryName];
+			if( [appDelegate.categories objectAtIndex:(row-1)] == selectedCategory )
+			    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+		    }
+		    else	// The "None" row
+		    {
+			cell.textLabel.text = @"None";	// Dummy "none" category so the user can select no category
+			if( !selectedCategory )
+			    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+		    }
 		}
 
 		break;
@@ -193,10 +191,11 @@
     }
     else
     {
+	const unsigned row = indexPath.row;
 	// Row 0 is the "None" row
-	Category *const c = indexPath.row ? [appDelegate.categories objectAtIndex:indexPath.row-1] : nil;
+	selectedCategory = row ? [appDelegate.categories objectAtIndex:row-1] : nil;
 	if( [delegate respondsToSelector:@selector(categoryViewControllerDidSelectCategory:)] )
-	    [delegate categoryViewControllerDidSelectCategory:c];
+	    [delegate categoryViewControllerDidSelectCategory:selectedCategory];
 
 	if( self.parentViewController.modalViewController == self )
 	    [self.parentViewController dismissModalViewControllerAnimated:YES];

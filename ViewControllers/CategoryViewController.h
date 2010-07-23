@@ -11,18 +11,19 @@
 #import "SlidingViewController.h"
 #import "TextFieldCell.h"	// Needed for TextFieldCellDelegate
 
+@class	Category;
 @protocol CategoryViewControllerDelegate;
 
 @interface CategoryViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
     id <CategoryViewControllerDelegate>	delegate;
-    id				editedObject;
 	BOOL			dirty;
     unsigned	deleteRowNum;
+    Category*	selectedCategory;
 }
 
 @property (nonatomic, assign) id <CategoryViewControllerDelegate>   delegate;
-@property (nonatomic, retain) id editedObject;
+@property (nonatomic, assign) id selectedCategory;
 
 @end
 

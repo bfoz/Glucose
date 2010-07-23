@@ -460,7 +460,7 @@ static NSUserDefaults* defaults = nil;
 		    categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain];
 		    categoryViewController.delegate = self;
 		}
-		categoryViewController.editedObject = entry;
+		categoryViewController.selectedCategory = entry.category;
 		[self presentModalViewController:categoryViewController animated:YES];
 		break;
 	    case 2: // Go into edit mode if the user taps anywhere on the row
