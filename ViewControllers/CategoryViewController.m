@@ -147,29 +147,38 @@
 	}
 
 	// If not editing, the first row is "None", and the categories need to be shifted down one row.
-	if( self.editing )
-	{
 	switch( section )
 	{
 	    case kCategoriesSectionNumber:
 	    {
-		Category *const c = [appDelegate.categories objectAtIndex:indexPath.row];
-		cell.textLabel.text = [c categoryName];
-		((TextFieldCell*)cell).editedObject = c;
+		const unsigned row = indexPath.row;
+
+		if( self.editing )
+		{
+		    Category *const c = [appDelegate.categories objectAtIndex:row];
+		    cell.textLabel.text = [c categoryName];
+		    ((TextFieldCell*)cell).editedObject = c;
+		}
+		else
+		{
+		    if( row )
+			cell.textLabel.text = [[appDelegate.categories objectAtIndex:(row-1)] categoryName];
+		    else
+			cell.textLabel.text = @"None";	// Dummy "none" category so the user can select no category
+
+		    // Put a checkmark on the currently selected row, or the None row if no category is set
+		    if( editedObject && ((![editedObject category] && !row) || (row && ([appDelegate.categories objectAtIndex:(row-1)] == [editedObject category]))) )
+			cell.accessoryType = UITableViewCellAccessoryCheckmark;
+		    else
+			cell.accessoryType = UITableViewCellAccessoryNone;
+		}
+
 		break;
 	    }
 	    case kRestoreDefaultsSectionNumber:
 		cell.textLabel.text = @"Restore Default Categories";
 		cell.textLabel.textAlignment = UITextAlignmentCenter;
 		break;
-	}
-	}
-	else
-	{
-		if( indexPath.row )
-			cell.textLabel.text = [[appDelegate.categories objectAtIndex:(indexPath.row-1)] categoryName];
-		else
-			cell.textLabel.text = @"None";	// Dummy "none" category so the user can select no category			
 	}
 
 	return cell;
@@ -197,15 +206,6 @@
 
     // HI guidlines say row should be selected and then deselected
     [tv deselectRowAtIndexPath:indexPath animated:YES];
-}
-
-- (void) tableView:(UITableView*)tv willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)path
-{
-	// Put a checkmark on the currently selected row, or the None row if no category is set
-	if( editedObject && ((![editedObject category] && !path.row) || (path.row && ([appDelegate.categories objectAtIndex:(path.row-1)] == [editedObject category]))) )
-		cell.accessoryType = UITableViewCellAccessoryCheckmark;
-	else
-		cell.accessoryType = UITableViewCellAccessoryNone;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)path
