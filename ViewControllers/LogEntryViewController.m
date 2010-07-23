@@ -444,7 +444,8 @@ static NSUserDefaults* defaults = nil;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)path
 {
-    unsigned section = [self translateSection:path.section];
+    const unsigned row = path.row;
+    const unsigned section = [self translateSection:path.section];
 
     if( 0 == section )
     {
@@ -476,9 +477,8 @@ static NSUserDefaults* defaults = nil;
 	    insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain];
 	    insulinTypeViewController.delegate = self;
 	}
-	editedIndex = path.row;
-	insulinTypeViewController.editedObject = entry;
-	insulinTypeViewController.editedIndex = path.row;
+	editedIndex = row;
+	[insulinTypeViewController setSelectedInsulinType:(InsulinType*)[[[entry insulin] objectAtIndex:row] type]];
 	[self presentModalViewController:insulinTypeViewController animated:YES];
     }
     else if( 2 == section )

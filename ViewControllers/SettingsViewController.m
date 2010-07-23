@@ -350,6 +350,7 @@ enum AboutSectionRows
 			defaultInsulinTypeViewController.delegate = self;
 			[defaultInsulinTypeViewController setMultiCheck:YES];
 		    }
+		    [defaultInsulinTypeViewController setSelectedInsulinTypes:appDelegate.defaultInsulinTypes];
 		    [self.navigationController pushViewController:defaultInsulinTypeViewController animated:YES];
 		    break;
 	    }

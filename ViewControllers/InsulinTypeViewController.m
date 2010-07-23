@@ -19,7 +19,7 @@
 @implementation InsulinTypeViewController
 
 @synthesize delegate;
-@synthesize editedObject, editedIndex;
+@synthesize selectedInsulinTypes;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -42,7 +42,7 @@
 
 - (void)dealloc
 {
-    [editedObject release];
+    [selectedInsulinTypes release];
 	[super dealloc];
 }
 
@@ -105,6 +105,9 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     return NSOrderedDescending;
 }
 
+#pragma mark -
+#pragma mark External Interface
+
 - (void) setMultiCheck:(BOOL)e
 {
     if( multiCheck && !e )	// If mutlicheck mode is ending
@@ -116,6 +119,30 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	self.title = @"Default Insulin Types";
     multiCheck = e;
 }
+
+- (void) setSelectedInsulinType:(InsulinType*)type
+{
+    if( selectedInsulinTypes )
+    {
+	[selectedInsulinTypes removeAllObjects];
+	[selectedInsulinTypes addObject:type];
+    }
+    else
+	selectedInsulinTypes = [[NSMutableSet setWithObject:type] retain];
+}
+
+- (void) setSelectedInsulinTypes:(NSArray*)types
+{
+    if( selectedInsulinTypes )
+    {
+	[selectedInsulinTypes removeAllObjects];
+	[selectedInsulinTypes addObjectsFromArray:types];
+    }
+    else
+	selectedInsulinTypes = [[NSMutableSet setWithArray:types] retain];
+}
+
+#pragma mark -
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -145,6 +172,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	[appDelegate purgeInsulinTypeAtIndex:index];
 }
 
+#pragma mark -
 #pragma mark <UITableViewDelegate>
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -204,11 +232,8 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	    else
 		cell.textLabel.textColor = [UIColor blackColor];
 
-	    // Put a checkmark on the currently selected row
-	    const BOOL goodIndex = editedIndex < [editedObject.insulin count];
-	    if( editedObject && goodIndex && (type == (InsulinType*)[[[editedObject insulin] objectAtIndex:self.editedIndex] type]) )
-		cell.accessoryType = UITableViewCellAccessoryCheckmark;
-	    else if( !editedObject && !self.editing && [appDelegate.defaultInsulinTypes containsObject:type] )
+	    // Put a checkmark on the currently selected row(s)
+	    if( [selectedInsulinTypes containsObject:type] )
 		cell.accessoryType = UITableViewCellAccessoryCheckmark;
 	    else
 		cell.accessoryType = UITableViewCellAccessoryNone;
@@ -244,11 +269,15 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	{
 	    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidSelectInsulinType:)] )
 		if( [delegate insulinTypeViewControllerDidSelectInsulinType:t] )
+		{
 		    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+		    [selectedInsulinTypes addObject:t];
+		}
 	}
 	else
 	{
 	    cell.accessoryType = UITableViewCellAccessoryNone;
+	    [selectedInsulinTypes removeObject:t];
 	    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidUnselectInsulinType:)] )
 		[delegate insulinTypeViewControllerDidUnselectInsulinType:t];
 	}

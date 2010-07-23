@@ -19,10 +19,9 @@
 {
     id <InsulinTypeViewControllerDelegate>  delegate;
     BOOL			dirty;
-    LogEntry*		editedObject;
-    unsigned		editedIndex;
     BOOL			multiCheck;
     unsigned	    deleteRowNum;
+    NSMutableSet*	selectedInsulinTypes;
     enum
     {
 	ALERT_REASON_DEFAULT_NEW_ENTRY_TYPE,
@@ -31,10 +30,11 @@
 }
 
 @property (nonatomic, assign) id <InsulinTypeViewControllerDelegate>   delegate;
-@property (nonatomic, retain) LogEntry* editedObject;
-@property (nonatomic, assign) unsigned editedIndex;
+@property (nonatomic, readonly) NSMutableSet*	selectedInsulinTypes;
 
 - (void) setMultiCheck:(BOOL)e;
+- (void) setSelectedInsulinType:(InsulinType*)type;
+- (void) setSelectedInsulinTypes:(NSArray*)types;
 
 @end
 
