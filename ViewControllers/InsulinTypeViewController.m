@@ -234,7 +234,12 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 	    // Put a checkmark on the currently selected row(s)
 	    if( [selectedInsulinTypes containsObject:type] )
-		cell.accessoryType = UITableViewCellAccessoryCheckmark;
+	    {
+		if( multiCheck )
+		    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+		else
+		    [tv selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+	    }
 	    else
 		cell.accessoryType = UITableViewCellAccessoryNone;
 
@@ -270,7 +275,10 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidSelectInsulinType:)] )
 		if( [delegate insulinTypeViewControllerDidSelectInsulinType:t] )
 		{
-		    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+		    if( multiCheck )
+			cell.accessoryType = UITableViewCellAccessoryCheckmark;
+		    else
+			[selectedInsulinTypes removeAllObjects];
 		    [selectedInsulinTypes addObject:t];
 		}
 	}
