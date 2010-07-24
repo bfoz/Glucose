@@ -155,19 +155,19 @@
 		}
 		else
 		{
-		    // Put a checkmark on the currently selected row, or the None row if no category is set
-		    cell.accessoryType = UITableViewCellAccessoryNone;
 		    if( row )	// A regular category row
 		    {
 			cell.textLabel.text = [[appDelegate.categories objectAtIndex:(row-1)] categoryName];
+			// Set the row as selected if it matches the currently selected category
 			if( [appDelegate.categories objectAtIndex:(row-1)] == selectedCategory )
-			    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+			    [tv selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
 		    }
 		    else	// The "None" row
 		    {
 			cell.textLabel.text = @"None";	// Dummy "none" category so the user can select no category
+			// Set the "None" row as selected if no category is currently selected
 			if( !selectedCategory )
-			    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+			    [tv selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
 		    }
 		}
 
