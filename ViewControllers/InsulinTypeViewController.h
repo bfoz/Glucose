@@ -30,6 +30,7 @@
 }
 
 @property (nonatomic, assign) id <InsulinTypeViewControllerDelegate>   delegate;
+@property (nonatomic, assign) BOOL	multiCheck;
 @property (nonatomic, readonly) NSMutableSet*	selectedInsulinTypes;
 
 - (void) setMultiCheck:(BOOL)e;

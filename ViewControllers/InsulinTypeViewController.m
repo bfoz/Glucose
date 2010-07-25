@@ -19,6 +19,7 @@
 @implementation InsulinTypeViewController
 
 @synthesize delegate;
+@synthesize multiCheck;
 @synthesize selectedInsulinTypes;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -108,18 +109,6 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 #pragma mark -
 #pragma mark External Interface
 
-- (void) setMultiCheck:(BOOL)e
-{
-    if( multiCheck && !e )	// If mutlicheck mode is ending
-    {
-	[appDelegate.defaultInsulinTypes sortUsingFunction:sortDefaultInsulinTypes context:appDelegate.insulinTypes];
-	[appDelegate flushDefaultInsulinTypes];
-    }
-    if( !multiCheck && e )	// If mutlicheck mode is beginning
-	self.title = @"Default Insulin Types";
-    multiCheck = e;
-}
-
 - (void) setSelectedInsulinType:(InsulinType*)type
 {
     if( selectedInsulinTypes )
@@ -143,11 +132,22 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 }
 
 #pragma mark -
+#pragma mark UIViewController
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     [self.tableView reloadData];	// Redisplay the data to update the checkmark
+}
+
+- (void) viewWillDisappear:(BOOL)animated
+{
+    if( multiCheck )
+    {
+	[appDelegate.defaultInsulinTypes sortUsingFunction:sortDefaultInsulinTypes context:appDelegate.insulinTypes];
+	[appDelegate flushDefaultInsulinTypes];
+    }
+    [super viewWillDisappear:animated];
 }
 
 - (void) purgeInsulinTypeAtIndex:(unsigned)index
