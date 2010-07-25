@@ -372,7 +372,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	    [alert release];
 	}
 	else	// Otherwise, carry on
-	    [self purgeInsulinTypeAtIndex:deleteRowNum];
+	    [self purgeInsulinTypeAtIndex:path.row];
     }
 }
 
