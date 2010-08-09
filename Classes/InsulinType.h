@@ -25,5 +25,6 @@
 - (id)initWithID:(NSInteger)type name:(NSString*)name;
 
 - (void) deleteFromDatabase:(sqlite3*)database;
+- (void) flush:(sqlite3*)database;
 
 @end

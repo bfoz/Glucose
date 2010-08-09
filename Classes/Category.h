@@ -25,4 +25,6 @@
 // Initialize with a Name and ID
 - (id)initWithID:(NSInteger)type name:(NSString*)name;
 
+- (void) flush:(sqlite3*)database;
+
 @end

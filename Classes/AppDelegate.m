@@ -656,21 +656,8 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 - (void) updateCategory:(Category*)c
 {
-	static char *sql = "UPDATE LogEntryCategories SET name=? WHERE categoryID=?";
-	sqlite3_stmt *statement;
-	if( sqlite3_prepare_v2(database, sql, -1, &statement, NULL) != SQLITE_OK )
-		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
-	
-	for( Category* c in categories )
-	{
-		sqlite3_bind_text(statement, 1, [c.categoryName UTF8String], -1, SQLITE_TRANSIENT);
-		sqlite3_bind_int(statement, 2, c.categoryID);
-		int success = sqlite3_step(statement);
-		sqlite3_reset(statement);
-		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
-	}
-	sqlite3_finalize(statement);
+    [c flush:database];
+    [self updateCategoryNameMaxWidth];
 }
 
 // Flush the category list to the database
@@ -802,21 +789,8 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 - (void) updateInsulinType:(InsulinType*)type
 {
-	static char *sql = "UPDATE InsulinTypes SET shortName=? WHERE typeID=?";
-	sqlite3_stmt *statement;
-	if( sqlite3_prepare_v2(database, sql, -1, &statement, NULL) != SQLITE_OK )
-		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
-	
-	for( InsulinType* type in insulinTypes )
-	{
-		sqlite3_bind_text(statement, 1, [type.shortName UTF8String], -1, SQLITE_TRANSIENT);
-		sqlite3_bind_int(statement, 2, type.typeID);
-		int success = sqlite3_step(statement);
-		sqlite3_reset(statement);
-		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
-	}
-	sqlite3_finalize(statement);
+    [type flush:database];
+    [self updateInsulinTypeShortNameMaxWidth];
 }
 
 - (void) updateInsulinTypeShortNameMaxWidth

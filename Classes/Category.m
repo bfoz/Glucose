@@ -96,6 +96,23 @@
 	[super dealloc];
 }
 
+- (void) flush:(sqlite3*)database
+{
+    static const char *sql = "UPDATE LogEntryCategories SET name=? WHERE categoryID=?";
+    sqlite3_stmt *statement;
+    if( sqlite3_prepare_v2(database, sql, -1, &statement, NULL) != SQLITE_OK )
+    {
+	NSLog(@"Error: failed to flush with message '%s'", sqlite3_errmsg(database));
+	return;
+    }
+
+    sqlite3_bind_text(statement, 1, [self.categoryName UTF8String], -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(statement, 2, self.categoryID);
+    if( sqlite3_step(statement) != SQLITE_DONE )
+	NSLog(@"Error: failed to flush with message '%s'", sqlite3_errmsg(database));
+    sqlite3_finalize(statement);
+}
+
 #pragma mark -
 #pragma mark Properties
 
