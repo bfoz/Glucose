@@ -25,6 +25,7 @@
 	if (self = [super initWithStyle:style])
 	{
 		self.title = @"Categories";
+	    didUndo = NO;
 		dirty = NO;
 		
 		// Register to be notified whenever the insulinTypes array changes
@@ -70,9 +71,20 @@
 	}
     // Eanble the Add button while editing
 	if( e )
+	{
+	    [[NSNotificationCenter defaultCenter] addObserver:self
+						     selector:@selector(shaken)
+							 name:@"shaken"
+						       object:nil];
+
 		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(appendNewCategory)];
+	}
 	else
+	{
+	    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"shaken" object:nil];
+
 		self.navigationItem.rightBarButtonItem = nil;
+	}
 	[tableView reloadData];
 }
 
@@ -90,6 +102,19 @@
 {
 	[super viewWillAppear:animated];
     [self.tableView reloadData];	// Redisplay the data to update the checkmark
+}
+
+#pragma mark Shake handling
+
+- (void)shaken
+{
+    // If editing a field, revert that field
+    if( editCell )
+    {
+	didUndo = YES;	    // Flag that an undo operation is happening
+	[self saveAction];  // Cancel the edit
+	[self.tableView reloadData];
+    }
 }
 
 #pragma mark <UITableViewDelegate>
@@ -309,11 +334,16 @@
 
 - (void)textFieldCellDidEndEditing:(TextFieldCell*)cell
 {
+    if( didUndo )
+	didUndo = NO;	// Undo handled
+    else
+    {
 	Category* c = cell.editedObject;
 	if( !c || !cell )
 		return;
 	c.categoryName = (cell.text && cell.text.length) ? cell.text : nil;
 	[appDelegate updateCategory:c];
+    }
 }
 
 @end

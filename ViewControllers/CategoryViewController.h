@@ -17,6 +17,7 @@
 @interface CategoryViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
     id <CategoryViewControllerDelegate>	delegate;
+    BOOL	didUndo;
 	BOOL			dirty;
     unsigned	deleteRowNum;
     Category*	selectedCategory;
