@@ -88,6 +88,21 @@
     return 0;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+    if( 1 == section )
+    {
+	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+	NSDate *const lastPurgeStart = [defaults objectForKey:kLastPurgeFromDate];
+	NSDate *const lastPurgeEnd = [defaults objectForKey:kLastPurgeToDate];
+	NSDate *const lastPurgedOn = [defaults objectForKey:kLastPurgedOnDate];
+
+	if( lastPurgeStart && lastPurgeEnd && lastPurgedOn )
+	    return [NSString stringWithFormat:@"Last purged from %@ to %@ on %@", [shortDateFormatter stringFromDate:purgeStart], [shortDateFormatter stringFromDate:purgeEnd], [shortDateFormatter stringFromDate:lastPurgedOn]];
+    }
+    return nil;
+}
+
 - (NSString *)tableView:(UITableView *)tv titleForHeaderInSection:(NSInteger)section
 {
     switch( section )
@@ -172,33 +187,6 @@
 		}
 		break;
 	}
-}
-
-- (CGFloat) tableView:(UITableView*)tableView heightForFooterInSection:(NSInteger)section
-{
-	return (1 == section) ? 40 : 0;
-}
-
-- (UIView*) tableView:(UITableView*)tableView viewForFooterInSection:(NSInteger)section
-{
-	if( 1 == section )
-	{
-		NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-		NSDate *const lastPurgeStart = [defaults objectForKey:kLastPurgeFromDate];
-		NSDate *const lastPurgeEnd = [defaults objectForKey:kLastPurgeToDate];
-		NSDate *const lastPurgedOn = [defaults objectForKey:kLastPurgedOnDate];
-
-		if( lastPurgeStart && lastPurgeEnd && lastPurgedOn )
-		{
-			UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
-			label.text = [NSString stringWithFormat:@"Last purged from %@ to %@ on %@", [shortDateFormatter stringFromDate:purgeStart], [shortDateFormatter stringFromDate:purgeEnd], [shortDateFormatter stringFromDate:lastPurgedOn]];
-			label.textAlignment = UITextAlignmentCenter;
-			label.backgroundColor = [UIColor clearColor];
-			label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
-			return label;
-		}
-	}
-	return nil;
 }
 
 #pragma mark -

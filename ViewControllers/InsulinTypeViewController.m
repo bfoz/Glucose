@@ -352,36 +352,6 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     return [NSIndexPath indexPathForRow:([appDelegate.insulinTypes count]-1) inSection:toPath.section];
 }
 
-- (CGFloat) tableView:(UITableView*)tv heightForHeaderInSection:(NSInteger)section
-{
-    return (multiCheck || self.editing) ? 35 : 0;
-}
-
-- (UIView*) tableView:(UITableView*)tableView viewForHeaderInSection:(NSInteger)section
-{
-    if( multiCheck )
-    {
-	UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
-	label.numberOfLines = 2;
-	label.text = @"Choose up to 2 insulin types to be automatically added to new log entries";
-	label.textAlignment = UITextAlignmentCenter;
-	label.backgroundColor = [UIColor clearColor];
-	label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
-	return label;
-    }
-    else if( self.editing  && (section != kRestoreDefaultsSectionNumber) )
-    {
-	UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
-	label.numberOfLines = 2;
-	label.text = @"Add, delete, rename or reorder insulin types";
-	label.textAlignment = UITextAlignmentCenter;
-	label.backgroundColor = [UIColor clearColor];
-	label.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];;
-	return label;
-    }
-    return nil;
-}
-
 #pragma mark -
 #pragma mark <UITableViewDataSource>
 
@@ -419,6 +389,15 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     [appDelegate.insulinTypes insertObject:type atIndex:toPath.row];
     [type release];
     dirty = YES;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if( multiCheck )
+	return @"Choose up to 2 insulin types to be automatically added to new log entries";
+    else if( self.editing  && (section != kRestoreDefaultsSectionNumber) )
+	return @"Add, delete, rename or reorder insulin types";
+    return nil;
 }
 
 #pragma mark -

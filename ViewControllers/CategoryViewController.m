@@ -249,26 +249,6 @@
 	return [NSIndexPath indexPathForRow:([appDelegate.categories count]-1) inSection:toPath.section];
 }
 
-- (CGFloat) tableView:(UITableView*)tv heightForHeaderInSection:(NSInteger)section
-{
-	return self.editing ? 35 : 0;
-}
-
-- (UIView*) tableView:(UITableView*)tableView viewForHeaderInSection:(NSInteger)section
-{
-	if( self.editing && (section != kRestoreDefaultsSectionNumber) )
-	{
-		UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
-		label.numberOfLines = 2;
-		label.text = @"Add, delete, rename or reorder categories";
-		label.textAlignment = UITextAlignmentCenter;
-		label.backgroundColor = [UIColor clearColor];
-		label.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];;
-		return label;
-	}
-	return nil;
-}
-
 #pragma mark -
 #pragma mark <UITableViewDataSource>
 
@@ -307,6 +287,13 @@
 	[appDelegate.categories insertObject:c atIndex:toPath.row];
 	[c release];
 	dirty = YES;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if( self.editing && (section != kRestoreDefaultsSectionNumber) )
+	return @"Add, delete, rename or reorder categories";
+    return nil;
 }
 
 #pragma mark -

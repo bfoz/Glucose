@@ -433,6 +433,21 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	return cell;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+    if( SECTION_EXPORT == section )
+    {
+	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+	NSDate *const lastExportStart = [defaults objectForKey:kLastExportGoogleFromDate];
+	NSDate *const lastExportEnd = [defaults objectForKey:kLastExportGoogleToDate];
+	NSDate *const lastExportedOn = [defaults objectForKey:kLastExportGoogleOnDate];
+
+	if( lastExportStart && lastExportEnd && lastExportedOn )
+	    return [NSString stringWithFormat:@"Last exported from %@ to %@ on %@", [shortDateFormatter stringFromDate:lastExportStart], [shortDateFormatter stringFromDate:lastExportEnd], [shortDateFormatter stringFromDate:lastExportedOn]];
+    }
+    return nil;
+}
+
 - (NSString *)tableView:(UITableView *)tv titleForHeaderInSection:(NSInteger)section
 {
     switch( section )
@@ -500,33 +515,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 	[self findExportFolder];
 	}
-}
-
-- (CGFloat) tableView:(UITableView*)tableView heightForFooterInSection:(NSInteger)section
-{
-	return (SECTION_EXPORT == section) ? 40 : 0;
-}
-
-- (UIView*) tableView:(UITableView*)tableView viewForFooterInSection:(NSInteger)section
-{
-	if( SECTION_EXPORT == section )
-	{
-		NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-		NSDate *const lastExportStart = [defaults objectForKey:kLastExportGoogleFromDate];
-		NSDate *const lastExportEnd = [defaults objectForKey:kLastExportGoogleToDate];
-		NSDate *const lastExportedOn = [defaults objectForKey:kLastExportGoogleOnDate];
-		
-		if( lastExportStart && lastExportEnd && lastExportedOn )
-		{
-			UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
-			label.text = [NSString stringWithFormat:@"Last exported from %@ to %@ on %@", [shortDateFormatter stringFromDate:lastExportStart], [shortDateFormatter stringFromDate:lastExportEnd], [shortDateFormatter stringFromDate:lastExportedOn]];
-			label.textAlignment = UITextAlignmentCenter;
-			label.backgroundColor = [UIColor clearColor];
-			label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
-			return label;
-		}
-	}
-	return nil;
 }
 
 #pragma mark -

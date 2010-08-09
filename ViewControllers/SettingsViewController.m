@@ -286,16 +286,13 @@ enum AboutSectionRows
 
     return cell;
 }
-/*
-- (NSString *)tableView:(UITableView *)tv titleForHeaderInSection:(NSInteger)section
+
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-    switch( section )
-	{
-        case 0: return @"About";
-    }
+    if( kSectionAbout == section )
+	return @"Copyright 2008-2009 Brandon Fosdick";
     return nil;
 }
-*/
 
 #pragma mark -
 #pragma mark <UITableViewDelegate>
@@ -392,25 +389,6 @@ enum AboutSectionRows
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return NO;
-}
-
-- (CGFloat) tableView:(UITableView*)tableView heightForFooterInSection:(NSInteger)section
-{
-    return (kSectionAbout == section) ? 40 : 0;
-}
-
-- (UIView*) tableView:(UITableView*)tableView viewForFooterInSection:(NSInteger)section
-{
-    if( kSectionAbout == section )
-    {
-	UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
-	label.text = @"Copyright 2008-2009 Brandon Fosdick";
-	label.textAlignment = UITextAlignmentCenter;
-	label.backgroundColor = [UIColor clearColor];
-	label.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];;
-	return label;
-    }
-    return nil;
 }
 
 #pragma mark -
