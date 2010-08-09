@@ -427,6 +427,13 @@ static NSUserDefaults* defaults = nil;
     }
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if( 2 == section )
+	return @"Note";
+    return nil;
+}
+
 #pragma mark -
 #pragma mark <UITableViewDelegate>
 
