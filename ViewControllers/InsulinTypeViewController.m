@@ -207,8 +207,8 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 		    ((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
 		    cell.showsReorderControl = YES;
 		    ((TextFieldCell*)cell).delegate = self;
-		    cell.textLabel.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
-		    ((UITextField*)(((TextFieldCell*)cell).view)).returnKeyType = UIReturnKeyDone;
+		    ((TextFieldCell*)cell).font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
+		    ((TextFieldCell*)cell).textField.returnKeyType = UIReturnKeyDone;
 		    break;
 		case kRestoreDefaultsSectionNumber:
 		    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
@@ -225,13 +225,6 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	{
 	    // Get the row's insulin type object
 	    InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
-	    cell.textLabel.text = [type shortName];
-
-	    // Highlight the row if its insulin type is on the list of types used for new entries
-	    if( self.editing && (NSNotFound != [appDelegate.defaultInsulinTypes indexOfObjectIdenticalTo:type]) )
-		cell.textLabel.textColor = [UIColor blueColor];
-	    else
-		cell.textLabel.textColor = [UIColor blackColor];
 
 	    // Put a checkmark on the currently selected row(s)
 	    if( [selectedInsulinTypes containsObject:type] )
@@ -245,7 +238,21 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 		cell.accessoryType = UITableViewCellAccessoryNone;
 
 	    if( self.editing )
+	    {
 		((TextFieldCell*)cell).editedObject = type;
+		((TextFieldCell*)cell).textField.text = [type shortName];
+
+		// Highlight the row if its insulin type is on the list of types used for new entries
+		if( NSNotFound != [appDelegate.defaultInsulinTypes indexOfObjectIdenticalTo:type] )
+		    ((TextFieldCell*)cell).textField.textColor = [UIColor blueColor];
+		else
+		    ((TextFieldCell*)cell).textField.textColor = [UIColor blackColor];
+	    }
+	    else
+	    {
+		cell.textLabel.text = [type shortName];
+		cell.textLabel.textColor = [UIColor blackColor];
+	    }
 	    break;
 	}
 	case kRestoreDefaultsSectionNumber:

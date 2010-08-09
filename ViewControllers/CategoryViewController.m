@@ -150,11 +150,11 @@
 	    {
 		case kCategoriesSectionNumber:
 			cell = [[[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-			((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
+		    ((TextFieldCell*)cell).textField.clearButtonMode = UITextFieldViewModeWhileEditing;
 			cell.showsReorderControl = YES;
 			((TextFieldCell*)cell).delegate = self;
-			cell.textLabel.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
-			((UITextField*)(((TextFieldCell*)cell).view)).returnKeyType = UIReturnKeyDone;
+		    ((TextFieldCell*)cell).textField.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]+3];
+		    ((TextFieldCell*)cell).textField.returnKeyType = UIReturnKeyDone;
 		    break;
 		case kRestoreDefaultsSectionNumber:
 		    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
@@ -175,8 +175,8 @@
 		if( self.editing )
 		{
 		    Category *const c = [appDelegate.categories objectAtIndex:row];
-		    cell.textLabel.text = [c categoryName];
 		    ((TextFieldCell*)cell).editedObject = c;
+		    ((TextFieldCell*)cell).textField.text = [c categoryName];
 		}
 		else
 		{
