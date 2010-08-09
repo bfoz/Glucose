@@ -18,6 +18,7 @@
 @interface InsulinTypeViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
     id <InsulinTypeViewControllerDelegate>  delegate;
+    BOOL		didUndo;
     BOOL			dirty;
     BOOL			multiCheck;
     unsigned	    deleteRowNum;

@@ -27,6 +27,7 @@
     if (self = [super initWithStyle:style])
     {
 	self.title = @"Insulin Types";
+	didUndo = NO;
 	dirty = NO;
 	multiCheck = NO;
 
@@ -84,9 +85,20 @@
     }
     // Eanble the Add button while editing
     if( e )
+    {
+	[[NSNotificationCenter defaultCenter] addObserver:self
+						 selector:@selector(shaken)
+						     name:@"shaken"
+						   object:nil];
+
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(appendNewInsulinType)];
+    }
     else
+    {
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"shaken" object:nil];
+
 	self.navigationItem.rightBarButtonItem = nil;
+    }
     [tableView reloadData];
 }
 
@@ -104,6 +116,19 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     if( a == b )
 	return NSOrderedSame;
     return NSOrderedDescending;
+}
+
+#pragma mark Shake handling
+
+- (void)shaken
+{
+    // If editing a field, revert that field
+    if( editCell )
+    {
+	didUndo = YES;	    // Flag that an undo operation is happening
+	[self saveAction];  // Cancel the edit
+	[self.tableView reloadData];
+    }
 }
 
 #pragma mark -
@@ -429,11 +454,16 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (void)textFieldCellDidEndEditing:(TextFieldCell*)cell
 {
-    InsulinType* type = cell.editedObject;
-    if( !type || !cell )
-	return;
-    type.shortName = (cell.text && cell.text.length) ? cell.text : nil;
-    [appDelegate updateInsulinType:type];
+    if( didUndo )
+	didUndo = NO;	// Undo handled
+    else
+    {
+	InsulinType* type = cell.editedObject;
+	if( !type || !cell )
+	    return;
+	type.shortName = (cell.text && cell.text.length) ? cell.text : nil;
+	[appDelegate updateInsulinType:type];
+    }
 }
 
 @end
