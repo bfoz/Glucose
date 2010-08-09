@@ -126,7 +126,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     if( editCell )
     {
 	didUndo = YES;	    // Flag that an undo operation is happening
-	[self saveAction];  // Cancel the edit
+	[((TextFieldCell*)editCell).textField resignFirstResponder];
 	[self.tableView reloadData];
     }
 }
@@ -428,7 +428,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (void)textFieldCellDidBeginEditing:(TextFieldCell*)cell
 {
-    [self didBeginEditing:cell field:cell.view action:@selector(saveAction)];
+    editCell = cell;
 }
 
 - (void)textFieldCellDidEndEditing:(TextFieldCell*)cell
@@ -443,6 +443,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	type.shortName = (cell.text && cell.text.length) ? cell.text : nil;
 	[appDelegate updateInsulinType:type];
     }
+    editCell = nil;	//Not editing anything
 }
 
 @end

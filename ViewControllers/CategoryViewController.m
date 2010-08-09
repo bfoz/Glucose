@@ -112,7 +112,7 @@
     if( editCell )
     {
 	didUndo = YES;	    // Flag that an undo operation is happening
-	[self saveAction];  // Cancel the edit
+	[((TextFieldCell*)editCell).textField resignFirstResponder];
 	[self.tableView reloadData];
     }
 }
@@ -316,7 +316,7 @@
 
 - (void)textFieldCellDidBeginEditing:(TextFieldCell*)cell
 {
-	[self didBeginEditing:cell field:cell.view action:@selector(saveAction)];
+    editCell = cell;
 }
 
 - (void)textFieldCellDidEndEditing:(TextFieldCell*)cell
@@ -331,6 +331,7 @@
 	c.categoryName = (cell.text && cell.text.length) ? cell.text : nil;
 	[appDelegate updateCategory:c];
     }
+    editCell = nil;	//Not editing anything
 }
 
 @end
