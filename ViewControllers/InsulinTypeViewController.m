@@ -137,6 +137,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.tableView.allowsSelectionDuringEditing = YES;
     [self.tableView reloadData];	// Redisplay the data to update the checkmark
 }
 
@@ -261,6 +262,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
     // HI guidlines say row should be selected and then deselected
     [tv deselectRowAtIndexPath:indexPath animated:YES];
 
+    // The Restore Defaults button is only displayed in edit mode
     if( kRestoreDefaultsSectionNumber == indexPath.section )
 	[appDelegate appendBundledInsulinTypes];	// Restore the missing defaults
     else
@@ -289,15 +291,15 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidUnselectInsulinType:)] )
 		[delegate insulinTypeViewControllerDidUnselectInsulinType:t];
 	}
-    }
 
-    // Don't need to pop/dismiss when in multicheck mode (the nav controller handles it)
-    if( !multiCheck )
-    {
-	if( self.parentViewController.modalViewController == self )
-	    [self.parentViewController dismissModalViewControllerAnimated:YES];
-	else
-	    [self.navigationController popViewControllerAnimated:YES];
+	// Don't need to pop/dismiss when in multicheck mode (the nav controller handles it)
+	if( !multiCheck )
+	{
+	    if( self.parentViewController.modalViewController == self )
+		[self.parentViewController dismissModalViewControllerAnimated:YES];
+	    else
+		[self.navigationController popViewControllerAnimated:YES];
+	}
     }
 }
 
