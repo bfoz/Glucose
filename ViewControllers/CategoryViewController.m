@@ -138,8 +138,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSString *const cellID = self.editing ? @"EditCellID" : @"Cell";
     const unsigned section = indexPath.section;
+    NSString *const cellID = (self.editing && (section != kRestoreDefaultsSectionNumber)) ? @"EditCellID" : @"Cell";
 
 	UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
