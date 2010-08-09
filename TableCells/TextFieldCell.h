@@ -25,6 +25,7 @@
 @property (nonatomic, retain)	UIFont*	font;
 @property (nonatomic, copy)	NSString*	placeholder;
 @property (nonatomic, copy)	NSString*	text;
+@property (nonatomic, readonly) UITextField*	textField;
 @property (nonatomic)	UITextAlignment	textAlignment;
 @property (nonatomic, retain) UITextField *view;
 

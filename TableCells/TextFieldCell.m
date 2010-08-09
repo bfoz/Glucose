@@ -140,6 +140,11 @@
 	view.text = t;
 }
 
+- (UITextField*) textField
+{
+    return view;
+}
+
 - (UITextAlignment) textAlignment
 {
 	return view.textAlignment;
