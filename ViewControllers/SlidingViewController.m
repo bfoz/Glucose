@@ -70,13 +70,18 @@
 	[b release];
 }
 
+- (void) didEndEditing
+{
+    self.navigationItem.rightBarButtonItem = oldRightBarButtonItem;
+    oldRightBarButtonItem = nil;
+    editCell = nil;	//Not editing anything
+    editField = nil;
+}
+
 - (void)saveAction
 {
-	self.navigationItem.rightBarButtonItem = oldRightBarButtonItem;
-	oldRightBarButtonItem = nil;
-	[editField resignFirstResponder];
-	editCell = nil;	//Not editing anything
-	editField = nil;
+    [editField resignFirstResponder];
+    [self didEndEditing];
 }
 
 #pragma mark -

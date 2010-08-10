@@ -29,6 +29,7 @@
 - (void)setViewMovedUp:(BOOL)movedUp;
 
 - (void)didBeginEditing:(UITableViewCell*)cell field:(id)field action:(SEL)action;
+- (void) didEndEditing;
 - (void)saveAction;
 
 - (void)hideDatePicker;
