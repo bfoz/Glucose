@@ -37,10 +37,12 @@
     BOOL	didSelectRow;
     BOOL	didUndo;
     unsigned	editedIndex;
+    BOOL	editingNewEntry;
 }
 
 @property (nonatomic, retain) LogEntry* entry;
 @property (nonatomic, retain) LogDay* entrySection;
+@property (nonatomic, assign) BOOL	editingNewEntry;
 
 - (void)shaken;
 

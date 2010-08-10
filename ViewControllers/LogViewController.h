@@ -24,6 +24,6 @@
 @property (nonatomic, retain) LogEntryViewController* logEntryViewController;
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;
-- (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e;
+- (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e isNew:(BOOL)n;
 
 @end

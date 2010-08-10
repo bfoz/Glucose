@@ -113,7 +113,7 @@
 				[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationFade];
 				LogDay *const section = [appDelegate.sections objectAtIndex:sectionIndex];
 				LogEntry *const entry = [section.entries objectAtIndex:0];
-				[self inspectLogEntry:entry inSection:section setEditing:YES];	// Display an editing view for the new LogEntry
+		    [self inspectLogEntry:entry inSection:section setEditing:YES isNew:YES];	// Display an editing view for the new LogEntry
 				break;
 			case NSKeyValueChangeRemoval:
 			{
@@ -132,10 +132,10 @@
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;
 {
-	[self inspectLogEntry:entry inSection:section setEditing:NO];
+    [self inspectLogEntry:entry inSection:section setEditing:NO isNew:NO];
 }
 
-- (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e
+- (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e isNew:(BOOL)n
 {
     // Create the detail view lazily
     if( !logEntryViewController )
@@ -146,6 +146,7 @@
 	logEntryViewController.entrySection = section;
     // Push the detail view on to the navigation controller's stack.
     [self.navigationController pushViewController:logEntryViewController animated:YES];
+    logEntryViewController.editingNewEntry = n;
     [logEntryViewController setEditing:e animated:NO];
 }
 
@@ -199,7 +200,7 @@
     else
 	entry.glucoseUnits = kGlucoseUnits_mmolL;
     
-    [self inspectLogEntry:entry inSection:nil setEditing:YES];	// Display an editing view for the new LogEntry
+    [self inspectLogEntry:entry inSection:nil setEditing:YES isNew:YES];	// Display an editing view for the new LogEntry
 }
 
 #pragma mark <UITableViewDataSource>

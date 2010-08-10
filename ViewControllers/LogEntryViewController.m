@@ -37,6 +37,7 @@
 @implementation LogEntryViewController
 
 @synthesize dateFormatter, entry, entrySection;
+@synthesize editingNewEntry;
 @synthesize glucoseCell;
 @synthesize cellTimestamp;
 
@@ -52,6 +53,7 @@ static NSUserDefaults* defaults = nil;
 
 	database = appDelegate.database;
 	didUndo = NO;
+	editingNewEntry = NO;
 	
 	// Create a date formatter to convert the date to a string format.
 	dateFormatter = [[NSDateFormatter alloc] init];
@@ -560,12 +562,19 @@ static NSUserDefaults* defaults = nil;
 	didUndo = NO;	// Undo handled
     else if( cell == glucoseCell )
 	entry.glucose = cell.number;
+    [self didEndEditing];
 }
 
 - (void)saveGlucoseAction:(id)sender
 {
-    [(NumberFieldCell*)editCell resignFirstResponder];
-    [self saveAction];
+    if( editingNewEntry )
+    {
+	// Find the first insulin dose row and force it to become the first responder
+	UITableViewCell* cell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kInsulinSectionNum]];
+	[((DoseFieldCell*)cell).doseField becomeFirstResponder];
+    }
+    else
+	[(NumberFieldCell*)editCell resignFirstResponder];
 }
 
 #pragma mark -
@@ -599,6 +608,8 @@ static NSUserDefaults* defaults = nil;
 - (void) categoryViewControllerDidSelectCategory:(Category *)category
 {
     entry.category = category;
+    if( editingNewEntry )
+	[glucoseCell becomeFirstResponder];
 }
 
 #pragma mark -
@@ -615,12 +626,30 @@ static NSUserDefaults* defaults = nil;
 	didUndo = NO;	// Undo handled
     else
 	[entry setDose:[cell.doseField number] insulinDose:cell.dose];
+    [self didEndEditing];
 }
 
 - (void)saveDoseAction:(id)sender
 {
-    [((DoseFieldCell*)editCell).doseField resignFirstResponder];
-    [self saveAction];
+    if( editingNewEntry )
+    {
+	// Get the index path for the next insulin row. If there is no next row, find the note row
+	NSIndexPath* path = [[tableView indexPathForCell:editCell] retain];
+	NSIndexPath* next = [[NSIndexPath indexPathForRow:path.row+1 inSection:kInsulinSectionNum] retain];
+	[path release];
+	UITableViewCell* cell = [[tableView cellForRowAtIndexPath:next] retain];
+	[next release];
+	if( cell )	// Found a next insulin row
+	    [((DoseFieldCell*)cell).doseField becomeFirstResponder];
+	else		// Use the note row
+	{
+	    cell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kNoteSectionNum]];
+	    [((TextViewCell*)cell).view becomeFirstResponder];
+	}
+	[cell release];
+    }
+    else
+	[((DoseFieldCell*)editCell).doseField resignFirstResponder];
 }
 
 #pragma mark -
