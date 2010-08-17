@@ -599,20 +599,20 @@ int compareLogEntriesByDate(id left, id right, void* context)
 - (void) purgeCategoryAtIndex:(unsigned)index
 {
 	Category *const category = [categories objectAtIndex:index];
-	const unsigned categoryID = [category categoryID];
-	[self deleteEntriesForCategoryID:categoryID];
-	[self deleteCategoryID:categoryID];
-	[self removeCategoryAtIndex:index];
 
-	// Remove all of the LogEntry's with the deleted insulin type
+    // Move all LogEntries in the deleted category to category "None"
 	NSArray* a = [NSArray arrayWithArray:sections];
 	for( LogDay* s in a )
 	{
 		NSArray* entries = [NSArray arrayWithArray:s.entries];
 		for( LogEntry* e in entries )
 			if( e.category && (e.category == category) )
-				[self deleteLogEntry:e fromSection:s];
+			    e.category = nil;;
 	}
+
+    [LogEntry moveAllEntriesInCategory:category toCategory:nil database:database];
+    [Category deleteCategory:category fromDatabase:database];
+    [self removeCategoryAtIndex:index];
 }
 
 // Remove an Category record and generate a KV notification
