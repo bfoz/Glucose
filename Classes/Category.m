@@ -13,6 +13,28 @@
 
 @synthesize categoryID, categoryName;
 
++ (BOOL) deleteCategory:(Category*)c fromDatabase:(sqlite3*)database;
+{
+    static const char *query = "DELETE FROM LogEntryCategories WHERE categoryID=?";
+    sqlite3_stmt *statement;
+
+    if( !c )
+	return NO;
+
+    if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) != SQLITE_OK )
+    {
+	NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+	return NO;
+    }
+
+    sqlite3_bind_int(statement, 1, c.categoryID);
+    const int result = sqlite3_step(statement);
+    sqlite3_finalize(statement);
+    if( SQLITE_ERROR == result )
+	NSLog(@"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(database));
+    return result != SQLITE_ERROR;
+}
+
 + (BOOL) insertCategory:(Category*)c intoDatabase:(sqlite3*)database
 {
     static char *sql = "INSERT INTO LogEntryCategories (categoryID, sequence, name) SELECT ?,MAX(sequence)+1,? FROM LogEntryCategories";

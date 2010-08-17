@@ -50,7 +50,6 @@
 - (LogDay*) getSectionForDate:(NSDate*)date;
 
 // Create a new log entry in response to a button press
-- (void) deleteCategoryID:(unsigned)path;
 - (void) deleteEntriesForCategoryID:(unsigned)categoryID;
 - (void) deleteLogEntryAtIndexPath:(NSIndexPath*)indexPath;
 

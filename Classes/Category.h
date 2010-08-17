@@ -18,6 +18,7 @@
 @property (nonatomic, assign) NSInteger	categoryID;
 @property (nonatomic, copy) NSString*	categoryName;
 
++ (BOOL) deleteCategory:(Category*)c fromDatabase:(sqlite3*)database;
 + (BOOL) insertCategory:(Category*)c intoDatabase:(sqlite3*)database;
 + (Category*)insertNewCategoryIntoDatabase:(sqlite3*)database withName:(NSString*)n;
 + (unsigned)numRowsForCategoryID:(unsigned)cid database:(sqlite3*)database;
