@@ -567,14 +567,7 @@ static NSUserDefaults* defaults = nil;
 
 - (void)saveGlucoseAction:(id)sender
 {
-    if( editingNewEntry )
-    {
-	// Find the first insulin dose row and force it to become the first responder
-	UITableViewCell* cell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kInsulinSectionNum]];
-	[((DoseFieldCell*)cell).doseField becomeFirstResponder];
-    }
-    else
-	[(NumberFieldCell*)editCell resignFirstResponder];
+    [(NumberFieldCell*)editCell resignFirstResponder];
 }
 
 #pragma mark -
@@ -641,11 +634,8 @@ static NSUserDefaults* defaults = nil;
 	[next release];
 	if( cell )	// Found a next insulin row
 	    [((DoseFieldCell*)cell).doseField becomeFirstResponder];
-	else		// Use the note row
-	{
-	    cell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kNoteSectionNum]];
-	    [((TextViewCell*)cell).view becomeFirstResponder];
-	}
+	else		// Resign first responder if no more insulin rows
+	    [((DoseFieldCell*)editCell).doseField resignFirstResponder];
 	[cell release];
     }
     else
