@@ -99,6 +99,29 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
 	}
 }
 
++ (BOOL) moveAllEntriesInCategory:(Category*)src toCategory:(Category*)dest database:(sqlite3*)database;
+{
+    static const char *const q = "UPDATE localLogEntries SET categoryID=? WHERE categoryID=?";
+    sqlite3_stmt *statement;
+
+    if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) != SQLITE_OK )
+    {
+	NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+	return NO;
+    }
+
+    if( src )
+	sqlite3_bind_int(statement, 1, src.categoryID);
+    if( dest )
+	sqlite3_bind_int(statement, 2, dest.categoryID);
+
+    const int result = sqlite3_step(statement);
+    sqlite3_finalize(statement);
+    if( SQLITE_ERROR == result )
+	NSLog(@"Error: failed to move categories with message '%s'.", sqlite3_errmsg(database));
+    return result != SQLITE_ERROR;
+}
+
 + (unsigned)numLogEntriesForInsulinTypeID:(unsigned)typeID database:(sqlite3*)database
 {
     const char* q = "SELECT COUNT() from localLogEntries WHERE typeID0 = ? OR typeID1 = ?";
