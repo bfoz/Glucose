@@ -883,6 +883,7 @@
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "ED3C208A-8794-462C-87A5-1FE41EE29DB9";
 				SDKROOT = iphoneos4.0;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = AdHoc;
 		};
@@ -986,6 +987,7 @@
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "71D3E2D4-7385-4515-8E20-76BD897B4A3E";
 				SDKROOT = iphoneos4.0;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = AppStore;
 		};
