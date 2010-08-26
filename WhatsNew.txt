@@ -1,0 +1,18 @@
+Version 0.6.4 - August 24, 2010
+	Home Sweet Home Release
+	Sorry for the long delay since the last release. I've been on travel for many months and was neglecting my duties. But, I'm back now so things should pick up again.
+	This release is mostly bug fixes and assorted details that have been piling up while I was gone.
+
+	New Features:
+	- Tapping the Save button while editing a new entry advances to the next field (only for some fields)
+	- Shake to Undo while...
+	-- editing a log entry
+	-- editing a field in a log entry
+	-- editing a category name
+	-- editing an insulin type name
+	- Added a "Restore Defaults" button to the Category and Insulin Types lists that are available from the Settings view
+
+	Fixes:
+	- Fixed the logview double entry display bug (after editing a new record twice)
+	- Fixed bug that prevented editing of category and insulin type names
+	- Fixed Save button bug while editing category and insulin type names
