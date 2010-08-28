@@ -19,7 +19,7 @@
     id <CategoryViewControllerDelegate>	delegate;
     BOOL	didUndo;
 	BOOL			dirty;
-    unsigned	deleteRowNum;
+    Category*	deleteCategory;
     Category*	selectedCategory;
 }
 
@@ -31,6 +31,7 @@
 @protocol CategoryViewControllerDelegate <NSObject>
 
 @optional
+- (void) categoryViewControllerDidDeleteCategory:(Category*)category;
 - (void) categoryViewControllerDidSelectCategory:(Category*)category;
 
 @end

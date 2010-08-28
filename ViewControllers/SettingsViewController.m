@@ -323,7 +323,10 @@ enum AboutSectionRows
 	    {
 		case kCategoryRow:
 		    if( !categoryViewController )	// Get the view controller from appDelegate
-			    categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStyleGrouped];
+		    {
+			categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStyleGrouped];
+			categoryViewController.delegate = self;
+		    }
 		    [self.navigationController pushViewController:categoryViewController animated:YES];
 		    // Set editing mode after pushing the view controller. The UITableView doesn't exist
 		    //  until loadView has been called. Until then, there's nothing to set editing mode on.
@@ -428,6 +431,16 @@ enum AboutSectionRows
 {
     [[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:lowGlucoseWarningKey];
     [self saveAction];
+}
+
+#pragma mark -
+#pragma mark <CategoryViewControllerDelegate>
+
+- (void) categoryViewControllerDidDeleteCategory:(Category*)category
+{
+    unsigned index = [appDelegate.categories indexOfObject:category];
+    // Purge the record from the database and the categories array
+    [appDelegate purgeCategoryAtIndex:index];
 }
 
 #pragma mark -

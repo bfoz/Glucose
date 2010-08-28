@@ -254,16 +254,17 @@
 
 - (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)path
 {
+    Category *const category = [appDelegate.categories objectAtIndex:path.row];
+
     // If row is deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	Category *const category = [appDelegate.categories objectAtIndex:path.row];
 	// Get number of records for the category
 	const unsigned numRecords = [appDelegate numRowsForCategoryID:category.categoryID];
 	// Ask the user for confirmation if numRecords != 0
 	if( numRecords )
 	{
-	    deleteRowNum = path.row;
+	    deleteCategory = category;
 	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" 
 							    message:[NSString stringWithFormat:@"Deleting category %@ will move %u log entr%@ to category 'None'", category.categoryName, numRecords, ((numRecords>1)?@"ies":@"y")]
 							   delegate:self
@@ -272,9 +273,8 @@
 	    [alert show];
 	    [alert release];		
 	}
-	else
-	    // Purge the record from the database and the categories array
-	    [appDelegate purgeCategoryAtIndex:path.row];
+	else if( [delegate respondsToSelector:@selector(categoryViewControllerDidDeleteCategory:)] )
+	    [delegate categoryViewControllerDidDeleteCategory:category];
     }
 }
 
@@ -303,8 +303,8 @@
 {
     if( buttonIndex )
     {
-	// Purge the record from the database and the categories array
-	[appDelegate purgeCategoryAtIndex:deleteRowNum];
+	if( [delegate respondsToSelector:@selector(categoryViewControllerDidDeleteCategory:)] )
+	    [delegate categoryViewControllerDidDeleteCategory:deleteCategory];
     }
     else
 	// Reload the table on cancel to work around a display bug
