@@ -193,9 +193,8 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	[alert show];
 	[alert release];
     }
-    else
-	// Purge the record from the database and the insulinTypes array
-	[appDelegate purgeInsulinTypeAtIndex:index];
+    else if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidDeleteInsulinType:)] )
+	[delegate insulinTypeViewControllerDidDeleteInsulinType:type];
 }
 
 #pragma mark -
@@ -413,8 +412,11 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 		[self purgeInsulinTypeAtIndex:deleteRowNum];
 		break;
 	    case ALERT_REASON_TYPE_NOT_EMPTY:
-		// Purge the record from the database and the Insulin Types array
-		[appDelegate purgeInsulinTypeAtIndex:deleteRowNum];
+		if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidDeleteInsulinType:)] )
+		{
+		    InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:deleteRowNum];
+		    [delegate insulinTypeViewControllerDidDeleteInsulinType:type];
+		}
 		break;
 	}
     }

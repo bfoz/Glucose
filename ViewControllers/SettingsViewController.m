@@ -333,6 +333,7 @@ enum AboutSectionRows
 		    if( !insulinTypeViewController )
 		    {
 			insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
+			insulinTypeViewController.delegate = self;
 			[insulinTypeViewController setMultiCheck:NO];
 		    }
 		    [self.navigationController pushViewController:insulinTypeViewController animated:YES];
@@ -431,6 +432,13 @@ enum AboutSectionRows
 
 #pragma mark -
 #pragma mark <InsulinTypeViewControllerDelegate>
+
+- (void) insulinTypeViewControllerDidDeleteInsulinType:(InsulinType*)type;
+{
+    unsigned index = [appDelegate.insulinTypes indexOfObject:type];
+    // Purge the record from the database and the Insulin Types array
+    [appDelegate purgeInsulinTypeAtIndex:index];
+}
 
 - (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type
 {
