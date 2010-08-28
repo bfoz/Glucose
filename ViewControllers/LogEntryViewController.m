@@ -633,7 +633,10 @@ static NSUserDefaults* defaults = nil;
 	UITableViewCell* cell = [[tableView cellForRowAtIndexPath:next] retain];
 	[next release];
 	if( cell )	// Found a next insulin row
+	{
+	    [tableView scrollToRowAtIndexPath:next atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 	    [((DoseFieldCell*)cell).doseField becomeFirstResponder];
+	}
 	else		// Resign first responder if no more insulin rows
 	    [((DoseFieldCell*)editCell).doseField resignFirstResponder];
 	[cell release];
