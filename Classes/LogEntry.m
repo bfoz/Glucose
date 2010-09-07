@@ -152,6 +152,12 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
     if (delete_statement) sqlite3_finalize(delete_statement);
     if (hydrate_statement) sqlite3_finalize(hydrate_statement);
     if (flush_statement) sqlite3_finalize(flush_statement);
+
+    delete_statement = nil;
+    flush_statement = nil;
+    hydrate_statement = nil;
+    init_statement = nil;
+    insert_statement = nil;
 }
 
 + (NSData*) createCSV:(sqlite3*)database from:(NSDate*)from to:(NSDate*)to
