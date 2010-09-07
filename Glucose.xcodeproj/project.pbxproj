@@ -899,36 +899,6 @@
 			};
 			name = AdHoc;
 		};
-		159E81AD0E51634C0097EA6F /* Device Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
-				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos4.0;
-			};
-			name = "Device Debug";
-		};
-		159E81AE0E51634C0097EA6F /* Device Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Glucose_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = Glucose;
-			};
-			name = "Device Debug";
-		};
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -998,7 +968,6 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
-				159E81AE0E51634C0097EA6F /* Device Debug */,
 				1D6058950D05DD3E006BFB54 /* AppStore */,
 				15417D1C0EB021F400C7E51E /* AdHoc */,
 			);
@@ -1009,7 +978,6 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
-				159E81AD0E51634C0097EA6F /* Device Debug */,
 				C01FCF5008A954540054247B /* AppStore */,
 				15417D1B0EB021F400C7E51E /* AdHoc */,
 			);
