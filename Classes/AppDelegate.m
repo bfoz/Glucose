@@ -50,7 +50,7 @@ BOOL partialTableLoad = NO;
 unsigned maxCategoryNameWidth = 0;
 unsigned maxInsulinTypeShortNameWidth = 0;
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application
+- (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {	
     // Create the top level window (instead of using a default nib)
     // Use a subclass of UIWindow for capturing shake events
@@ -121,6 +121,8 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	// Configure and display the window
     [window addSubview:[navController view]];
     [window makeKeyAndVisible];
+
+    return YES;
 }
 
 - (void)dealloc
