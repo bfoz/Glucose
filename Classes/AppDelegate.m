@@ -139,11 +139,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 // Save all changes to the database, then close it.
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-	// Flush all entries
-	for( LogDay* s in self.sections )
-		for( LogEntry* e in s.entries )
-			[e flush:database];
-
+    [self flushLogEntries];	// Flush all entries
     [LogEntry finalizeStatements];
     [self closeLogDatabase];	// Close the database.
 }
@@ -532,6 +528,13 @@ int compareLogEntriesByDate(id left, id right, void* context)
 		sqlite3_finalize(statement);
 	}
 	return d;
+}
+
+- (void) flushLogEntries
+{
+    for( LogDay* s in self.sections )
+	for( LogEntry* e in s.entries )
+	    [e flush:database];
 }
 
 - (unsigned) numLogEntries

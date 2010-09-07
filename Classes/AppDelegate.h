@@ -64,6 +64,7 @@
 - (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
 - (unsigned) numRowsForCategoryID:(unsigned)catID;
 - (NSDate*) earliestLogEntryDate;
+- (void) flushLogEntries;
 - (unsigned) numLogEntries;
 - (void) updateCategory:(Category*)c;
 - (void) updateCategoryNameMaxWidth;
