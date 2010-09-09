@@ -202,6 +202,7 @@ sqlite3* openBundledDatabase()
 - (void) closeLogDatabase
 {
 	sqlite3_close(database);
+    database = nil;
 }
 
 - (void) loadCategories:(NSMutableArray*)result fromDB:(sqlite3*)db
