@@ -29,7 +29,6 @@ AppDelegate* appDelegate = nil;
 - (BOOL) openLogDatabase;
 - (void) closeLogDatabase;
 
-- (void) loadCategories:(NSMutableArray*)result fromDB:(sqlite3*)db;
 - (void) loadDefaultInsulinTypes;
 - (void) loadInsulinTypes:(NSMutableArray*)types fromDB:(sqlite3*)db;
 - (void) loadAllSections;
@@ -102,12 +101,15 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	[self openLogDatabase];
 	
 	// Call these in this order
-    [self loadCategories:self.categories fromDB:database];
+    [Category loadCategories:self.categories fromDatabase:database];
     [self loadInsulinTypes:self.insulinTypes fromDB:database];
 	[self loadDefaultInsulinTypes];	// Must be after loadInsulinTypes
     // Load the most recent 30 days
     sections = [LogDay loadSections:database limit:30 offset:0];
     partialTableLoad = [LogDay numberOfDays:database] > [sections count];
+
+    // Find the max width of the categoryName strings so it can be used for layout
+    [self updateCategoryNameMaxWidth];
 
     // Create an empty "Today" object if no LogDays were loaded
     if( 0 == [sections count] )
@@ -205,26 +207,6 @@ sqlite3* openBundledDatabase()
     database = nil;
 }
 
-- (void) loadCategories:(NSMutableArray*)result fromDB:(sqlite3*)db
-{
-	const char *query = "SELECT categoryID, sequence, name FROM LogEntryCategories ORDER BY sequence";
-	sqlite3_stmt *statement;
-
-	if( sqlite3_prepare_v2(db, query, -1, &statement, NULL) == SQLITE_OK )
-	{
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			int categoryID = sqlite3_column_int(statement, 0);
-			const unsigned char *const s = sqlite3_column_text(statement, 2);
-			NSString* name = s ? [NSString stringWithUTF8String:(const char*)s] : @"";
-			[result addObject:[[Category alloc] initWithID:categoryID name:name]];
-		}
-		sqlite3_finalize(statement);
-	}
-	// Find the max width of the categoryName strings so it can be used for layout
-	[self updateCategoryNameMaxWidth];
-}
-
 - (void) loadDefaultInsulinTypes
 {
 	if( ![self.insulinTypes count] )
@@ -268,7 +250,7 @@ sqlite3* openBundledDatabase()
 
     // Load the default categories
     NSMutableArray* a = [NSMutableArray arrayWithCapacity:1];
-    [self loadCategories:a fromDB:db];
+    [Category loadCategories:a fromDatabase:db];
 
     sqlite3_close(db);	    // Close the database
 

@@ -81,6 +81,29 @@
 	return [[Category alloc] initWithID:sqlite3_last_insert_rowid(database) name:name];
 }
 
++ (BOOL) loadCategories:(NSMutableArray*)result fromDatabase:(sqlite3*)database
+{
+    const char *const query = "SELECT categoryID, sequence, name FROM LogEntryCategories ORDER BY sequence";
+    sqlite3_stmt* statement;
+
+    if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) != SQLITE_OK )
+    {
+	NSLog(@"loadCategories: Failed to prepare statement with message '%s'", sqlite3_errmsg(database));
+	return NO;
+    }
+
+    while( sqlite3_step(statement) == SQLITE_ROW )
+    {
+	int categoryID = sqlite3_column_int(statement, 0);
+	const unsigned char *const s = sqlite3_column_text(statement, 2);
+	NSString *const name = s ? [NSString stringWithUTF8String:(const char*)s] : @"";
+	[result addObject:[[Category alloc] initWithID:categoryID name:name]];
+    }
+    sqlite3_finalize(statement);
+
+    return YES;
+}
+
 + (unsigned)numRowsForCategoryID:(unsigned)cid database:(sqlite3*)database
 {
     const char* q = "SELECT COUNT() from localLogEntries WHERE categoryID = ?";
