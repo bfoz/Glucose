@@ -106,7 +106,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	
 	// Call these in this order
     [Category loadCategories:self.categories fromDatabase:database];
-    [self loadInsulinTypes:self.insulinTypes fromDB:database];
+    [InsulinType loadInsulinTypes:self.insulinTypes fromDatabase:database];
 	[self loadDefaultInsulinTypes];	// Must be after loadInsulinTypes
     // Load the most recent 30 days
     sections = [LogDay loadSections:database limit:30 offset:0];
@@ -114,6 +114,8 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 
     // Find the max width of the categoryName strings so it can be used for layout
     [self updateCategoryNameMaxWidth];
+    // Find the max width of the InsulinType shortName strings so it can be used for layout
+    [self updateInsulinTypeShortNameMaxWidth];
 
     // Create an empty "Today" object if no LogDays were loaded
     if( 0 == [sections count] )
@@ -210,26 +212,6 @@ sqlite3* openBundledDatabase()
 	}
 }
 
-- (void) loadInsulinTypes:(NSMutableArray*)types fromDB:(sqlite3*)db
-{
-	const char *const query = "SELECT typeID, sequence, shortName FROM InsulinTypes ORDER BY sequence";
-	sqlite3_stmt *statement;
-
-	if( sqlite3_prepare_v2(db, query, -1, &statement, NULL) == SQLITE_OK )
-	{
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			int typeID = sqlite3_column_int(statement, 0);
-			const unsigned char *const s = sqlite3_column_text(statement, 2);
-			NSString* shortName = s ? [NSString stringWithUTF8String:(const char*)s] : nil;
-			[types addObject:[[InsulinType alloc] initWithID:typeID name:shortName]];
-		}
-		sqlite3_finalize(statement);
-	}
-	// Find the max width of the shortName strings so it can be used for layout
-	[self updateInsulinTypeShortNameMaxWidth];
-}
-
 // Add the categories from the bundled defaults database
 - (void) appendBundledCategories
 {
@@ -269,7 +251,7 @@ sqlite3* openBundledDatabase()
 
     // Load the default insulin types
     NSMutableArray* a = [NSMutableArray arrayWithCapacity:1];
-    [self loadInsulinTypes:a fromDB:db];
+    [InsulinType loadInsulinTypes:a fromDatabase:db];
 
     sqlite3_close(db);	    // Close the database
 
