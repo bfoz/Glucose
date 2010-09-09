@@ -26,7 +26,6 @@ AppDelegate* appDelegate = nil;
 
 @interface AppDelegate (Private)
 - (void) createEditableCopyOfDatabaseIfNeeded;
-- (BOOL) openLogDatabase;
 - (void) closeLogDatabase;
 
 - (void) loadDefaultInsulinTypes;
@@ -41,7 +40,6 @@ AppDelegate* appDelegate = nil;
 @synthesize categories, defaultInsulinTypes, insulinTypes;
 @synthesize logViewController;
 @synthesize sections;
-@synthesize database;
 
 NSDateFormatter* shortDateFormatter = nil;
 BOOL partialTableLoad = NO;
@@ -98,7 +96,13 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     // bundle is altered, the code sign will fail. We want the database to be editable by users, 
     // so we need to create a copy of it in the application's Documents directory.     
     [self createEditableCopyOfDatabaseIfNeeded];
-	[self openLogDatabase];
+
+    // Try to open the log database
+    if( ![self database] )
+    {
+	NSLog(@"Could not open log database");
+	return NO;
+    }
 	
 	// Call these in this order
     [Category loadCategories:self.categories fromDatabase:database];
@@ -184,21 +188,6 @@ sqlite3* openBundledDatabase()
 	return NULL;
     }
     return db;
-}
-
-- (BOOL) openLogDatabase
-{
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *path = [documentsDirectory stringByAppendingPathComponent:LOG_SQL];
-    // Open the database. The database was prepared outside the application.
-    if( sqlite3_open([path UTF8String], &database) != SQLITE_OK )
-	{
-        sqlite3_close(database);	// Cleanup after failure (release resources)
-        NSAssert1(0, @"Failed to open database with message '%s'.", sqlite3_errmsg(database));
-		return NO;
-	}
-	return YES;		
 }
 
 - (void) closeLogDatabase
@@ -800,6 +789,33 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 #pragma mark -
 #pragma mark Properties
+
+- (sqlite3*) database
+{
+    if( !database )
+    {
+	NSArray *const paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *const documentsDirectory = [paths objectAtIndex:0];
+	NSString *const path = [documentsDirectory stringByAppendingPathComponent:LOG_SQL];
+	// Open the database. The database was prepared outside the application.
+	if( sqlite3_open([path UTF8String], &database) != SQLITE_OK )
+	{
+	    // sqlite3_open() doesn't always return a valid connection object on failure
+	    if( database )
+	    {
+		sqlite3_close(database);	// Cleanup after failure (release resources)
+		NSLog(@"Failed to open database with message '%s'.", sqlite3_errmsg(database));
+		database = NULL;
+	    }
+	    else
+		NSLog(@"Failed to allocate a database object");
+
+	    return NULL;
+	}
+    }
+
+    return database;
+}
 
 // This is a dummy property to get KVO to work on the dummy entries key
 - (NSMutableArray*)entries
