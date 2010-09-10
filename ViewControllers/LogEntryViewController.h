@@ -33,7 +33,6 @@
     NSDateFormatter*	dateFormatter;
     NumberFieldCell*	glucoseCell;
     UITableViewCell*	cellTimestamp;
-    sqlite3*	database;			// SQLite database handle
     BOOL	didSelectRow;
     BOOL	didUndo;
     unsigned	editedIndex;

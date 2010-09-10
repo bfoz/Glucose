@@ -51,7 +51,6 @@ static NSUserDefaults* defaults = nil;
     {
 	self.title = @"Detail";
 
-	database = appDelegate.database;
 	didUndo = NO;
 	editingNewEntry = NO;
 	
@@ -136,7 +135,7 @@ static NSUserDefaults* defaults = nil;
 	}
 	else	// Only need to update if above block was skipped
 	    [s updateStatistics];
-	[entry flush:database];
+	[entry flush:appDelegate.database];
     }
     [self.tableView reloadData];
 }
@@ -163,7 +162,7 @@ static NSUserDefaults* defaults = nil;
     }
     else // otherwise revert the record and cancel editing
     {
-	[entry load:database];		    // Reload the entry from the database
+	[entry load:appDelegate.database];	// Reload the entry from the database
 	[self setEditing:NO animated:NO];   // Cancel edit mode
     }
 }
