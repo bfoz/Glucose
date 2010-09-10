@@ -47,6 +47,9 @@ BOOL partialTableLoad = NO;
 unsigned maxCategoryNameWidth = 0;
 unsigned maxInsulinTypeShortNameWidth = 0;
 
+#pragma mark -
+#pragma mark <UIApplicationDelegate>
+
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {	
     // Create the top level window (instead of using a default nib)
@@ -131,6 +134,13 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [window makeKeyAndVisible];
 
     return YES;
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+    [self flushLogEntries];	// Flush all entries
+    [LogEntry finalizeStatements];
+    [self closeLogDatabase];	// Close the database.
 }
 
 - (void)dealloc
