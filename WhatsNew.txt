@@ -1,3 +1,13 @@
+Version 0.6.5 - September 10, 2010
+	Now with less crashing
+
+	The last update introduced some problems for devices running iOS 4.x. They should be fixed now. If you notice any problems please email me (there's a button for that at the bottom of the Settings screen).
+
+	Fixes:
+	- Fixed scrolling bug on new log entry view
+	- Fixed occasional startup crash on devices running iOS 4.x
+	- Fixed occasional crash when saving a new record on devices running iOS 4.x
+
 Version 0.6.4 - August 24, 2010
 	Home Sweet Home Release
 	Sorry for the long delay since the last release. I've been on travel for many months and was neglecting my duties. But, I'm back now so things should pick up again.

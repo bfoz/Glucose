@@ -1,3 +1,8 @@
+Version 0.6.5 - September 10, 2010
+- Fixed scrolling to the second insulin type in new log entry view
+- Fixed occasional startup crash on devices running iOS 4.x
+- Fixed occasional crash when saving a new record on devices running iOS 4.x
+
 Version 0.6.4 - August 24, 2010
 - Shake-to-undo support
 -- Shaking the device while editing a record reverts the record to its pre-edit state
