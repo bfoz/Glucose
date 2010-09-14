@@ -35,6 +35,7 @@
 				<noscript>
 					<a href="http://iphone.iusethis.com/app/">Support Glucose on iusethis</a>
 				</noscript>
+				<a href="http://www.appstorehq.com/glucose-iphone-17438/app">AppStoreHQ</a>
 			</center>
 
 			<h2>Features</h2>
