@@ -276,10 +276,17 @@ enum AboutSectionRows
 		    NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
 		    NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
 		    cell.textLabel.text = [NSString stringWithFormat:@"%@ v%@", n, v];
+		    cell.accessoryType = UITableViewCellAccessoryNone;
 		}
 		break;
-		case kAuthorRow: cell.textLabel.text = @"Brandon Fosdick <bfoz@bfoz.net>"; break;
-		case kWebsiteRow: cell.textLabel.text = @"http://bfoz.net/projects/glucose"; break;
+		case kAuthorRow:
+		    cell.textLabel.text = @"Brandon Fosdick <bfoz@bfoz.net>";
+		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		    break;
+		case kWebsiteRow:
+		    cell.textLabel.text = @"http://bfoz.net/projects/glucose";
+		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		    break;
 	    }
 	    break;
     }
