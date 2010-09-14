@@ -40,6 +40,7 @@
 + (void) deleteDosesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database;
 + (void) deleteLogEntriesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database;
 + (BOOL) moveAllEntriesInCategory:(Category*)src toCategory:(Category*)dest database:(sqlite3*)database;
++ (unsigned) numLogEntriesForCategoryID:(unsigned)categoryID database:(sqlite3*)database;
 + (unsigned) numLogEntriesForInsulinTypeID:(unsigned)typeID database:(sqlite3*)database;
 
 + (void)finalizeStatements;		// Finalize (delete) all of the SQLite compiled queries

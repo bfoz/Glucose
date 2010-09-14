@@ -104,27 +104,6 @@
     return YES;
 }
 
-+ (unsigned)numRowsForCategoryID:(unsigned)cid database:(sqlite3*)database
-{
-    const char* q = "SELECT COUNT() from localLogEntries WHERE categoryID = ?";
-    sqlite3_stmt *statement;
-    unsigned num = 0;
-    
-    if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
-    {
-	sqlite3_bind_int(statement, 1, cid);
-	unsigned i = 0;
-	while( sqlite3_step(statement) == SQLITE_ROW )
-	{
-	    NSAssert(i==0, @"Too many rows returned for COUNT() in numRowsForCategoryID:");
-	    num = sqlite3_column_int(statement, 0);
-	    ++i;
-	}
-	sqlite3_finalize(statement);
-    }
-    return num;
-}
-
 - (id)initWithID:(NSInteger)cid name:(NSString*)name;
 {
     if( self = [super init] )

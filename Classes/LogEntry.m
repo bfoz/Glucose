@@ -122,6 +122,31 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
     return result != SQLITE_ERROR;
 }
 
++ (unsigned) numLogEntriesForCategoryID:(unsigned)categoryID database:(sqlite3*)database
+{
+    const char *const q = "SELECT COUNT() from localLogEntries WHERE categoryID = ?";
+    sqlite3_stmt *statement;
+    unsigned num = 0;
+
+    if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
+    {
+	sqlite3_bind_int(statement, 1, categoryID);
+	unsigned i = 0;
+	while( sqlite3_step(statement) == SQLITE_ROW )
+	{
+	    if( 0 == i )
+		num = sqlite3_column_int(statement, 0);
+	    ++i;
+	}
+	if( 0 == i )
+	    NSLog(@"No rows returned for COUNT() in numRowsForCategoryID");
+	if( i > 1 )
+	    NSLog(@"Too many rows returned for COUNT() in numRowsForCategoryID");
+	sqlite3_finalize(statement);
+    }
+    return num;
+}
+
 + (unsigned)numLogEntriesForInsulinTypeID:(unsigned)typeID database:(sqlite3*)database
 {
     const char* q = "SELECT COUNT() from localLogEntries WHERE typeID0 = ? OR typeID1 = ?";

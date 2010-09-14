@@ -550,7 +550,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 - (unsigned) numRowsForCategoryID:(unsigned)catID
 {
-    return [Category numRowsForCategoryID:catID database:database];
+    return [LogEntry numLogEntriesForCategoryID:catID database:database];
 }
 
 #pragma mark Category Records
