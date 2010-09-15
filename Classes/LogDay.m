@@ -16,33 +16,33 @@
 @synthesize	entries;
 @synthesize name;
 
-static const char *sqlLoadSections = "SELECT timestamp, COUNT(timestamp) FROM localLogEntries GROUP BY date(timestamp,'unixepoch','localtime') ORDER BY timestamp DESC LIMIT ? OFFSET ?";
+static const char *sqlLoadDays = "SELECT timestamp, COUNT(timestamp) FROM localLogEntries GROUP BY date(timestamp,'unixepoch','localtime') ORDER BY timestamp DESC LIMIT ? OFFSET ?";
 static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(timestamp,'unixepoch','localtime') FROM localLogEntries)";
 
 // Load a subset of sections given by limit and offset
 //  All sections can be loaded by passing limit=-1 and offset=0
-+ (NSMutableArray*) loadSections:(sqlite3*)db limit:(unsigned)limit offset:(unsigned)offset
++ (BOOL) loadDays:(NSMutableArray*)days fromDatabase:(sqlite3*)database limit:(unsigned)limit offset:(unsigned)offset
 {
     sqlite3_stmt *statement;
-    NSMutableArray *const sections = [[NSMutableArray alloc] init];
+
+    if( sqlite3_prepare_v2(database, sqlLoadDays, -1, &statement, NULL) != SQLITE_OK )
+	return NO;
+
     NSDateFormatter *const shortDateFormatter = [[NSDateFormatter alloc] init];
     [shortDateFormatter setDateStyle:NSDateFormatterShortStyle];
-
-    if( sqlite3_prepare_v2(db, sqlLoadSections, -1, &statement, NULL) == SQLITE_OK )
+    sqlite3_bind_int(statement, 1, limit);
+    sqlite3_bind_int(statement, 2, offset);
+    while( sqlite3_step(statement) == SQLITE_ROW )
     {
-	sqlite3_bind_int(statement, 1, limit);
-	sqlite3_bind_int(statement, 2, offset);
-	while( sqlite3_step(statement) == SQLITE_ROW )
-	{
-	    NSDate *const day = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)];
-	    LogDay *const  section = [[LogDay alloc] initWithDate:day count:sqlite3_column_int(statement, 1)];
-	    section.name = [shortDateFormatter stringFromDate:day];
-	    [sections addObject:section];
-	}
-	sqlite3_finalize(statement);
+	NSDate *const date = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)];
+	LogDay *const  day = [[LogDay alloc] initWithDate:date count:sqlite3_column_int(statement, 1)];
+	day.name = [shortDateFormatter stringFromDate:date];
+	[days addObject:day];
+	[day release];
     }
+    sqlite3_finalize(statement);
     [shortDateFormatter release];
-    return sections;
+    return YES;
 }
 
 + (unsigned) numberOfDays:(sqlite3*)db

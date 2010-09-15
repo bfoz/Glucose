@@ -26,7 +26,7 @@
 @property (nonatomic, readonly)	NSMutableArray*	entries;
 @property (nonatomic, retain)	NSString*	name;
 
-+ (NSMutableArray*) loadSections:(sqlite3*)db limit:(unsigned)limit offset:(unsigned)offset;
++ (BOOL) loadDays:(NSMutableArray*)days fromDatabase:(sqlite3*)database limit:(unsigned)limit offset:(unsigned)offset;
 + (unsigned) numberOfDays:(sqlite3*)db;
 
 - (id) initWithDate:(NSDate*)d;

@@ -354,7 +354,7 @@
 
     if( (section == ([appDelegate.sections count]-1)) && (row == [s count]) )
     {
-	[appDelegate.sections addObjectsFromArray:[LogDay loadSections:appDelegate.database limit:30 offset:[appDelegate.sections count]]];
+	[LogDay loadDays:appDelegate.sections fromDatabase:appDelegate.database limit:30 offset:[appDelegate.sections count]];
 	partialTableLoad = [LogDay numberOfDays:appDelegate.database] > [appDelegate.sections count];
 	[tv reloadData];
     }

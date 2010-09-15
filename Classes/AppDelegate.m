@@ -112,7 +112,8 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [InsulinType loadInsulinTypes:self.insulinTypes fromDatabase:database];
 	[self loadDefaultInsulinTypes];	// Must be after loadInsulinTypes
     // Load the most recent 30 days
-    sections = [LogDay loadSections:database limit:30 offset:0];
+    sections = [[NSMutableArray alloc] init];
+    [LogDay loadDays:sections fromDatabase:database limit:30 offset:0];
     partialTableLoad = [LogDay numberOfDays:database] > [sections count];
 
     // Find the max width of the categoryName strings so it can be used for layout
