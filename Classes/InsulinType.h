@@ -19,7 +19,7 @@
 @property (nonatomic, copy)	NSString*	shortName;
 
 + (BOOL) insertInsulinType:(InsulinType*)t intoDatabase:(sqlite3*)database;
-+ (InsulinType*)insertNewInsulinTypeIntoDatabase:(sqlite3*)database withName:(NSString*)n;
++ (InsulinType*) newInsulinTypeWithName:(NSString*)n database:(sqlite3*)database;
 + (BOOL) loadInsulinTypes:(NSMutableArray*)types fromDatabase:(sqlite3*)database;
 
 // Initialize with a Name and ID

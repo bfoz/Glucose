@@ -559,9 +559,11 @@ int compareLogEntriesByDate(id left, id right, void* context)
 - (void) addCategory:(NSString*)name
 {
 	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[categories count]];
+    Category* c = [Category newCategoryWithName:name database:database];
 	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
-	[categories addObject:[Category insertNewCategoryIntoDatabase:database withName:name]];
+    [categories addObject:c];
 	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
+    [c release];
 }
 
 // Purge a Category record from the database and the category array
@@ -660,9 +662,11 @@ int compareLogEntriesByDate(id left, id right, void* context)
 - (void) addInsulinType:(NSString*)name
 {
 	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[insulinTypes count]];
+    InsulinType* insulin = [InsulinType newInsulinTypeWithName:name database:database];
 	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"insulinTypes"];
-	[insulinTypes addObject:[InsulinType insertNewInsulinTypeIntoDatabase:database withName:name]];
+    [insulinTypes addObject:insulin];
 	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"insulinTypes"];
+    [insulin release];
 }
 
 // Purge an InsulinType record from the database and the insulinTypes array

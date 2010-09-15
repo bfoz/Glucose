@@ -59,7 +59,7 @@
 }
 
 // Create a new Category record in the database and return an new Category object
-+ (Category*)insertNewCategoryIntoDatabase:(sqlite3*)database withName:(NSString*)n
++ (Category*) newCategoryWithName:(NSString*)n database:(sqlite3*)database
 {
 	static char *sql = "INSERT INTO LogEntryCategories (sequence, name) SELECT MAX(sequence)+1,? FROM LogEntryCategories";
 	sqlite3_stmt *statement;
@@ -97,7 +97,9 @@
 	int categoryID = sqlite3_column_int(statement, 0);
 	const unsigned char *const s = sqlite3_column_text(statement, 2);
 	NSString *const name = s ? [NSString stringWithUTF8String:(const char*)s] : @"";
-	[result addObject:[[Category alloc] initWithID:categoryID name:name]];
+	Category* category = [[Category alloc] initWithID:categoryID name:name];
+	[result addObject:category];
+	[category release];
     }
     sqlite3_finalize(statement);
 

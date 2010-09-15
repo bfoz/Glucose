@@ -37,7 +37,7 @@
 }
 
 // Create a new InsulinType record in the database and return an new InsulinType object
-+ (InsulinType*)insertNewInsulinTypeIntoDatabase:(sqlite3*)database withName:(NSString*)n;
++ (InsulinType*) newInsulinTypeWithName:(NSString*)n database:(sqlite3*)database
 {
 	static char *sql = "INSERT INTO InsulinTypes (sequence, shortName) SELECT MAX(sequence)+1,? FROM InsulinTypes";
 	sqlite3_stmt *statement;
@@ -75,7 +75,9 @@
 	int typeID = sqlite3_column_int(statement, 0);
 	const unsigned char *const s = sqlite3_column_text(statement, 2);
 	NSString* shortName = s ? [NSString stringWithUTF8String:(const char*)s] : nil;
-	[types addObject:[[InsulinType alloc] initWithID:typeID name:shortName]];
+	InsulinType* type = [[InsulinType alloc] initWithID:typeID name:shortName];
+	[types addObject:type];
+	[type release];
     }
     sqlite3_finalize(statement);
 
