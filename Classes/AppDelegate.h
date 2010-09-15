@@ -9,17 +9,18 @@
 #import <UIKit/UIKit.h>
 #import <sqlite3.h>
 
+#import "LogViewController.h"
+
 @class Category;
 @class CategoryViewController;
 @class InsulinType;
 @class InsulinTypeViewController;
 @class LogEntry;
 @class LogDay;
-@class LogViewController;
 
 @class GDataServiceGoogleDocs;
 
-@interface AppDelegate : NSObject <UIApplicationDelegate>
+@interface AppDelegate : NSObject <UIApplicationDelegate, LogViewDelegate>
 {
     IBOutlet UIWindow *window;
     UINavigationController* navController;
@@ -86,6 +87,5 @@
 extern unsigned maxCategoryNameWidth;
 extern unsigned maxInsulinTypeShortNameWidth;
 extern NSDateFormatter* shortDateFormatter;
-extern BOOL partialTableLoad;
 extern AppDelegate* appDelegate;
 

@@ -42,7 +42,6 @@ AppDelegate* appDelegate = nil;
 @synthesize sections;
 
 NSDateFormatter* shortDateFormatter = nil;
-BOOL partialTableLoad = NO;
 
 unsigned maxCategoryNameWidth = 0;
 unsigned maxInsulinTypeShortNameWidth = 0;
@@ -81,6 +80,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	}
 
     logViewController = [[LogViewController alloc] initWithStyle:UITableViewStylePlain];
+    logViewController.delegate = self;
     UINavigationController* aNavigationController = [[UINavigationController alloc] initWithRootViewController:logViewController];
     self.navController = aNavigationController;
 /*
@@ -114,7 +114,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     // Load the most recent 30 days
     sections = [[NSMutableArray alloc] init];
     [LogDay loadDays:sections fromDatabase:database limit:30 offset:0];
-    partialTableLoad = [LogDay numberOfDays:database] > [sections count];
 
     // Find the max width of the categoryName strings so it can be used for layout
     [self updateCategoryNameMaxWidth];
@@ -162,6 +161,19 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [self flushLogEntries];	// Flush all entries
     [LogEntry finalizeStatements];
     [self closeLogDatabase];	// Close the database.
+}
+
+#pragma mark -
+#pragma mark <LogViewDelegate>
+
+- (BOOL) canLoadMoreDays
+{
+    return [LogDay numberOfDays:self.database] > [self.sections count];
+}
+
+- (void) didSelectLoadMore
+{
+    [LogDay loadDays:self.sections fromDatabase:self.database limit:30 offset:[self.sections count]];
 }
 
 #pragma mark -

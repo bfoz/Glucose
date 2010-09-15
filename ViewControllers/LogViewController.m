@@ -26,6 +26,7 @@
 @implementation LogViewController
 
 @synthesize dateFormatter;
+@synthesize delegate;
 @synthesize logEntryViewController, settingsViewController;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -214,11 +215,15 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    unsigned count = [[appDelegate.sections objectAtIndex:section] count];
+
     // If the table hasn't been fully loaded the last section has an extra row for loading more rows
-    if( partialTableLoad && (section == ([appDelegate.sections count]-1)) )
-	return [[appDelegate.sections objectAtIndex:section] count] + 1;
-	LogDay *const s = [appDelegate.sections objectAtIndex:section];
-	return s.count;
+    if( section == ([appDelegate.sections count]-1) )
+	if( [delegate respondsToSelector:@selector(canLoadMoreDays)] )
+	    if( [delegate canLoadMoreDays] )
+		++count;
+
+    return count;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -355,8 +360,8 @@
 
     if( (section == ([appDelegate.sections count]-1)) && (row == [s count]) )
     {
-	[LogDay loadDays:appDelegate.sections fromDatabase:appDelegate.database limit:30 offset:[appDelegate.sections count]];
-	partialTableLoad = [LogDay numberOfDays:appDelegate.database] > [appDelegate.sections count];
+	if( [delegate respondsToSelector:@selector(didSelectLoadMore)] )
+	    [delegate didSelectLoadMore];
 	[tv reloadData];
     }
     else
