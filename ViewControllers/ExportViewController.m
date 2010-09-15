@@ -117,9 +117,8 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			{
 				Contact* c = [[Contact alloc] initWithRecordID:[r intValue] emailID:[e intValue]];
 				[contacts addObject:c];
+		[c release];
 			}
-			[email release];
-			[records release];
 		}
 	}
 }
@@ -493,6 +492,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		clvc.contacts = contacts;
 		[self.navigationController pushViewController:clvc animated:YES];
 		[clvc setEditing:YES animated:NO];
+	    [clvc release];
 		showingContacts = YES;
 	}
 	else if( (section == SECTION_EXPORT) && exportEnabled )
@@ -763,6 +763,8 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		ABAddressBookRef book = ABAddressBookCreate();
 
 		ABRecordRef person = ABAddressBookGetPersonWithRecordID(book, c.recordID);
+	    CFRetain(person);
+	    CFRelease(book);
 		ABMultiValueRef email = ABRecordCopyValue(person, kABPersonEmailProperty);
 		CFIndex i = ABMultiValueGetIndexForIdentifier(email, c.emailID);
 		CFTypeRef v = ABMultiValueCopyValueAtIndex(email, i);

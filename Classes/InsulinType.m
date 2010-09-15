@@ -47,9 +47,9 @@
 	
 	NSString* name;
 	if( n && [n length])
-		name = [NSString stringWithString:n];
+	name = [[NSString stringWithString:n] retain];
 	else
-		name = [NSString stringWithString:@"New Insulin Type"];
+	name = [[NSString stringWithString:@"New Insulin Type"] retain];
 	
 	sqlite3_bind_text(statement, 1, [name UTF8String], -1, SQLITE_TRANSIENT);
     int success = sqlite3_step(statement);

@@ -105,6 +105,7 @@ static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(times
 				averageGlucose += [newEntry.glucose floatValue];
 				++i;
 			}
+	    [newEntry release];
 		}
 		sqlite3_finalize(statement);
 		averageGlucose = i ? averageGlucose/i : 0;
@@ -157,7 +158,10 @@ static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(times
 
 - (void) sortEntries
 {
-	[entries sortUsingDescriptors:[NSArray arrayWithObject:[[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:YES selector:@selector(compare:)]]];
+    id descriptor = [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
+						  ascending:YES
+						   selector:@selector(compare:)];
+    [entries sortUsingDescriptors:[NSArray arrayWithObject:descriptor]];
 }
 
 - (void) updateStatistics

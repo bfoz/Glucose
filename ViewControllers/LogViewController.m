@@ -34,7 +34,7 @@
 	{
 		self.title = @"Glucose";
 
-        UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
+        UIButton* b = [[UIButton buttonWithType:UIButtonTypeInfoLight] retain];
 		[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
 		self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:b];
 		[b release];
@@ -100,6 +100,7 @@
 				[self.tableView deleteSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
 				break;
 		}
+	    [indexSet release];
     }
 	else if( [keyPath isEqual:@"entries"] )
 	{

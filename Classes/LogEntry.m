@@ -187,7 +187,7 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
 
 + (NSData*) createCSV:(sqlite3*)database from:(NSDate*)from to:(NSDate*)to
 {
-	NSMutableData *data = [NSMutableData dataWithCapacity:2048];
+    NSMutableData *data = [[NSMutableData dataWithCapacity:2048] retain];
 	
 	if( !data )
 		return nil;
@@ -467,6 +467,7 @@ _var = _val;
 	    ++i;
 	}
 	[insulin removeObjectsAtIndexes:indexes];
+	[indexes release];
     }
 }
 /*

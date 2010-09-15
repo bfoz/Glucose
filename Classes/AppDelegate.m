@@ -128,6 +128,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	LogDay *const section = [[LogDay alloc] initWithDate:day];
 	section.name = [shortDateFormatter stringFromDate:day];
 	[sections addObject:section];
+	[section release];
     }
 
 	// Configure and display the window
@@ -422,7 +423,7 @@ sqlite3* openBundledDatabase()
 	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
 	[sections insertObject:s atIndex:i];
 	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
-
+    [s release];
 	return s;
 }
 
@@ -469,6 +470,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 			[sections removeObjectIdenticalTo:s];
 			[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
 		}
+	[a release];
 	}
 }
 

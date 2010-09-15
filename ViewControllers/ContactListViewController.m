@@ -79,7 +79,9 @@
     cell.text = [NSString stringWithFormat:@"%@ <%@>", ABRecordCopyCompositeName(person), v];
 #else
     cell.textLabel.textAlignment = UITextAlignmentCenter;
-    cell.textLabel.text = (NSString*)ABRecordCopyCompositeName(ABAddressBookGetPersonWithRecordID(ABAddressBookCreate(), c.recordID));
+    ABAddressBookRef book = ABAddressBookCreate();
+    cell.textLabel.text = (NSString*)ABRecordCopyCompositeName(ABAddressBookGetPersonWithRecordID(book, c.recordID));
+    CFRelease(book);
 #endif
 
     return cell;
@@ -110,7 +112,9 @@
 		selectedContact = [contacts objectAtIndex:row];
 		ABPersonViewController* pvc = [[ABPersonViewController alloc] init];
 		pvc.allowsEditing = NO;
-		pvc.displayedPerson = ABAddressBookGetPersonWithRecordID(ABAddressBookCreate(), selectedContact.recordID);
+	    ABAddressBookRef ab = ABAddressBookCreate();
+		pvc.displayedPerson = ABAddressBookGetPersonWithRecordID(ab, selectedContact.recordID);
+	    CFRelease(ab);
 		pvc.displayedProperties = [NSArray arrayWithObject:[NSNumber numberWithInt:kABPersonEmailProperty]];
 		pvc.personViewDelegate = self;
 		[pvc setHighlightedItemForProperty:kABPersonEmailProperty withIdentifier:selectedContact.emailID];
@@ -156,6 +160,7 @@
     c.emailID = identifier;
     
 	[contacts addObject:c];
+    [c release];
 	// insertRowsAtIndexPath calls cellForRowAtIndexPath before returning so
 	//  contacts array must be changed first. Unfortunately, this means count
 	//  can't be used here as an index.
@@ -184,9 +189,11 @@
 	{
 		// Save the record id and property id
 		[self addPerson:person identifier:ABMultiValueGetIdentifierAtIndex(email, 0)];
+	CFRelease(email);
 		[self dismissModalViewControllerAnimated:YES];
 		return NO;
 	}
+    CFRelease(email);
 	return YES;
 }
 
