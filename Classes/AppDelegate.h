@@ -52,7 +52,6 @@
 
 // Create a new log entry in response to a button press
 - (void) deleteEntriesForCategoryID:(unsigned)categoryID;
-- (void) deleteLogEntryAtIndexPath:(NSIndexPath*)indexPath;
 
 - (void) addCategory:(NSString*)name;
 - (void) appendBundledCategories;

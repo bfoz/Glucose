@@ -176,6 +176,15 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [LogDay loadDays:self.sections fromDatabase:self.database limit:30 offset:[self.sections count]];
 }
 
+// Delete a LogEntry from memory and the database
+- (void) logViewDidDeleteLogEntryAtRow:(unsigned)row inSection:(unsigned)section;
+{
+    LogDay *const s = [sections objectAtIndex:section];
+    LogEntry *const entry = [s.entries objectAtIndex:row];
+    [entry deleteFromDatabase:database];
+    [self deleteLogEntry:entry fromSection:s];
+}
+
 #pragma mark -
 #pragma mark Database Initialization
 
@@ -337,16 +346,6 @@ sqlite3* openBundledDatabase()
 
 #pragma mark -
 #pragma mark Array Management
-
-// Delete a LogEntry from memory and the database
-// This function is only called from commitEditingStyle:
-- (void) deleteLogEntryAtIndexPath:(NSIndexPath*)indexPath
-{
-	LogDay *const s = [sections objectAtIndex:indexPath.section];
-	LogEntry *const entry = [s.entries objectAtIndex:indexPath.row];
-	[entry deleteFromDatabase:database];
-	[self deleteLogEntry:entry fromSection:s];
-}
 
 - (void) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section
 {

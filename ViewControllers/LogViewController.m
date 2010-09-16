@@ -98,7 +98,7 @@
 				[self.tableView insertSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
 				break;
 			case NSKeyValueChangeRemoval:
-				[self.tableView deleteSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
+//				[self.tableView deleteSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
 				break;
 		}
 	    [indexSet release];
@@ -117,12 +117,6 @@
 				LogEntry *const entry = [section.entries objectAtIndex:0];
 		    [self inspectLogEntry:entry inSection:section setEditing:YES isNew:YES];	// Display an editing view for the new LogEntry
 				break;
-			case NSKeyValueChangeRemoval:
-			{
-				NSNumber *const row = [[change valueForKey:NSKeyValueChangeOldKey] anyObject];
-				[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:[row intValue] inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationFade];
-				break;
-			}
 		}
 	}
     // Verify that the superclass does indeed handle these notifications before actually invoking that method.
@@ -375,7 +369,12 @@
 {
     // If the row was deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
-		[appDelegate deleteLogEntryAtIndexPath:indexPath];
+    {
+	if( [delegate respondsToSelector:@selector(logViewDidDeleteLogEntryAtRow:inSection:)] )
+	    [delegate logViewDidDeleteLogEntryAtRow:indexPath.row inSection:indexPath.section];
+
+	// This must be called after deleting the row, otherwise UIKit will throw an exception
+	[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 #pragma mark -

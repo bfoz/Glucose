@@ -86,6 +86,15 @@ static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(times
 	return self;
 }
 
+- (void) deleteAllEntriesFromDatabase:(sqlite3*)database
+{
+    for( id entry in self.entries )
+    {
+	[entry deleteFromDatabase:database];
+    }
+    [self.entries removeAllObjects];
+}
+
 - (void) hydrate:(sqlite3*)db
 {
 	const char* q = "SELECT ID FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') = date(?,'unixepoch','localtime') ORDER BY timestamp DESC";
