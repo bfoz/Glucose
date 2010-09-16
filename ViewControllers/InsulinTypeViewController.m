@@ -107,17 +107,6 @@
     [appDelegate addInsulinType:nil];	// Create a new Category record
 }
 
-int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
-{
-    unsigned a = [((NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:left];
-    unsigned b = [((NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:right];
-    if( a < b )
-	return NSOrderedAscending;
-    if( a == b )
-	return NSOrderedSame;
-    return NSOrderedDescending;
-}
-
 #pragma mark Shake handling
 
 - (void)shaken
@@ -169,10 +158,8 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 - (void) viewWillDisappear:(BOOL)animated
 {
     if( multiCheck )
-    {
-	[appDelegate.defaultInsulinTypes sortUsingFunction:sortDefaultInsulinTypes context:appDelegate.insulinTypes];
-	[appDelegate flushDefaultInsulinTypes];
-    }
+	if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidEndMultiSelect)] )
+	    [delegate insulinTypeViewControllerDidEndMultiSelect];
     [super viewWillDisappear:animated];
 }
 

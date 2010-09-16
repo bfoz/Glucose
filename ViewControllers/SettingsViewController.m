@@ -460,6 +460,23 @@ enum AboutSectionRows
     [appDelegate purgeInsulinTypeAtIndex:index];
 }
 
+int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
+{
+    unsigned a = [((NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:left];
+    unsigned b = [((NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:right];
+    if( a < b )
+	return NSOrderedAscending;
+    if( a == b )
+	return NSOrderedSame;
+    return NSOrderedDescending;
+}
+
+- (void) insulinTypeViewControllerDidEndMultiSelect
+{
+    [appDelegate.defaultInsulinTypes sortUsingFunction:sortDefaultInsulinTypes context:appDelegate.insulinTypes];
+    [appDelegate flushDefaultInsulinTypes];
+}
+
 - (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type
 {
     if( [appDelegate.defaultInsulinTypes count] >= 2 )
