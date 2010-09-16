@@ -22,8 +22,11 @@
 @class LogDay;
 @class NumberFieldCell;
 
+@protocol LogEntryViewDelegate;
+
 @interface LogEntryViewController : SlidingViewController <CategoryViewControllerDelegate, DoseFieldCellDelegate, InsulinTypeViewControllerDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
 {
+    id <LogEntryViewDelegate>	delegate;
     LogEntry* entry;
     LogDay*		entrySection;
 
@@ -39,10 +42,18 @@
     BOOL	editingNewEntry;
 }
 
+@property (nonatomic, assign) id <LogEntryViewDelegate>	delegate;
 @property (nonatomic, retain) LogEntry* entry;
 @property (nonatomic, retain) LogDay* entrySection;
 @property (nonatomic, assign) BOOL	editingNewEntry;
 
 - (void)shaken;
+
+@end
+
+@protocol LogEntryViewDelegate <NSObject>
+
+@optional
+- (void) logEntryViewDidEndEditing;
 
 @end

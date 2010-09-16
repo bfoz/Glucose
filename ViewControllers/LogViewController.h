@@ -14,7 +14,7 @@
 @class SettingsViewController;
 @protocol LogViewDelegate;
 
-@interface LogViewController : UITableViewController
+@interface LogViewController : UITableViewController <LogEntryViewDelegate>
 {
     id <LogViewDelegate>    delegate;
     NSDateFormatter *dateFormatter;

@@ -141,7 +141,10 @@
 {
     // Create the detail view lazily
     if( !logEntryViewController )
+    {
         logEntryViewController = [[LogEntryViewController alloc] initWithStyle:UITableViewStyleGrouped];
+	logEntryViewController.delegate = self;
+    }
 
 //    [entry hydrate];		// Force the LogEntry to be fully loaded from the database
     logEntryViewController.entry = entry;	// Give the view controller the LogEntry to display
@@ -373,6 +376,28 @@
     // If the row was deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
 		[appDelegate deleteLogEntryAtIndexPath:indexPath];
+}
+
+#pragma mark -
+#pragma mark <LogEntryViewDelegate>
+
+- (void) logEntryViewDidEndEditing
+{
+    if( logEntryViewController.entry.dirty )
+    {
+	LogDay *const s = [appDelegate getSectionForDate:logEntryViewController.entry.timestamp];
+	if ( s != logEntryViewController.entrySection )
+	{
+	    [s insertEntry:logEntryViewController.entry];		// Add entry to new section
+						// Remove from old section
+	    if( logEntryViewController.entrySection )
+		[appDelegate deleteLogEntry:logEntryViewController.entry fromSection:logEntryViewController.entrySection];
+	    logEntryViewController.entrySection = s;
+	}
+	else	// Only need to update if above block was skipped
+	    [s updateStatistics];
+	[logEntryViewController.entry flush:appDelegate.database];
+    }
 }
 
 @end

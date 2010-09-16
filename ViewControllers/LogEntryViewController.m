@@ -37,6 +37,7 @@
 @implementation LogEntryViewController
 
 @synthesize dateFormatter, entry, entrySection;
+@synthesize delegate;
 @synthesize editingNewEntry;
 @synthesize glucoseCell;
 @synthesize cellTimestamp;
@@ -119,24 +120,23 @@ static NSUserDefaults* defaults = nil;
 
 - (void)setEditing:(BOOL)e animated:(BOOL)animated
 {
-    [super setEditing:e animated:animated];
+    // Tell the entry first so it can flush itself and do any cleanup
     [entry setEditing:e];
 
-    if( !e && entry.dirty )
+    /* If ending edit mode...
+	Do this check before calling the super so that self.editing still
+	reflects the previous edit state.
+    */
+    if( self.editing && !e )
     {
-	LogDay *const s = [appDelegate getSectionForDate:entry.timestamp];
-	if ( s != entrySection )
-	{
-	    [s insertEntry:entry];		// Add entry to new section
-	    // Remove from old section
-	    if( entrySection )
-		[appDelegate deleteLogEntry:entry fromSection:entrySection];
-	    entrySection = s;
-	}
-	else	// Only need to update if above block was skipped
-	    [s updateStatistics];
-	[entry flush:appDelegate.database];
+	if( [delegate respondsToSelector:@selector(logEntryViewDidEndEditing)] )
+	    [delegate logEntryViewDidEndEditing];
     }
+
+    // Finally pass the call to the super
+    [super setEditing:e animated:animated];
+
+    // Reload the table to update the view to reflect the new edit state
     [self.tableView reloadData];
 }
 
