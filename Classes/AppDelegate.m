@@ -181,8 +181,24 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 {
     LogDay *const s = [sections objectAtIndex:section];
     LogEntry *const entry = [s.entries objectAtIndex:row];
-    [entry deleteFromDatabase:database];
+    [entry deleteFromDatabase:self.database];
     [self deleteLogEntry:entry fromSection:s];
+}
+
+- (void) logViewDidDeleteSectionAtIndex:(unsigned)section;
+{
+    // Delete all of the LogDay's entries from the database
+    LogDay *const s = [sections objectAtIndex:section];
+    [s deleteAllEntriesFromDatabase:self.database];
+
+    // Remove the LogDay itself
+    [self.sections removeObjectAtIndex:section];
+}
+
+- (void) logViewDidMoveLogEntry:(LogEntry*)entry fromSection:(LogDay*)from toSection:(LogDay*)to
+{
+    [to insertEntry:entry];			    // Add entry to new section
+    [self deleteLogEntry:entry fromSection:from];   // Remove from old section
 }
 
 #pragma mark -
@@ -349,27 +365,10 @@ sqlite3* openBundledDatabase()
 
 - (void) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section
 {
-	const BOOL deleteSection = [section.entries count] <= 1;	// Delete the section if it will become empty
-	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[sections indexOfObjectIdenticalTo:section]];
-	NSSet* set;
-	
-	if( deleteSection )
-		[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
-	else
-	{
-		set = [NSSet setWithObject:[NSNumber numberWithInt:[section.entries indexOfObjectIdenticalTo:entry]]];
-		[self willChangeValueForKey:@"entries" withSetMutation:NSKeyValueMinusSetMutation usingObjects:set];
-	}
-
 	[section removeEntry:entry];
 
-	if( deleteSection )
-	{
+    if( 0 == [section.entries count] )
 		[self.sections removeObjectIdenticalTo:section];
-		[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
-	}
-	else
-		[self didChangeValueForKey:@"entries" withSetMutation:NSKeyValueMinusSetMutation usingObjects:set];
 }
 
 - (Category*) findCategoryForID:(unsigned)categoryID

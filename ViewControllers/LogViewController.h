@@ -33,6 +33,12 @@
 
 @protocol LogViewDelegate <NSObject>
 
+/* These methods are required of the delegate because the UITableView will throw
+    an exception if the data source doesn't reflect the change in rows/sections	*/
+- (void) logViewDidDeleteLogEntryAtRow:(unsigned)row inSection:(unsigned)section;
+- (void) logViewDidDeleteSectionAtIndex:(unsigned)section;
+- (void) logViewDidMoveLogEntry:(LogEntry*)entry fromSection:(LogDay*)from toSection:(LogDay*)to;
+
 @optional
 - (BOOL) canLoadMoreDays;
 - (void) didSelectLoadMore;

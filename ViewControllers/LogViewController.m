@@ -97,9 +97,6 @@
 			case NSKeyValueChangeInsertion:
 				[self.tableView insertSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
 				break;
-			case NSKeyValueChangeRemoval:
-//				[self.tableView deleteSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
-				break;
 		}
 	    [indexSet release];
     }
@@ -370,11 +367,23 @@
     // If the row was deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	if( [delegate respondsToSelector:@selector(logViewDidDeleteLogEntryAtRow:inSection:)] )
-	    [delegate logViewDidDeleteLogEntryAtRow:indexPath.row inSection:indexPath.section];
+	LogDay *const s = [appDelegate.sections objectAtIndex:indexPath.section];
+	if( 1 == [s.entries count] )	// If the section is about to be empty, delete it
+	{
+	    [delegate logViewDidDeleteSectionAtIndex:indexPath.section];
 
-	// This must be called after deleting the row, otherwise UIKit will throw an exception
-	[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+	    // This must be called after deleting the section, otherwise UITableView will throw an exception
+	    [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationFade];
+	}
+	else
+	{
+	    if( [delegate respondsToSelector:@selector(logViewDidDeleteLogEntryAtRow:inSection:)] )
+		[delegate logViewDidDeleteLogEntryAtRow:indexPath.row inSection:indexPath.section];
+
+	    // This must be called after deleting the row, otherwise UITableView will throw an exception
+	    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+	}
+    }
 }
 
 #pragma mark -
@@ -387,10 +396,9 @@
 	LogDay *const s = [appDelegate getSectionForDate:logEntryViewController.entry.timestamp];
 	if ( s != logEntryViewController.entrySection )
 	{
-	    [s insertEntry:logEntryViewController.entry];		// Add entry to new section
-						// Remove from old section
-	    if( logEntryViewController.entrySection )
-		[appDelegate deleteLogEntry:logEntryViewController.entry fromSection:logEntryViewController.entrySection];
+	    [delegate logViewDidMoveLogEntry:logEntryViewController.entry
+				 fromSection:logEntryViewController.entrySection
+				   toSection:s];
 	    logEntryViewController.entrySection = s;
 	}
 	else	// Only need to update if above block was skipped
