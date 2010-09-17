@@ -180,22 +180,7 @@
 
 - (void) addNewEntry:(id)sender
 {
-    // Create a new record in the database and get its automatically generated primary key.
-    sqlite3 *const db = appDelegate.database;
-    unsigned entryID = [LogEntry insertNewLogEntryIntoDatabase:db];
-    LogEntry* entry = [[LogEntry alloc] initWithID:entryID database:db];
-
-    // Set defaults for the new LogEntry
-    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-    /*	Don't use the returned string directly because glucoseUnits is used 
-	elsewhere in pointer comparisons (for performance reasons). 
-	Consequently, it must be a pointer to one of the constants in 
-	Constants.h.   */
-    if( [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL] )
-	entry.glucoseUnits = kGlucoseUnits_mgdL;
-    else
-	entry.glucoseUnits = kGlucoseUnits_mmolL;
-    
+    LogEntry* entry = [delegate logViewCreateLogEntry];
     [self inspectLogEntry:entry inSection:nil setEditing:YES isNew:YES];	// Display an editing view for the new LogEntry
 }
 

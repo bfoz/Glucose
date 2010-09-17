@@ -176,6 +176,26 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [LogDay loadDays:self.sections fromDatabase:self.database limit:30 offset:[self.sections count]];
 }
 
+- (LogEntry*) logViewCreateLogEntry
+{
+    // Create a new record in the database and get its automatically generated primary key.
+    const unsigned entryID = [LogEntry insertNewLogEntryIntoDatabase:self.database];
+    LogEntry* entry = [[LogEntry alloc] initWithID:entryID database:self.database];
+
+    // Set defaults for the new LogEntry
+    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+    /*	Don't use the returned string directly because glucoseUnits is used
+     elsewhere in pointer comparisons (for performance reasons).
+     Consequently, it must be a pointer to one of the constants in
+     Constants.h.   */
+    if( [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL] )
+	entry.glucoseUnits = kGlucoseUnits_mgdL;
+    else
+	entry.glucoseUnits = kGlucoseUnits_mmolL;
+
+    return entry;
+}
+
 // Delete a LogEntry from memory and the database
 - (void) logViewDidDeleteLogEntryAtRow:(unsigned)row inSection:(unsigned)section;
 {
