@@ -449,10 +449,7 @@ sqlite3* openBundledDatabase()
 		}
 	}
 	
-	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:i];
-	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
 	[sections insertObject:s atIndex:i];
-	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"sections"];
     [s release];
 	return s;
 }
@@ -494,12 +491,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 				[a addObject:s];
 		}
 		for( LogDay* s in a )
-		{
-			NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:[sections indexOfObjectIdenticalTo:s]];
-			[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
 			[sections removeObjectIdenticalTo:s];
-			[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"sections"];
-		}
 	[a release];
 	}
 }

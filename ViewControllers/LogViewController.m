@@ -47,12 +47,6 @@
 		// Create a date formatter to convert the date to a string format.
 		self.dateFormatter = [[NSDateFormatter alloc] init];
 		[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-
-		// Register to be notified whenever the sections array changes
-		[appDelegate addObserver:self forKeyPath:@"sections" 
-						 options:0 context:nil];
-		[appDelegate addObserver:self forKeyPath:@"entries" 
-						 options:NSKeyValueObservingOptionOld context:nil];
 	}
 	return self;
 }
@@ -84,44 +78,6 @@
 	[super didReceiveMemoryWarning];
 }
 */
-// Handle change notifications for observed key paths of other objects.
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if( [keyPath isEqual:@"sections"] )
-	{
-		const int kind = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
-		NSIndexSet *const indexSet = [change valueForKey:NSKeyValueChangeIndexesKey];
-		[indexSet retain];
-		switch( kind )
-		{
-			case NSKeyValueChangeInsertion:
-				[self.tableView insertSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
-				break;
-		}
-	    [indexSet release];
-    }
-	else if( [keyPath isEqual:@"entries"] )
-	{
-		const int kind = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
-		NSIndexSet *const indexSet = [change valueForKey:NSKeyValueChangeIndexesKey];
-		const unsigned sectionIndex = [indexSet firstIndex];	// Get the section that changed
-
-		switch( kind )
-		{
-			case NSKeyValueChangeInsertion:
-				[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionIndex]] withRowAnimation:UITableViewRowAnimationFade];
-				LogDay *const section = [appDelegate.sections objectAtIndex:sectionIndex];
-				LogEntry *const entry = [section.entries objectAtIndex:0];
-		    [self inspectLogEntry:entry inSection:section setEditing:YES isNew:YES];	// Display an editing view for the new LogEntry
-				break;
-		}
-	}
-    // Verify that the superclass does indeed handle these notifications before actually invoking that method.
-	else if( [[self superclass] instancesRespondToSelector:@selector(observeValueForKeyPath:ofObject:change:context:)] )
-	{
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
-}
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;
 {
