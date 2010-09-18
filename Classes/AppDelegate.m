@@ -726,10 +726,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 // Remove an InsulinType record and generate a KV notification
 - (void) removeInsulinTypeAtIndex:(unsigned)index
 {
-	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:index];
-	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"insulinTypes"];
 	[insulinTypes removeObjectAtIndex:index];
-	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"insulinTypes"];
 }
 
 // Flush the insulin types list to the database

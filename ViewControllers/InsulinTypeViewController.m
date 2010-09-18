@@ -63,9 +63,6 @@
 	    case NSKeyValueChangeInsertion:
 		[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
 		break;
-	    case NSKeyValueChangeRemoval:
-		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-		break;
 	}
     }
     // Verify that the superclass does indeed handle these notifications before actually invoking that method.
@@ -163,7 +160,20 @@
     [super viewWillDisappear:animated];
 }
 
-- (void) purgeInsulinTypeAtIndex:(unsigned)index
+#pragma mark -
+
+- (void) deleteInsulinTypeAtIndex:(unsigned)index
+{
+    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidDeleteInsulinType:)] )
+    {
+	InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:index];
+	[delegate insulinTypeViewControllerDidDeleteInsulinType:type];
+	[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
+			      withRowAnimation:UITableViewRowAnimationFade];
+    }
+}
+
+- (void) confirmDeleteInsulinTypeAtIndex:(unsigned)index
 {
     InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:index];
     const unsigned numRecords = [appDelegate numLogEntriesForInsulinTypeID:type.typeID];
@@ -180,8 +190,8 @@
 	[alert show];
 	[alert release];
     }
-    else if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidDeleteInsulinType:)] )
-	[delegate insulinTypeViewControllerDidDeleteInsulinType:type];
+    else
+	[self deleteInsulinTypeAtIndex:index];
 }
 
 #pragma mark -
@@ -362,7 +372,7 @@
 	    [alert release];
 	}
 	else	// Otherwise, carry on
-	    [self purgeInsulinTypeAtIndex:path.row];
+	    [self confirmDeleteInsulinTypeAtIndex:path.row];
     }
 }
 
@@ -396,14 +406,10 @@
 	switch( alertReason )
 	{
 	    case ALERT_REASON_DEFAULT_NEW_ENTRY_TYPE:
-		[self purgeInsulinTypeAtIndex:deleteRowNum];
+		[self confirmDeleteInsulinTypeAtIndex:deleteRowNum];
 		break;
 	    case ALERT_REASON_TYPE_NOT_EMPTY:
-		if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidDeleteInsulinType:)] )
-		{
-		    InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:deleteRowNum];
-		    [delegate insulinTypeViewControllerDidDeleteInsulinType:type];
-		}
+		[self deleteInsulinTypeAtIndex:deleteRowNum];
 		break;
 	}
     }
