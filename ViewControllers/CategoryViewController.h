@@ -20,6 +20,7 @@
     BOOL	didUndo;
 	BOOL			dirty;
     Category*	deleteCategory;
+    unsigned	deleteRow;
     Category*	selectedCategory;
 }
 

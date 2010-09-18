@@ -49,9 +49,6 @@
 			case NSKeyValueChangeInsertion:
 				[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
 				break;
-			case NSKeyValueChangeRemoval:
-				[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-				break;
 		}
     }
     // Verify that the superclass does indeed handle these notifications before actually invoking that method.
@@ -102,6 +99,15 @@
 {
 	[super viewWillAppear:animated];
     [self.tableView reloadData];	// Redisplay the data to update the checkmark
+}
+
+#pragma mark -
+
+- (void) deleteCategory:(Category*)category atIndex:(unsigned)index
+{
+    [delegate categoryViewControllerDidDeleteCategory:category];
+    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
+			  withRowAnimation:UITableViewRowAnimationFade];
 }
 
 #pragma mark Shake handling
@@ -265,6 +271,7 @@
 	if( numRecords )
 	{
 	    deleteCategory = category;
+	    deleteRow = path.row;
 	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" 
 							    message:[NSString stringWithFormat:@"Deleting category %@ will move %u log entr%@ to category 'None'", category.categoryName, numRecords, ((numRecords>1)?@"ies":@"y")]
 							   delegate:self
@@ -273,8 +280,8 @@
 	    [alert show];
 	    [alert release];		
 	}
-	else if( [delegate respondsToSelector:@selector(categoryViewControllerDidDeleteCategory:)] )
-	    [delegate categoryViewControllerDidDeleteCategory:category];
+	else
+	    [self deleteCategory:category atIndex:path.row];
     }
 }
 
@@ -302,10 +309,7 @@
 - (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if( buttonIndex )
-    {
-	if( [delegate respondsToSelector:@selector(categoryViewControllerDidDeleteCategory:)] )
-	    [delegate categoryViewControllerDidDeleteCategory:deleteCategory];
-    }
+	[self deleteCategory:deleteCategory atIndex:deleteRow];
     else
 	// Reload the table on cancel to work around a display bug
 	[tableView reloadData];

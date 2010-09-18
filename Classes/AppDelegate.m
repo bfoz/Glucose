@@ -614,10 +614,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 // Remove an Category record and generate a KV notification
 - (void) removeCategoryAtIndex:(unsigned)index
 {
-	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:index];
-	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"categories"];
 	[categories removeObjectAtIndex:index];
-	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexSet forKey:@"categories"];
 }
 
 - (void) deleteEntriesForCategoryID:(unsigned)categoryID
