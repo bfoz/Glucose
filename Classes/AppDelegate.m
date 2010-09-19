@@ -680,11 +680,8 @@ int compareLogEntriesByDate(id left, id right, void* context)
 // Create a new InsulinType record and add it to the insulinTypes array
 - (void) addInsulinType:(NSString*)name
 {
-	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[insulinTypes count]];
     InsulinType* insulin = [InsulinType newInsulinTypeWithName:name database:database];
-	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"insulinTypes"];
     [insulinTypes addObject:insulin];
-	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"insulinTypes"];
     [insulin release];
 }
 

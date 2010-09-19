@@ -458,6 +458,11 @@ enum AboutSectionRows
 #pragma mark -
 #pragma mark <InsulinTypeViewControllerDelegate>
 
+- (void) insulinTypeViewControllerCreateInsulinType
+{
+    [appDelegate addInsulinType:nil];	// Create a new Category record
+}
+
 - (void) insulinTypeViewControllerDidDeleteInsulinType:(InsulinType*)type;
 {
     unsigned index = [appDelegate.insulinTypes indexOfObject:type];

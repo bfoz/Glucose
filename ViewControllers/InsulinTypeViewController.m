@@ -60,9 +60,6 @@
 	    case NSKeyValueChangeSetting:
 		[[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:0]] setNeedsDisplay];
 		break;
-	    case NSKeyValueChangeInsertion:
-		[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-		break;
 	}
     }
     // Verify that the superclass does indeed handle these notifications before actually invoking that method.
@@ -97,11 +94,6 @@
 	self.navigationItem.rightBarButtonItem = nil;
     }
     [tableView reloadData];
-}
-
-- (void) appendNewInsulinType
-{
-    [appDelegate addInsulinType:nil];	// Create a new Category record
 }
 
 #pragma mark Shake handling
@@ -161,6 +153,17 @@
 }
 
 #pragma mark -
+
+- (void) appendNewInsulinType
+{
+    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerCreateInsulinType)] )
+    {
+	const unsigned index = [appDelegate.insulinTypes count];
+	[delegate insulinTypeViewControllerCreateInsulinType];
+	[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
+			      withRowAnimation:UITableViewRowAnimationFade];
+    }
+}
 
 - (void) deleteInsulinTypeAtIndex:(unsigned)index
 {

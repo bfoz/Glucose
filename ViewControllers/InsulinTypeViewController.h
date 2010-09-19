@@ -43,6 +43,7 @@
 @protocol InsulinTypeViewControllerDelegate <NSObject>
 
 @optional
+- (void) insulinTypeViewControllerCreateInsulinType;
 - (void) insulinTypeViewControllerDidDeleteInsulinType:(InsulinType*)type;
 - (void) insulinTypeViewControllerDidEndMultiSelect;
 - (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type;
