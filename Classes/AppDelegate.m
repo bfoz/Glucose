@@ -685,8 +685,8 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	const unsigned typeID = [type typeID];
 	[LogEntry deleteDosesForInsulinTypeID:typeID fromDatabase:database];
 	[type deleteFromDatabase:database];
+    [self removeDefaultInsulinType:type];   // Must be before deleting the InsulinType
 	[self removeInsulinTypeAtIndex:index];
-	[self removeDefaultInsulinType:type];
 
 	// Remove all of the LogEntry doses with the deleted insulin type
 	for( LogDay* s in sections )
