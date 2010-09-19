@@ -295,7 +295,13 @@
 
     // The Restore Defaults button is only displayed in edit mode
     if( kRestoreDefaultsSectionNumber == indexPath.section )
-	[appDelegate appendBundledInsulinTypes];	// Restore the missing defaults
+    {
+	if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidSelectRestoreDefaults)] )
+	{
+	    [delegate insulinTypeViewControllerDidSelectRestoreDefaults];
+	    [self.tableView reloadData];
+	}
+    }
     else
     {
 	UITableViewCell *const cell = [tv cellForRowAtIndexPath:indexPath];

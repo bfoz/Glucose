@@ -221,7 +221,11 @@
     if( self.editing )
     {
 	if( kRestoreDefaultsSectionNumber == indexPath.section )
-	    [appDelegate appendBundledCategories];    // Restore the missing defaults
+	    if( [delegate respondsToSelector:@selector(categoryViewControllerDidSelectRestoreDefaults)] )
+	    {
+		[delegate categoryViewControllerDidSelectRestoreDefaults];
+		[self.tableView reloadData];
+	    }
     }
     else
     {

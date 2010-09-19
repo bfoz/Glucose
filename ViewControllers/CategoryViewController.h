@@ -35,5 +35,6 @@
 - (void) categoryViewControllerCreateCategory;
 - (void) categoryViewControllerDidDeleteCategory:(Category*)category;
 - (void) categoryViewControllerDidSelectCategory:(Category*)category;
+- (void) categoryViewControllerDidSelectRestoreDefaults;
 
 @end

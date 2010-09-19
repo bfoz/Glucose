@@ -455,6 +455,11 @@ enum AboutSectionRows
     [appDelegate purgeCategoryAtIndex:index];
 }
 
+- (void) categoryViewControllerDidSelectRestoreDefaults
+{
+    [appDelegate appendBundledCategories];    // Restore the missing defaults
+}
+
 #pragma mark -
 #pragma mark <InsulinTypeViewControllerDelegate>
 
@@ -493,6 +498,11 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 	return NO;
     [appDelegate.defaultInsulinTypes addObject:type];
     return YES;
+}
+
+- (void) insulinTypeViewControllerDidSelectRestoreDefaults
+{
+    [appDelegate appendBundledInsulinTypes];	// Restore the missing defaults
 }
 
 - (void) insulinTypeViewControllerDidUnselectInsulinType:(InsulinType*)type

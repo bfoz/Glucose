@@ -47,6 +47,7 @@
 - (void) insulinTypeViewControllerDidDeleteInsulinType:(InsulinType*)type;
 - (void) insulinTypeViewControllerDidEndMultiSelect;
 - (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type;
+- (void) insulinTypeViewControllerDidSelectRestoreDefaults;
 - (void) insulinTypeViewControllerDidUnselectInsulinType:(InsulinType*)type;
 
 @end
