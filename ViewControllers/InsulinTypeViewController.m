@@ -164,7 +164,7 @@
 	alertReason = ALERT_REASON_TYPE_NOT_EMPTY;
 	deleteRowNum = index;
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?"
-							message:[NSString stringWithFormat:@"Deleting Insulin %@ will delete dose information from %u log entr%@", type.shortName, numRecords, ((numRecords>1)?@"ies":@"y")]
+							message:[NSString stringWithFormat:@"Deleting 'Insulin %@' will delete dose information from %u log entr%@", type.shortName, numRecords, ((numRecords>1)?@"ies":@"y")]
 						       delegate:self
 					      cancelButtonTitle:@"Cancel"
 					      otherButtonTitles:@"OK", nil];
@@ -351,7 +351,7 @@
 	    alertReason = ALERT_REASON_DEFAULT_NEW_ENTRY_TYPE;
 	    deleteRowNum = path.row;
 	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" 
-							    message:[NSString stringWithFormat:@"Insulin %@ is used for new log entries. If you delete this insulin type it will no longer be displayed for new log entries.", type.shortName]
+							    message:[NSString stringWithFormat:@"'Insulin %@' is used for new log entries. If you delete this insulin type it will no longer be displayed for new log entries.", type.shortName]
 							   delegate:self
 						  cancelButtonTitle:@"Cancel"
 						  otherButtonTitles:@"OK", nil];

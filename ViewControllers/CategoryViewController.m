@@ -258,7 +258,7 @@
 	    deleteCategory = category;
 	    deleteRow = path.row;
 	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" 
-							    message:[NSString stringWithFormat:@"Deleting category %@ will move %u log entr%@ to category 'None'", category.categoryName, numRecords, ((numRecords>1)?@"ies":@"y")]
+							    message:[NSString stringWithFormat:@"Deleting category '%@' will move %u log entr%@ to category 'None'", category.categoryName, numRecords, ((numRecords>1)?@"ies":@"y")]
 							   delegate:self
 						  cancelButtonTitle:@"Cancel"
 						  otherButtonTitles:@"OK", nil];
