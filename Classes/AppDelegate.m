@@ -583,11 +583,8 @@ int compareLogEntriesByDate(id left, id right, void* context)
 // Create a new Category record and add it to the categories array
 - (void) addCategory:(NSString*)name
 {
-	NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[categories count]];
     Category* c = [Category newCategoryWithName:name database:database];
-	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
     [categories addObject:c];
-	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
     [c release];
 }
 

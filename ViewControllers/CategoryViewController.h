@@ -32,6 +32,7 @@
 @protocol CategoryViewControllerDelegate <NSObject>
 
 @optional
+- (void) categoryViewControllerCreateCategory;
 - (void) categoryViewControllerDidDeleteCategory:(Category*)category;
 - (void) categoryViewControllerDidSelectCategory:(Category*)category;
 

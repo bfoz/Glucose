@@ -443,6 +443,11 @@ enum AboutSectionRows
 #pragma mark -
 #pragma mark <CategoryViewControllerDelegate>
 
+- (void) categoryViewControllerCreateCategory
+{
+    [appDelegate addCategory:nil];
+}
+
 - (void) categoryViewControllerDidDeleteCategory:(Category*)category
 {
     unsigned index = [appDelegate.categories indexOfObject:category];

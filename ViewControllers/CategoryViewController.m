@@ -46,9 +46,6 @@
 			case NSKeyValueChangeSetting:
 				[[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:0]] setNeedsDisplay];
 				break;
-			case NSKeyValueChangeInsertion:
-				[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-				break;
 		}
     }
     // Verify that the superclass does indeed handle these notifications before actually invoking that method.
@@ -85,11 +82,6 @@
 	[tableView reloadData];
 }
 
-- (void) appendNewCategory
-{
-	[appDelegate addCategory:nil];	// Create a new Category record
-}
-
 - (void)viewDidLoad
 {
     self.tableView.allowsSelectionDuringEditing = YES;
@@ -102,6 +94,17 @@
 }
 
 #pragma mark -
+
+- (void) appendNewCategory
+{
+    if( [delegate respondsToSelector:@selector(categoryViewControllerCreateCategory)] )
+    {
+	const unsigned index = [appDelegate.categories count];
+	[delegate categoryViewControllerCreateCategory];
+	[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
+			      withRowAnimation:UITableViewRowAnimationFade];
+    }
+}
 
 - (void) deleteCategory:(Category*)category atIndex:(unsigned)index
 {
