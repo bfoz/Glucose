@@ -301,10 +301,7 @@ sqlite3* openBundledDatabase()
 	if( ![self findCategoryForID:c.categoryID] )
 	{
 	    [Category insertCategory:c intoDatabase:database];
-	    NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[categories count]];
-	    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
 	    [categories addObject:c];
-	    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"categories"];
 	}
     }
 
@@ -331,11 +328,7 @@ sqlite3* openBundledDatabase()
 	if( ![self findInsulinTypeForID:t.typeID] )
 	{
 	    [InsulinType insertInsulinType:t intoDatabase:database];
-
-	    NSIndexSet *const indexSet = [NSIndexSet indexSetWithIndex:[insulinTypes count]];
-	    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"insulinTypes"];
 	    [insulinTypes addObject:t];
-	    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexSet forKey:@"insulinTypes"];
 	}
     }
 

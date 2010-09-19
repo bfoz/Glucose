@@ -30,9 +30,6 @@
 	didUndo = NO;
 	dirty = NO;
 	multiCheck = NO;
-
-	// Register to be notified whenever the insulinTypes array changes
-	[appDelegate addObserver:self forKeyPath:@"insulinTypes" options:0 context:nil];
     }
     return self;
 }
@@ -46,25 +43,6 @@
 {
     [selectedInsulinTypes release];
 	[super dealloc];
-}
-
-// Handle change notifications for observed key paths of other objects.
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if( [keyPath isEqual:@"insulinTypes"] )
-    {
-	const int kind = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
-	const unsigned row = [[change valueForKey:NSKeyValueChangeIndexesKey] firstIndex];
-	switch( kind )
-	{
-	    case NSKeyValueChangeSetting:
-		[[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:0]] setNeedsDisplay];
-		break;
-	}
-    }
-    // Verify that the superclass does indeed handle these notifications before actually invoking that method.
-    else if( [[self superclass] instancesRespondToSelector:@selector(observeValueForKeyPath:ofObject:change:context:)] )
-	[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
 - (void) setEditing:(BOOL)e animated:(BOOL)animated
