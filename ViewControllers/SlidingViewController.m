@@ -116,6 +116,13 @@
 	((UIDatePicker*)context).hidden = YES;	// State change
 }
 
+- (void) didShowDatePicker:(NSString*)animationID finished:(BOOL)finished context:(void*)context
+{
+    [self.tableView scrollToRowAtIndexPath:[self.tableView indexPathForCell:editCell]
+			  atScrollPosition:UITableViewScrollPositionNone
+				  animated:YES];
+}
+
 - (void)hideDatePicker
 {
 	if( !datePicker || datePicker.hidden )
@@ -167,6 +174,8 @@
     rect.origin.y = oldDatePickerRect.origin.y - keyboardHeight;
 
 	[UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDidStopSelector:@selector(didShowDatePicker:finished:context:)];
 	[UIView setAnimationDuration:0.3];
 	datePicker.frame = rect;
 	[UIView commitAnimations];
