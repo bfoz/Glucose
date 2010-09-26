@@ -164,12 +164,7 @@
 	oldDatePickerRect = rect;
 	keyboardHeight = [datePicker sizeThatFits:CGSizeZero].height;
 	
-    CGPoint bottom = CGPointMake(0, cell.frame.origin.y + cell.bounds.size.height);
-    CGFloat editCellBottom = [UIScreen mainScreen].bounds.size.height - [self.view convertPoint:bottom toView:nil].y;
-	if( editCellBottom <= keyboardHeight )
-		rect.origin.y = cell.frame.origin.y + cell.bounds.size.height;
-	else
-		rect.origin.y = oldDatePickerRect.origin.y - keyboardHeight;
+    rect.origin.y = oldDatePickerRect.origin.y - keyboardHeight;
 
 	[UIView beginAnimations:nil context:NULL];
 	[UIView setAnimationDuration:0.3];
