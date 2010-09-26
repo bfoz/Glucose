@@ -474,8 +474,8 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	{
 		switch( indexPath.row )
 		{
-			case 0: [self showDatePicker:exportStartCell mode:UIDatePickerModeDate initialDate:exportStart changeAction:@selector(exportStartChangeAction)]; break;
-			case 1: [self showDatePicker:exportEndCell mode:UIDatePickerModeDate initialDate:exportEnd changeAction:@selector(exportEndChangeAction)]; break;
+	    case 0: [self toggleDatePicker:exportStartCell mode:UIDatePickerModeDate initialDate:exportStart changeAction:@selector(exportStartChangeAction)]; break;
+	    case 1: [self toggleDatePicker:exportEndCell mode:UIDatePickerModeDate initialDate:exportEnd changeAction:@selector(exportEndChangeAction)]; break;
 		}
 	}
 	else if( section == SECTION_SHARE )
