@@ -73,14 +73,29 @@
 
 #pragma mark -
 
+- (void) editRow
+{
+    NSIndexPath *const path = [NSIndexPath indexPathForRow:deleteRow inSection:0];
+    TextFieldCell *const cell = (TextFieldCell*)[self.tableView cellForRowAtIndexPath:path];
+    // Try again later if the row isn't visible yet
+    if( cell )
+	[cell.view becomeFirstResponder];
+    else
+	[self performSelector:@selector(editRow) withObject:nil afterDelay:0.1];
+}
+
 - (void) appendNewCategory
 {
     if( [delegate respondsToSelector:@selector(categoryViewControllerCreateCategory)] )
     {
 	const unsigned index = [appDelegate.categories count];
 	[delegate categoryViewControllerCreateCategory];
-	[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
+	NSIndexPath *const path = [NSIndexPath indexPathForRow:index inSection:0];
+	[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:path]
 			      withRowAnimation:UITableViewRowAnimationFade];
+	[self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionNone animated:YES];
+	deleteRow = index;	// Reuse deleteRow to avoid creating a new variable
+	[self performSelector:@selector(editRow) withObject:nil afterDelay:0.2];
     }
 }
 
