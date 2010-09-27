@@ -1,3 +1,15 @@
+Version 0.6.6 - September 26, 2010
+	Bug Juice Release
+
+	I've squashed a lot of bugs for this release. Hopefully that's the last of them. If you find any more please hit the email link on the Settings view to tell me about them.
+
+	Fixes:
+	- Fixed date picker animation issue on the Export and Purge views
+	- Fixed occasional crash when saving a new entry
+	- Fixed Insulin Type deletion bug
+	- Fixed bug when creating new Categories or Insulin Types
+	- Fixed disclosure indicators on the About rows in Settings
+
 Version 0.6.5 - September 10, 2010
 	Now with less crashing
 
