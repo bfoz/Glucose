@@ -18,6 +18,7 @@
 		150829D80E500B0500FB556A /* LogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829D40E500B0500FB556A /* LogEntry.m */; };
 		150829F20E500DCA00FB556A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 150829F10E500DCA00FB556A /* CoreGraphics.framework */; };
 		150829FE0E500E1000FB556A /* LogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829FD0E500E1000FB556A /* LogViewController.m */; };
+		1517983F1250156100E28662 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1517983E1250156100E28662 /* MessageUI.framework */; };
 		1532B88F11EAAFDF00E38527 /* GlucoseWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 1532B88E11EAAFDF00E38527 /* GlucoseWindow.m */; };
 		153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 153F26A00E7F70C000F75D9F /* Security.framework */; };
 		155A24660F2971160077FC20 /* NumberFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 155A24650F2971160077FC20 /* NumberFieldCell.m */; };
@@ -121,6 +122,7 @@
 		150829F10E500DCA00FB556A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		150829FC0E500E1000FB556A /* LogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogViewController.h; path = ViewControllers/LogViewController.h; sourceTree = "<group>"; };
 		150829FD0E500E1000FB556A /* LogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LogViewController.m; path = ViewControllers/LogViewController.m; sourceTree = "<group>"; };
+		1517983E1250156100E28662 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		1532B88D11EAAFDF00E38527 /* GlucoseWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlucoseWindow.h; sourceTree = "<group>"; };
 		1532B88E11EAAFDF00E38527 /* GlucoseWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlucoseWindow.m; sourceTree = "<group>"; };
 		153F26A00E7F70C000F75D9F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -321,6 +323,7 @@
 				153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */,
 				15A321920ED28A7E00C16388 /* AddressBook.framework in Frameworks */,
 				15A321940ED28A7E00C16388 /* AddressBookUI.framework in Frameworks */,
+				1517983F1250156100E28662 /* MessageUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -659,6 +662,7 @@
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				15A321910ED28A7E00C16388 /* AddressBook.framework */,
 				15A321930ED28A7E00C16388 /* AddressBookUI.framework */,
+				1517983E1250156100E28662 /* MessageUI.framework */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";

@@ -6,13 +6,14 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
+#import <MessageUI/MessageUI.h>
 #import <UIKit/UIKit.h>
 #import "SlidingViewController.h"
 
 @class CategoryViewController;
 @class InsulinTypeViewController;
 
-@interface SettingsViewController : SlidingViewController <CategoryViewControllerDelegate, InsulinTypeViewControllerDelegate, UITextFieldDelegate>
+@interface SettingsViewController : SlidingViewController <CategoryViewControllerDelegate, InsulinTypeViewControllerDelegate, MFMailComposeViewControllerDelegate, UITextFieldDelegate>
 {
     CategoryViewController*	categoryViewController;
     InsulinTypeViewController*	defaultInsulinTypeViewController;

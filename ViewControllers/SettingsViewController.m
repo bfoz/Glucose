@@ -380,8 +380,21 @@ enum AboutSectionRows
 	    {
 		case kAuthorRow:
 		{
-		    NSString* e = [@"mailto:bfoz@bfoz.net?subject=Glucose" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-		    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:e]];
+		    MFMailComposeViewController *mail = [[MFMailComposeViewController alloc] init];
+		    mail.mailComposeDelegate = self;
+
+		    NSBundle *const mainBundle = [NSBundle mainBundle];
+		    NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
+		    NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
+		    [mail setSubject:[NSString stringWithFormat:@"%@ v%@", n, v]];
+
+		    // Set up the recipients.
+		    NSArray *toRecipients = [NSArray arrayWithObjects:@"bfoz@bfoz.net", nil];
+		    [mail setToRecipients:toRecipients];
+
+		    // Present the mail composition interface.
+		    [self presentModalViewController:mail animated:YES];
+		    [mail release];	// Can safely release the controller now.
 		}
 		break;
 		case kWebsiteRow:
@@ -509,6 +522,16 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 {
     if( [appDelegate.defaultInsulinTypes containsObject:type] )
 	[appDelegate.defaultInsulinTypes removeObjectIdenticalTo:type];
+}
+
+#pragma mark -
+#pragma mark <MFMailComposeViewControllerDelegate>
+
+- (void) mailComposeController:(MFMailComposeViewController*) controller
+	   didFinishWithResult:(MFMailComposeResult) result
+			 error:(NSError*) error
+{
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 @end
