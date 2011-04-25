@@ -1,0 +1,24 @@
+---
+layout: default
+title: Glucose Release History
+---
+<html>
+	<head>
+		<title>Glucose Release History</title>
+		<link rel="stylesheet" href="/style.css" type="text/css" />
+		<link rel="stylesheet" href="index.css" type="text/css" />
+	</head>
+
+	<body>
+		<div id='header' style="text-align:center">
+			<h1>Glucose Release History</h1>
+		</div>
+		<div id="content">
+			{% for post in site.posts %}
+			    <p><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=294296711&mt=8">{{ post.title }}</a> - Released {{ post.date | date: '%B %d, %Y' }}
+			    {{ post.content }}
+			    </p>
+			{% endfor %}
+		</div>	<!-- id='content' -->
+	</body>
+</html>
