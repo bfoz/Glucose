@@ -1,0 +1,8 @@
+---
+layout: default
+title: Version 0.2
+---
+
+* Export to Google Spreadsheets
+* Purge old records
+* Color glucose measurements according to high/low thresholds

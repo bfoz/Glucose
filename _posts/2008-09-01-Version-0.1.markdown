@@ -1,0 +1,7 @@
+---
+layout: default
+title: Version 0.1
+---
+
+* First beta release to [Ars Technica](http://arstechnica.com)'s [Macintoshian Achaia forum](http://episteme.arstechnica.com/eve/forums/a/tpc/f/8300945231/m/530009424931?r=889002994931#889002994931)
+* Usable, but lots of rough edges

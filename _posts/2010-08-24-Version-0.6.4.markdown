@@ -1,0 +1,22 @@
+---
+layout: default
+title: Version 0.6.4
+---
+
+- Shake-to-undo support
+    - Shaking the device while editing a record reverts the record to its pre-edit state
+    - Shaking the device while editing a field reverts that field
+    - Shake the device while editing a category name to undo
+    - Shake the device while editing an insulin type name to undo
+- Fixed the logview double entry display bug (after editing a new record twice)
+- Added a "Restore Defaults" button to the Category list that's available from the Settings view
+- Added a "Restore Defaults" button to the Insulin Types list that's available from the Settings view
+- Changed log view title to "Glucose"
+- Added protocol CategoryViewControllerDelegate
+- Added protocol InsulinTypeViewControllerDelegate
+- Fixed bug that prevented editing of category and insulin type names
+- Fixed Save button bug while editing category and insulin type names
+- Tapping the Save button while editing a new entry advances to the next field
+    - Advances from to glucose from category and from the first insulin row to the second
+- Move LogEntries from a deleted category to category "None"
+

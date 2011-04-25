@@ -1,0 +1,8 @@
+---
+title: Version 0.6.5
+---
+
+- Fixed scrolling to the second insulin type in new log entry view
+- Fixed occasional startup crash on devices running iOS 4.x
+- Fixed occasional crash when saving a new record on devices running iOS 4.x
+

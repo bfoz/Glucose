@@ -1,0 +1,7 @@
+---
+layout: default
+title: Version 0.3
+---
+
+* First version submitted to the App Store
+* Bug fixes and cleanups

@@ -1,0 +1,7 @@
+---
+layout: default
+title: Version 0.6.1
+---
+
+* Fixed crash when creating an entry with a timestamp in the past
+* Glucose values are color coded on the entry detail view

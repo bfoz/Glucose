@@ -1,0 +1,11 @@
+---
+layout: default
+title: Version 0.4
+---
+
+* Support for mmol/L (Settings screen)
+* Tap anywhere on glucose threshold rows to edit (Settings screen)
+* Display note-only records on the main log view
+* Configuring default insulin types for new records should be more intuitive now
+* Fixed a few minor display bugs
+* Google Data client library version 1.5

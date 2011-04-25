@@ -1,0 +1,11 @@
+---
+title: Version 0.6.6
+---
+
+- Fixed date picker animation issue in ExportViewController
+- Fixed occasional crash on save in LogEntryView
+- Fixed Insulin Type deletion bug
+- Fixed bug when creating new Categories or Insulin Types
+- Fixed disclosure indicators on the About rows in SettingsViewController
+- Display an MFMailComposeViewController when the user taps on the Author row of the SettingsViewController
+

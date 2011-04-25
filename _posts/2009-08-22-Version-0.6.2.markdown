@@ -1,0 +1,9 @@
+---
+layout: default
+title: Version 0.6.2
+---
+
+* Only display last 30 days of records at startup. More can be displayed by selecting "Display More Log Entries".
+* Fixed crash when creating a new category
+* Google Data client library version 1.7
+* Requires iPhone OS 2.2.1 or later
