@@ -1,6 +1,3 @@
-<?php
-	include_once '/home/bfoz/public_html/include/common.php';
-?>
 <html>
 	<head>
 		<title>Glucose</title>
@@ -10,15 +7,13 @@
 
 	<body>
 		<div id='LinkBar'>
-			<?php EmitLinkbar(); ?>
 			<hr>
 			<div id='verticleScreenShots' >
 				<strong>Screen Shots</strong>
 				<ul>
-<?php
-	foreach( array('main.jpg', 'newentry.jpg', 'settings.jpg') as $file )
-		echo "<li><a href='./screenshots/release_0.6/$file'><img src='./screenshots/release_0.6/$file' /></a></li>\n";
-?>
+		<li><a href='./screenshots/release_0.6/main.jpg'><img src='./screenshots/release_0.6/main.jpg' /></a></li>
+		<li><a href='./screenshots/release_0.6/newentry.jpg'><img src='./screenshots/release_0.6/newentry.jpg' /></a></li>
+		<li><a href='./screenshots/release_0.6/settings.jpg'><img src='./screenshots/release_0.6/settings.jpg' /></a></li>
 				</ul>
 			</div>
 		</div>
