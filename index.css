@@ -1,3 +1,42 @@
+body { color: black; background-color: white;	}
+
+#SideBar
+{
+    float: left;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-top: 1em;
+}
+
+h1 { font-size: 3.5em; }
+
+#header, #content
+{
+    margin-left: 125px;
+    padding: 0 1em;
+}
+
+#header
+{
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    margin-bottom: 1em;
+}
+
+#content
+{
+    margin-bottom: 10px;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+}
+
+#footer
+{
+    clear: both;
+    text-align: center;
+    border-top: 1px solid black;
+}
+
 div#verticleScreenShots
 {
 	text-align: center;
@@ -6,7 +45,7 @@ div#verticleScreenShots
 div#verticleScreenShots img
 {
 	border: 0;
-	width: 75px;
+	width: 100px;
 }
 
 div#verticleScreenShots ul
