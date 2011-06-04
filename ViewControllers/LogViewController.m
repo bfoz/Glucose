@@ -16,7 +16,7 @@
 #import "LogEntryCell.h"
 #import "SettingsViewController.h"
 
-@interface LogViewController ()
+@interface LogViewController () <SettingsViewControllerDelegate>
 
 @property (nonatomic, retain)	NSDateFormatter*	dateFormatter;
 @property (nonatomic, retain) SettingsViewController* settingsViewController;
@@ -93,8 +93,11 @@
 
 - (void) showSettings:(id)sender
 {
-	if( !settingsViewController )
-		settingsViewController = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    if( !settingsViewController )
+    {
+	settingsViewController = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+	settingsViewController.delegate = self;
+    }
 
 	[UIView beginAnimations:nil context:NULL];
 	[UIView setAnimationDuration:0.75];
@@ -336,6 +339,19 @@
 	    [s updateStatistics];
 	[logEntryViewController.entry flush:appDelegate.database];
     }
+}
+
+#pragma mark <SettingsViewControllerDelegate>
+
+- (void) settingsViewControllerDidPressBack
+{
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:0.75];
+    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight
+			   forView:self.navigationController.view
+			     cache:YES];
+    [self.navigationController popViewControllerAnimated:NO];
+    [UIView commitAnimations];
 }
 
 @end

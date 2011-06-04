@@ -13,8 +13,12 @@
 @class CategoryViewController;
 @class InsulinTypeViewController;
 
+@protocol SettingsViewControllerDelegate;
+
 @interface SettingsViewController : SlidingViewController <CategoryViewControllerDelegate, InsulinTypeViewControllerDelegate, MFMailComposeViewControllerDelegate, UITextFieldDelegate>
 {
+    id<SettingsViewControllerDelegate>    delegate;
+
     CategoryViewController*	categoryViewController;
     InsulinTypeViewController*	defaultInsulinTypeViewController;
     InsulinTypeViewController*	insulinTypeViewController;
@@ -29,5 +33,13 @@
     UITableViewController*	exportViewController;
     UITableViewController*	purgeViewController;
 }
+
+@property (nonatomic, retain)	id<SettingsViewControllerDelegate>    delegate;
+
+@end
+
+@protocol SettingsViewControllerDelegate <NSObject>
+
+- (void) settingsViewControllerDidPressBack;
 
 @end

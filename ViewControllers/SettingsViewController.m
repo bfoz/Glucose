@@ -21,7 +21,7 @@
 
 @implementation SettingsViewController
 
-//@synthesize categoryViewController;
+@synthesize delegate;
 
 enum Sections
 {
@@ -107,13 +107,8 @@ enum AboutSectionRows
     [appDelegate flushDefaultInsulinTypes];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.75];
-    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight
-			   forView:self.navigationController.view
-			     cache:YES];
-    [self.navigationController popViewControllerAnimated:NO];	
-    [UIView commitAnimations];
+    if( delegate && [delegate respondsToSelector:@selector(settingsViewControllerDidPressBack)] )
+	[delegate settingsViewControllerDidPressBack];
 }
 
 - (void) glucoseUnitsAction:(UISegmentedControl*)sender
