@@ -378,22 +378,35 @@ enum AboutSectionRows
 	    {
 		case kAuthorRow:
 		{
-		    MFMailComposeViewController *mail = [[MFMailComposeViewController alloc] init];
-		    mail.mailComposeDelegate = self;
+		    // Is the device configured for email?
+		    if( [MFMailComposeViewController canSendMail] )
+		    {
+			MFMailComposeViewController *mail = [[MFMailComposeViewController alloc] init];
+			mail.mailComposeDelegate = self;
 
-		    NSBundle *const mainBundle = [NSBundle mainBundle];
-		    NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
-		    NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
-		    UIDevice *const device = [UIDevice currentDevice];
-		    [mail setSubject:[NSString stringWithFormat:@"%@ v%@ on %@ %@", n, v, device.model, device.systemVersion]];
+			NSBundle *const mainBundle = [NSBundle mainBundle];
+			NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
+			NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
+			UIDevice *const device = [UIDevice currentDevice];
+			[mail setSubject:[NSString stringWithFormat:@"%@ v%@ on %@ %@", n, v, device.model, device.systemVersion]];
 
-		    // Set up the recipients.
-		    NSArray *toRecipients = [NSArray arrayWithObjects:@"bfoz@bfoz.net", nil];
-		    [mail setToRecipients:toRecipients];
+			// Set up the recipients.
+			NSArray *toRecipients = [NSArray arrayWithObjects:@"bfoz@bfoz.net", nil];
+			[mail setToRecipients:toRecipients];
 
-		    // Present the mail composition interface.
-		    [self presentModalViewController:mail animated:YES];
-		    [mail release];	// Can safely release the controller now.
+			// Present the mail composition interface.
+			[self presentModalViewController:mail animated:YES];
+			[mail release];	// Can safely release the controller now.
+		    }
+		    else
+		    {
+			// Inform the user that email needs to be configured
+			[[[UIAlertView alloc] initWithTitle:@"Error"
+						    message:@"Email is not configured on this device. Please configure email in the Settings application."
+						   delegate:nil
+					  cancelButtonTitle:@"OK"
+					  otherButtonTitles:nil] show];
+		    }
 		}
 		break;
 		case kWebsiteRow:
