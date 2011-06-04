@@ -62,6 +62,11 @@
 	[font retain];
 }
 
+- (NSString*) text
+{
+    return view.text;
+}
+
 - (void) setText:(NSString*)t
 {
     // Use the TextView's accessor method to handle storing the new string

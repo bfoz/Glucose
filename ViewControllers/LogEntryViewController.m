@@ -679,7 +679,7 @@ static NSUserDefaults* defaults = nil;
 	didUndo = NO;	// Undo handled
     else
     {
-	entry.note = ((TextViewCell *)editCell).view.text;
+	entry.note = ((TextViewCell *)editCell).text;
 	[self saveAction];
     }
 }
