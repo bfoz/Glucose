@@ -63,21 +63,10 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addNewEntry:)];
 }
 
-/*
-- (void)viewDidAppear:(BOOL)animated {
-	[super viewDidAppear:animated];
+- (void) inspectNewLogEntry:(LogEntry*)entry
+{
+    [self inspectLogEntry:entry inSection:nil setEditing:YES isNew:YES];
 }
-
-- (void)viewWillDisappear:(BOOL)animated {
-}
-
-- (void)viewDidDisappear:(BOOL)animated {
-}
-
-- (void)didReceiveMemoryWarning {
-	[super didReceiveMemoryWarning];
-}
-*/
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;
 {
@@ -136,8 +125,9 @@
 
 - (void) addNewEntry:(id)sender
 {
-    LogEntry* entry = [delegate logViewCreateLogEntry];
-    [self inspectLogEntry:entry inSection:nil setEditing:YES isNew:YES];	// Display an editing view for the new LogEntry
+    // Inform the delegate of the button event
+    if( delegate && [delegate respondsToSelector:@selector(didPressNewLogEntry)] )
+	[delegate didPressNewLogEntry];
 }
 
 #pragma mark <UITableViewDataSource>

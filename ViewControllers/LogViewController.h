@@ -28,12 +28,13 @@
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e isNew:(BOOL)n;
+- (void) inspectNewLogEntry:(LogEntry*)entry;
 
 @end
 
 @protocol LogViewDelegate <NSObject>
 
-- (LogEntry*) logViewCreateLogEntry;
+- (void) didPressNewLogEntry;
 
 /* These methods are required of the delegate because the UITableView will throw
     an exception if the data source doesn't reflect the change in rows/sections	*/

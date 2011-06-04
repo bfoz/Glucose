@@ -171,12 +171,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     return [LogDay numberOfDays:self.database] > [self.sections count];
 }
 
-- (void) didSelectLoadMore
-{
-    [LogDay loadDays:self.sections fromDatabase:self.database limit:30 offset:[self.sections count]];
-}
-
-- (LogEntry*) logViewCreateLogEntry
+- (void) didPressNewLogEntry
 {
     // Create a new record in the database and get its automatically generated primary key.
     const unsigned entryID = [LogEntry insertNewLogEntryIntoDatabase:self.database];
@@ -193,7 +188,13 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     else
 	entry.glucoseUnits = kGlucoseUnits_mmolL;
 
-    return entry;
+    // Display the detail view so the user can edit the new entry
+    [logViewController inspectNewLogEntry:entry];
+}
+
+- (void) didSelectLoadMore
+{
+    [LogDay loadDays:self.sections fromDatabase:self.database limit:30 offset:[self.sections count]];
 }
 
 // Delete a LogEntry from memory and the database
