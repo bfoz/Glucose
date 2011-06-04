@@ -58,8 +58,7 @@ enum ThresholdsUnitsRows
 
 enum AboutSectionRows
 {
-    kAppNameVersionRow = 0,
-    kAuthorRow,
+    kAuthorRow = 0,
     kWebsiteRow,
     NUM_ABOUT_ROWS
 };
@@ -264,23 +263,9 @@ enum AboutSectionRows
 	} break;
         case kSectionAbout:
 	    cell.textLabel.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-	    // Work around the cell.textAlignment bug introduced in version 2.2 by
-	    //  getting the first child UILabel and settting its textAlignment 
-	    //  property directly
-	    [[[[cell contentView] subviews] objectAtIndex:0] setTextAlignment:UITextAlignmentCenter];
-	    if( row )
-		cell.textLabel.textColor = [UIColor blueColor];	// Website and email links
+	    cell.textLabel.textColor = [UIColor blueColor];
 	    switch( row )
 	    {
-		case kAppNameVersionRow:
-		{
-		    NSBundle *const mainBundle = [NSBundle mainBundle];
-		    NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
-		    NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
-		    cell.textLabel.text = [NSString stringWithFormat:@"%@ v%@", n, v];
-		    cell.accessoryType = UITableViewCellAccessoryNone;
-		}
-		break;
 		case kAuthorRow:
 		    cell.textLabel.text = @"Brandon Fosdick <bfoz@bfoz.net>";
 		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -300,6 +285,18 @@ enum AboutSectionRows
 {
     if( kSectionAbout == section )
 	return @"Copyright 2008-2011 Brandon Fosdick";
+    return nil;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if( kSectionAbout == section )
+    {
+	NSBundle *const mainBundle = [NSBundle mainBundle];
+	NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
+	NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
+	return [NSString stringWithFormat:@"%@ v%@", n, v];
+    }
     return nil;
 }
 
