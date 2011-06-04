@@ -17,6 +17,8 @@
 #import "PurgeViewController.h"
 #import "SettingsViewController.h"
 
+#define	URL_PROJECT_PAGE    @"http://bfoz.github.com/Glucose/"
+
 @implementation SettingsViewController
 
 //@synthesize categoryViewController;
@@ -284,7 +286,7 @@ enum AboutSectionRows
 		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		    break;
 		case kWebsiteRow:
-		    cell.textLabel.text = @"http://bfoz.net/projects/glucose";
+		    cell.textLabel.text = URL_PROJECT_PAGE;
 		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		    break;
 	    }
@@ -398,7 +400,7 @@ enum AboutSectionRows
 		}
 		break;
 		case kWebsiteRow:
-		    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://bfoz.net/projects/glucose/"]];
+		    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URL_PROJECT_PAGE]];
 		    break;
 	    }
 	    break;
