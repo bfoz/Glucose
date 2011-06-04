@@ -31,6 +31,7 @@
 
 
 - (void)toggleDatePicker;
+- (void) updateTitle;
 
 @end
 
@@ -50,8 +51,6 @@ static NSUserDefaults* defaults = nil;
     // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
     if (self = [super initWithStyle:style])
     {
-	self.title = @"Detail";
-
 	didUndo = NO;
 	editingNewEntry = NO;
 	
@@ -106,6 +105,7 @@ static NSUserDefaults* defaults = nil;
 					       object:nil];
 
     didSelectRow = NO;		    // Remove any existing selection
+    [self updateTitle];		    // Update the navigation item title
     [self.tableView reloadData];    // Redisplay the data
 }
 
@@ -133,8 +133,16 @@ static NSUserDefaults* defaults = nil;
 	    [delegate logEntryViewDidEndEditing];
     }
 
+    // Not editing, so not editing a new entry
+    if( !e )
+	self.editingNewEntry = NO;
+
     // Finally pass the call to the super
     [super setEditing:e animated:animated];
+
+    /* Update the navigation item title
+	!!! Must be after calling the super so that self.editing is updated */
+    [self updateTitle];
 
     // Reload the table to update the view to reflect the new edit state
     [self.tableView reloadData];
@@ -143,6 +151,16 @@ static NSUserDefaults* defaults = nil;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+- (void) updateTitle
+{
+    if( self.editingNewEntry )
+	self.title = @"New Entry";
+    else if( self.editing )
+	self.title = @"Edit Entry";
+    else
+	self.title = @"Details";
 }
 
 #pragma mark Shake handling
