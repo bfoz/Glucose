@@ -58,8 +58,9 @@ enum ThresholdsUnitsRows
 
 enum AboutSectionRows
 {
-    kAuthorRow = 0,
+    kWriteReviewRow = 0,
     kWebsiteRow,
+    kAuthorRow,
     NUM_ABOUT_ROWS
 };
 
@@ -260,17 +261,17 @@ enum AboutSectionRows
 	    }
 	} break;
         case kSectionAbout:
-	    cell.textLabel.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-	    cell.textLabel.textColor = [UIColor blueColor];
+	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	    switch( row )
 	    {
 		case kAuthorRow:
-		    cell.textLabel.text = @"Brandon Fosdick <bfoz@bfoz.net>";
-		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		    cell.textLabel.text = @"Report a Bug";
 		    break;
 		case kWebsiteRow:
-		    cell.textLabel.text = URL_PROJECT_PAGE;
-		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		    cell.textLabel.text = @"More Information";
+		    break;
+		case kWriteReviewRow:
+		    cell.textLabel.text = @"Write a Review";
 		    break;
 	    }
 	    break;
@@ -396,6 +397,9 @@ enum AboutSectionRows
 		break;
 		case kWebsiteRow:
 		    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:URL_PROJECT_PAGE]];
+		    break;
+		case kWriteReviewRow:
+		    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=294296711"]];
 		    break;
 	    }
 	    break;
