@@ -16,6 +16,8 @@
 #import "LogEntryCell.h"
 #import "SettingsViewController.h"
 
+#define	ANIMATION_DURATION	    0.5	    // seconds
+
 @interface LogViewController () <SettingsViewControllerDelegate>
 
 @property (nonatomic, retain)	NSDateFormatter*	dateFormatter;
@@ -100,7 +102,7 @@
     }
 
 	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationDuration:0.75];
+    [UIView setAnimationDuration:ANIMATION_DURATION];
 	[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft
 						   forView:self.navigationController.view cache:YES];
     [self.navigationController pushViewController:settingsViewController animated:NO];	
@@ -346,7 +348,7 @@
 - (void) settingsViewControllerDidPressBack
 {
     [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.75];
+    [UIView setAnimationDuration:ANIMATION_DURATION];
     [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight
 			   forView:self.navigationController.view
 			     cache:YES];
