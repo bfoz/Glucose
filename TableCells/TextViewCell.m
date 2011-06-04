@@ -64,10 +64,12 @@
 
 - (void) setText:(NSString*)t
 {
+    // Use the TextView's accessor method to handle storing the new string
+    view.text = t;
+
 	if( t && [t length])
 	{
 		dirty = YES;
-		view.text = t;
 		view.font = nil;
 		view.textColor = nil;
 	}

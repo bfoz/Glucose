@@ -404,7 +404,13 @@ static NSUserDefaults* defaults = nil;
 	}
     }
     else if( 2 == section )
+    {
 	cell.textLabel.text = entry.note;
+
+	// In editing mode, the cell is actually a TextViewCell that sets it's text differently
+	if( self.editing )
+	    ((TextViewCell *)cell).text = entry.note;
+    }
 
     if( self.editing )
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
