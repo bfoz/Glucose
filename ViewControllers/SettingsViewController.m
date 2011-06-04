@@ -384,7 +384,8 @@ enum AboutSectionRows
 		    NSBundle *const mainBundle = [NSBundle mainBundle];
 		    NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
 		    NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
-		    [mail setSubject:[NSString stringWithFormat:@"%@ v%@", n, v]];
+		    UIDevice *const device = [UIDevice currentDevice];
+		    [mail setSubject:[NSString stringWithFormat:@"%@ v%@ on %@ %@", n, v, device.model, device.systemVersion]];
 
 		    // Set up the recipients.
 		    NSArray *toRecipients = [NSArray arrayWithObjects:@"bfoz@bfoz.net", nil];
