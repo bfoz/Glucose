@@ -67,11 +67,6 @@ enum AboutSectionRows
 {
     if( self = [super initWithStyle:style] )
     {
-	self.navigationItem.hidesBackButton = YES;
-	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneAction:)];
-	self.title = @"Settings";
-	self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
 
@@ -86,6 +81,14 @@ enum AboutSectionRows
  */
     }
     return self;
+}
+
+- (void) viewDidLoad
+{
+    self.navigationItem.hidesBackButton = YES;
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneAction:)];
+    self.title = @"Settings";
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 
 - (void)dealloc
