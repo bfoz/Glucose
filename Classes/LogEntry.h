@@ -54,6 +54,7 @@
 - (void) setEditing:(BOOL)edit;
 
 - (void) addDoseWithType:(InsulinType*)t;
+- (InsulinDose*) doseAtIndex:(unsigned)index;
 - (void) removeDoseAtIndex:(unsigned)i;
 
 - (void) setCategoryWithID:(unsigned)cid;

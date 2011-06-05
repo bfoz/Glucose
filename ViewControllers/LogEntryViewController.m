@@ -394,12 +394,12 @@ static NSUserDefaults* defaults = nil;
     {
 	// If the entry doesn't have a valid number for an insulin type use a regular cell and display the short name. 
 	// Otherwise, use a dual column cell.
-	InsulinDose* dose = ([entry.insulin count] > row) ? [entry.insulin objectAtIndex:row] : nil;
+	InsulinDose* dose = [entry doseAtIndex:row];
 
 	if( @"DualCellID" == cellID )
 	{
 	    while( !(dose && dose.dose && dose.type) )
-		dose = [entry.insulin objectAtIndex:++row];
+		dose = [entry doseAtIndex:++row];
 	    if( dose )
 	    {
 		if( dose.dose )	// If the record has a valid value...

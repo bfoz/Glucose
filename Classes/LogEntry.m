@@ -487,6 +487,11 @@ _var = _val;
     [insulin addObject:[InsulinDose withType:t]];
 }
 
+- (InsulinDose*) doseAtIndex:(unsigned)index
+{
+    return (index >= [insulin count]) ? nil : [insulin objectAtIndex:index];
+}
+
 - (void) removeDoseAtIndex:(unsigned)i
 {
     [insulin removeObjectAtIndex:i];
