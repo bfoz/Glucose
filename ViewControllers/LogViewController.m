@@ -215,11 +215,8 @@
 	return cell;
     }
 
-	// Get the LogEntry for the cell
-	LogDay *const s = [appDelegate.sections objectAtIndex:indexPath.section];
-	if( s && s.count && ![s.entries count] )
-		[s hydrate:appDelegate.database];
-	LogEntry* entry = [s.entries objectAtIndex:indexPath.row];
+    // Get the LogEntry for the cell
+    LogEntry *const entry = [delegate logEntryAtIndex:row inDayIndex:section];
 
 	// Configure the cell
 //	cell.entry = entry;

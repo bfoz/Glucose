@@ -192,6 +192,19 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [logViewController inspectNewLogEntry:entry];
 }
 
+- (LogDay*) logDayAtIndex:(unsigned)index
+{
+    return [sections objectAtIndex:index];
+}
+
+- (LogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day
+{
+    LogDay *const d = [self logDayAtIndex:day];
+    if( d && d.count && ![d.entries count] )
+	[d hydrate:database];
+    return (entry >= [d.entries count]) ? nil : [d.entries objectAtIndex:entry];
+}
+
 - (void) didSelectLoadMore
 {
     [LogDay loadDays:self.sections fromDatabase:self.database limit:30 offset:[self.sections count]];
