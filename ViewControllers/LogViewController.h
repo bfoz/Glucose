@@ -35,6 +35,7 @@
 @protocol LogViewDelegate <NSObject>
 
 - (void) didPressNewLogEntry;
+- (LogDay*) logDayAtIndex:(unsigned)index;
 - (LogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day;
 
 /* These methods are required of the delegate because the UITableView will throw

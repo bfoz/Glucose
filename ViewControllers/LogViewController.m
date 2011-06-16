@@ -145,7 +145,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    unsigned count = [[appDelegate.sections objectAtIndex:section] count];
+    unsigned count = [[delegate logDayAtIndex:section] count];
 
     // If the table hasn't been fully loaded the last section has an extra row for loading more rows
     if( section == ([appDelegate.sections count]-1) )
@@ -158,7 +158,7 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	LogDay *const s = [appDelegate.sections objectAtIndex:section];
+	LogDay *const s = [delegate logDayAtIndex:section];
 
     const float averageGlucose = s.averageGlucose;
 	NSString* avg = @"";
@@ -193,7 +193,7 @@
     const unsigned section = indexPath.section;
     const unsigned row = indexPath.row;
 
-    if( (section == ([appDelegate.sections count]-1)) && (row == [[appDelegate.sections objectAtIndex:section] count]) )
+    if( (section == ([appDelegate.sections count]-1)) && (row == [[delegate logDayAtIndex:section] count]) )
 	cellID = @"MoreCell";
 
     LogEntryCell *cell = (LogEntryCell*)[tableView dequeueReusableCellWithIdentifier:cellID];
@@ -280,7 +280,7 @@
 {
     const unsigned section = path.section;
     const unsigned row = path.row;
-    LogDay *const s = [appDelegate.sections objectAtIndex:section];
+    LogDay *const s = [delegate logDayAtIndex:section];
 
     // HI guidlines say row should be selected and then deselected
     [tv deselectRowAtIndexPath:path animated:YES];
@@ -300,7 +300,7 @@
     // If the row was deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	LogDay *const s = [appDelegate.sections objectAtIndex:indexPath.section];
+	LogDay *const s = [delegate logDayAtIndex:indexPath.section];
 	if( 1 == [s.entries count] )	// If the section is about to be empty, delete it
 	{
 	    [delegate logViewDidDeleteSectionAtIndex:indexPath.section];
