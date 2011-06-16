@@ -30,6 +30,9 @@
 	LogViewController*	logViewController;
 	NSMutableArray* sections;
     sqlite3*	database;			// SQLite database handle
+
+@private
+    unsigned	numberOfSections;   // The number of sections in the database
 }
 
 @property (nonatomic, retain)	UIWindow*	window;

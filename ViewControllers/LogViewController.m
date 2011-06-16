@@ -139,7 +139,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [appDelegate.sections count];
+    return [delegate numberOfLogDays];
 }
 
 
@@ -148,7 +148,7 @@
     unsigned count = [[delegate logDayAtIndex:section] count];
 
     // If the table hasn't been fully loaded the last section has an extra row for loading more rows
-    if( section == ([appDelegate.sections count]-1) )
+    if( section == ([delegate numberOfLogDays]-1) )
 	if( [delegate respondsToSelector:@selector(canLoadMoreDays)] )
 	    if( [delegate canLoadMoreDays] )
 		++count;
@@ -193,7 +193,7 @@
     const unsigned section = indexPath.section;
     const unsigned row = indexPath.row;
 
-    if( (section == ([appDelegate.sections count]-1)) && (row == [[delegate logDayAtIndex:section] count]) )
+    if( (section == ([delegate numberOfLogDays]-1)) && (row == [[delegate logDayAtIndex:section] count]) )
 	cellID = @"MoreCell";
 
     LogEntryCell *cell = (LogEntryCell*)[tableView dequeueReusableCellWithIdentifier:cellID];
@@ -285,7 +285,7 @@
     // HI guidlines say row should be selected and then deselected
     [tv deselectRowAtIndexPath:path animated:YES];
 
-    if( (section == ([appDelegate.sections count]-1)) && (row == [s count]) )
+    if( (section == ([delegate numberOfLogDays]-1)) && (row == [s count]) )
     {
 	if( [delegate respondsToSelector:@selector(didSelectLoadMore)] )
 	    [delegate didSelectLoadMore];

@@ -113,6 +113,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	[self loadDefaultInsulinTypes];	// Must be after loadInsulinTypes
     // Load the most recent 30 days
     sections = [[NSMutableArray alloc] init];
+    numberOfSections = [LogDay numberOfDays:database];
     [LogDay loadDays:sections fromDatabase:database limit:30 offset:0];
 
     // Find the max width of the categoryName strings so it can be used for layout
@@ -168,7 +169,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 
 - (BOOL) canLoadMoreDays
 {
-    return [LogDay numberOfDays:self.database] > [self.sections count];
+    return numberOfSections > [self.sections count];
 }
 
 - (void) didPressNewLogEntry
@@ -203,6 +204,11 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     if( d && d.count && ![d.entries count] )
 	[d hydrate:database];
     return (entry >= [d.entries count]) ? nil : [d.entries objectAtIndex:entry];
+}
+
+- (unsigned) numberOfLogDays
+{
+    return numberOfSections;
 }
 
 - (void) didSelectLoadMore

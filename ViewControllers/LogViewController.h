@@ -37,6 +37,7 @@
 - (void) didPressNewLogEntry;
 - (LogDay*) logDayAtIndex:(unsigned)index;
 - (LogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day;
+- (unsigned) numberOfLogDays;
 
 /* These methods are required of the delegate because the UITableView will throw
     an exception if the data source doesn't reflect the change in rows/sections	*/
