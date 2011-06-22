@@ -24,7 +24,10 @@
 
 AppDelegate* appDelegate = nil;
 
-@interface AppDelegate (Private)
+@interface AppDelegate ()
+
+@property (nonatomic, readonly)	NSMutableArray*		sections;
+
 - (void) createEditableCopyOfDatabaseIfNeeded;
 - (void) closeLogDatabase;
 

@@ -41,7 +41,6 @@
 @property (nonatomic, readonly)	NSMutableArray*		defaultInsulinTypes;
 @property (nonatomic, readonly)	NSMutableArray*		insulinTypes;
 @property (nonatomic, readonly)	LogViewController*	logViewController;
-@property (nonatomic, readonly)	NSMutableArray*		sections;
 @property (nonatomic, readonly)	sqlite3*		database;
 @property (nonatomic, readonly) GDataServiceGoogleDocs*	docService;
 
