@@ -169,6 +169,16 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
     return num;
 }
 
++ (NSString*) unitsStringForInteger:(unsigned)units
+{
+    switch(units)
+    {
+	case 0: return kGlucoseUnits_mgdL;
+	case 1: return kGlucoseUnits_mmolL;
+	default: return NULL; break;
+    }
+}
+
 // Finalize (delete) all of the SQLite compiled queries.
 + (void)finalizeStatements
 {
@@ -392,20 +402,10 @@ _var = _val;
 			[NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(init_statement, 0)]);
 	ASSIGN_NOT_NULL(init_statement, 1, self.glucose,
 			[NSNumber numberWithDouble:sqlite3_column_double(init_statement, 1)]);
+	ASSIGN_NOT_NULL(init_statement, 2, self.glucoseUnits,
+			[LogEntry unitsStringForInteger:sqlite3_column_int(init_statement, 2)]);
 	ASSIGN_NOT_NULL(init_statement, 8, self.note,
 			[NSString stringWithUTF8String:(const char*)sqlite3_column_text(init_statement, 8)]);
-
-	if( SQLITE_NULL == sqlite3_column_type(init_statement, 2) )
-	    self.glucoseUnits = nil;
-	else
-	{
-	    switch(sqlite3_column_int(init_statement, 2))
-	    {
-		case 0: self.glucoseUnits = kGlucoseUnits_mgdL; break;
-		case 1: self.glucoseUnits = kGlucoseUnits_mmolL; break;
-		default: self.glucoseUnits = nil; break;
-	    }
-	}
 
 	if( SQLITE_NULL == sqlite3_column_type(init_statement, 3) )
 	    self.category = nil;

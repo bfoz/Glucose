@@ -13,6 +13,8 @@
 
 - (id) initWithStatement:(sqlite3_stmt*)statement;
 
+- (void) loadUnitsFromDatabase:(sqlite3*)database;
+
 @end
 
 
@@ -22,9 +24,13 @@
 @synthesize	date;
 @synthesize	entries;
 @synthesize name;
+@synthesize units;
 
 static const char *sqlLoadDays = "SELECT timestamp, COUNT(timestamp), AVG(glucose) FROM localLogEntries GROUP BY date(timestamp,'unixepoch','localtime') ORDER BY timestamp DESC LIMIT ? OFFSET ?";
 static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(timestamp,'unixepoch','localtime') FROM localLogEntries)";
+static const char*  sqlGlucoseUnits = "SELECT DISTINCT glucoseUnits FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') = date(?,'unixepoch','localtime') GROUP BY glucoseUnits";
+
+static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 
 // Load a subset of sections given by limit and offset
 //  All sections can be loaded by passing limit=-1 and offset=0
@@ -78,6 +84,7 @@ static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(times
 	averageGlucose = 0;
 		count = 0;
 		entries = [[NSMutableArray alloc] init];
+	units = NULL;
 	}
 	return self;
 }
@@ -92,9 +99,35 @@ static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(times
 	averageGlucose = sqlite3_column_double(statement, 2);
 
 	entries = [[NSMutableArray alloc] initWithCapacity:count];
+	[self loadUnitsFromDatabase:sqlite3_db_handle(statement)];
     }
 
     return self;
+}
+
+// Load the day's units string from the database
+- (void) loadUnitsFromDatabase:(sqlite3*)database
+{
+    // Try to figure out the units string from the entries in the database
+    if( !stmtGlucoseUnits )
+    {
+        if( sqlite3_prepare_v2(database, sqlGlucoseUnits, -1, &stmtGlucoseUnits, NULL) != SQLITE_OK )
+	{
+            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+	    return;
+	}
+    }
+
+    sqlite3_bind_int(stmtGlucoseUnits, 1, [date timeIntervalSince1970]);
+    while( sqlite3_step(stmtGlucoseUnits) == SQLITE_ROW )
+    {
+	/* Use the units from the day's first entry and hope the user hasn't
+	 been switching units within a section    */
+	units = [LogEntry unitsStringForInteger:sqlite3_column_int(stmtGlucoseUnits, 0)];
+	if( units )
+	    break;
+    }
+    sqlite3_reset(stmtGlucoseUnits);	// Reset the statement for reuse
 }
 
 - (void) deleteAllEntriesFromDatabase:(sqlite3*)database
@@ -197,6 +230,25 @@ static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(times
 		}
 	}
 	averageGlucose = i ? averageGlucose/i : 0;
+}
+
+#pragma mark -
+#pragma mark Accessors
+
+// Return the units string for the units used by the day's entries
+- (NSString*) units
+{
+    if( units )
+	return units;
+
+    /*	If the units aren't known, but there's at least one LogEntry available,
+	this is probably a new record that wasn't loaded from the database. So,
+	use the units from the day's first entry and hope the user hasn't been
+	switching units within a day.	*/
+    if( [entries count] )
+	units = [[entries objectAtIndex:0] glucoseUnits];
+
+    return units;
 }
 
 @end

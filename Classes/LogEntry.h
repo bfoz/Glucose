@@ -42,6 +42,7 @@
 + (BOOL) moveAllEntriesInCategory:(Category*)src toCategory:(Category*)dest database:(sqlite3*)database;
 + (unsigned) numLogEntriesForCategoryID:(unsigned)categoryID database:(sqlite3*)database;
 + (unsigned) numLogEntriesForInsulinTypeID:(unsigned)typeID database:(sqlite3*)database;
++ (NSString*) unitsStringForInteger:(unsigned)units;
 
 + (void)finalizeStatements;		// Finalize (delete) all of the SQLite compiled queries
 + (NSData*) createCSV:(sqlite3*)database from:(NSDate*)from to:(NSDate*)to;

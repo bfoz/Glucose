@@ -18,6 +18,7 @@
 	NSDate*			date;
 	NSMutableArray*	entries;
 	NSString*		name;
+    NSString*		units;
 }
 
 @property (nonatomic, readonly)	float	averageGlucose;
@@ -25,6 +26,7 @@
 @property (nonatomic, retain)	NSDate*	date;
 @property (nonatomic, readonly)	NSMutableArray*	entries;
 @property (nonatomic, retain)	NSString*	name;
+@property (nonatomic, readonly)	NSString*	units;
 
 + (BOOL) loadDays:(NSMutableArray*)days fromDatabase:(sqlite3*)database limit:(unsigned)limit offset:(unsigned)offset;
 + (unsigned) numberOfDays:(sqlite3*)db;
