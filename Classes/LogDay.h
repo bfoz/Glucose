@@ -30,7 +30,6 @@
 + (unsigned) numberOfDays:(sqlite3*)db;
 
 - (id) initWithDate:(NSDate*)d;
-- (id) initWithDate:(NSDate*)d count:(unsigned)c;
 
 - (void) deleteAllEntriesFromDatabase:(sqlite3*)database;
 - (void) hydrate:(sqlite3*)db;

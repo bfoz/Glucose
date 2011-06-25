@@ -9,6 +9,13 @@
 #import "LogDay.h"
 #import "LogEntry.h"
 
+@interface LogDay ()
+
+- (id) initWithStatement:(sqlite3_stmt*)statement;
+
+@end
+
+
 @implementation LogDay
 
 @synthesize	averageGlucose, count;
@@ -16,7 +23,7 @@
 @synthesize	entries;
 @synthesize name;
 
-static const char *sqlLoadDays = "SELECT timestamp, COUNT(timestamp) FROM localLogEntries GROUP BY date(timestamp,'unixepoch','localtime') ORDER BY timestamp DESC LIMIT ? OFFSET ?";
+static const char *sqlLoadDays = "SELECT timestamp, COUNT(timestamp), AVG(glucose) FROM localLogEntries GROUP BY date(timestamp,'unixepoch','localtime') ORDER BY timestamp DESC LIMIT ? OFFSET ?";
 static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(timestamp,'unixepoch','localtime') FROM localLogEntries)";
 
 // Load a subset of sections given by limit and offset
@@ -34,9 +41,8 @@ static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(times
     sqlite3_bind_int(statement, 2, offset);
     while( sqlite3_step(statement) == SQLITE_ROW )
     {
-	NSDate *const date = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)];
-	LogDay *const  day = [[LogDay alloc] initWithDate:date count:sqlite3_column_int(statement, 1)];
-	day.name = [shortDateFormatter stringFromDate:date];
+	LogDay *const  day = [[LogDay alloc] initWithStatement:statement];
+	day.name = [shortDateFormatter stringFromDate:day.date];
 	[days addObject:day];
 	[day release];
     }
@@ -69,21 +75,26 @@ static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(times
 	if( self = [super init] )
 	{
 		self.date = d;
+	averageGlucose = 0;
 		count = 0;
 		entries = [[NSMutableArray alloc] init];
 	}
 	return self;
 }
 
-- (id) initWithDate:(NSDate*)d count:(unsigned)c
+- (id) initWithStatement:(sqlite3_stmt*)statement
 {
-	if( self = [super init] )
-	{
-		self.date = d;
-		count = c;
-		entries = [[NSMutableArray alloc] initWithCapacity:c];
-	}
-	return self;
+    self = [super init];
+    if( self )
+    {
+	self.date = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)];
+	count = sqlite3_column_int(statement, 1);
+	averageGlucose = sqlite3_column_double(statement, 2);
+
+	entries = [[NSMutableArray alloc] initWithCapacity:count];
+    }
+
+    return self;
 }
 
 - (void) deleteAllEntriesFromDatabase:(sqlite3*)database
