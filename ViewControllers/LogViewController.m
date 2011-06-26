@@ -222,16 +222,14 @@
 //	cell.entry = entry;
 	cell.labelTimestamp.text = [dateFormatter stringFromDate:entry.timestamp];
 	cell.labelCategory.text = entry.category ? entry.category.categoryName : @"";
-    NSString *const units = entry.glucoseUnits;
-    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
-    cell.labelGlucose.text = entry.glucose ? [NSString localizedStringWithFormat:@"%.*f%@", precision, [entry.glucose floatValue], units] : nil;
+    cell.labelGlucose.text = entry.glucoseString;
 	cell.note = entry.note;
 
 	// Color the glucose values accordingly
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
     NSString* keyHigh;
     NSString* keyLow;
-    if( units == kGlucoseUnits_mgdL )
+    if( kGlucoseUnits_mgdL == entry.glucoseUnits )
     {
 	keyHigh = kHighGlucoseWarning0;
 	keyLow = kLowGlucoseWarning0;

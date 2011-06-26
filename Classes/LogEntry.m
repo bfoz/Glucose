@@ -443,6 +443,27 @@ _var = _val;
     dirty = NO;
 }
 
+#pragma mark -
+
+- (NSString*) glucoseString
+{
+    if( glucoseString )
+	return glucoseString;
+
+    if( glucose && ![glucose isEqualToNumber:[NSNumber numberWithInt:0]] )
+    {
+	if( glucoseUnits )
+	{
+	    const unsigned precision = (glucoseUnits == kGlucoseUnits_mgdL) ? 0 : 1;
+	    glucoseString = [NSString localizedStringWithFormat:@"%.*f%@", precision, [glucose floatValue], glucoseUnits];
+	}
+	else
+	    glucoseString = [NSString localizedStringWithFormat:@"%.0f", [glucose floatValue]];
+    }
+
+    return [glucoseString retain];
+}
+
 // When entering edit mode setup defaults for any missing fields (like insulin doses)
 - (void) setEditing:(BOOL)edit
 {
