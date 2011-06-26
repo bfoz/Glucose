@@ -7,6 +7,8 @@
 //
 
 #import "LogDay.h"
+
+#import "Constants.h"
 #import "LogEntry.h"
 
 @interface LogDay ()
@@ -234,6 +236,25 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 
 #pragma mark -
 #pragma mark Accessors
+
+- (NSString*) averageGlucoseString
+{
+    if( averageGlucoseString )
+	return averageGlucoseString;
+
+    if( averageGlucose != 0 )
+    {
+	if( units )
+	{
+	    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
+	    averageGlucoseString = [NSString localizedStringWithFormat:@"%.*f%@", precision, averageGlucose, units];
+	}
+	else
+	    averageGlucoseString = [NSString localizedStringWithFormat:@"%.0f", averageGlucose];
+    }
+
+    return [averageGlucoseString retain];
+}
 
 // Return the units string for the units used by the day's entries
 - (NSString*) units

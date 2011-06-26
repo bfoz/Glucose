@@ -18,10 +18,12 @@
 	NSDate*			date;
 	NSMutableArray*	entries;
 	NSString*		name;
+    NSString*		averageGlucoseString;
     NSString*		units;
 }
 
 @property (nonatomic, readonly)	float	averageGlucose;
+@property (nonatomic, readonly)	NSString*	averageGlucoseString;
 @property (nonatomic, readonly)	unsigned	count;
 @property (nonatomic, retain)	NSDate*	date;
 @property (nonatomic, readonly)	NSMutableArray*	entries;
