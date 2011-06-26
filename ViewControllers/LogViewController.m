@@ -158,24 +158,29 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	LogDay *const s = [delegate logDayAtIndex:section];
+    LogDay *const day = [delegate logDayAtIndex:section];
 
-    NSString* avg = s.averageGlucoseString;
-
-	// Only the first section could possibly be the "today" section
-	//  So return SectionName for all but the first section
-	if( section )
-		return [NSString stringWithFormat:@"%@%@", s.name, avg, nil];
-
+    /* Display "Today" instead of the date string if the LogDay corresponds to
+	the current date. Only the first section could possibly be the "today"
+	section, so don't bother checking the others.	*/
+    NSString* name = day.name;
+    if( 0 == section )
+    {
 	// Make sure it really is today
 	NSCalendar *const calendar = [NSCalendar currentCalendar];
 	static const unsigned components = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
 	NSDateComponents *const today = [calendar components:components fromDate:[NSDate date]];
-	NSDateComponents *const c = [calendar components:components fromDate:s.date];
+	NSDateComponents *const c = [calendar components:components fromDate:day.date];
 	if( (today.day == c.day) && (today.month == c.month) && (today.year == c.year) )
-		return [NSString stringWithFormat:@"%@%@", @"Today", avg, nil];
+	    name = @"Today";
+    }
 
-	return [NSString stringWithFormat:@"%@%@", s.name, avg, nil];
+    NSString *const average = day.averageGlucoseString;
+
+    // Don't display the average if it's zero
+    NSString *const format = average ? @"%@ (%@)" : @"%@";
+
+    return [NSString stringWithFormat:format, name, average, nil];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
