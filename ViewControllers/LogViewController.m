@@ -226,25 +226,25 @@
 	cell.note = entry.note;
 
 	// Color the glucose values accordingly
-	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-    NSString* keyHigh;
-    NSString* keyLow;
+    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+    const float glucose = [entry.glucose floatValue];
+    float thresholdHigh, threshholdLow;
     if( kGlucoseUnits_mgdL == entry.glucoseUnits )
     {
-	keyHigh = kHighGlucoseWarning0;
-	keyLow = kLowGlucoseWarning0;
+	thresholdHigh = [defaults floatForKey:kHighGlucoseWarning0];
+	threshholdLow = [defaults floatForKey:kLowGlucoseWarning0];
     }
     else
     {
-	keyHigh = kHighGlucoseWarning1;
-	keyLow = kLowGlucoseWarning1;
+	thresholdHigh = [defaults floatForKey:kHighGlucoseWarning1];
+	threshholdLow = [defaults floatForKey:kLowGlucoseWarning1];
     }
-    if( [entry.glucose floatValue] > [defaults floatForKey:keyHigh] )
-		cell.labelGlucose.textColor = [UIColor blueColor];
-    else if( [entry.glucose floatValue] < [defaults floatForKey:keyLow] )
-		cell.labelGlucose.textColor = [UIColor redColor];
-	else
-		cell.labelGlucose.textColor = [UIColor darkTextColor];
+    if( glucose > thresholdHigh )
+	cell.labelGlucose.textColor = [UIColor blueColor];
+    else if( glucose < threshholdLow )
+	cell.labelGlucose.textColor = [UIColor redColor];
+    else
+	cell.labelGlucose.textColor = [UIColor darkTextColor];
 
 	InsulinDose* dose = [entry doseAtIndex:0];
 	if( dose && dose.dose && dose.type )
