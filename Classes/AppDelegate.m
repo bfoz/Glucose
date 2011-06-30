@@ -114,18 +114,20 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [Category loadCategories:self.categories fromDatabase:database];
     [InsulinType loadInsulinTypes:self.insulinTypes fromDatabase:database];
 	[self loadDefaultInsulinTypes];	// Must be after loadInsulinTypes
-    // Load the most recent 30 days
+
+    // Create an array for the loaded LogDays
     sections = [[NSMutableArray alloc] init];
+
+    // How many days of records are available in the database?
     numberOfSections = [LogDay numberOfDays:database];
-    [LogDay loadDays:sections fromDatabase:database limit:30 offset:0];
 
     // Find the max width of the categoryName strings so it can be used for layout
     [self updateCategoryNameMaxWidth];
     // Find the max width of the InsulinType shortName strings so it can be used for layout
     [self updateInsulinTypeShortNameMaxWidth];
 
-    // Create an empty "Today" object if no LogDays were loaded
-    if( 0 == [sections count] )
+    // Create an empty "Today" object if no LogDays are available
+    if( 0 == numberOfSections )
     {
 	NSDate *const day = [NSDate date];
 	LogDay *const section = [[LogDay alloc] initWithDate:day];
