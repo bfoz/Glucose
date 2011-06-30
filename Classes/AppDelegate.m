@@ -198,7 +198,22 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 
 - (LogDay*) logDayAtIndex:(unsigned)index
 {
-    return [sections objectAtIndex:index];
+    if( index < numberOfSections )
+    {
+	const unsigned count = [sections count];
+	if( index < count )
+	    return [sections objectAtIndex:index];
+	if( [self canLoadMoreDays] )
+	{
+	    const unsigned num = [LogDay loadDays:sections
+				     fromDatabase:database
+					    limit:(index-count+1)
+					   offset:count];
+	    if( index < (count+num) )
+		return [sections objectAtIndex:index];
+	}
+    }
+    return NULL;
 }
 
 - (LogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day

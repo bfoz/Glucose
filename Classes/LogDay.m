@@ -36,8 +36,9 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 
 // Load a subset of sections given by limit and offset
 //  All sections can be loaded by passing limit=-1 and offset=0
-+ (BOOL) loadDays:(NSMutableArray*)days fromDatabase:(sqlite3*)database limit:(unsigned)limit offset:(unsigned)offset
++ (unsigned) loadDays:(NSMutableArray*)days fromDatabase:(sqlite3*)database limit:(unsigned)limit offset:(unsigned)offset
 {
+    unsigned count = 0;
     sqlite3_stmt *statement;
 
     if( sqlite3_prepare_v2(database, sqlLoadDays, -1, &statement, NULL) != SQLITE_OK )
@@ -53,10 +54,11 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 	day.name = [shortDateFormatter stringFromDate:day.date];
 	[days addObject:day];
 	[day release];
+	++count;
     }
     sqlite3_finalize(statement);
     [shortDateFormatter release];
-    return YES;
+    return count;
 }
 
 + (unsigned) numberOfDays:(sqlite3*)db
