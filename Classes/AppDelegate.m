@@ -226,14 +226,19 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     return (entry >= [d.entries count]) ? nil : [d.entries objectAtIndex:entry];
 }
 
+- (unsigned) numberOfEntriesForLogDayAtIndex:(unsigned)index
+{
+    return [[self logDayAtIndex:index] count];
+}
+
+- (unsigned) numberOfLoadedLogDays
+{
+    return [sections count];
+}
+
 - (unsigned) numberOfLogDays
 {
     return numberOfSections;
-}
-
-- (void) didSelectLoadMore
-{
-    [LogDay loadDays:self.sections fromDatabase:self.database limit:30 offset:[self.sections count]];
 }
 
 // Delete a LogEntry from memory and the database

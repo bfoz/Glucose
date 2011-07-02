@@ -135,25 +135,32 @@
 	[delegate didPressNewLogEntry];
 }
 
+// Force the delegate to load another section and then tell the UITableView about it
+- (void) loadNextSection
+{
+    const unsigned count = [delegate numberOfLoadedLogDays];
+
+    if( [delegate logDayAtIndex:count] )
+	[self.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(count,1)]
+		      withRowAnimation:NO];
+}
+
 #pragma mark <UITableViewDataSource>
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [delegate numberOfLogDays];
-}
+    const unsigned numLoaded = [delegate numberOfLoadedLogDays];
 
+    // Schedule a section load if nothing has been loaded yet
+    if( 0 == numLoaded )
+	[self performSelectorOnMainThread:@selector(loadNextSection) withObject:nil waitUntilDone:NO];
+
+    return numLoaded;
+}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    unsigned count = [[delegate logDayAtIndex:section] count];
-
-    // If the table hasn't been fully loaded the last section has an extra row for loading more rows
-    if( section == ([delegate numberOfLogDays]-1) )
-	if( [delegate respondsToSelector:@selector(canLoadMoreDays)] )
-	    if( [delegate canLoadMoreDays] )
-		++count;
-
-    return count;
+    return [delegate numberOfEntriesForLogDayAtIndex:section];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -189,26 +196,11 @@
     const unsigned section = indexPath.section;
     const unsigned row = indexPath.row;
 
-    if( (section == ([delegate numberOfLogDays]-1)) && (row == [[delegate logDayAtIndex:section] count]) )
-	cellID = @"MoreCell";
-
     LogEntryCell *cell = (LogEntryCell*)[tableView dequeueReusableCellWithIdentifier:cellID];
     if( nil == cell )
     {
-	if( @"MoreCell" == cellID )
-	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-	else
-	{
-	    cell = [[[LogEntryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	}
-    }
-
-    if( @"MoreCell" == cellID )
-    {
-	cell.textLabel.text = @"Display More Log Entries";
-	cell.textLabel.textAlignment = UITextAlignmentCenter;
-	return cell;
+	cell = [[[LogEntryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
 
     // Get the LogEntry for the cell
@@ -279,14 +271,18 @@
     // HI guidlines say row should be selected and then deselected
     [tv deselectRowAtIndexPath:path animated:YES];
 
-    if( (section == ([delegate numberOfLogDays]-1)) && (row == [s count]) )
+    [self inspectLogEntry:[s.entries objectAtIndex:row] inSection:s];
+}
+
+- (void)tableView:(UITableView *)tv willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)path
+{
+    // If the requested row is in the last loaded section, schedule a task to load the next section
+    const unsigned numberOfSections = [tv numberOfSections];
+    if( (numberOfSections == (path.section + 1)) && (path.row == 0) )
     {
-	if( [delegate respondsToSelector:@selector(didSelectLoadMore)] )
-	    [delegate didSelectLoadMore];
-	[tv reloadData];
+	if( numberOfSections < [delegate numberOfLogDays] )
+	    [self performSelectorOnMainThread:@selector(loadNextSection) withObject:nil waitUntilDone:NO];
     }
-    else
-	[self inspectLogEntry:[s.entries objectAtIndex:row] inSection:s];
 }
 
 - (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath

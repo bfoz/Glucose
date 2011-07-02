@@ -37,6 +37,8 @@
 - (void) didPressNewLogEntry;
 - (LogDay*) logDayAtIndex:(unsigned)index;
 - (LogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day;
+- (unsigned) numberOfEntriesForLogDayAtIndex:(unsigned)index;
+- (unsigned) numberOfLoadedLogDays;
 - (unsigned) numberOfLogDays;
 
 /* These methods are required of the delegate because the UITableView will throw
@@ -44,9 +46,5 @@
 - (void) logViewDidDeleteLogEntryAtRow:(unsigned)row inSection:(unsigned)section;
 - (void) logViewDidDeleteSectionAtIndex:(unsigned)section;
 - (void) logViewDidMoveLogEntry:(LogEntry*)entry fromSection:(LogDay*)from toSection:(LogDay*)to;
-
-@optional
-- (BOOL) canLoadMoreDays;
-- (void) didSelectLoadMore;
 
 @end
