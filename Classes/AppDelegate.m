@@ -200,11 +200,11 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 
 - (LogDay*) logDayAtIndex:(unsigned)index
 {
+    const unsigned count = [sections count];
+    if( index < count )
+	return [sections objectAtIndex:index];
     if( index < numberOfSections )
     {
-	const unsigned count = [sections count];
-	if( index < count )
-	    return [sections objectAtIndex:index];
 	if( [self canLoadMoreDays] )
 	{
 	    const unsigned num = [LogDay loadDays:sections
