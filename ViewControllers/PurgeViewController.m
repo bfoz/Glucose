@@ -11,6 +11,8 @@
 
 #import "PurgeViewController.h"
 
+#define	kPurgeButtonSection	1
+
 @implementation PurgeViewController
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -83,14 +85,14 @@
 	switch( section )
 	{
 		case 0:	return 2;
-		case 1: return 1;
+		case kPurgeButtonSection: return 1;
 	}
     return 0;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-    if( 1 == section )
+    if( kPurgeButtonSection == section )
     {
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	NSDate *const lastPurgeStart = [defaults objectForKey:kLastPurgeFromDate];
@@ -150,7 +152,7 @@
 			}
 		}
 		break;
-		case 1:
+		case kPurgeButtonSection:
 		{
 			cell.textLabel.textAlignment = UITextAlignmentCenter;
 			purgeCell = cell;
@@ -203,6 +205,10 @@
 	[defaults setObject:purgeStart forKey:kLastPurgeFromDate];
 	[defaults setObject:purgeEnd forKey:kLastPurgeToDate];
 	[defaults setObject:[NSDate date] forKey:kLastPurgedOnDate];
+
+    // Update the footer text
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kPurgeButtonSection]
+		  withRowAnimation:NO];
 
 	UIAlertView* alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Purge Complete", [appDelegate numLogEntriesFrom:purgeStart to:purgeEnd]]
 													message:nil

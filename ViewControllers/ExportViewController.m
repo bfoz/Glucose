@@ -541,6 +541,10 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	// Update the "Last Export On" row
 	exportLastField.text = [shortDateFormatter stringFromDate:[NSDate date]];
 	
+    // Update the footer text
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:SECTION_EXPORT]
+		  withRowAnimation:NO];
+
 	[self cleanupExport];
 }
 
