@@ -23,6 +23,8 @@
 #define	kInsulinSectionNum		1
 #define	kNoteSectionNum			2
 
+#define	kInsulinCellID			@"InsulinCellID"
+
 @interface LogEntryViewController ()
 
 @property (nonatomic, retain)	NumberFieldCell*	glucoseCell;
@@ -268,7 +270,7 @@ static NSUserDefaults* defaults = nil;
 		if( 2 == row )
 		    return @"Glucose";
 		break;
-	    case 1: return @"DualCellID";
+	    case 1: return kInsulinCellID;
 	    case 2: return @"NoteID";
 	}
     }
@@ -289,12 +291,12 @@ static NSUserDefaults* defaults = nil;
 
     if( !cell )	// Create a new cell if needed
     {
-	if( @"DualCellID" == cellID )
+	if( kInsulinCellID == cellID )
 	{
-	    // CGRectZero allows the cell to determine the appropriate size.
-	    cell = [[[DualTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-	    ((DualTableViewCell*)cell).leftTextAlignment = UITextAlignmentRight;
-	    ((DualTableViewCell*)cell).rightTextAlignment = UITextAlignmentLeft;
+	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1
+					   reuseIdentifier:cellID] autorelease];
+	    // Use the same font size for both labels
+	    cell.detailTextLabel.font = cell.textLabel.font;
 	}
 	else if( @"eDualCellID" == cellID )
 	{
@@ -396,7 +398,7 @@ static NSUserDefaults* defaults = nil;
 	// Otherwise, use a dual column cell.
 	InsulinDose* dose = [entry doseAtIndex:row];
 
-	if( @"DualCellID" == cellID )
+	if( kInsulinCellID == cellID )
 	{
 	    while( !(dose && dose.dose && dose.type) )
 		dose = [entry doseAtIndex:++row];
@@ -404,11 +406,8 @@ static NSUserDefaults* defaults = nil;
 	    {
 		if( dose.dose )	// If the record has a valid value...
 		{
-		    // Get a DualTableViewCell
-		    DualTableViewCell* dcell = (DualTableViewCell*)cell;
-		    dcell.leftText = [dose.dose stringValue];	// Value
-		    if( dose.type )
-			dcell.rightText = dose.type.shortName;	// Name
+		    cell.detailTextLabel.text = [dose.dose stringValue];    // Value
+		    cell.textLabel.text = dose.type.shortName;		    // Name
 		}
 		else if(dose.type)
 		    cell.textLabel.text = dose.type.shortName;
