@@ -823,8 +823,6 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	if( !service )
 	{
 		service = [[GDataServiceGoogleDocs alloc] init];
-		
-		[service setUserAgent:@"net.bfoz-Glucose-0.1"];
 	}
 	return service;
 }

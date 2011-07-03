@@ -582,12 +582,8 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (void) exportToFolderDoc:(GDataEntryFolderDoc*)folder
 {
-    NSString *const uri = [[folder content] sourceURI];
-    if( !uri )
-	return;
-
     self.failureTitle = @"Folder Feed";
-    [appDelegate.docService fetchFeedWithURL:[NSURL URLWithString:uri]
+    [appDelegate.docService fetchFeedWithURL:[GDataServiceGoogleDocs folderContentsFeedURLForFolderID:[folder resourceID]]
 				    delegate:self
 			   didFinishSelector:@selector(docsFeedTicket:finishedWithFeed:error:)];
 }
@@ -621,8 +617,11 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (void) findExportFolder
 {
-    NSURL *const url = [NSURL URLWithString:@"http://docs.google.com/feeds/documents/private/full/-/folder?max-results=1&showfolders=true&title=Glucose+Export&title-exact=true"];
-    GDataQueryDocs *const q = [GDataQueryDocs documentQueryWithFeedURL:url];
+    GDataQueryDocs *const q = [GDataQueryDocs documentQueryWithFeedURL:[GDataServiceGoogleDocs docsFeedURL]];
+    q.titleQuery = @"Glucose Export";
+    q.isTitleQueryExact = YES;
+    q.shouldShowFolders = YES;
+    q.maxResults = 1;
 
     progressAlert.message = @"Fetching Folder Feed";
     self.failureTitle = @"Find Export Folder";
@@ -669,7 +668,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
     GDataEntryDocBase *docEntry = [GDataEntrySpreadsheetDoc documentEntry];
     [docEntry setUploadMIMEType:@"text/csv"];
-
     [docEntry setTitleWithString:title];
     [docEntry setUploadData:data];
     [docEntry setUploadSlug:title];
@@ -677,13 +675,13 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	GDataServiceGoogleDocs *const service = appDelegate.docService;
 	
     // Have new service tickets call back into an upload progress selector
-	SEL progressSel = @selector(inputStream:hasDeliveredByteCount:ofTotalByteCount:);
+	SEL progressSel = @selector(ticket:hasDeliveredByteCount:ofTotalByteCount:);
 	[service setServiceUploadProgressSelector:progressSel];
 
 	// Do the insert
 	self.failureTitle = @"Export Failed";
 	[service fetchEntryByInsertingEntry:docEntry
-				 forFeedURL:[[feed postLink] URL]
+				 forFeedURL:[[feed uploadLink] URL]
 				   delegate:self
 			  didFinishSelector:@selector(uploadFileTicket:finishedWithEntry:error:)];
 
@@ -694,7 +692,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 #pragma mark File Upload
 
 // progress callback
-- (void)inputStream:(GDataProgressMonitorInputStream *)stream hasDeliveredByteCount:(unsigned long long)numberOfBytesRead  ofTotalByteCount:(unsigned long long)dataLength
+- (void) ticket:(GDataServiceTicket *)ticket hasDeliveredByteCount:(unsigned long long)numberOfBytesRead ofTotalByteCount:(unsigned long long)dataLength
 {
 	progressAlert.message = [NSString stringWithFormat:@"Exported %qu of %qu bytes", numberOfBytesRead, dataLength];
 	progressView.progress = ((float)numberOfBytesRead)/dataLength;
