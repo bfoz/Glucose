@@ -25,6 +25,7 @@
 - (void) flush;
 
 #pragma mark Log Days
+- (void) deleteLogDay:(LogDay*)day;
 - (LogDay*) logDayAtIndex:(unsigned)index;
 
 #pragma mark Log Entries
@@ -32,5 +33,9 @@
 - (LogEntry*) logEntryAtIndex:(unsigned)entry inDay:(LogDay*)day;
 - (LogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day;
 - (unsigned) numberOfEntriesForLogDayAtIndex:(unsigned)index;
+
+- (LogEntry*) createLogEntry;
+- (void) deleteLogEntry:(LogEntry*)entry inDay:(LogDay*)day;
+- (void) moveLogEntry:(LogEntry*)entry fromDay:(LogDay*)from toDay:(LogDay*)to;
 
 @end

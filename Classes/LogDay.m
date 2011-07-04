@@ -143,6 +143,18 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
     [self.entries removeAllObjects];
 }
 
+- (void) deleteEntry:(LogEntry*)entry fromDatabase:(sqlite3*)database
+{
+    if( entry && database && [entries containsObject:entry] )
+    {
+	[entry deleteFromDatabase:database];
+	[entries removeObjectIdenticalTo:entry];
+	if( count )
+	    --count;
+	[self updateStatistics];
+    }
+}
+
 - (void) hydrate:(sqlite3*)db
 {
 	const char* q = "SELECT ID FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') = date(?,'unixepoch','localtime') ORDER BY timestamp DESC";
@@ -199,16 +211,6 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 	{
 		[entries insertObject:entry atIndex:index];
 		++count;
-		[self updateStatistics];
-	}
-}
-
-- (void) removeEntry:(LogEntry*)entry
-{
-	if( entry && count )
-	{
-		[entries removeObjectIdenticalTo:entry];
-		--count;
 		[self updateStatistics];
 	}
 }

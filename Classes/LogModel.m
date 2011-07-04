@@ -45,6 +45,15 @@
 
 #pragma mark Log Days
 
+- (void) deleteLogDay:(LogDay*)day
+{
+    // Delete all of the LogDay's entries from the database
+    [day deleteAllEntriesFromDatabase:self.database];
+
+    // Remove the LogDay itself
+    [days removeObjectIdenticalTo:day];
+}
+
 - (LogDay*) logDayAtIndex:(unsigned)index
 {
     const unsigned count = [days count];
@@ -88,6 +97,40 @@
 - (unsigned) numberOfEntriesForLogDayAtIndex:(unsigned)index
 {
     return [[self logDayAtIndex:index] count];
+}
+
+- (LogEntry*) createLogEntry
+{
+    // Create a new database record and get its automatically generated primary key.
+    const unsigned entryID = [LogEntry insertNewLogEntryIntoDatabase:self.database];
+    LogEntry* entry = [[LogEntry alloc] initWithID:entryID database:database];
+
+    /* Set defaults for the new LogEntry
+	Don't use the returned string directly because glucoseUnits is used
+	elsewhere in pointer comparisons (for performance reasons).
+	Consequently, it must be a pointer to one of the constants in
+	Constants.h.   */
+    if( [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL] )
+	entry.glucoseUnits = kGlucoseUnits_mgdL;
+    else
+	entry.glucoseUnits = kGlucoseUnits_mmolL;
+
+    return entry;
+}
+
+// Delete the given entry from the given LogDay. Remove the LogDay if it becomes empty.
+- (void) deleteLogEntry:(LogEntry*)entry inDay:(LogDay*)day
+{
+    [day deleteEntry:entry fromDatabase:database];
+
+    if( 0 == day.count )
+	[days removeObjectIdenticalTo:day];
+}
+
+- (void) moveLogEntry:(LogEntry*)entry fromDay:(LogDay*)from toDay:(LogDay*)to
+{
+    [to insertEntry:entry];			// Add entry to new section
+    [self deleteLogEntry:entry inDay:from];	// Remove from old section
 }
 
 #pragma mark -

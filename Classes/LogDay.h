@@ -36,10 +36,10 @@
 - (id) initWithDate:(NSDate*)d;
 
 - (void) deleteAllEntriesFromDatabase:(sqlite3*)database;
+- (void) deleteEntry:(LogEntry*)entry fromDatabase:(sqlite3*)database;
 - (void) hydrate:(sqlite3*)db;
 - (void) insertEntry:(LogEntry*)entry;
 - (void) insertEntry:(LogEntry*)entry atIndex:(unsigned)index;
-- (void) removeEntry:(LogEntry*)entry;
 - (void) sortEntries;
 - (void) updateStatistics;
 

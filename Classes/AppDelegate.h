@@ -46,7 +46,6 @@
 - (Category*) findCategoryForID:(unsigned)categoryID;
 - (InsulinType*) findInsulinTypeForID:(unsigned)typeID;
 
-- (void) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section;
 - (LogDay*) findSectionForDate:(NSDate*)date;
 - (LogDay*) getSectionForDate:(NSDate*)date;
 

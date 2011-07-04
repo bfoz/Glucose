@@ -169,52 +169,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 #pragma mark -
 #pragma mark <LogViewDelegate>
 
-- (void) didPressNewLogEntry
-{
-    // Create a new record in the database and get its automatically generated primary key.
-    const unsigned entryID = [LogEntry insertNewLogEntryIntoDatabase:model.database];
-    LogEntry* entry = [[LogEntry alloc] initWithID:entryID database:model.database];
-
-    // Set defaults for the new LogEntry
-    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-    /*	Don't use the returned string directly because glucoseUnits is used
-     elsewhere in pointer comparisons (for performance reasons).
-     Consequently, it must be a pointer to one of the constants in
-     Constants.h.   */
-    if( [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL] )
-	entry.glucoseUnits = kGlucoseUnits_mgdL;
-    else
-	entry.glucoseUnits = kGlucoseUnits_mmolL;
-
-    // Display the detail view so the user can edit the new entry
-    [logViewController inspectNewLogEntry:entry];
-}
-
-// Delete a LogEntry from memory and the database
-- (void) logViewDidDeleteLogEntryAtRow:(unsigned)row inSection:(unsigned)section;
-{
-    LogDay *const s = [model logDayAtIndex:section];
-    LogEntry *const entry = [s.entries objectAtIndex:row];
-    [entry deleteFromDatabase:model.database];
-    [self deleteLogEntry:entry fromSection:s];
-}
-
-- (void) logViewDidDeleteSectionAtIndex:(unsigned)section;
-{
-    // Delete all of the LogDay's entries from the database
-    LogDay *const s = [model logDayAtIndex:section];
-    [s deleteAllEntriesFromDatabase:model.database];
-
-    // Remove the LogDay itself
-    [model.days removeObjectAtIndex:section];
-}
-
-- (void) logViewDidMoveLogEntry:(LogEntry*)entry fromSection:(LogDay*)from toSection:(LogDay*)to
-{
-    [to insertEntry:entry];			    // Add entry to new section
-    [self deleteLogEntry:entry fromSection:from];   // Remove from old section
-}
-
 #pragma mark -
 #pragma mark Database Initialization
 
@@ -326,14 +280,6 @@ sqlite3* openBundledDatabase()
 
 #pragma mark -
 #pragma mark Array Management
-
-- (void) deleteLogEntry:(LogEntry*)entry fromSection:(LogDay*)section
-{
-	[section removeEntry:entry];
-
-    if( 0 == [section.entries count] )
-	[model.days removeObjectIdenticalTo:section];
-}
 
 - (Category*) findCategoryForID:(unsigned)categoryID
 {

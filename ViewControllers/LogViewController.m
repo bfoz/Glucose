@@ -134,9 +134,12 @@
 
 - (void) addNewEntry:(id)sender
 {
-    // Inform the delegate of the button event
-    if( delegate && [delegate respondsToSelector:@selector(didPressNewLogEntry)] )
-	[delegate didPressNewLogEntry];
+    // Create a new record
+    LogEntry *const entry = [model createLogEntry];
+
+    // Display the detail view so the user can edit the new entry
+    if( entry )
+	[self inspectNewLogEntry:entry];
 }
 
 // Force the delegate to load another section and then tell the UITableView about it
@@ -295,18 +298,18 @@
     // If the row was deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	LogDay *const s = [model logDayAtIndex:indexPath.section];
-	if( 1 == [s.entries count] )	// If the section is about to be empty, delete it
+	LogDay *const day = [model logDayAtIndex:indexPath.section];
+	if( 1 == [day count] )	// If the section is about to be empty, delete it
 	{
-	    [delegate logViewDidDeleteSectionAtIndex:indexPath.section];
+	    [model deleteLogDay:day];
 
 	    // This must be called after deleting the section, otherwise UITableView will throw an exception
 	    [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationFade];
 	}
 	else
 	{
-	    if( [delegate respondsToSelector:@selector(logViewDidDeleteLogEntryAtRow:inSection:)] )
-		[delegate logViewDidDeleteLogEntryAtRow:indexPath.row inSection:indexPath.section];
+	    [model deleteLogEntry:[model logEntryAtIndex:indexPath.row inDay:day]
+			    inDay:day];
 
 	    // This must be called after deleting the row, otherwise UITableView will throw an exception
 	    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
@@ -321,16 +324,16 @@
 {
     if( logEntryViewController.entry.dirty )
     {
-	LogDay *const s = [appDelegate getSectionForDate:logEntryViewController.entry.timestamp];
-	if ( s != logEntryViewController.entrySection )
+	LogDay *const day = [appDelegate getSectionForDate:logEntryViewController.entry.timestamp];
+	if ( day != logEntryViewController.entrySection )
 	{
-	    [delegate logViewDidMoveLogEntry:logEntryViewController.entry
-				 fromSection:logEntryViewController.entrySection
-				   toSection:s];
-	    logEntryViewController.entrySection = s;
+	    [model moveLogEntry:logEntryViewController.entry
+			fromDay:logEntryViewController.entrySection
+			  toDay:day];
+	    logEntryViewController.entrySection = day;
 	}
 	else	// Only need to update if above block was skipped
-	    [s updateStatistics];
+	    [day updateStatistics];
 	[logEntryViewController.entry flush:model.database];
     }
 }
