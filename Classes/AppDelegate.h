@@ -17,6 +17,7 @@
 @class InsulinTypeViewController;
 @class LogEntry;
 @class LogDay;
+@class LogModel;
 
 @class GDataServiceGoogleDocs;
 
@@ -28,11 +29,9 @@
     NSMutableArray* defaultInsulinTypes;
     NSMutableArray* insulinTypes;
 	LogViewController*	logViewController;
-	NSMutableArray* sections;
-    sqlite3*	database;			// SQLite database handle
 
 @private
-    unsigned	numberOfSections;   // The number of sections in the database
+    LogModel*	model;
 }
 
 @property (nonatomic, retain)	UIWindow*	window;
@@ -41,7 +40,6 @@
 @property (nonatomic, readonly)	NSMutableArray*		defaultInsulinTypes;
 @property (nonatomic, readonly)	NSMutableArray*		insulinTypes;
 @property (nonatomic, readonly)	LogViewController*	logViewController;
-@property (nonatomic, readonly)	sqlite3*		database;
 @property (nonatomic, readonly) GDataServiceGoogleDocs*	docService;
 
 #pragma mark Array Management
@@ -66,7 +64,6 @@
 - (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
 - (unsigned) numRowsForCategoryID:(unsigned)catID;
 - (NSDate*) earliestLogEntryDate;
-- (void) flushLogEntries;
 - (unsigned) numLogEntries;
 - (void) updateCategory:(Category*)c;
 - (void) updateCategoryNameMaxWidth;

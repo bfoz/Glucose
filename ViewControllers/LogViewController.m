@@ -12,6 +12,7 @@
 #import "InsulinDose.h"
 #import "InsulinType.h"
 #import "LogDay.h"
+#import "LogModel.h"
 #import "LogViewController.h"
 #import "LogEntryCell.h"
 #import "SettingsViewController.h"
@@ -29,6 +30,7 @@
 
 @synthesize dateFormatter;
 @synthesize delegate;
+@synthesize model;
 @synthesize logEntryViewController, settingsViewController;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -82,6 +84,7 @@
     {
         logEntryViewController = [[LogEntryViewController alloc] initWithStyle:UITableViewStyleGrouped];
 	logEntryViewController.delegate = self;
+	logEntryViewController.model = model;
     }
 
 //    [entry hydrate];		// Force the LogEntry to be fully loaded from the database
@@ -99,6 +102,7 @@
     {
 	settingsViewController = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
 	settingsViewController.delegate = self;
+	settingsViewController.model = model;
     }
 
 	[UIView beginAnimations:nil context:NULL];
@@ -138,9 +142,9 @@
 // Force the delegate to load another section and then tell the UITableView about it
 - (void) loadNextSection
 {
-    const unsigned count = [delegate numberOfLoadedLogDays];
+    const unsigned count = [model numberOfLoadedLogDays];
 
-    if( [delegate logDayAtIndex:count] )
+    if( [model logDayAtIndex:count] )
 	[self.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(count,1)]
 		      withRowAnimation:NO];
 }
@@ -149,7 +153,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    const unsigned numLoaded = [delegate numberOfLoadedLogDays];
+    const unsigned numLoaded = [model numberOfLoadedLogDays];
 
     // Schedule a section load if nothing has been loaded yet
     if( 0 == numLoaded )
@@ -160,12 +164,12 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [delegate numberOfEntriesForLogDayAtIndex:section];
+    return [model numberOfEntriesForLogDayAtIndex:section];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    LogDay *const day = [delegate logDayAtIndex:section];
+    LogDay *const day = [model logDayAtIndex:section];
 
     /* Display "Today" instead of the date string if the LogDay corresponds to
 	the current date. Only the first section could possibly be the "today"
@@ -204,7 +208,7 @@
     }
 
     // Get the LogEntry for the cell
-    LogEntry *const entry = [delegate logEntryAtIndex:row inDayIndex:section];
+    LogEntry *const entry = [model logEntryAtIndex:row inDayIndex:section];
 
 	// Configure the cell
 //	cell.entry = entry;
@@ -266,10 +270,11 @@
 {
     const unsigned section = path.section;
     const unsigned row = path.row;
-    LogDay *const s = [delegate logDayAtIndex:section];
 
     // HI guidlines say row should be selected and then deselected
     [tv deselectRowAtIndexPath:path animated:YES];
+
+    LogDay *const s = [model logDayAtIndex:section];
 
     [self inspectLogEntry:[s.entries objectAtIndex:row] inSection:s];
 }
@@ -280,7 +285,7 @@
     const unsigned numberOfSections = [tv numberOfSections];
     if( (numberOfSections == (path.section + 1)) && (path.row == 0) )
     {
-	if( numberOfSections < [delegate numberOfLogDays] )
+	if( numberOfSections < [model numberOfLogDays] )
 	    [self performSelectorOnMainThread:@selector(loadNextSection) withObject:nil waitUntilDone:NO];
     }
 }
@@ -290,7 +295,7 @@
     // If the row was deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	LogDay *const s = [delegate logDayAtIndex:indexPath.section];
+	LogDay *const s = [model logDayAtIndex:indexPath.section];
 	if( 1 == [s.entries count] )	// If the section is about to be empty, delete it
 	{
 	    [delegate logViewDidDeleteSectionAtIndex:indexPath.section];
@@ -326,7 +331,7 @@
 	}
 	else	// Only need to update if above block was skipped
 	    [s updateStatistics];
-	[logEntryViewController.entry flush:appDelegate.database];
+	[logEntryViewController.entry flush:model.database];
     }
 }
 

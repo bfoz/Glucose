@@ -20,6 +20,7 @@
 @class InsulinTypeViewController;
 @class LogEntry;
 @class LogDay;
+@class LogModel;
 @class NumberFieldCell;
 
 @protocol LogEntryViewDelegate;
@@ -27,6 +28,8 @@
 @interface LogEntryViewController : SlidingViewController <CategoryViewControllerDelegate, DoseFieldCellDelegate, InsulinTypeViewControllerDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
 {
     id <LogEntryViewDelegate>	delegate;
+    LogModel*			model;
+
     LogEntry* entry;
     LogDay*		entrySection;
 
@@ -46,6 +49,7 @@
 @property (nonatomic, retain) LogEntry* entry;
 @property (nonatomic, retain) LogDay* entrySection;
 @property (nonatomic, assign) BOOL	editingNewEntry;
+@property (nonatomic, retain) LogModel*		    model;
 
 - (void)shaken;
 

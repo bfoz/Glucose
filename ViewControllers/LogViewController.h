@@ -11,12 +11,15 @@
 #import "LogEntry.h"
 #import "LogEntryViewController.h"
 
+@class LogModel;
 @class SettingsViewController;
 @protocol LogViewDelegate;
 
 @interface LogViewController : UITableViewController <LogEntryViewDelegate>
 {
     id <LogViewDelegate>    delegate;
+    LogModel*		    model;
+
     NSDateFormatter *dateFormatter;
 //	unsigned	inspectingSectionID;
 //	NSMutableDictionary*	inspectingSection;
@@ -24,6 +27,7 @@
 	SettingsViewController*	settingsViewController;
 }
 @property (nonatomic, assign) id <LogViewDelegate>  delegate;
+@property (nonatomic, retain) LogModel*		    model;
 @property (nonatomic, retain) LogEntryViewController* logEntryViewController;
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;
@@ -35,11 +39,6 @@
 @protocol LogViewDelegate <NSObject>
 
 - (void) didPressNewLogEntry;
-- (LogDay*) logDayAtIndex:(unsigned)index;
-- (LogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day;
-- (unsigned) numberOfEntriesForLogDayAtIndex:(unsigned)index;
-- (unsigned) numberOfLoadedLogDays;
-- (unsigned) numberOfLogDays;
 
 /* These methods are required of the delegate because the UITableView will throw
     an exception if the data source doesn't reflect the change in rows/sections	*/

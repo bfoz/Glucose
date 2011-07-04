@@ -14,6 +14,7 @@
 #import "InsulinType.h"
 #import "LogEntry.h"
 #import "LogDay.h"
+#import "LogModel.h"
 #import "CategoryViewController.h"
 #import "InsulinTypeViewController.h"
 #import "LogViewController.h"
@@ -26,10 +27,7 @@ AppDelegate* appDelegate = nil;
 
 @interface AppDelegate ()
 
-@property (nonatomic, readonly)	NSMutableArray*		sections;
-
 - (void) createEditableCopyOfDatabaseIfNeeded;
-- (void) closeLogDatabase;
 
 - (void) loadDefaultInsulinTypes;
 - (void) loadInsulinTypes:(NSMutableArray*)types fromDB:(sqlite3*)db;
@@ -42,7 +40,6 @@ AppDelegate* appDelegate = nil;
 @synthesize navController;
 @synthesize categories, defaultInsulinTypes, insulinTypes;
 @synthesize logViewController;
-@synthesize sections;
 
 NSDateFormatter* shortDateFormatter = nil;
 
@@ -82,8 +79,17 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 		[shortDateFormatter setDateStyle:NSDateFormatterShortStyle];
 	}
 
+    // Create the Log Model object
+    model = [[LogModel alloc] init];
+    if( !model )
+    {
+	NSLog(@"Could not create a LogModel");
+	return NO;
+    }
+
     logViewController = [[LogViewController alloc] initWithStyle:UITableViewStylePlain];
     logViewController.delegate = self;
+    logViewController.model = model;
     UINavigationController* aNavigationController = [[UINavigationController alloc] initWithRootViewController:logViewController];
     self.navController = aNavigationController;
 /*
@@ -104,22 +110,16 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [self createEditableCopyOfDatabaseIfNeeded];
 
     // Try to open the log database
-    if( ![self database] )
+    if( ![model database] )
     {
 	NSLog(@"Could not open log database");
 	return NO;
     }
-	
+
 	// Call these in this order
-    [Category loadCategories:self.categories fromDatabase:database];
-    [InsulinType loadInsulinTypes:self.insulinTypes fromDatabase:database];
+    [Category loadCategories:self.categories fromDatabase:model.database];
+    [InsulinType loadInsulinTypes:self.insulinTypes fromDatabase:model.database];
 	[self loadDefaultInsulinTypes];	// Must be after loadInsulinTypes
-
-    // Create an array for the loaded LogDays
-    sections = [[NSMutableArray alloc] init];
-
-    // How many days of records are available in the database?
-    numberOfSections = [LogDay numberOfDays:database];
 
     // Find the max width of the categoryName strings so it can be used for layout
     [self updateCategoryNameMaxWidth];
@@ -127,12 +127,12 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [self updateInsulinTypeShortNameMaxWidth];
 
     // Create an empty "Today" object if no LogDays are available
-    if( 0 == numberOfSections )
+    if( 0 == [model numberOfLogDays] )
     {
 	NSDate *const day = [NSDate date];
 	LogDay *const section = [[LogDay alloc] initWithDate:day];
 	section.name = [shortDateFormatter stringFromDate:day];
-	[sections addObject:section];
+	[model.days addObject:section];
 	[section release];
     }
 
@@ -145,9 +145,8 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    [self flushLogEntries];	// Flush all entries
-    [LogEntry finalizeStatements];
-    [self closeLogDatabase];	// Close the database.
+    [model flush];	// Flush all entries
+    [model close];	// Close all open databases
 }
 
 - (void)dealloc
@@ -155,7 +154,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	[defaultInsulinTypes release];
 	[categories release];
 	[insulinTypes release];
-	[sections release];
 //	[shortDateFormatter release];
 	[window release];
 	[super dealloc];
@@ -164,24 +162,18 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 // Save all changes to the database, then close it.
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    [self flushLogEntries];	// Flush all entries
-    [LogEntry finalizeStatements];
-    [self closeLogDatabase];	// Close the database.
+    [model flush];	// Flush all entries
+    [model close];	// Close all open databases
 }
 
 #pragma mark -
 #pragma mark <LogViewDelegate>
 
-- (BOOL) canLoadMoreDays
-{
-    return numberOfSections > [self.sections count];
-}
-
 - (void) didPressNewLogEntry
 {
     // Create a new record in the database and get its automatically generated primary key.
-    const unsigned entryID = [LogEntry insertNewLogEntryIntoDatabase:self.database];
-    LogEntry* entry = [[LogEntry alloc] initWithID:entryID database:self.database];
+    const unsigned entryID = [LogEntry insertNewLogEntryIntoDatabase:model.database];
+    LogEntry* entry = [[LogEntry alloc] initWithID:entryID database:model.database];
 
     // Set defaults for the new LogEntry
     NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
@@ -198,66 +190,23 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     [logViewController inspectNewLogEntry:entry];
 }
 
-- (LogDay*) logDayAtIndex:(unsigned)index
-{
-    const unsigned count = [sections count];
-    if( index < count )
-	return [sections objectAtIndex:index];
-    if( index < numberOfSections )
-    {
-	if( [self canLoadMoreDays] )
-	{
-	    const unsigned num = [LogDay loadDays:sections
-				     fromDatabase:database
-					    limit:(index-count+1)
-					   offset:count];
-	    if( index < (count+num) )
-		return [sections objectAtIndex:index];
-	}
-    }
-    return NULL;
-}
-
-- (LogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day
-{
-    LogDay *const d = [self logDayAtIndex:day];
-    if( d && d.count && ![d.entries count] )
-	[d hydrate:database];
-    return (entry >= [d.entries count]) ? nil : [d.entries objectAtIndex:entry];
-}
-
-- (unsigned) numberOfEntriesForLogDayAtIndex:(unsigned)index
-{
-    return [[self logDayAtIndex:index] count];
-}
-
-- (unsigned) numberOfLoadedLogDays
-{
-    return [sections count];
-}
-
-- (unsigned) numberOfLogDays
-{
-    return numberOfSections;
-}
-
 // Delete a LogEntry from memory and the database
 - (void) logViewDidDeleteLogEntryAtRow:(unsigned)row inSection:(unsigned)section;
 {
-    LogDay *const s = [sections objectAtIndex:section];
+    LogDay *const s = [model logDayAtIndex:section];
     LogEntry *const entry = [s.entries objectAtIndex:row];
-    [entry deleteFromDatabase:self.database];
+    [entry deleteFromDatabase:model.database];
     [self deleteLogEntry:entry fromSection:s];
 }
 
 - (void) logViewDidDeleteSectionAtIndex:(unsigned)section;
 {
     // Delete all of the LogDay's entries from the database
-    LogDay *const s = [sections objectAtIndex:section];
-    [s deleteAllEntriesFromDatabase:self.database];
+    LogDay *const s = [model logDayAtIndex:section];
+    [s deleteAllEntriesFromDatabase:model.database];
 
     // Remove the LogDay itself
-    [self.sections removeObjectAtIndex:section];
+    [model.days removeObjectAtIndex:section];
 }
 
 - (void) logViewDidMoveLogEntry:(LogEntry*)entry fromSection:(LogDay*)from toSection:(LogDay*)to
@@ -306,12 +255,6 @@ sqlite3* openBundledDatabase()
     return db;
 }
 
-- (void) closeLogDatabase
-{
-	sqlite3_close(database);
-    database = nil;
-}
-
 - (void) loadDefaultInsulinTypes
 {
 	if( ![self.insulinTypes count] )
@@ -345,7 +288,7 @@ sqlite3* openBundledDatabase()
 	// See if the category already exists
 	if( ![self findCategoryForID:c.categoryID] )
 	{
-	    [Category insertCategory:c intoDatabase:database];
+	    [Category insertCategory:c intoDatabase:model.database];
 	    [categories addObject:c];
 	}
     }
@@ -372,7 +315,7 @@ sqlite3* openBundledDatabase()
 	// See if the category already exists
 	if( ![self findInsulinTypeForID:t.typeID] )
 	{
-	    [InsulinType insertInsulinType:t intoDatabase:database];
+	    [InsulinType insertInsulinType:t intoDatabase:model.database];
 	    [insulinTypes addObject:t];
 	}
     }
@@ -380,43 +323,6 @@ sqlite3* openBundledDatabase()
     // Find the max width of the shortName strings so it can be used for layout
     [self updateInsulinTypeShortNameMaxWidth];
 }
-
-/*
-// Return the number of days worth of log entries in the database
-- (unsigned) getNumDays
-{
-	const char *query = "SELECT COUNT(*) FROM localLogEntries GROUP BY date(timestamp)";
-	sqlite3_stmt *statement;
-	unsigned numDays = 0;
-
-	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
-	{
-		while( sqlite3_step(statement) == SQLITE_ROW )
-			++numDays;
-//			numDays = sqlite3_column_int(statement, 0);
-		sqlite3_finalize(statement);
-	}
-	return numDays;
-}
-
-- (NSArray*) getDays
-{
-	const char *query = "SELECT timestamp, COUNT(timestamp) FROM localLogEntries GROUP BY date(timestamp,'unixepoch')";
-	sqlite3_stmt *statement;
-	NSMutableArray* days = [[NSMutableArray alloc] init];
-	
-	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
-	{
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			[days addObject:[NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)]];
-			NSLog(@"found day %s\n", sqlite3_column_text(statement, 0));
-		}
-		sqlite3_finalize(statement);
-	}
-	return days;
-}
-*/
 
 #pragma mark -
 #pragma mark Array Management
@@ -426,7 +332,7 @@ sqlite3* openBundledDatabase()
 	[section removeEntry:entry];
 
     if( 0 == [section.entries count] )
-		[self.sections removeObjectIdenticalTo:section];
+	[model.days removeObjectIdenticalTo:section];
 }
 
 - (Category*) findCategoryForID:(unsigned)categoryID
@@ -452,7 +358,7 @@ sqlite3* openBundledDatabase()
 	NSDateComponents *const date = [calendar components:components fromDate:d];
 //	NSDate* today = [NSDate date];
 //	NSMutableDictionary* r = nil;
-	for( LogDay* s in sections )
+	for( LogDay* s in model.days )
 	{
 		NSDateComponents *const c = [calendar components:components fromDate:s.date];
 //		NSDateComponents* c = [calendar components:components fromDate:s.date toDate:today options:0];
@@ -475,29 +381,22 @@ sqlite3* openBundledDatabase()
 	//	anything in the array. So, only need to compare seconds; no need to 
 	//	create calendar components.
 	unsigned i = 0;
-	if( [sections count] )
+	if( model.numberOfLoadedLogDays )
 	{
 		// Find the index that entry should be inserted at
 		const double a = [date timeIntervalSince1970];
-		for( LogDay* s in sections )
+		for( LogDay* s in model.days )
 		{
 			if( a > [s.date timeIntervalSince1970] )
 				break;
 			++i;
 		}
 	}
-	
-	[sections insertObject:s atIndex:i];
+
+    [model.days insertObject:s atIndex:i];
     [s release];
 	return s;
 }
-
-/*
-int compareLogEntriesByDate(id left, id right, void* context)
-{
-	return [((LogEntry*)left).timestamp compare:((LogEntry*)right).timestamp];
-}
-*/
 
 #pragma mark -
 #pragma mark Record Management
@@ -506,19 +405,19 @@ int compareLogEntriesByDate(id left, id right, void* context)
 {
 	const char *query = "DELETE FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime')";
 	sqlite3_stmt *statement;
-	
-	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
+
+	if( sqlite3_prepare_v2(model.database, query, -1, &statement, NULL) == SQLITE_OK )
 	{
 		sqlite3_bind_int(statement, 1, [from timeIntervalSince1970]);
 		sqlite3_bind_int(statement, 2, [to timeIntervalSince1970]);
 		int success = sqlite3_step(statement);
 		sqlite3_finalize(statement);
 		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(database));
+			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(model.database));
 
 		// Delete the corresponding sections
 		NSMutableArray* a = [[NSMutableArray alloc] init];
-		for( LogDay* s in sections )
+		for( LogDay* s in model.days )
 		{
 			NSDate *const d = s.date;
 			NSComparisonResult b = [from compare:d];
@@ -529,7 +428,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 				[a addObject:s];
 		}
 		for( LogDay* s in a )
-			[sections removeObjectIdenticalTo:s];
+			[model.days removeObjectIdenticalTo:s];
 	[a release];
 	}
 }
@@ -542,8 +441,8 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	const char* q = "SELECT MIN(timestamp) from localLogEntries";
 	sqlite3_stmt *statement;
 	NSDate* d = nil;
-	
-	if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
+
+	if( sqlite3_prepare_v2(model.database, q, -1, &statement, NULL) == SQLITE_OK )
 	{
 		unsigned i = 0;
 		while( sqlite3_step(statement) == SQLITE_ROW )
@@ -557,20 +456,13 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	return d;
 }
 
-- (void) flushLogEntries
-{
-    for( LogDay* s in self.sections )
-	for( LogEntry* e in s.entries )
-	    [e flush:database];
-}
-
 - (unsigned) numLogEntries
 {
 	const char* q = "SELECT COUNT() from localLogEntries";
 	sqlite3_stmt *statement;
 	unsigned num = 0;
-	
-	if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
+
+	if( sqlite3_prepare_v2(model.database, q, -1, &statement, NULL) == SQLITE_OK )
 	{
 		unsigned i = 0;
 		while( sqlite3_step(statement) == SQLITE_ROW )
@@ -586,7 +478,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 - (unsigned) numLogEntriesForInsulinTypeID:(unsigned)typeID
 {
-    return [LogEntry numLogEntriesForInsulinTypeID:typeID database:database];
+    return [LogEntry numLogEntriesForInsulinTypeID:typeID database:model.database];
 }
 
 - (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to
@@ -594,8 +486,8 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	const char* q = "SELECT COUNT() from localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime')";
 	sqlite3_stmt *statement;
 	unsigned num = 0;
-	
-	if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
+
+	if( sqlite3_prepare_v2(model.database, q, -1, &statement, NULL) == SQLITE_OK )
 	{
 		sqlite3_bind_int(statement, 1, [from timeIntervalSince1970]);
 		sqlite3_bind_int(statement, 2, [to timeIntervalSince1970]);
@@ -613,7 +505,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 - (unsigned) numRowsForCategoryID:(unsigned)catID
 {
-    return [LogEntry numLogEntriesForCategoryID:catID database:database];
+    return [LogEntry numLogEntriesForCategoryID:catID database:model.database];
 }
 
 #pragma mark Category Records
@@ -621,7 +513,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 // Create a new Category record and add it to the categories array
 - (void) addCategory:(NSString*)name
 {
-    Category* c = [Category newCategoryWithName:name database:database];
+    Category* c = [Category newCategoryWithName:name database:model.database];
     [categories addObject:c];
     [c release];
 }
@@ -632,7 +524,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 	Category *const category = [categories objectAtIndex:index];
 
     // Move all LogEntries in the deleted category to category "None"
-	NSArray* a = [NSArray arrayWithArray:sections];
+	NSArray* a = [NSArray arrayWithArray:model.days];
 	for( LogDay* s in a )
 	{
 		NSArray* entries = [NSArray arrayWithArray:s.entries];
@@ -641,8 +533,8 @@ int compareLogEntriesByDate(id left, id right, void* context)
 			    e.category = nil;;
 	}
 
-    [LogEntry moveAllEntriesInCategory:category toCategory:nil database:database];
-    [Category deleteCategory:category fromDatabase:database];
+    [LogEntry moveAllEntriesInCategory:category toCategory:nil database:model.database];
+    [Category deleteCategory:category fromDatabase:model.database];
     [self removeCategoryAtIndex:index];
 }
 
@@ -656,20 +548,20 @@ int compareLogEntriesByDate(id left, id right, void* context)
 {
 	const char *query = "DELETE FROM localLogEntries WHERE categoryID=?";
 	sqlite3_stmt *statement;
-	
-	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
+
+	if( sqlite3_prepare_v2(model.database, query, -1, &statement, NULL) == SQLITE_OK )
 	{
 		sqlite3_bind_int(statement, 1, categoryID);
 		int success = sqlite3_step(statement);
 		sqlite3_finalize(statement);
 		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(database));
+			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(model.database));
 	}
 }
 
 - (void) updateCategory:(Category*)c
 {
-    [c flush:database];
+    [c flush:model.database];
     [self updateCategoryNameMaxWidth];
 }
 
@@ -678,12 +570,12 @@ int compareLogEntriesByDate(id left, id right, void* context)
 - (void) flushCategories
 {
 	// Truncate the category table
-	sqlite3_exec(database, "DELETE FROM LogEntryCategories", NULL, NULL, NULL);
-	
+	sqlite3_exec(model.database, "DELETE FROM LogEntryCategories", NULL, NULL, NULL);
+
 	static char *sql = "INSERT INTO LogEntryCategories (categoryID, sequence, name) VALUES(?,?,?)";
 	sqlite3_stmt *statement;
-	if( sqlite3_prepare_v2(database, sql, -1, &statement, NULL) != SQLITE_OK )
-		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
+	if( sqlite3_prepare_v2(model.database, sql, -1, &statement, NULL) != SQLITE_OK )
+		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(model.database));
 
 	unsigned i = 0;
 	for( Category* c in categories )
@@ -695,7 +587,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 		sqlite3_reset(statement);		// Reset the query for the next use
 		sqlite3_clear_bindings(statement);	//Clear all bindings for next time
 		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
+			NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(model.database));
 		++i;
 	}
 	sqlite3_finalize(statement);
@@ -718,7 +610,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 // Create a new InsulinType record and add it to the insulinTypes array
 - (void) addInsulinType:(NSString*)name
 {
-    InsulinType* insulin = [InsulinType newInsulinTypeWithName:name database:database];
+    InsulinType* insulin = [InsulinType newInsulinTypeWithName:name database:model.database];
     [insulinTypes addObject:insulin];
     [insulin release];
 }
@@ -728,13 +620,13 @@ int compareLogEntriesByDate(id left, id right, void* context)
 {
 	InsulinType *const type = [insulinTypes objectAtIndex:index];
 	const unsigned typeID = [type typeID];
-	[LogEntry deleteDosesForInsulinTypeID:typeID fromDatabase:database];
-	[type deleteFromDatabase:database];
+	[LogEntry deleteDosesForInsulinTypeID:typeID fromDatabase:model.database];
+	[type deleteFromDatabase:model.database];
     [self removeDefaultInsulinType:type];   // Must be before deleting the InsulinType
 	[self removeInsulinTypeAtIndex:index];
 
 	// Remove all of the LogEntry doses with the deleted insulin type
-	for( LogDay* s in sections )
+	for( LogDay* s in model.days )
 	{
 		for( LogEntry* e in s.entries )
 		{
@@ -763,13 +655,13 @@ int compareLogEntriesByDate(id left, id right, void* context)
 - (void) flushInsulinTypes
 {
 	// Truncate the category table
-	sqlite3_exec(database, "DELETE FROM InsulinTypes", NULL, NULL, NULL);
-	
+	sqlite3_exec(model.database, "DELETE FROM InsulinTypes", NULL, NULL, NULL);
+
 	static char *sql = "INSERT INTO InsulinTypes (typeID, sequence, shortName) VALUES(?,?,?)";
 	sqlite3_stmt *statement;
-	if( sqlite3_prepare_v2(database, sql, -1, &statement, NULL) != SQLITE_OK )
-		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
-	
+	if( sqlite3_prepare_v2(model.database, sql, -1, &statement, NULL) != SQLITE_OK )
+		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(model.database));
+
 	unsigned i = 0;
 	for( InsulinType* type in insulinTypes )
 	{
@@ -780,7 +672,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 		sqlite3_reset(statement);		// Reset the query for the next use
 		sqlite3_clear_bindings(statement);	//Clear all bindings for next time
 		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
+			NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(model.database));
 		++i;
 	}
 	sqlite3_finalize(statement);
@@ -798,7 +690,7 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 - (void) updateInsulinType:(InsulinType*)type
 {
-    [type flush:database];
+    [type flush:model.database];
     [self updateInsulinTypeShortNameMaxWidth];
 }
 
@@ -834,33 +726,6 @@ int compareLogEntriesByDate(id left, id right, void* context)
 
 #pragma mark -
 #pragma mark Properties
-
-- (sqlite3*) database
-{
-    if( !database )
-    {
-	NSArray *const paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString *const documentsDirectory = [paths objectAtIndex:0];
-	NSString *const path = [documentsDirectory stringByAppendingPathComponent:LOG_SQL];
-	// Open the database. The database was prepared outside the application.
-	if( sqlite3_open([path UTF8String], &database) != SQLITE_OK )
-	{
-	    // sqlite3_open() doesn't always return a valid connection object on failure
-	    if( database )
-	    {
-		sqlite3_close(database);	// Cleanup after failure (release resources)
-		NSLog(@"Failed to open database with message '%s'.", sqlite3_errmsg(database));
-		database = NULL;
-	    }
-	    else
-		NSLog(@"Failed to allocate a database object");
-
-	    return NULL;
-	}
-    }
-
-    return database;
-}
 
 // This is a dummy property to get KVO to work on the dummy entries key
 - (NSMutableArray*)entries

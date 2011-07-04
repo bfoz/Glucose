@@ -11,13 +11,16 @@
 #import "SlidingViewController.h"
 
 @class CategoryViewController;
+@class ExportViewController;
 @class InsulinTypeViewController;
+@class LogModel;
 
 @protocol SettingsViewControllerDelegate;
 
 @interface SettingsViewController : SlidingViewController <CategoryViewControllerDelegate, InsulinTypeViewControllerDelegate, MFMailComposeViewControllerDelegate, UITextFieldDelegate>
 {
     id<SettingsViewControllerDelegate>    delegate;
+    LogModel*		    model;
 
     CategoryViewController*	categoryViewController;
     InsulinTypeViewController*	defaultInsulinTypeViewController;
@@ -30,11 +33,12 @@
     NSString*			highGlucoseWarningKey;
     NSString*			lowGlucoseWarningKey;
 
-    UITableViewController*	exportViewController;
+    ExportViewController*	exportViewController;
     UITableViewController*	purgeViewController;
 }
 
 @property (nonatomic, retain)	id<SettingsViewControllerDelegate>    delegate;
+@property (nonatomic, retain) LogModel*				    model;
 
 @end
 

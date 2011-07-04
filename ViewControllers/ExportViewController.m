@@ -13,6 +13,7 @@
 #import "Contact.h"
 #import "InsulinType.h"
 #import "LogEntry.h"
+#import "LogModel.h"
 
 #import "ExportViewController.h"
 #import "ContactListViewController.h"
@@ -43,6 +44,7 @@
 static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 @synthesize keychainData, failureTitle;
+@synthesize model;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -661,7 +663,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	return;
     }
 
-    NSData *const data = [LogEntry createCSV:appDelegate.database from:exportStart to:exportEnd];
+    NSData *const data = [LogEntry createCSV:model.database from:exportStart to:exportEnd];
     if( !data )
     {
 	[self cleanupExport];

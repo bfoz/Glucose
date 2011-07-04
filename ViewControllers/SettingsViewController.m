@@ -12,6 +12,7 @@
 #import "CategoryViewController.h"
 #import "ExportViewController.h"
 #import "InsulinTypeViewController.h"
+#import "LogModel.h"
 #import "LogViewController.h"
 #import "NumberField.h"
 #import "PurgeViewController.h"
@@ -22,6 +23,7 @@
 @implementation SettingsViewController
 
 @synthesize delegate;
+@synthesize model;
 
 enum Sections
 {
@@ -313,7 +315,10 @@ enum AboutSectionRows
 	    {
 		case kExportRow:
 		    if( !exportViewController )
+		    {
 			exportViewController = [[ExportViewController alloc] initWithStyle:UITableViewStyleGrouped];
+			exportViewController.model = model;
+		    }
 		    [self.navigationController pushViewController:exportViewController animated:YES];
 		    break;
 		case kPurgeRow:

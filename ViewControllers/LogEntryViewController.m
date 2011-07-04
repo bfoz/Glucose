@@ -16,6 +16,7 @@
 #import "LogEntryViewController.h"
 #import "LogEntry.h"
 #import "LogDay.h"
+#import "LogModel.h"
 #import "TextViewCell.h"
 
 // Post-translation section numbers
@@ -44,6 +45,7 @@
 @synthesize editingNewEntry;
 @synthesize glucoseCell;
 @synthesize cellTimestamp;
+@synthesize model;
 
 static unsigned InsulinPrecision;
 static NSUserDefaults* defaults = nil;
@@ -182,7 +184,7 @@ static NSUserDefaults* defaults = nil;
     }
     else // otherwise revert the record and cancel editing
     {
-	[entry load:appDelegate.database];	// Reload the entry from the database
+	[entry load:model.database];	// Reload the entry from the database
 	[self setEditing:NO animated:NO];   // Cancel edit mode
     }
 }

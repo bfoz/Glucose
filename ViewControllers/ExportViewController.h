@@ -13,9 +13,12 @@
 @class GDataEntryDocBase;
 @class GDataFeedACL;
 @class GDataServiceTicket;
+@class LogModel;
 
 @interface ExportViewController : SlidingViewController <UITextFieldDelegate>
 {
+    LogModel*			model;
+
 	NSDate*	exportStart;
 	NSDate*	exportEnd;
 	BOOL	exportEnabled;
@@ -47,6 +50,7 @@
 
 @property (nonatomic, retain) NSMutableDictionary*	keychainData;
 @property (nonatomic, retain) NSString*	failureTitle;
+@property (nonatomic, retain) LogModel*		    model;
 
 - (void) addACLTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataFeedACL*)object error:(NSError *)error;
 - (void) findExportFolder;
