@@ -14,6 +14,7 @@
 @class InsulinDose;
 @class InsulinType;
 @class LogDay;
+@class LogModel;
 
 @interface LogEntry : NSObject
 {
@@ -51,15 +52,15 @@
 + (NSString*) unitsStringForInteger:(unsigned)units;
 
 + (void)finalizeStatements;		// Finalize (delete) all of the SQLite compiled queries
-+ (NSData*) createCSV:(sqlite3*)database from:(NSDate*)from to:(NSDate*)to;
++ (NSData*) createCSV:(LogModel*)model from:(NSDate*)from to:(NSDate*)to;
 
 - (id) initWithID:(unsigned)entry date:(NSDate*)date;
-- (id) initWithStatement:(sqlite3_stmt*)statement;
+- (id) initWithStatement:(sqlite3_stmt*)statement model:(LogModel*)model;
 
 - (void)deleteFromDatabase:(sqlite3 *)db;
 //- (void)dehydrate:(sqlite3 *)db;	// Flush and reduce memory footprint
 - (void)flush:(sqlite3 *)db;		// Flush to database if dirty
-- (void) revert:(sqlite3*)database;	// Undo any changes
+- (void) revert:(LogModel*)model;	// Undo any changes
 - (void) setEditing:(BOOL)edit;
 
 - (void) addDoseWithType:(InsulinType*)t;

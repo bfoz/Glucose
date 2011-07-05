@@ -3,6 +3,7 @@
 #import "LogModel.h"
 
 #import "Constants.h"
+#import "Category.h"
 #import "LogDay.h"
 #import "LogEntry.h"
 
@@ -43,6 +44,16 @@
 	    [entry flush:database];
 }
 
+#pragma mark Categories
+
+- (Category*) categoryForCategoryID:(unsigned)categoryID
+{
+    for( Category* category in self.categories )
+	if( category.categoryID == categoryID )
+	    return category;
+    return NULL;
+}
+
 #pragma mark Log Days
 
 - (void) deleteLogDay:(LogDay*)day
@@ -79,7 +90,7 @@
 - (NSMutableArray*) logEntriesForDay:(LogDay*)day
 {
     if( day && day.count && ![day.entries count] )
-	[day hydrate:database];
+	[day hydrate:self];
     return day.entries;
 }
 
@@ -133,6 +144,16 @@
 
 #pragma mark -
 #pragma mark Accessors
+
+- (NSArray*) categories
+{
+    if( !categories )
+    {
+	categories = [[NSMutableArray alloc] init];
+	[Category loadCategories:categories fromDatabase:database];
+    }
+    return categories;
+}
 
 - (sqlite3*) database
 {

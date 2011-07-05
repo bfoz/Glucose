@@ -336,6 +336,7 @@ enum AboutSectionRows
 		    {
 			categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStyleGrouped];
 			categoryViewController.delegate = self;
+			categoryViewController.model = model;
 		    }
 		    [self.navigationController pushViewController:categoryViewController animated:YES];
 		    // Set editing mode after pushing the view controller. The UITableView doesn't exist
@@ -483,7 +484,7 @@ enum AboutSectionRows
 
 - (void) categoryViewControllerDidDeleteCategory:(Category*)category
 {
-    unsigned index = [appDelegate.categories indexOfObject:category];
+    unsigned index = [model.categories indexOfObject:category];
     // Purge the record from the database and the categories array
     [appDelegate purgeCategoryAtIndex:index];
 }

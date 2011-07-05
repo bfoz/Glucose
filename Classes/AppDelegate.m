@@ -15,8 +15,6 @@
 #import "LogEntry.h"
 #import "LogDay.h"
 #import "LogModel.h"
-#import "CategoryViewController.h"
-#import "InsulinTypeViewController.h"
 #import "LogViewController.h"
 
 #import "GDataDocs.h"
@@ -29,8 +27,6 @@ AppDelegate* appDelegate = nil;
 
 - (void) createEditableCopyOfDatabaseIfNeeded;
 
-- (void) loadDefaultInsulinTypes;
-- (void) loadInsulinTypes:(NSMutableArray*)types fromDB:(sqlite3*)db;
 - (void) loadAllSections;
 @end
 
@@ -38,7 +34,6 @@ AppDelegate* appDelegate = nil;
 
 @synthesize window;
 @synthesize navController;
-@synthesize categories, defaultInsulinTypes, insulinTypes;
 @synthesize logViewController;
 
 NSDateFormatter* shortDateFormatter = nil;
@@ -68,10 +63,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	NSArray* values = [NSArray arrayWithObjects:@"120", @"80", @"6.6", @"4.4", kGlucoseUnits_mgdL, [NSNumber numberWithInt:0], a, @"NO", nil];
 	NSDictionary* d = [NSDictionary dictionaryWithObjects:values forKeys:keys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:d];
-
-	categories = [[NSMutableArray alloc] init];
-	defaultInsulinTypes = [[NSMutableArray alloc] init];
-	insulinTypes = [[NSMutableArray alloc] init];
 
 	if( !shortDateFormatter )
 	{
@@ -116,11 +107,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	return NO;
     }
 
-	// Call these in this order
-    [Category loadCategories:self.categories fromDatabase:model.database];
-    [InsulinType loadInsulinTypes:self.insulinTypes fromDatabase:model.database];
-	[self loadDefaultInsulinTypes];	// Must be after loadInsulinTypes
-
     // Find the max width of the categoryName strings so it can be used for layout
     [self updateCategoryNameMaxWidth];
     // Find the max width of the InsulinType shortName strings so it can be used for layout
@@ -151,10 +137,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 
 - (void)dealloc
 {
-	[defaultInsulinTypes release];
-	[categories release];
-	[insulinTypes release];
-//	[shortDateFormatter release];
 	[window release];
 	[super dealloc];
 }
@@ -209,20 +191,6 @@ sqlite3* openBundledDatabase()
     return db;
 }
 
-- (void) loadDefaultInsulinTypes
-{
-	if( ![self.insulinTypes count] )
-		return;
-
-	NSArray* a = [[NSUserDefaults standardUserDefaults] objectForKey:@"DefaultInsulinTypes"];
-	for( NSNumber* typeID in a )
-	{
-		InsulinType* t = [self findInsulinTypeForID:[typeID intValue]];
-		if( t )
-			[self.defaultInsulinTypes addObject:t];
-	}
-}
-
 // Add the categories from the bundled defaults database
 - (void) appendBundledCategories
 {
@@ -240,10 +208,10 @@ sqlite3* openBundledDatabase()
     for( Category* c in a )
     {
 	// See if the category already exists
-	if( ![self findCategoryForID:c.categoryID] )
+	if( ![model categoryForCategoryID:c.categoryID] )
 	{
 	    [Category insertCategory:c intoDatabase:model.database];
-	    [categories addObject:c];
+	    [model.categories addObject:c];
 	}
     }
 
@@ -267,10 +235,10 @@ sqlite3* openBundledDatabase()
     for( InsulinType* t in a )
     {
 	// See if the category already exists
-	if( ![self findInsulinTypeForID:t.typeID] )
+	if( ![model insulinTypeForInsulinTypeID:t.typeID] )
 	{
 	    [InsulinType insertInsulinType:t intoDatabase:model.database];
-	    [insulinTypes addObject:t];
+	    [model.insulinTypes addObject:t];
 	}
     }
 
@@ -280,22 +248,6 @@ sqlite3* openBundledDatabase()
 
 #pragma mark -
 #pragma mark Array Management
-
-- (Category*) findCategoryForID:(unsigned)categoryID
-{
-	for( Category* c in categories )
-		if( c.categoryID == categoryID )
-			return c;
-	return nil;
-}
-
-- (InsulinType*) findInsulinTypeForID:(unsigned)typeID
-{
-	for( InsulinType* t in insulinTypes )
-		if( t.typeID == typeID )
-			return t;
-	return nil;
-}
 
 - (LogDay*) findSectionForDate:(NSDate*)d
 {
@@ -460,14 +412,14 @@ sqlite3* openBundledDatabase()
 - (void) addCategory:(NSString*)name
 {
     Category* c = [Category newCategoryWithName:name database:model.database];
-    [categories addObject:c];
+    [model.categories addObject:c];
     [c release];
 }
 
 // Purge a Category record from the database and the category array
 - (void) purgeCategoryAtIndex:(unsigned)index
 {
-	Category *const category = [categories objectAtIndex:index];
+    Category *const category = [model.categories objectAtIndex:index];
 
     // Move all LogEntries in the deleted category to category "None"
 	NSArray* a = [NSArray arrayWithArray:model.days];
@@ -487,7 +439,7 @@ sqlite3* openBundledDatabase()
 // Remove an Category record and generate a KV notification
 - (void) removeCategoryAtIndex:(unsigned)index
 {
-	[categories removeObjectAtIndex:index];
+    [model.categories removeObjectAtIndex:index];
 }
 
 - (void) deleteEntriesForCategoryID:(unsigned)categoryID
@@ -524,7 +476,7 @@ sqlite3* openBundledDatabase()
 		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(model.database));
 
 	unsigned i = 0;
-	for( Category* c in categories )
+	for( Category* c in model.categories )
 	{
 		sqlite3_bind_int(statement, 1, c.categoryID);
 		sqlite3_bind_int(statement, 2, i);
@@ -542,7 +494,7 @@ sqlite3* openBundledDatabase()
 - (void) updateCategoryNameMaxWidth
 {
 	float maxWidth = 0;
-	for( Category* c in categories )
+	for( Category* c in model.categories )
 	{
 		const float a = [c.categoryName sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
 		if( a > maxWidth )
@@ -557,14 +509,14 @@ sqlite3* openBundledDatabase()
 - (void) addInsulinType:(NSString*)name
 {
     InsulinType* insulin = [InsulinType newInsulinTypeWithName:name database:model.database];
-    [insulinTypes addObject:insulin];
+    [model.insulinTypes addObject:insulin];
     [insulin release];
 }
 
 // Purge an InsulinType record from the database and the insulinTypes array
 - (void) purgeInsulinTypeAtIndex:(unsigned)index
 {
-	InsulinType *const type = [insulinTypes objectAtIndex:index];
+	InsulinType *const type = [model.insulinTypes objectAtIndex:index];
 	const unsigned typeID = [type typeID];
 	[LogEntry deleteDosesForInsulinTypeID:typeID fromDatabase:model.database];
 	[type deleteFromDatabase:model.database];
@@ -586,14 +538,14 @@ sqlite3* openBundledDatabase()
 
 - (void) removeDefaultInsulinType:(InsulinType*)type
 {
-	[self.defaultInsulinTypes removeObjectIdenticalTo:type];
+    [model.insulinTypesForNewEntries removeObjectIdenticalTo:type];
 	[self flushDefaultInsulinTypes];
 }
 
 // Remove an InsulinType record and generate a KV notification
 - (void) removeInsulinTypeAtIndex:(unsigned)index
 {
-	[insulinTypes removeObjectAtIndex:index];
+    [model.insulinTypesForNewEntries removeObjectAtIndex:index];
 }
 
 // Flush the insulin types list to the database
@@ -609,7 +561,7 @@ sqlite3* openBundledDatabase()
 		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(model.database));
 
 	unsigned i = 0;
-	for( InsulinType* type in insulinTypes )
+	for( InsulinType* type in model.insulinTypes )
 	{
 		sqlite3_bind_int(statement, 1, type.typeID);
 		sqlite3_bind_int(statement, 2, i);
@@ -643,7 +595,7 @@ sqlite3* openBundledDatabase()
 - (void) updateInsulinTypeShortNameMaxWidth
 {
 	float maxWidth = 0;
-	for( InsulinType* t in insulinTypes )
+	for( InsulinType* t in model.insulinTypes )
 	{
 		const float a = [t.shortName sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
 		if( a > maxWidth )

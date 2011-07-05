@@ -663,7 +663,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	return;
     }
 
-    NSData *const data = [LogEntry createCSV:model.database from:exportStart to:exportEnd];
+    NSData *const data = [LogEntry createCSV:model from:exportStart to:exportEnd];
     if( !data )
     {
 	[self cleanupExport];

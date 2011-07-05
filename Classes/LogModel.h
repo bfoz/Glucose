@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <sqlite3.h>
 
+@class Category;
 @class LogDay;
 @class LogEntry;
 
@@ -9,11 +10,13 @@
     unsigned	    numberOfLogDays;	// Number of LogDays available in the database
 
 @private
+    NSMutableArray* categories;
     sqlite3*	    database;		// SQLite database handle
     NSMutableArray* days;
     NSUserDefaults* defaults;
 }
 
+@property (nonatomic, readonly)	NSArray*    categories;
 @property (nonatomic, readonly)	sqlite3*    database;
 @property (nonatomic, readonly)	NSMutableArray*    days;
 @property (nonatomic, readonly)	unsigned    numberOfLoadedLogDays;
@@ -23,6 +26,10 @@
 
 - (void) close;
 - (void) flush;
+
+#pragma mark Categories
+
+- (Category*) categoryForCategoryID:(unsigned)categoryID;
 
 #pragma mark Log Days
 - (void) deleteLogDay:(LogDay*)day;

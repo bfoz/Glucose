@@ -6,7 +6,6 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-#import "AppDelegate.h"
 #import "Constants.h"
 
 #import "LogEntry.h"
@@ -14,6 +13,7 @@
 #import "InsulinDose.h"
 #import "InsulinType.h"
 #import "LogDay.h"
+#import "LogModel.h"
 
 #define	kAllColumns	    "ID,timestamp,glucose,glucoseUnits,categoryID,dose0,dose1,typeID0,typeID1,note"
 #define	kLocalLogEntryTable "localLogEntries"
@@ -106,13 +106,13 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
     return entry;
 }
 
-+ (NSMutableArray*) logEntriesForLogDay:(LogDay*)day database:(sqlite3*)database
++ (NSMutableArray*) logEntriesForLogDay:(LogDay*)day model:(LogModel*)model
 {
     if( !statementLoadLogDay )
     {
-        if( sqlite3_prepare_v2(database, sqlLoadLogDay, -1, &statementLoadLogDay, NULL) != SQLITE_OK )
+        if( sqlite3_prepare_v2(model.database, sqlLoadLogDay, -1, &statementLoadLogDay, NULL) != SQLITE_OK )
 	{
-            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(model.database));
 	    return NULL;
 	}
     }
@@ -122,7 +122,7 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
     NSMutableArray* entries = [NSMutableArray arrayWithCapacity:1];
     while( sqlite3_step(statementLoadLogDay) == SQLITE_ROW )
     {
-	LogEntry *const entry = [[LogEntry alloc] initWithStatement:statementLoadLogDay];
+	LogEntry *const entry = [[LogEntry alloc] initWithStatement:statementLoadLogDay model:model];
 	if( entry )
 	    [entries addObject:entry];
     }
@@ -268,7 +268,7 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
     insert_statement = nil;
 }
 
-+ (NSData*) createCSV:(sqlite3*)database from:(NSDate*)from to:(NSDate*)to
++ (NSData*) createCSV:(LogModel*)model from:(NSDate*)from to:(NSDate*)to
 {
     NSMutableData *data = [[NSMutableData dataWithCapacity:2048] retain];
 	
@@ -279,7 +279,7 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 	const char* q = "SELECT timestamp,glucose,glucoseUnits,categoryID,dose0,typeID0,dose1,typeID1,note FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime') ORDER BY timestamp ASC";
 	sqlite3_stmt *statement;
 	unsigned numRows = 0;
-	if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
+	if( sqlite3_prepare_v2(model.database, q, -1, &statement, NULL) == SQLITE_OK )
 	{
 		sqlite3_bind_int(statement, 1, [from timeIntervalSince1970]);
 		sqlite3_bind_int(statement, 2, [to timeIntervalSince1970]);
@@ -316,7 +316,7 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 					case 3:	// categoryID
 					{
 						const int a = sqlite3_column_int(statement, i);
-						Category* c = [appDelegate findCategoryForID:a];
+						Category* c = [model categoryForCategoryID:a];
 						s = [c.categoryName UTF8String];
 					}
 						break;
@@ -370,7 +370,7 @@ _var = nil;						\
 else							\
 _var = _val;
 
-- (id) initWithStatement:(sqlite3_stmt*)statement
+- (id) initWithStatement:(sqlite3_stmt*)statement model:(LogModel*)model
 {
     self = [self init];
     if( self )
@@ -392,18 +392,18 @@ _var = _val;
 	if( SQLITE_NULL == sqlite3_column_type(statement, 4) )
 	    self.category = nil;
 	else
-	    self.category = [appDelegate findCategoryForID:sqlite3_column_int(statement, 4)];
+	    self.category = [model categoryForCategoryID:sqlite3_column_int(statement, 4)];
 
 	if( (SQLITE_NULL != sqlite3_column_type(statement, 5)) &&
 	    (SQLITE_NULL != sqlite3_column_type(statement, 7)) )
 	{
-	    [self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(statement, 7)]]];
+	    [self.insulin addObject:[InsulinDose withType:[model insulinTypeForInsulinTypeID:sqlite3_column_int(statement, 7)]]];
 	    [self setDose:[NSNumber numberWithInt:sqlite3_column_int(statement, 5)] insulinDose:[self.insulin lastObject]];
 	}
 	if( (SQLITE_NULL != sqlite3_column_type(statement, 6)) &&
 	    (SQLITE_NULL != sqlite3_column_type(statement, 8)) )
 	{
-	    [self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(statement, 8)]]];
+	    [self.insulin addObject:[InsulinDose withType:[model insulinTypeForInsulinTypeID:sqlite3_column_int(statement, 8)]]];
 	    [self setDose:[NSNumber numberWithInt:sqlite3_column_int(statement, 6)] insulinDose:[self.insulin lastObject]];
 	}
 
@@ -509,13 +509,13 @@ _var = _val;
 	dirty = NO;		// Squeaky clean
 }
 
-- (void) revert:(sqlite3*)database
+- (void) revert:(LogModel*)model
 {
     if( !statementLoadEntryforID )
     {
-        if( sqlite3_prepare_v2(database, sqlLoadEntryforID, -1, &statementLoadEntryforID, NULL) != SQLITE_OK )
+        if( sqlite3_prepare_v2(model.database, sqlLoadEntryforID, -1, &statementLoadEntryforID, NULL) != SQLITE_OK )
 	{
-            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(model.database));
 	    return;
 	}
     }
@@ -524,7 +524,7 @@ _var = _val;
 
     if( sqlite3_step(statementLoadEntryforID) == SQLITE_ROW )
     {
-	if( self != [self initWithStatement:statementLoadEntryforID] )
+	if( self != [self initWithStatement:statementLoadEntryforID model:model] )
 	    NSAssert(0, @"Bad re-init");
     }
 

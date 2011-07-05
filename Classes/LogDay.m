@@ -155,11 +155,11 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
     }
 }
 
-- (void) hydrate:(sqlite3*)database
+- (void) hydrate:(LogModel*)model
 {
     if( entries )
 	[entries release];
-    entries = [[LogEntry logEntriesForLogDay:self database:database] retain];
+    entries = [[LogEntry logEntriesForLogDay:self model:model] retain];
 }
 
 // Insert a new entry and maintain sort

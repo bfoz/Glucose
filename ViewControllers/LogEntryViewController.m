@@ -184,7 +184,7 @@ static NSUserDefaults* defaults = nil;
     }
     else // otherwise revert the record and cancel editing
     {
-	[entry revert:model.database];	// Reload the entry from the database
+	[entry revert:model];		    // Reload the entry from the database
 	[self setEditing:NO animated:NO];   // Cancel edit mode
     }
 }
@@ -493,6 +493,7 @@ static NSUserDefaults* defaults = nil;
 		{
 		    categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain];
 		    categoryViewController.delegate = self;
+		    categoryViewController.model = model;
 		}
 		categoryViewController.selectedCategory = entry.category;
 		[self presentModalViewController:categoryViewController animated:YES];

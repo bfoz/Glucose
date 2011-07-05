@@ -11,6 +11,7 @@
 #import "CategoryViewController.h"
 #import "Constants.h"
 #import "LogEntry.h"
+#import "LogModel.h"
 
 #define	kCategoriesSectionNumber		0
 #define	kRestoreDefaultsSectionNumber		1
@@ -18,6 +19,7 @@
 @implementation CategoryViewController
 
 @synthesize delegate;
+@synthesize model;
 @synthesize selectedCategory;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -88,7 +90,7 @@
 {
     if( [delegate respondsToSelector:@selector(categoryViewControllerCreateCategory)] )
     {
-	const unsigned index = [appDelegate.categories count];
+	const unsigned index = [model.categories count];
 	[delegate categoryViewControllerCreateCategory];
 	NSIndexPath *const path = [NSIndexPath indexPathForRow:index inSection:0];
 	[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:path]
@@ -134,7 +136,7 @@
 	return 1;
 
 	// When not in editing mode there is one extra row for "None"
-	return self.editing ? [appDelegate.categories count] : [appDelegate.categories count] + 1;
+	return self.editing ? [model.categories count] : [model.categories count] + 1;
 }
 
 
@@ -176,7 +178,7 @@
 
 		if( self.editing )
 		{
-		    Category *const c = [appDelegate.categories objectAtIndex:row];
+		    Category *const c = [model.categories objectAtIndex:row];
 		    ((TextFieldCell*)cell).editedObject = c;
 		    ((TextFieldCell*)cell).textField.text = [c categoryName];
 		}
@@ -184,9 +186,9 @@
 		{
 		    if( row )	// A regular category row
 		    {
-			cell.textLabel.text = [[appDelegate.categories objectAtIndex:(row-1)] categoryName];
+			cell.textLabel.text = [[model.categories objectAtIndex:(row-1)] categoryName];
 			// Set the row as selected if it matches the currently selected category
-			if( [appDelegate.categories objectAtIndex:(row-1)] == selectedCategory )
+			if( [model.categories objectAtIndex:(row-1)] == selectedCategory )
 			    [tv selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
 		    }
 		    else	// The "None" row
@@ -224,7 +226,7 @@
     {
 	const unsigned row = indexPath.row;
 	// Row 0 is the "None" row
-	selectedCategory = row ? [appDelegate.categories objectAtIndex:row-1] : nil;
+	selectedCategory = row ? [model.categories objectAtIndex:row-1] : nil;
 	if( [delegate respondsToSelector:@selector(categoryViewControllerDidSelectCategory:)] )
 	    [delegate categoryViewControllerDidSelectCategory:selectedCategory];
 
@@ -250,9 +252,9 @@
 
 - (NSIndexPath*) tableView:(UITableView*)tv targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath*)fromPath toProposedIndexPath:(NSIndexPath*)toPath
 {
-	if( toPath.row < [appDelegate.categories count] )
+	if( toPath.row < [model.categories count] )
 		return toPath;
-	return [NSIndexPath indexPathForRow:([appDelegate.categories count]-1) inSection:toPath.section];
+	return [NSIndexPath indexPathForRow:([model.categories count]-1) inSection:toPath.section];
 }
 
 #pragma mark -
@@ -260,7 +262,7 @@
 
 - (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)path
 {
-    Category *const category = [appDelegate.categories objectAtIndex:path.row];
+    Category *const category = [model.categories objectAtIndex:path.row];
 
     // If row is deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
@@ -289,9 +291,9 @@
 {
 //	NSLog(@"From Row %d to Row %d", fromPath.row, toPath.row);
 	// Shuffle the categories array
-	Category* c = [[appDelegate.categories objectAtIndex:fromPath.row] retain];
-	[appDelegate.categories removeObjectAtIndex:fromPath.row];
-	[appDelegate.categories insertObject:c atIndex:toPath.row];
+	Category* c = [[model.categories objectAtIndex:fromPath.row] retain];
+	[model.categories removeObjectAtIndex:fromPath.row];
+	[model.categories insertObject:c atIndex:toPath.row];
 	[c release];
 	dirty = YES;
 }

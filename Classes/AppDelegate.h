@@ -12,7 +12,6 @@
 #import "LogViewController.h"
 
 @class Category;
-@class CategoryViewController;
 @class InsulinType;
 @class InsulinTypeViewController;
 @class LogEntry;
@@ -25,7 +24,6 @@
 {
     IBOutlet UIWindow *window;
     UINavigationController* navController;
-    NSMutableArray* categories;
     NSMutableArray* defaultInsulinTypes;
     NSMutableArray* insulinTypes;
 	LogViewController*	logViewController;
@@ -36,14 +34,12 @@
 
 @property (nonatomic, retain)	UIWindow*	window;
 @property (nonatomic, retain)	UINavigationController* navController;
-@property (nonatomic, readonly)	NSMutableArray*		categories;
 @property (nonatomic, readonly)	NSMutableArray*		defaultInsulinTypes;
 @property (nonatomic, readonly)	NSMutableArray*		insulinTypes;
 @property (nonatomic, readonly)	LogViewController*	logViewController;
 @property (nonatomic, readonly) GDataServiceGoogleDocs*	docService;
 
 #pragma mark Array Management
-- (Category*) findCategoryForID:(unsigned)categoryID;
 - (InsulinType*) findInsulinTypeForID:(unsigned)typeID;
 
 - (LogDay*) findSectionForDate:(NSDate*)date;

@@ -10,6 +10,7 @@
 #import <sqlite3.h>
 
 @class LogEntry;
+@class LogModel;
 
 @interface LogDay : NSObject
 {
@@ -37,7 +38,7 @@
 
 - (void) deleteAllEntriesFromDatabase:(sqlite3*)database;
 - (void) deleteEntry:(LogEntry*)entry fromDatabase:(sqlite3*)database;
-- (void) hydrate:(sqlite3*)db;
+- (void) hydrate:(LogModel*)model;
 - (void) insertEntry:(LogEntry*)entry;
 - (void) insertEntry:(LogEntry*)entry atIndex:(unsigned)index;
 - (void) sortEntries;
