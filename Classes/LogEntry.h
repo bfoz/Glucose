@@ -42,7 +42,7 @@
 
 #pragma mark LogEntry creation
 + (LogEntry*) createLogEntryInDatabase:(sqlite3*)database;
-+ (NSMutableArray*) logEntriesForLogDay:(LogDay*)day database:(sqlite3*)database;
++ (NSMutableArray*) logEntriesForLogDay:(LogDay*)day model:(LogModel*)model;
 
 + (void) deleteDosesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database;
 + (void) deleteLogEntriesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database;
@@ -61,7 +61,7 @@
 //- (void)dehydrate:(sqlite3 *)db;	// Flush and reduce memory footprint
 - (void)flush:(sqlite3 *)db;		// Flush to database if dirty
 - (void) revert:(LogModel*)model;	// Undo any changes
-- (void) setEditing:(BOOL)edit;
+- (void) setEditing:(BOOL)edit model:(LogModel*)model;
 
 - (void) addDoseWithType:(InsulinType*)t;
 - (InsulinDose*) doseAtIndex:(unsigned)index;

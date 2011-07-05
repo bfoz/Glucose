@@ -11,6 +11,7 @@
 #import "TextFieldCell.h"	// Needed for TextFieldCellDelegate
 
 @class LogEntry;
+@class LogModel;
 @class TextFieldCell;
 
 @protocol InsulinTypeViewControllerDelegate;
@@ -18,6 +19,8 @@
 @interface InsulinTypeViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
     id <InsulinTypeViewControllerDelegate>  delegate;
+    LogModel*				    model;
+
     BOOL		didUndo;
     BOOL			dirty;
     BOOL			multiCheck;
@@ -31,6 +34,7 @@
 }
 
 @property (nonatomic, assign) id <InsulinTypeViewControllerDelegate>   delegate;
+@property (nonatomic, retain) LogModel*					model;
 @property (nonatomic, assign) BOOL	multiCheck;
 @property (nonatomic, readonly) NSMutableSet*	selectedInsulinTypes;
 

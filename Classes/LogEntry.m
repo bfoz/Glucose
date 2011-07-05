@@ -324,7 +324,7 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 					case 7:	// typeID1
 					{
 						const int a = sqlite3_column_int(statement, i);
-						InsulinType* t = [appDelegate findInsulinTypeForID:a];
+						InsulinType* t = [model insulinTypeForInsulinTypeID:a];
 						s = [t.shortName UTF8String];
 					}
 						break;
@@ -554,14 +554,14 @@ _var = _val;
 }
 
 // When entering edit mode setup defaults for any missing fields (like insulin doses)
-- (void) setEditing:(BOOL)edit
+- (void) setEditing:(BOOL)edit model:(LogModel*)model
 {
     if( edit )
     {
 	// If the insulin array is empty, populate it with the list of default entries from the prefs bundle
 	if( ![insulin count] )
 	{
-	    for( InsulinType* t in appDelegate.defaultInsulinTypes )
+	    for( InsulinType* t in model.insulinTypesForNewEntries )
 		[insulin addObject:[InsulinDose withType:t]];
 	    dirty = YES;
 	}

@@ -2,6 +2,7 @@
 #import <sqlite3.h>
 
 @class Category;
+@class InsulinType;
 @class LogDay;
 @class LogEntry;
 
@@ -14,11 +15,15 @@
     sqlite3*	    database;		// SQLite database handle
     NSMutableArray* days;
     NSUserDefaults* defaults;
+    NSMutableArray* insulinTypes;
+    NSMutableArray* insulinTypesForNewEntries;
 }
 
 @property (nonatomic, readonly)	NSArray*    categories;
 @property (nonatomic, readonly)	sqlite3*    database;
 @property (nonatomic, readonly)	NSMutableArray*    days;
+@property (nonatomic, readonly)	NSArray*    insulinTypes;
+@property (nonatomic, readonly)	NSArray*    insulinTypesForNewEntries;
 @property (nonatomic, readonly)	unsigned    numberOfLoadedLogDays;
 @property (nonatomic, readonly)	unsigned    numberOfLogDays;
 
@@ -30,6 +35,10 @@
 #pragma mark Categories
 
 - (Category*) categoryForCategoryID:(unsigned)categoryID;
+
+# pragma mark Insulin Types
+
+- (InsulinType*) insulinTypeForInsulinTypeID:(unsigned)typeID;
 
 #pragma mark Log Days
 - (void) deleteLogDay:(LogDay*)day;

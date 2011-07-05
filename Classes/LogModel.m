@@ -4,6 +4,7 @@
 
 #import "Constants.h"
 #import "Category.h"
+#import "InsulinType.h"
 #import "LogDay.h"
 #import "LogEntry.h"
 
@@ -51,6 +52,16 @@
     for( Category* category in self.categories )
 	if( category.categoryID == categoryID )
 	    return category;
+    return NULL;
+}
+
+# pragma mark Insulin Types
+
+- (InsulinType*) insulinTypeForInsulinTypeID:(unsigned)typeID
+{
+    for( InsulinType* t in self.insulinTypes )
+	if( t.typeID == typeID )
+	    return t;
     return NULL;
 }
 
@@ -182,6 +193,33 @@
     }
 
     return database;
+}
+
+- (NSArray*) insulinTypes
+{
+    if( !insulinTypes )
+    {
+	insulinTypes = [NSMutableArray new];
+	[InsulinType loadInsulinTypes:insulinTypes fromDatabase:database];
+    }
+
+    return insulinTypes;
+}
+
+- (NSArray*) insulinTypesForNewEntries
+{
+    if( !insulinTypesForNewEntries )
+    {
+	insulinTypesForNewEntries = [NSMutableArray new];
+	for( NSNumber* typeID in [defaults objectForKey:kDefaultInsulinTypes] )
+	{
+	    InsulinType *const t = [self insulinTypeForInsulinTypeID:[typeID intValue]];
+	    if( t )
+		[insulinTypesForNewEntries addObject:t];
+	}
+    }
+
+    return insulinTypesForNewEntries;
 }
 
 - (unsigned) numberOfLoadedLogDays

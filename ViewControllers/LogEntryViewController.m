@@ -125,7 +125,7 @@ static NSUserDefaults* defaults = nil;
 - (void)setEditing:(BOOL)e animated:(BOOL)animated
 {
     // Tell the entry first so it can flush itself and do any cleanup
-    [entry setEditing:e];
+    [entry setEditing:e model:model];
 
     /* If ending edit mode...
 	Do this check before calling the super so that self.editing still
@@ -510,6 +510,7 @@ static NSUserDefaults* defaults = nil;
 	{
 	    insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain];
 	    insulinTypeViewController.delegate = self;
+	    insulinTypeViewController.model = model;
 	}
 	editedIndex = row;
 	[insulinTypeViewController setSelectedInsulinType:(InsulinType*)[[[entry insulin] objectAtIndex:row] type]];

@@ -12,6 +12,7 @@
 #import "InsulinType.h"
 #import "InsulinTypeViewController.h"
 #import "LogEntry.h"
+#import "LogModel.h"
 
 #define	kInsulinTypesSectionNumber		0
 #define	kRestoreDefaultsSectionNumber		1
@@ -19,6 +20,7 @@
 @implementation InsulinTypeViewController
 
 @synthesize delegate;
+@synthesize model;
 @synthesize multiCheck;
 @synthesize selectedInsulinTypes;
 
@@ -147,7 +149,7 @@
 {
     if( [delegate respondsToSelector:@selector(insulinTypeViewControllerCreateInsulinType)] )
     {
-	const unsigned index = [appDelegate.insulinTypes count];
+	const unsigned index = [model.insulinTypes count];
 	[delegate insulinTypeViewControllerCreateInsulinType];
 	NSIndexPath *const path = [NSIndexPath indexPathForRow:index inSection:0];
 	[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:path]
@@ -162,7 +164,7 @@
 {
     if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidDeleteInsulinType:)] )
     {
-	InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:index];
+	InsulinType *const type = [model.insulinTypes objectAtIndex:index];
 	[delegate insulinTypeViewControllerDidDeleteInsulinType:type];
 	[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
 			      withRowAnimation:UITableViewRowAnimationFade];
@@ -171,7 +173,7 @@
 
 - (void) confirmDeleteInsulinTypeAtIndex:(unsigned)index
 {
-    InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:index];
+    InsulinType *const type = [model.insulinTypes objectAtIndex:index];
     const unsigned numRecords = [appDelegate numLogEntriesForInsulinTypeID:type.typeID];
     // Ask the user for confirmation if numRecords != 0
     if( numRecords )
@@ -204,7 +206,7 @@
     if( kRestoreDefaultsSectionNumber == section )
 	return 1;
 
-    return [appDelegate.insulinTypes count];
+    return [model.insulinTypes count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -241,7 +243,7 @@
 	case kInsulinTypesSectionNumber:
 	{
 	    // Get the row's insulin type object
-	    InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
+	    InsulinType *const type = [model.insulinTypes objectAtIndex:indexPath.row];
 
 	    // Put a checkmark on the currently selected row(s)
 	    if( [selectedInsulinTypes containsObject:type] )
@@ -260,7 +262,7 @@
 		((TextFieldCell*)cell).textField.text = [type shortName];
 
 		// Highlight the row if its insulin type is on the list of types used for new entries
-		if( NSNotFound != [appDelegate.defaultInsulinTypes indexOfObjectIdenticalTo:type] )
+		if( NSNotFound != [model.insulinTypesForNewEntries indexOfObjectIdenticalTo:type] )
 		    ((TextFieldCell*)cell).textField.textColor = [UIColor blueColor];
 		else
 		    ((TextFieldCell*)cell).textField.textColor = [UIColor blackColor];
@@ -298,7 +300,7 @@
     else
     {
 	UITableViewCell *const cell = [tv cellForRowAtIndexPath:indexPath];
-	InsulinType *const t = [appDelegate.insulinTypes objectAtIndex:indexPath.row];
+	InsulinType *const t = [model.insulinTypes objectAtIndex:indexPath.row];
 
 	// Toggle the checkmark on the selected row and notify the delegate
 	//  The delegate can block the selection event by returning NO
@@ -345,9 +347,9 @@
 
 - (NSIndexPath*) tableView:(UITableView*)tv targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath*)fromPath toProposedIndexPath:(NSIndexPath*)toPath
 {
-    if( toPath.row < [appDelegate.insulinTypes count] )
+    if( toPath.row < [model.insulinTypes count] )
 	return toPath;
-    return [NSIndexPath indexPathForRow:([appDelegate.insulinTypes count]-1) inSection:toPath.section];
+    return [NSIndexPath indexPathForRow:([model.insulinTypes count]-1) inSection:toPath.section];
 }
 
 #pragma mark -
@@ -360,8 +362,8 @@
     {
 	// If the row corresponds to a type that's used as a default insulin
 	//  type for new log entries, then ask the user for confirmation first
-	InsulinType *const type = [appDelegate.insulinTypes objectAtIndex:path.row];
-	if( NSNotFound != [appDelegate.defaultInsulinTypes indexOfObjectIdenticalTo:type] )
+	InsulinType *const type = [model.insulinTypes objectAtIndex:path.row];
+	if( NSNotFound != [model.insulinTypesForNewEntries indexOfObjectIdenticalTo:type] )
 	{
 	    alertReason = ALERT_REASON_DEFAULT_NEW_ENTRY_TYPE;
 	    deleteRowNum = path.row;
@@ -382,9 +384,9 @@
 {
     NSLog(@"From Row %d to Row %d", fromPath.row, toPath.row);
     // Shuffle the insulinTypes array
-    InsulinType* type = [[appDelegate.insulinTypes objectAtIndex:fromPath.row] retain];
-    [appDelegate.insulinTypes removeObjectAtIndex:fromPath.row];
-    [appDelegate.insulinTypes insertObject:type atIndex:toPath.row];
+    InsulinType* type = [[model.insulinTypes objectAtIndex:fromPath.row] retain];
+    [model.insulinTypes removeObjectAtIndex:fromPath.row];
+    [model.insulinTypes insertObject:type atIndex:toPath.row];
     [type release];
     dirty = YES;
 }

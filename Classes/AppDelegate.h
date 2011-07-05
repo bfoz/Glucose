@@ -13,7 +13,6 @@
 
 @class Category;
 @class InsulinType;
-@class InsulinTypeViewController;
 @class LogEntry;
 @class LogDay;
 @class LogModel;
@@ -25,7 +24,6 @@
     IBOutlet UIWindow *window;
     UINavigationController* navController;
     NSMutableArray* defaultInsulinTypes;
-    NSMutableArray* insulinTypes;
 	LogViewController*	logViewController;
 
 @private
@@ -34,14 +32,10 @@
 
 @property (nonatomic, retain)	UIWindow*	window;
 @property (nonatomic, retain)	UINavigationController* navController;
-@property (nonatomic, readonly)	NSMutableArray*		defaultInsulinTypes;
-@property (nonatomic, readonly)	NSMutableArray*		insulinTypes;
 @property (nonatomic, readonly)	LogViewController*	logViewController;
 @property (nonatomic, readonly) GDataServiceGoogleDocs*	docService;
 
 #pragma mark Array Management
-- (InsulinType*) findInsulinTypeForID:(unsigned)typeID;
-
 - (LogDay*) findSectionForDate:(NSDate*)date;
 - (LogDay*) getSectionForDate:(NSDate*)date;
 

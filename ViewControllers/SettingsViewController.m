@@ -348,6 +348,7 @@ enum AboutSectionRows
 		    {
 			insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
 			insulinTypeViewController.delegate = self;
+			insulinTypeViewController.model = model;
 			[insulinTypeViewController setMultiCheck:NO];
 		    }
 		    [self.navigationController pushViewController:insulinTypeViewController animated:YES];
@@ -360,10 +361,11 @@ enum AboutSectionRows
 		    {
 			defaultInsulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
 			defaultInsulinTypeViewController.delegate = self;
+			defaultInsulinTypeViewController.model = model;
 			defaultInsulinTypeViewController.title = @"Default Insulin Types";
 			defaultInsulinTypeViewController.multiCheck = YES;
 		    }
-		    [defaultInsulinTypeViewController setSelectedInsulinTypes:appDelegate.defaultInsulinTypes];
+		    [defaultInsulinTypeViewController setSelectedInsulinTypes:model.insulinTypesForNewEntries];
 		    [self.navigationController pushViewController:defaultInsulinTypeViewController animated:YES];
 		    break;
 	    }
@@ -504,7 +506,7 @@ enum AboutSectionRows
 
 - (void) insulinTypeViewControllerDidDeleteInsulinType:(InsulinType*)type;
 {
-    unsigned index = [appDelegate.insulinTypes indexOfObject:type];
+    unsigned index = [model.insulinTypes indexOfObject:type];
     // Purge the record from the database and the Insulin Types array
     [appDelegate purgeInsulinTypeAtIndex:index];
 }
@@ -522,15 +524,15 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (void) insulinTypeViewControllerDidEndMultiSelect
 {
-    [appDelegate.defaultInsulinTypes sortUsingFunction:sortDefaultInsulinTypes context:appDelegate.insulinTypes];
+    [model.insulinTypesForNewEntries sortUsingFunction:sortDefaultInsulinTypes context:model.insulinTypes];
     [appDelegate flushDefaultInsulinTypes];
 }
 
 - (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type
 {
-    if( [appDelegate.defaultInsulinTypes count] >= 2 )
+    if( [model.insulinTypesForNewEntries count] >= 2 )
 	return NO;
-    [appDelegate.defaultInsulinTypes addObject:type];
+    [model.insulinTypesForNewEntries addObject:type];
     return YES;
 }
 
@@ -541,8 +543,8 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (void) insulinTypeViewControllerDidUnselectInsulinType:(InsulinType*)type
 {
-    if( [appDelegate.defaultInsulinTypes containsObject:type] )
-	[appDelegate.defaultInsulinTypes removeObjectIdenticalTo:type];
+    if( [model.insulinTypesForNewEntries containsObject:type] )
+	[model.insulinTypesForNewEntries removeObjectIdenticalTo:type];
 }
 
 #pragma mark -
