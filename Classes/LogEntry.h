@@ -66,7 +66,6 @@
 - (InsulinDose*) doseAtIndex:(unsigned)index;
 - (void) removeDoseAtIndex:(unsigned)i;
 
-- (void) setCategoryWithID:(unsigned)cid;
 - (void) setCategory:(Category*)c;
 - (void) setDose:(NSNumber*)d insulinDose:(InsulinDose*)dose;
 - (void) setDoseType:(InsulinType*)type at:(unsigned)index;

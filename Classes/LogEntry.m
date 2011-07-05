@@ -392,7 +392,7 @@ _var = _val;
 	if( SQLITE_NULL == sqlite3_column_type(statement, 4) )
 	    self.category = nil;
 	else
-	    [self setCategoryWithID:sqlite3_column_int(statement, 4)];
+	    self.category = [appDelegate findCategoryForID:sqlite3_column_int(statement, 4)];
 
 	if( (SQLITE_NULL != sqlite3_column_type(statement, 5)) &&
 	    (SQLITE_NULL != sqlite3_column_type(statement, 7)) )
@@ -609,11 +609,6 @@ _var = _val;
 
 #pragma mark -
 #pragma mark Properties
-
-- (void) setCategoryWithID:(unsigned)cid
-{
-	self.category = [appDelegate findCategoryForID:cid];
-}
 
 - (void) setCategory:(Category*)c
 {
