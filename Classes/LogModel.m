@@ -101,9 +101,7 @@
 
 - (LogEntry*) createLogEntry
 {
-    // Create a new database record and get its automatically generated primary key.
-    const unsigned entryID = [LogEntry insertNewLogEntryIntoDatabase:self.database];
-    LogEntry* entry = [[LogEntry alloc] initWithID:entryID database:database];
+    LogEntry* entry = [LogEntry createLogEntryInDatabase:database];
 
     /* Set defaults for the new LogEntry
 	Don't use the returned string directly because glucoseUnits is used

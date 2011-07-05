@@ -155,30 +155,11 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
     }
 }
 
-- (void) hydrate:(sqlite3*)db
+- (void) hydrate:(sqlite3*)database
 {
-	const char* q = "SELECT ID FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') = date(?,'unixepoch','localtime') ORDER BY timestamp DESC";
-	sqlite3_stmt *statement;
-
-	if( sqlite3_prepare_v2(db, q, -1, &statement, NULL) == SQLITE_OK )
-	{
-        sqlite3_bind_int(statement, 1, [date timeIntervalSince1970]);
-		averageGlucose = 0;
-		unsigned i = 0;
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			LogEntry *const newEntry = [[LogEntry alloc] initWithID:sqlite3_column_int(statement, 0) database:db];
-			[entries addObject:newEntry];
-			if( newEntry.glucose )
-			{
-				averageGlucose += [newEntry.glucose floatValue];
-				++i;
-			}
-	    [newEntry release];
-		}
-		sqlite3_finalize(statement);
-		averageGlucose = i ? averageGlucose/i : 0;
-	}
+    if( entries )
+	[entries release];
+    entries = [[LogEntry logEntriesForLogDay:self database:database] retain];
 }
 
 // Insert a new entry and maintain sort

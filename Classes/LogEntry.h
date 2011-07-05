@@ -13,6 +13,7 @@
 
 @class InsulinDose;
 @class InsulinType;
+@class LogDay;
 
 @interface LogEntry : NSObject
 {
@@ -38,7 +39,10 @@
 @property (nonatomic, copy)		NSString*	note;
 @property (nonatomic, retain)	NSDate*		timestamp;
 
-+ (unsigned)insertNewLogEntryIntoDatabase:(sqlite3*)database;	//Insert a new LogEntry
+#pragma mark LogEntry creation
++ (LogEntry*) createLogEntryInDatabase:(sqlite3*)database;
++ (NSMutableArray*) logEntriesForLogDay:(LogDay*)day database:(sqlite3*)database;
+
 + (void) deleteDosesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database;
 + (void) deleteLogEntriesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database;
 + (BOOL) moveAllEntriesInCategory:(Category*)src toCategory:(Category*)dest database:(sqlite3*)database;
@@ -49,11 +53,13 @@
 + (void)finalizeStatements;		// Finalize (delete) all of the SQLite compiled queries
 + (NSData*) createCSV:(sqlite3*)database from:(NSDate*)from to:(NSDate*)to;
 
-- (id)initWithID:(unsigned)eid database:(sqlite3 *)db;
+- (id) initWithID:(unsigned)entry date:(NSDate*)date;
+- (id) initWithStatement:(sqlite3_stmt*)statement;
+
 - (void)deleteFromDatabase:(sqlite3 *)db;
 //- (void)dehydrate:(sqlite3 *)db;	// Flush and reduce memory footprint
 - (void)flush:(sqlite3 *)db;		// Flush to database if dirty
-- (void)load:(sqlite3*)db;		// Load a record from a database
+- (void) revert:(sqlite3*)database;	// Undo any changes
 - (void) setEditing:(BOOL)edit;
 
 - (void) addDoseWithType:(InsulinType*)t;

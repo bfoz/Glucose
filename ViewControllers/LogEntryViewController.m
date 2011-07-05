@@ -184,7 +184,7 @@ static NSUserDefaults* defaults = nil;
     }
     else // otherwise revert the record and cancel editing
     {
-	[entry load:model.database];	// Reload the entry from the database
+	[entry revert:model.database];	// Reload the entry from the database
 	[self setEditing:NO animated:NO];   // Cancel edit mode
     }
 }

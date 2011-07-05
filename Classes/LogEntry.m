@@ -10,9 +10,13 @@
 #import "Constants.h"
 
 #import "LogEntry.h"
+
 #import "InsulinDose.h"
 #import "InsulinType.h"
+#import "LogDay.h"
 
+#define	kAllColumns	    "ID,timestamp,glucose,glucoseUnits,categoryID,dose0,dose1,typeID0,typeID1,note"
+#define	kLocalLogEntryTable "localLogEntries"
 
 // Static variables for compiled SQL queries. This implementation choice is to be able to share a one time
 // compilation of each query across all instances of the class. Each time a query is used, variables may be bound
@@ -20,14 +24,21 @@
 // a class method will be invoked to "finalize" (delete) the compiled queries - this must happen before the database
 // can be closed.
 static sqlite3_stmt *insert_statement = nil;
-static sqlite3_stmt *init_statement = nil;
 static sqlite3_stmt *delete_statement = nil;
 static sqlite3_stmt *hydrate_statement = nil;
 static sqlite3_stmt *flush_statement = nil;
 
 static const char *const flush_sql = "UPDATE localLogEntries SET timestamp=?, glucose=?, glucoseUnits=?, categoryID=?, dose0=?, dose1=?, typeID0=?, typeID1=?, note=? WHERE ID=?";
 //static const char *const flush_sql = "UPDATE localLogEntries SET timestamp=datetime(?,'unixepoch'), glucose=?, glucoseUnits=?, categoryID=?, dose0=?, dose1=?, typeID0=?, typeID1=?, note=? WHERE ID=?";
-static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, categoryID, dose0, dose1, typeID0, typeID1, note FROM localLogEntries WHERE ID=?";
+static const char *const sqlInsertEntry = "INSERT INTO " kLocalLogEntryTable " (timestamp) VALUES(strftime('%s',datetime('NOW')))";
+static const char *const sqlLoadEntryforID = "SELECT " kAllColumns " FROM " kLocalLogEntryTable " WHERE ID=?";
+static const char *const sqlLoadLogDay = "SELECT " kAllColumns " FROM " kLocalLogEntryTable " WHERE date(timestamp,'unixepoch','localtime') = date(?,'unixepoch','localtime') ORDER BY timestamp DESC";
+static const char *const sqlLoadTimestampForID = "SELECT timestamp FROM " kLocalLogEntryTable " WHERE ID=?";
+
+static sqlite3_stmt*	statementInsertEntry	    = NULL;
+static sqlite3_stmt*	statementLoadEntryforID	    = NULL;
+static sqlite3_stmt*	statementLoadLogDay	    = NULL;
+static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 
 #define	kHeaderString	@"timestamp,glucose,glucoseUnits,category,dose0,type0,dose1,type1,note\n"
 
@@ -40,22 +51,86 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
 @synthesize note;
 @synthesize	timestamp;
 
-// Creates a new empty LogEntry record in the database and returns the new entryID
-+ (unsigned)insertNewLogEntryIntoDatabase:(sqlite3*)database
-{
-    if( !insert_statement )
-	{
-        static char *sql = "INSERT INTO localLogEntries (timestamp) VALUES(strftime('%s',datetime('NOW')))";
-        if( sqlite3_prepare_v2(database, sql, -1, &insert_statement, NULL) != SQLITE_OK )
-            NSAssert1(0, @"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
-    }
-    int success = sqlite3_step(insert_statement);
-    sqlite3_reset(insert_statement);	// Reset instead of finalize so the statement can be reused
-    if( success != SQLITE_ERROR )
-        return sqlite3_last_insert_rowid(database);
+#pragma mark LogEntry creation
 
-    NSAssert1(0, @"Failed to insert: '%s'.", sqlite3_errmsg(database));
-    return -1;
++ (LogEntry*) createLogEntryInDatabase:(sqlite3*)database
+{
+    // Create a new database record and get its automatically generated primary key
+    if( !statementInsertEntry )
+    {
+        if( sqlite3_prepare_v2(database, sqlInsertEntry, -1, &statementInsertEntry, NULL) != SQLITE_OK )
+	{
+            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+	    return NULL;
+	}
+    }
+
+    unsigned entryID = 0;
+    if( sqlite3_step(statementInsertEntry) )
+	entryID = sqlite3_last_insert_rowid(database);
+    sqlite3_reset(statementInsertEntry);
+
+    if( 0 == entryID )
+    {
+	NSLog(@"Failed to insert: '%s'.", sqlite3_errmsg(database));
+	return NULL;
+    }
+
+    // Fetch the new entry's timestamp that was assigned by the database
+    if( !statementLoadTimestampForID )
+    {
+        if( sqlite3_prepare_v2(database, sqlLoadTimestampForID, -1, &statementLoadTimestampForID, NULL) != SQLITE_OK )
+	{
+            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+	    return NULL;
+	}
+    }
+
+    sqlite3_bind_int(statementLoadTimestampForID, 1, entryID);
+
+    NSDate* date = NULL;
+    if( sqlite3_step(statementLoadTimestampForID) == SQLITE_ROW )
+    {
+	if( SQLITE_NULL != sqlite3_column_type(statementLoadTimestampForID, 0) )
+	    date = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statementLoadTimestampForID, 0)];
+    }
+
+    sqlite3_clear_bindings(statementLoadTimestampForID);
+    sqlite3_reset(statementLoadTimestampForID);
+
+    // Allocate and initialize a new LogEntry object
+    LogEntry* entry = NULL;
+    if( date )
+	entry = [[LogEntry alloc] initWithID:entryID date:date];
+
+    return entry;
+}
+
++ (NSMutableArray*) logEntriesForLogDay:(LogDay*)day database:(sqlite3*)database
+{
+    if( !statementLoadLogDay )
+    {
+        if( sqlite3_prepare_v2(database, sqlLoadLogDay, -1, &statementLoadLogDay, NULL) != SQLITE_OK )
+	{
+            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+	    return NULL;
+	}
+    }
+
+    sqlite3_bind_int(statementLoadLogDay, 1, [day.date timeIntervalSince1970]);
+
+    NSMutableArray* entries = [NSMutableArray arrayWithCapacity:1];
+    while( sqlite3_step(statementLoadLogDay) == SQLITE_ROW )
+    {
+	LogEntry *const entry = [[LogEntry alloc] initWithStatement:statementLoadLogDay];
+	if( entry )
+	    [entries addObject:entry];
+    }
+
+    sqlite3_clear_bindings(statementLoadLogDay);
+    sqlite3_reset(statementLoadLogDay);
+
+    return entries;
 }
 
 + (void) deleteDosesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database
@@ -183,7 +258,6 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
 + (void)finalizeStatements
 {
     if (insert_statement) sqlite3_finalize(insert_statement);
-    if (init_statement) sqlite3_finalize(init_statement);
     if (delete_statement) sqlite3_finalize(delete_statement);
     if (hydrate_statement) sqlite3_finalize(hydrate_statement);
     if (flush_statement) sqlite3_finalize(flush_statement);
@@ -191,7 +265,6 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
     delete_statement = nil;
     flush_statement = nil;
     hydrate_statement = nil;
-    init_statement = nil;
     insert_statement = nil;
 }
 
@@ -279,22 +352,80 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
 	return nil;
 }
 
+#pragma mark Initialization
+
 - (id)init
 {
 	if( self = [super init] )
     {
+	dirty = NO;
 		insulin = [[NSMutableArray alloc] init];
 	}
     return self;		
 }
 
-- (id)initWithID:(unsigned)eid database:(sqlite3 *)db
+#define ASSIGN_NOT_NULL(_s, _c, _var, _val)		\
+if( SQLITE_NULL == sqlite3_column_type(_s, _c) )	\
+_var = nil;						\
+else							\
+_var = _val;
+
+- (id) initWithStatement:(sqlite3_stmt*)statement
 {
-    if( self = [self init] )
+    self = [self init];
+    if( self )
     {
-		entryID = eid;
-	[self load:db];
+	if( SQLITE_NULL == sqlite3_column_type(statement, 0) )
+	    entryID = 0;
+	else
+	    entryID = sqlite3_column_int(statement, 0);
+
+	ASSIGN_NOT_NULL(statement, 1, self.timestamp,
+			[NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 1)]);
+	ASSIGN_NOT_NULL(statement, 2, self.glucose,
+			[NSNumber numberWithDouble:sqlite3_column_double(statement, 2)]);
+	ASSIGN_NOT_NULL(statement, 3, self.glucoseUnits,
+			[LogEntry unitsStringForInteger:sqlite3_column_int(statement, 3)]);
+	ASSIGN_NOT_NULL(statement, 9, self.note,
+			[NSString stringWithUTF8String:(const char*)sqlite3_column_text(statement, 9)]);
+
+	if( SQLITE_NULL == sqlite3_column_type(statement, 4) )
+	    self.category = nil;
+	else
+	    [self setCategoryWithID:sqlite3_column_int(statement, 4)];
+
+	if( (SQLITE_NULL != sqlite3_column_type(statement, 5)) &&
+	    (SQLITE_NULL != sqlite3_column_type(statement, 7)) )
+	{
+	    [self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(statement, 7)]]];
+	    [self setDose:[NSNumber numberWithInt:sqlite3_column_int(statement, 5)] insulinDose:[self.insulin lastObject]];
 	}
+	if( (SQLITE_NULL != sqlite3_column_type(statement, 6)) &&
+	    (SQLITE_NULL != sqlite3_column_type(statement, 8)) )
+	{
+	    [self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(statement, 8)]]];
+	    [self setDose:[NSNumber numberWithInt:sqlite3_column_int(statement, 6)] insulinDose:[self.insulin lastObject]];
+	}
+
+	// Empty the array if there are no valid doses
+	unsigned count = 0;
+	for( InsulinDose* d in insulin )
+	    if( d.dose )
+		++count;
+	if( !count )
+	    [self.insulin removeAllObjects];
+    }
+    return self;
+}
+
+- (id) initWithID:(unsigned)entry date:(NSDate*)date
+{
+    self = [self init];
+    if( self )
+    {
+	entryID = entry;
+	self.timestamp = date;;
+    }
     return self;
 }
 
@@ -378,69 +509,27 @@ static const char *const init_sql = "SELECT timestamp, glucose, glucoseUnits, ca
 	dirty = NO;		// Squeaky clean
 }
 
-- (void)load:(sqlite3*)db
+- (void) revert:(sqlite3*)database
 {
-    if( !init_statement && (sqlite3_prepare_v2(db, init_sql, -1, &init_statement, NULL) != SQLITE_OK) )
-	NSAssert1(0, @"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(db));
-
-    // For this query, we bind the primary key to the first (and only) placeholder in the statement.
-    // Note that the parameters are numbered from 1, not from 0.
-    sqlite3_bind_int(init_statement, 1, entryID);
-
-    // Start with a clean insulin array in case this is a reload
-    [self.insulin removeAllObjects];
-
-#define ASSIGN_NOT_NULL(_s, _c, _var, _val)		\
-if( SQLITE_NULL == sqlite3_column_type(_s, _c) )	\
-_var = nil;						\
-else							\
-_var = _val;
-
-    if( sqlite3_step(init_statement) == SQLITE_ROW )
+    if( !statementLoadEntryforID )
     {
-	ASSIGN_NOT_NULL(init_statement, 0, self.timestamp,
-			[NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(init_statement, 0)]);
-	ASSIGN_NOT_NULL(init_statement, 1, self.glucose,
-			[NSNumber numberWithDouble:sqlite3_column_double(init_statement, 1)]);
-	ASSIGN_NOT_NULL(init_statement, 2, self.glucoseUnits,
-			[LogEntry unitsStringForInteger:sqlite3_column_int(init_statement, 2)]);
-	ASSIGN_NOT_NULL(init_statement, 8, self.note,
-			[NSString stringWithUTF8String:(const char*)sqlite3_column_text(init_statement, 8)]);
-
-	if( SQLITE_NULL == sqlite3_column_type(init_statement, 3) )
-	    self.category = nil;
-	else
-	    [self setCategoryWithID:sqlite3_column_int(init_statement, 3)];
-
-	if( (SQLITE_NULL != sqlite3_column_type(init_statement, 4)) &&
-	    (SQLITE_NULL != sqlite3_column_type(init_statement, 6)) )
+        if( sqlite3_prepare_v2(database, sqlLoadEntryforID, -1, &statementLoadEntryforID, NULL) != SQLITE_OK )
 	{
-	    [self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 6)]]];
-	    [self setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 4)] insulinDose:[self.insulin lastObject]];
+            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+	    return;
 	}
-	if( (SQLITE_NULL != sqlite3_column_type(init_statement, 5)) &&
-	   (SQLITE_NULL != sqlite3_column_type(init_statement, 7)) )
-	{
-	    [self.insulin addObject:[InsulinDose withType:[appDelegate findInsulinTypeForID:sqlite3_column_int(init_statement, 7)]]];
-	    [self setDose:[NSNumber numberWithInt:sqlite3_column_int(init_statement, 5)] insulinDose:[self.insulin lastObject]];
-	}
-	// Empty the array if there are no valid doses
-	unsigned count = 0;
-	for( InsulinDose* d in insulin )
-	    if( d.dose )
-		++count;
-	if( !count )
-	    [self.insulin removeAllObjects];
-    }
-    else
-    {
-	self.timestamp = nil;
-	self.glucose = nil;
-	self.category = nil;
     }
 
-    sqlite3_reset(init_statement);	// Reset the statement for future reuse
-    dirty = NO;
+    sqlite3_bind_int(statementLoadEntryforID, 1, entryID);
+
+    if( sqlite3_step(statementLoadEntryforID) == SQLITE_ROW )
+    {
+	if( self != [self initWithStatement:statementLoadEntryforID] )
+	    NSAssert(0, @"Bad re-init");
+    }
+
+    sqlite3_clear_bindings(statementLoadEntryforID);
+    sqlite3_reset(statementLoadEntryforID);
 }
 
 #pragma mark -
