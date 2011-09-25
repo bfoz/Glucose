@@ -55,6 +55,18 @@
     return NULL;
 }
 
+- (void) moveCategoryAtIndex:(unsigned)from toIndex:(unsigned)to
+{
+    Category *const c = [[self.categories objectAtIndex:from] retain];
+
+    /* The previous line lazy-instantiated the categories array, so there's no
+	longer a need to use the accessor method. */
+    [categories removeObjectAtIndex:from];
+    [categories insertObject:c atIndex:to];
+
+    [c release];
+}
+
 # pragma mark Insulin Types
 
 - (InsulinType*) insulinTypeForInsulinTypeID:(unsigned)typeID
@@ -63,6 +75,18 @@
 	if( t.typeID == typeID )
 	    return t;
     return NULL;
+}
+
+- (void) moveInsulinTypeAtIndex:(unsigned)from toIndex:(unsigned)to
+{
+    InsulinType *const type = [[self.insulinTypes objectAtIndex:from] retain];
+
+    /* The previous line lazy-instantiated the insulin types array, so there's
+	no longer a need to use the accessor method. */
+    [insulinTypes removeObjectAtIndex:from];
+    [insulinTypes insertObject:type atIndex:to];
+
+    [type release];
 }
 
 #pragma mark Log Days

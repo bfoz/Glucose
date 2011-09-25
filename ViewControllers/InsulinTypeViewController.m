@@ -382,12 +382,7 @@
 
 - (void) tableView:(UITableView*)tv moveRowAtIndexPath:(NSIndexPath*)fromPath toIndexPath:(NSIndexPath*)toPath
 {
-    NSLog(@"From Row %d to Row %d", fromPath.row, toPath.row);
-    // Shuffle the insulinTypes array
-    InsulinType* type = [[model.insulinTypes objectAtIndex:fromPath.row] retain];
-    [model.insulinTypes removeObjectAtIndex:fromPath.row];
-    [model.insulinTypes insertObject:type atIndex:toPath.row];
-    [type release];
+    [model moveInsulinTypeAtIndex:fromPath.row toIndex:toPath.row];
     dirty = YES;
 }
 

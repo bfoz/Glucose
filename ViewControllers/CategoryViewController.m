@@ -289,12 +289,7 @@
 
 - (void) tableView:(UITableView*)tv moveRowAtIndexPath:(NSIndexPath*)fromPath toIndexPath:(NSIndexPath*)toPath
 {
-//	NSLog(@"From Row %d to Row %d", fromPath.row, toPath.row);
-	// Shuffle the categories array
-	Category* c = [[model.categories objectAtIndex:fromPath.row] retain];
-	[model.categories removeObjectAtIndex:fromPath.row];
-	[model.categories insertObject:c atIndex:toPath.row];
-	[c release];
+    [model moveCategoryAtIndex:fromPath.row toIndex:toPath.row];
 	dirty = YES;
 }
 

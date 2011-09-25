@@ -35,10 +35,12 @@
 #pragma mark Categories
 
 - (Category*) categoryForCategoryID:(unsigned)categoryID;
+- (void) moveCategoryAtIndex:(unsigned)from toIndex:(unsigned)to;
 
 # pragma mark Insulin Types
 
 - (InsulinType*) insulinTypeForInsulinTypeID:(unsigned)typeID;
+- (void) moveInsulinTypeAtIndex:(unsigned)from toIndex:(unsigned)to;
 
 #pragma mark Log Days
 - (void) deleteLogDay:(LogDay*)day;
