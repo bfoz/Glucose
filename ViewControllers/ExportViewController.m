@@ -175,7 +175,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[d setObject:(id)kSecClassGenericPassword forKey:(id)kSecClass];
 #else
 	[d setObject:(id)kSecClassInternetPassword forKey:(id)kSecClass];
-	[d setObject:[[NSURL URLWithString:kGDataGoogleDocsDefaultPrivateFullFeed] path] forKey:(id)kSecAttrPath];
+	[d setObject:[[GDataServiceGoogleDocs docsFeedURL] path] forKey:(id)kSecAttrPath];
 	[d setObject:(id)kSecAttrProtocolHTTP forKey:(id)kSecAttrProtocol];
 	[d setObject:@"docs.google.com" forKey:(id)kSecAttrServer];
 #endif	// GENERIC_PASSWORD
