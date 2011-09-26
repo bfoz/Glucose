@@ -181,6 +181,7 @@
 		    Category *const c = [model.categories objectAtIndex:row];
 		    ((TextFieldCell*)cell).editedObject = c;
 		    ((TextFieldCell*)cell).textField.text = [c categoryName];
+		    cell.accessibilityLabel = [c categoryName];
 		}
 		else
 		{

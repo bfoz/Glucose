@@ -83,15 +83,7 @@ unsigned maxInsulinTypeShortNameWidth = 0;
     logViewController.model = model;
     UINavigationController* aNavigationController = [[UINavigationController alloc] initWithRootViewController:logViewController];
     self.navController = aNavigationController;
-/*
-	UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
-	[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
-	UIBarButtonItem* bb = [[UIBarButtonItem alloc] initWithCustomView:b];
-//	bb.target = self;
-//	bb.action = @selector(showSettings:);
-	navController.navigationBar.topItem.leftBarButtonItem = bb;
-//	navController.navigationBar.topItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Settings" style:UIBarButtonItemStylePlain target:self action:@selector(showSettings:)];
-*/	
+
     [aNavigationController release];
     [logViewController release];
 

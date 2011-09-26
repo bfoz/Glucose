@@ -260,6 +260,7 @@
 	    {
 		((TextFieldCell*)cell).editedObject = type;
 		((TextFieldCell*)cell).textField.text = [type shortName];
+		cell.accessibilityLabel = [type shortName];
 
 		// Highlight the row if its insulin type is on the list of types used for new entries
 		if( NSNotFound != [model.insulinTypesForNewEntries indexOfObjectIdenticalTo:type] )
