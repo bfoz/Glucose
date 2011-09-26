@@ -39,7 +39,7 @@ test('Checking the Settings View', function(app, target)
         [{
             groups:
             [
-                { name: 'Glucose v0.6.6'},
+                { name: 'Glucose v0.7'},
                 { name: 'Copyright 2008-2011 Brandon Fosdick' },
             ],
             cells:

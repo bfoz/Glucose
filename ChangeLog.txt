@@ -1,3 +1,8 @@
+Version 0.7 - September 25, 2011
+- Added a "Write a Review" button to the Settings view
+- Fixed old notes showing up in the Notes row when creating new entries
+- Updated Google Data client library to version 1.12
+
 Version 0.6.6 - September 26, 2010
 - Fixed date picker animation issue in ExportViewController
 - Fixed occasional crash on save in LogEntryView
