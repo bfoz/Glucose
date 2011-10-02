@@ -42,7 +42,7 @@
 {
     for( LogDay* day in days )
 	for( LogEntry* entry in day.entries )
-	    [entry flush:database];
+	    [entry flush:self.database];
 }
 
 #pragma mark Categories
@@ -147,7 +147,7 @@
 
 - (LogEntry*) createLogEntry
 {
-    LogEntry* entry = [LogEntry createLogEntryInDatabase:database];
+    LogEntry* entry = [LogEntry createLogEntryInDatabase:self.database];
 
     /* Set defaults for the new LogEntry
 	Don't use the returned string directly because glucoseUnits is used
@@ -165,7 +165,7 @@
 // Delete the given entry from the given LogDay. Remove the LogDay if it becomes empty.
 - (void) deleteLogEntry:(LogEntry*)entry inDay:(LogDay*)day
 {
-    [day deleteEntry:entry fromDatabase:database];
+    [day deleteEntry:entry fromDatabase:self.database];
 
     if( 0 == day.count )
 	[days removeObjectIdenticalTo:day];
@@ -185,7 +185,7 @@
     if( !categories )
     {
 	categories = [[NSMutableArray alloc] init];
-	[Category loadCategories:categories fromDatabase:database];
+	[Category loadCategories:categories fromDatabase:self.database];
     }
     return categories;
 }
@@ -224,7 +224,7 @@
     if( !insulinTypes )
     {
 	insulinTypes = [NSMutableArray new];
-	[InsulinType loadInsulinTypes:insulinTypes fromDatabase:database];
+	[InsulinType loadInsulinTypes:insulinTypes fromDatabase:self.database];
     }
 
     return insulinTypes;
