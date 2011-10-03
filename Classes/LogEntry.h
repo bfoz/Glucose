@@ -51,7 +51,7 @@
 + (unsigned) numLogEntriesForInsulinTypeID:(unsigned)typeID database:(sqlite3*)database;
 + (NSString*) unitsStringForInteger:(unsigned)units;
 
-+ (void)finalizeStatements;		// Finalize (delete) all of the SQLite compiled queries
++ (void) finalize;		// Finalize (delete) all of the SQLite compiled queries
 + (NSData*) createCSV:(LogModel*)model from:(NSDate*)from to:(NSDate*)to;
 
 - (id) initWithID:(unsigned)entry date:(NSDate*)date;

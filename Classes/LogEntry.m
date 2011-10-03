@@ -255,17 +255,25 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 }
 
 // Finalize (delete) all of the SQLite compiled queries.
-+ (void)finalizeStatements
++ (void) finalize
 {
-    if (insert_statement) sqlite3_finalize(insert_statement);
-    if (delete_statement) sqlite3_finalize(delete_statement);
-    if (hydrate_statement) sqlite3_finalize(hydrate_statement);
-    if (flush_statement) sqlite3_finalize(flush_statement);
+    sqlite3_finalize(insert_statement);
+    sqlite3_finalize(delete_statement);
+    sqlite3_finalize(hydrate_statement);
+    sqlite3_finalize(flush_statement);
+    sqlite3_finalize(statementInsertEntry);
+    sqlite3_finalize(statementLoadEntryforID);
+    sqlite3_finalize(statementLoadLogDay);
+    sqlite3_finalize(statementLoadTimestampForID);
 
     delete_statement = nil;
     flush_statement = nil;
     hydrate_statement = nil;
     insert_statement = nil;
+    statementInsertEntry	= NULL;
+    statementLoadEntryforID	= NULL;
+    statementLoadLogDay		= NULL;
+    statementLoadTimestampForID = NULL;
 }
 
 + (NSData*) createCSV:(LogModel*)model from:(NSDate*)from to:(NSDate*)to

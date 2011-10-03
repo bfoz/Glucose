@@ -41,12 +41,11 @@
 {
     if( database )
     {
+	[LogEntry finalize];
+
 	sqlite3_close(database);
 	database = NULL;
     }
-    
-    // Do any necessary cleanup
-    [LogEntry finalizeStatements];
 }
 
 - (void) flush
