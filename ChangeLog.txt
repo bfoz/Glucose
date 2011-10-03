@@ -1,3 +1,8 @@
+Version 0.7.1 - October 2, 2011
+- Fixed statement finalization in LogEntry
+- Fixed database handle opening after backgrounding
+- Moved all Category and InsulinType handling to LogModel
+
 Version 0.7 - September 25, 2011
 - Added a "Write a Review" button to the Settings view
 - Fixed old notes showing up in the Notes row when creating new entries
