@@ -110,7 +110,7 @@ enum AboutSectionRows
     [insulinTypeViewController setMultiCheck:NO];
 
     // Persist changes to NSUserDefaults
-    [appDelegate flushDefaultInsulinTypes];
+    [model flushInsulinTypesForNewEntries];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
     if( delegate && [delegate respondsToSelector:@selector(settingsViewControllerDidPressBack)] )
@@ -501,38 +501,24 @@ enum AboutSectionRows
 
 - (void) insulinTypeViewControllerCreateInsulinType
 {
-    [appDelegate addInsulinType:nil];	// Create a new Category record
+    [model addInsulinTypeWithName:nil];
 }
 
 - (void) insulinTypeViewControllerDidDeleteInsulinType:(InsulinType*)type;
 {
-    unsigned index = [model.insulinTypes indexOfObject:type];
-    // Purge the record from the database and the Insulin Types array
-    [appDelegate purgeInsulinTypeAtIndex:index];
-}
-
-int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
-{
-    unsigned a = [((NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:left];
-    unsigned b = [((NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:right];
-    if( a < b )
-	return NSOrderedAscending;
-    if( a == b )
-	return NSOrderedSame;
-    return NSOrderedDescending;
+    [model purgeInsulinType:type];
 }
 
 - (void) insulinTypeViewControllerDidEndMultiSelect
 {
-    [model.insulinTypesForNewEntries sortUsingFunction:sortDefaultInsulinTypes context:model.insulinTypes];
-    [appDelegate flushDefaultInsulinTypes];
+    [model flushInsulinTypesForNewEntries];
 }
 
 - (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type
 {
     if( [model.insulinTypesForNewEntries count] >= 2 )
 	return NO;
-    [model.insulinTypesForNewEntries addObject:type];
+    [model addInsulinTypeForNewEntries:type];
     return YES;
 }
 
@@ -543,8 +529,7 @@ int sortDefaultInsulinTypes(id left, id right, void* insulinTypes)
 
 - (void) insulinTypeViewControllerDidUnselectInsulinType:(InsulinType*)type
 {
-    if( [model.insulinTypesForNewEntries containsObject:type] )
-	[model.insulinTypesForNewEntries removeObjectIdenticalTo:type];
+    [model removeInsulinTypeForNewEntries:type];
 }
 
 #pragma mark -

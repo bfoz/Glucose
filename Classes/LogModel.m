@@ -4,11 +4,18 @@
 
 #import "Constants.h"
 #import "Category.h"
+#import "InsulinDose.h"
 #import "InsulinType.h"
 #import "LogDay.h"
 #import "LogEntry.h"
 
 #define	LOG_SQL		@"glucose.sqlite"
+
+@interface LogModel ()
+
+- (void) clearInsulinTypeShortNameMaxWidth;
+
+@end
 
 @implementation LogModel
 
@@ -21,6 +28,7 @@
     {
 	days = [[NSMutableArray alloc] init];
 	defaults = [NSUserDefaults standardUserDefaults];
+	insulinTypeShortNameMaxWidth = NULL;
     }
 
     return self;
@@ -40,6 +48,8 @@
 
 - (void) flush
 {
+    [self flushInsulinTypes];
+    [self flushInsulinTypesForNewEntries];
     for( LogDay* day in days )
 	for( LogEntry* entry in day.entries )
 	    [entry flush:self.database];
@@ -67,7 +77,59 @@
     [c release];
 }
 
-# pragma mark Insulin Types
+#pragma mark
+#pragma mark Insulin Types
+
+- (void) addInsulinType:(InsulinType*)type
+{
+    if( ![insulinTypes containsObject:type] )
+    {
+	[InsulinType insertInsulinType:type intoDatabase:self.database];
+	[insulinTypes addObject:type];
+    }
+    [self clearInsulinTypeShortNameMaxWidth];
+}
+
+- (void) addInsulinTypeWithName:(NSString*)name
+{
+    InsulinType *const type = [InsulinType newInsulinTypeWithName:name
+							 database:self.database];
+    [insulinTypes addObject:type];
+    [type release];
+    [self clearInsulinTypeShortNameMaxWidth];
+}
+
+// Clear the max width so it will be recomputed next time it's needed
+- (void) clearInsulinTypeShortNameMaxWidth
+{
+    if( insulinTypeShortNameMaxWidth )
+	[insulinTypeShortNameMaxWidth release];
+    insulinTypeShortNameMaxWidth = NULL;
+}
+
+// Flush the insulin types list to the database
+- (void) flushInsulinTypes
+{
+    static char *sql = "REPLACE INTO InsulinTypes (typeID, sequence, shortName) VALUES(?,?,?)";
+    sqlite3_stmt *statement;
+    if( sqlite3_prepare_v2(self.database, sql, -1, &statement, NULL) != SQLITE_OK )
+	NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
+
+    unsigned i = 0;
+    for( InsulinType* type in insulinTypes )
+    {
+	sqlite3_bind_int(statement, 1, type.typeID);
+	sqlite3_bind_int(statement, 2, i);
+	sqlite3_bind_text(statement, 3, [type.shortName UTF8String], -1, SQLITE_TRANSIENT);
+	int success = sqlite3_step(statement);
+	sqlite3_reset(statement);		// Reset the query for the next use
+	sqlite3_clear_bindings(statement);	// Clear all bindings for next time
+	if( success != SQLITE_DONE )
+	    NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
+	++i;
+    }
+    sqlite3_finalize(statement);
+}
 
 - (InsulinType*) insulinTypeForInsulinTypeID:(unsigned)typeID
 {
@@ -75,6 +137,22 @@
 	if( t.typeID == typeID )
 	    return t;
     return NULL;
+}
+
+- (unsigned) insulinTypeShortNameMaxWidth
+{
+    if( !insulinTypeShortNameMaxWidth )
+    {
+	float maxWidth = 0;
+	for( InsulinType* t in insulinTypes )
+	{
+	    const float a = [t.shortName sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
+	    if( a > maxWidth )
+		maxWidth = a;
+	}
+	insulinTypeShortNameMaxWidth = [NSNumber numberWithFloat:maxWidth];
+    }
+    return [insulinTypeShortNameMaxWidth unsignedIntValue];
 }
 
 - (void) moveInsulinTypeAtIndex:(unsigned)from toIndex:(unsigned)to
@@ -86,7 +164,98 @@
     [insulinTypes removeObjectAtIndex:from];
     [insulinTypes insertObject:type atIndex:to];
 
+    // Flush the array to preserve the new sequence
+    [self flushInsulinTypes];
+
     [type release];
+}
+
+// Purge an InsulinType record from the database and the insulinTypes array
+- (void) purgeInsulinType:(InsulinType*)type
+{
+    const unsigned typeID = [type typeID];
+    [LogEntry deleteDosesForInsulinTypeID:typeID fromDatabase:self.database];
+    [type deleteFromDatabase:self.database];
+    [self removeInsulinType:type];
+
+    // Remove all of the LogEntry doses with the deleted insulin type
+    for( LogDay* s in self.days )
+    {
+	for( LogEntry* e in s.entries )
+	{
+	    NSArray* doses = [NSArray arrayWithArray:e.insulin];
+	    for( InsulinDose* d in doses )
+		if( d.type && (d.type == type) )
+		    [e.insulin removeObjectIdenticalTo:d];
+	}
+    }
+    [self clearInsulinTypeShortNameMaxWidth];
+}
+
+- (void) removeInsulinType:(InsulinType*)type
+{
+    [self removeInsulinTypeForNewEntries:type];
+    [insulinTypes removeObject:type];
+    [self clearInsulinTypeShortNameMaxWidth];
+}
+
+- (void) updateInsulinType:(InsulinType*)type
+{
+    [type flush:self.database];
+    [self clearInsulinTypeShortNameMaxWidth];
+}
+
+#pragma mark
+#pragma mark Insulin Types for New Entries
+
+- (void) addInsulinTypeForNewEntries:(InsulinType*)type
+{
+    [insulinTypesForNewEntries addObject:type];
+    [self flushInsulinTypesForNewEntries];
+}
+
+int orderInsulinTypesByIndex(id left, id right, void* insulinTypes)
+{
+    unsigned a = [((NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:left];
+    unsigned b = [((NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:right];
+    if( a < b )
+	return NSOrderedAscending;
+    if( a == b )
+	return NSOrderedSame;
+    return NSOrderedDescending;
+}
+
+- (void) flushInsulinTypesForNewEntries
+{
+    const unsigned count = [insulinTypesForNewEntries count];
+    NSMutableArray *const a = [NSMutableArray arrayWithCapacity:count];
+
+    for( InsulinType* type in insulinTypesForNewEntries )
+	[a addObject:[NSNumber numberWithInt:type.typeID]];
+
+    /* Sort the array before flushing it to keep it in the same order as the
+	insulinTypes array. The NewLogEntry view uses the array order when
+	displaying new dose rows.   */
+    [insulinTypesForNewEntries sortUsingFunction:orderInsulinTypesByIndex
+					 context:insulinTypes];
+
+    [[NSUserDefaults standardUserDefaults] setObject:a
+					      forKey:kDefaultInsulinTypes];
+}
+
+- (void) removeInsulinTypeForNewEntries:(InsulinType*)type
+{
+    if( [insulinTypesForNewEntries containsObject:type] )
+    {
+	[insulinTypesForNewEntries removeObjectIdenticalTo:type];
+	[self flushInsulinTypesForNewEntries];
+    }
+}
+
+- (void) removeInsulinTypeForNewEntriesAtIndex:(unsigned)index
+{
+    [insulinTypesForNewEntries removeObjectAtIndex:index];
+    [self flushInsulinTypesForNewEntries];
 }
 
 #pragma mark Log Days

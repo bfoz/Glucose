@@ -101,8 +101,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 
     // Find the max width of the categoryName strings so it can be used for layout
     [self updateCategoryNameMaxWidth];
-    // Find the max width of the InsulinType shortName strings so it can be used for layout
-    [self updateInsulinTypeShortNameMaxWidth];
 
     // Create an empty "Today" object if no LogDays are available
     if( 0 == [model numberOfLogDays] )
@@ -225,17 +223,7 @@ sqlite3* openBundledDatabase()
 
     // Loop through the items to add
     for( InsulinType* t in a )
-    {
-	// See if the category already exists
-	if( ![model insulinTypeForInsulinTypeID:t.typeID] )
-	{
-	    [InsulinType insertInsulinType:t intoDatabase:model.database];
-	    [model.insulinTypes addObject:t];
-	}
-    }
-
-    // Find the max width of the shortName strings so it can be used for layout
-    [self updateInsulinTypeShortNameMaxWidth];
+	[model addInsulinType:t];
 }
 
 #pragma mark -
@@ -493,107 +481,6 @@ sqlite3* openBundledDatabase()
 			maxWidth = a;
 	}
 	maxCategoryNameWidth = maxWidth;
-}
-
-#pragma mark InsulinType Records
-
-// Create a new InsulinType record and add it to the insulinTypes array
-- (void) addInsulinType:(NSString*)name
-{
-    InsulinType* insulin = [InsulinType newInsulinTypeWithName:name database:model.database];
-    [model.insulinTypes addObject:insulin];
-    [insulin release];
-}
-
-// Purge an InsulinType record from the database and the insulinTypes array
-- (void) purgeInsulinTypeAtIndex:(unsigned)index
-{
-	InsulinType *const type = [model.insulinTypes objectAtIndex:index];
-	const unsigned typeID = [type typeID];
-	[LogEntry deleteDosesForInsulinTypeID:typeID fromDatabase:model.database];
-	[type deleteFromDatabase:model.database];
-    [self removeDefaultInsulinType:type];   // Must be before deleting the InsulinType
-	[self removeInsulinTypeAtIndex:index];
-
-	// Remove all of the LogEntry doses with the deleted insulin type
-	for( LogDay* s in model.days )
-	{
-		for( LogEntry* e in s.entries )
-		{
-			NSArray* doses = [NSArray arrayWithArray:e.insulin];
-			for( InsulinDose* d in doses )
-				if( d.type && (d.type == type) )
-					[e.insulin removeObjectIdenticalTo:d];
-		}
-	}
-}
-
-- (void) removeDefaultInsulinType:(InsulinType*)type
-{
-    [model.insulinTypesForNewEntries removeObjectIdenticalTo:type];
-	[self flushDefaultInsulinTypes];
-}
-
-// Remove an InsulinType record and generate a KV notification
-- (void) removeInsulinTypeAtIndex:(unsigned)index
-{
-    [model.insulinTypesForNewEntries removeObjectAtIndex:index];
-}
-
-// Flush the insulin types list to the database
-//  !! This truncates the table first, then writes the entire array !!
-- (void) flushInsulinTypes
-{
-	// Truncate the category table
-	sqlite3_exec(model.database, "DELETE FROM InsulinTypes", NULL, NULL, NULL);
-
-	static char *sql = "INSERT INTO InsulinTypes (typeID, sequence, shortName) VALUES(?,?,?)";
-	sqlite3_stmt *statement;
-	if( sqlite3_prepare_v2(model.database, sql, -1, &statement, NULL) != SQLITE_OK )
-		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(model.database));
-
-	unsigned i = 0;
-	for( InsulinType* type in model.insulinTypes )
-	{
-		sqlite3_bind_int(statement, 1, type.typeID);
-		sqlite3_bind_int(statement, 2, i);
-		sqlite3_bind_text(statement, 3, [type.shortName UTF8String], -1, SQLITE_TRANSIENT);
-		int success = sqlite3_step(statement);
-		sqlite3_reset(statement);		// Reset the query for the next use
-		sqlite3_clear_bindings(statement);	//Clear all bindings for next time
-		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(model.database));
-		++i;
-	}
-	sqlite3_finalize(statement);
-}
-
-// Flush the insulin types list to the database
-//  !! This truncates the table first, then writes the entire array !!
-- (void) flushDefaultInsulinTypes
-{
-	NSMutableArray* a = [NSMutableArray arrayWithCapacity:[defaultInsulinTypes count]];
-	for( InsulinType* type in defaultInsulinTypes )
-		[a addObject:[NSNumber numberWithInt:type.typeID]];
-	[[NSUserDefaults standardUserDefaults] setObject:a forKey:kDefaultInsulinTypes];
-}
-
-- (void) updateInsulinType:(InsulinType*)type
-{
-    [type flush:model.database];
-    [self updateInsulinTypeShortNameMaxWidth];
-}
-
-- (void) updateInsulinTypeShortNameMaxWidth
-{
-	float maxWidth = 0;
-	for( InsulinType* t in model.insulinTypes )
-	{
-		const float a = [t.shortName sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
-		if( a > maxWidth )
-			maxWidth = a;
-	}
-	maxInsulinTypeShortNameWidth = maxWidth;
 }
 
 #pragma mark -

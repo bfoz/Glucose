@@ -23,7 +23,6 @@
 {
     IBOutlet UIWindow *window;
     UINavigationController* navController;
-    NSMutableArray* defaultInsulinTypes;
 	LogViewController*	logViewController;
 
 @private
@@ -56,15 +55,6 @@
 - (unsigned) numLogEntries;
 - (void) updateCategory:(Category*)c;
 - (void) updateCategoryNameMaxWidth;
-
-- (void) addInsulinType:(NSString*)name;
-- (void) purgeInsulinTypeAtIndex:(unsigned)index;
-- (void) flushInsulinTypes;
-- (void) flushDefaultInsulinTypes;
-- (void) removeDefaultInsulinType:(InsulinType*)type;
-- (void) removeInsulinTypeAtIndex:(unsigned)index;
-- (void) updateInsulinType:(InsulinType*)type;
-- (void) updateInsulinTypeShortNameMaxWidth;
 
 // Google Docs
 - (void) setUserCredentialsWithUsername:(NSString*)user password:(NSString*)pass;

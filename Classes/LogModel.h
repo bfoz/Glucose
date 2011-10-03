@@ -17,6 +17,7 @@
     NSUserDefaults* defaults;
     NSMutableArray* insulinTypes;
     NSMutableArray* insulinTypesForNewEntries;
+    NSNumber*	    insulinTypeShortNameMaxWidth;
 }
 
 @property (nonatomic, readonly)	NSArray*    categories;
@@ -24,6 +25,7 @@
 @property (nonatomic, readonly)	NSMutableArray*    days;
 @property (nonatomic, readonly)	NSArray*    insulinTypes;
 @property (nonatomic, readonly)	NSArray*    insulinTypesForNewEntries;
+@property (nonatomic, readonly)	unsigned    insulinTypeShortNameMaxWidth;
 @property (nonatomic, readonly)	unsigned    numberOfLoadedLogDays;
 @property (nonatomic, readonly)	unsigned    numberOfLogDays;
 
@@ -39,8 +41,21 @@
 
 # pragma mark Insulin Types
 
+- (void) addInsulinType:(InsulinType*)type;
+- (void) addInsulinTypeWithName:(NSString*)name;
+- (void) flushInsulinTypes;
 - (InsulinType*) insulinTypeForInsulinTypeID:(unsigned)typeID;
 - (void) moveInsulinTypeAtIndex:(unsigned)from toIndex:(unsigned)to;
+- (void) purgeInsulinType:(InsulinType*)type;
+- (void) removeInsulinType:(InsulinType*)type;
+- (void) updateInsulinType:(InsulinType*)type;
+
+#pragma mark Insulin Types for New Entries
+
+- (void) addInsulinTypeForNewEntries:(InsulinType*)type;
+- (void) flushInsulinTypesForNewEntries;
+- (void) removeInsulinTypeForNewEntries:(InsulinType*)type;
+- (void) removeInsulinTypeForNewEntriesAtIndex:(unsigned)index;
 
 #pragma mark Log Days
 - (void) deleteLogDay:(LogDay*)day;

@@ -53,9 +53,7 @@
     // Flush the category array to the database if it has been modified
     if( dirty )
     {
-	[appDelegate flushInsulinTypes];
 	dirty = NO;
-	[appDelegate updateInsulinTypeShortNameMaxWidth];
     }
     // Eanble the Add button while editing
     if( e )
@@ -436,7 +434,7 @@
 	if( !type || !cell )
 	    return;
 	type.shortName = (cell.text && cell.text.length) ? cell.text : nil;
-	[appDelegate updateInsulinType:type];
+	[model updateInsulinType:type];
     }
     editCell = nil;	//Not editing anything
 }
