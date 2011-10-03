@@ -27,7 +27,6 @@ AppDelegate* appDelegate = nil;
 
 - (void) createEditableCopyOfDatabaseIfNeeded;
 
-- (void) loadAllSections;
 @end
 
 @implementation AppDelegate
