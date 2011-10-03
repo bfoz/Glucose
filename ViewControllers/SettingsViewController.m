@@ -481,14 +481,13 @@ enum AboutSectionRows
 
 - (void) categoryViewControllerCreateCategory
 {
-    [appDelegate addCategory:nil];
+    [model addCategory:nil];
 }
 
 - (void) categoryViewControllerDidDeleteCategory:(Category*)category
 {
-    unsigned index = [model.categories indexOfObject:category];
     // Purge the record from the database and the categories array
-    [appDelegate purgeCategoryAtIndex:index];
+    [model purgeCategory:category];
 }
 
 - (void) categoryViewControllerDidSelectRestoreDefaults

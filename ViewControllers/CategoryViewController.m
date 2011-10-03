@@ -38,11 +38,8 @@
 	[super setEditing:e animated:animated];
 	// Flush the category array to the database if it has been modified
 	if( dirty )
-	{
-		[appDelegate flushCategories];
 		dirty = NO;
-		[appDelegate updateCategoryNameMaxWidth];
-	}
+
     // Eanble the Add button while editing
 	if( e )
 	{
@@ -331,7 +328,7 @@
 	if( !c || !cell )
 		return;
 	c.categoryName = (cell.text && cell.text.length) ? cell.text : nil;
-	[appDelegate updateCategory:c];
+	[model updateCategory:c];
     }
     editCell = nil;	//Not editing anything
 }

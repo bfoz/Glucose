@@ -38,23 +38,14 @@
 - (LogDay*) findSectionForDate:(NSDate*)date;
 - (LogDay*) getSectionForDate:(NSDate*)date;
 
-// Create a new log entry in response to a button press
-- (void) deleteEntriesForCategoryID:(unsigned)categoryID;
-
-- (void) addCategory:(NSString*)name;
 - (void) appendBundledCategories;
 - (void) appendBundledInsulinTypes;
-- (void) purgeCategoryAtIndex:(unsigned)index;
-- (void) removeCategoryAtIndex:(unsigned)index;
-- (void) flushCategories;
 - (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
 - (unsigned) numLogEntriesForInsulinTypeID:(unsigned)typeID;
 - (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
 - (unsigned) numRowsForCategoryID:(unsigned)catID;
 - (NSDate*) earliestLogEntryDate;
 - (unsigned) numLogEntries;
-- (void) updateCategory:(Category*)c;
-- (void) updateCategoryNameMaxWidth;
 
 // Google Docs
 - (void) setUserCredentialsWithUsername:(NSString*)user password:(NSString*)pass;

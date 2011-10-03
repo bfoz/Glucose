@@ -12,6 +12,7 @@
 
 @private
     NSMutableArray* categories;
+    NSNumber*	    categoryNameMaxWidth;
     sqlite3*	    database;		// SQLite database handle
     NSMutableArray* days;
     NSUserDefaults* defaults;
@@ -21,6 +22,7 @@
 }
 
 @property (nonatomic, readonly)	NSArray*    categories;
+@property (nonatomic, readonly)	unsigned    categoryNameMaxWidth;
 @property (nonatomic, readonly)	sqlite3*    database;
 @property (nonatomic, readonly)	NSMutableArray*    days;
 @property (nonatomic, readonly)	NSArray*    insulinTypes;
@@ -36,8 +38,11 @@
 
 #pragma mark Categories
 
+- (void) addCategory:(Category*)category;
 - (Category*) categoryForCategoryID:(unsigned)categoryID;
 - (void) moveCategoryAtIndex:(unsigned)from toIndex:(unsigned)to;
+- (void) purgeCategory:(Category*)category;
+- (void) updateCategory:(Category*)category;
 
 # pragma mark Insulin Types
 

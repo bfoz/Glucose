@@ -13,7 +13,10 @@
 
 @interface LogModel ()
 
+- (void) clearCategoryNameMaxWidth;
 - (void) clearInsulinTypeShortNameMaxWidth;
+- (void) flushCategories;
+- (void) removeCategory:(Category*)type;
 
 @end
 
@@ -55,7 +58,18 @@
 	    [entry flush:self.database];
 }
 
+#pragma mark
 #pragma mark Categories
+
+- (void) addCategory:(Category*)category
+{
+    if( ![categories containsObject:category] )
+    {
+	[Category insertCategory:category intoDatabase:self.database];
+	[categories addObject:category];
+    }
+    [self clearCategoryNameMaxWidth];
+}
 
 - (Category*) categoryForCategoryID:(unsigned)categoryID
 {
@@ -63,6 +77,54 @@
 	if( category.categoryID == categoryID )
 	    return category;
     return NULL;
+}
+
+- (unsigned) categoryNameMaxWidth
+{
+    if( !categoryNameMaxWidth )
+    {
+	float maxWidth = 0;
+	for( Category* c in categories )
+	{
+	    const float a = [c.categoryName sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
+	    if( a > maxWidth )
+		maxWidth = a;
+	}
+	categoryNameMaxWidth = [NSNumber numberWithFloat:maxWidth];
+    }
+    return [categoryNameMaxWidth unsignedIntValue];
+}
+
+// Clear the max width so it will be recomputed next time it's needed
+- (void) clearCategoryNameMaxWidth
+{
+    if( categoryNameMaxWidth )
+	[categoryNameMaxWidth release];
+    categoryNameMaxWidth = NULL;
+}
+
+// Flush the category list to the database
+- (void) flushCategories
+{
+    static char *sql = "REPLACE INTO LogEntryCategories (categoryID, sequence, name) VALUES(?,?,?)";
+    sqlite3_stmt *statement;
+    if( sqlite3_prepare_v2(self.database, sql, -1, &statement, NULL) != SQLITE_OK )
+	NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
+
+    unsigned i = 0;
+    for( Category* c in categories )
+    {
+	sqlite3_bind_int(statement, 1, c.categoryID);
+	sqlite3_bind_int(statement, 2, i);
+	sqlite3_bind_text(statement, 3, [c.categoryName UTF8String], -1, SQLITE_TRANSIENT);
+	int success = sqlite3_step(statement);
+	sqlite3_reset(statement);		// Reset the query for the next use
+	sqlite3_clear_bindings(statement);	//Clear all bindings for next time
+	if( success != SQLITE_DONE )
+	    NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
+	++i;
+    }
+    sqlite3_finalize(statement);
 }
 
 - (void) moveCategoryAtIndex:(unsigned)from toIndex:(unsigned)to
@@ -74,7 +136,40 @@
     [categories removeObjectAtIndex:from];
     [categories insertObject:c atIndex:to];
 
+    // Flush the array to preserve the new sequence
+    [self flushCategories];
+
     [c release];
+}
+
+// Purge a Category record from the database and the category array
+- (void) purgeCategory:(Category*)category
+{
+    // Move all LogEntries in the deleted category to category "None"
+    NSArray* a = [NSArray arrayWithArray:self.days];
+    for( LogDay* s in a )
+    {
+	NSArray* entries = [NSArray arrayWithArray:s.entries];
+	for( LogEntry* e in entries )
+	    if( e.category && (e.category == category) )
+		e.category = nil;;
+    }
+
+    [LogEntry moveAllEntriesInCategory:category toCategory:nil database:self.database];
+    [Category deleteCategory:category fromDatabase:self.database];
+    [self removeCategory:category];
+}
+
+- (void) removeCategory:(Category*)type
+{
+    [categories removeObject:type];
+    [self clearCategoryNameMaxWidth];
+}
+
+- (void) updateCategory:(Category*)category
+{
+    [category flush:self.database];
+    [self clearCategoryNameMaxWidth];
 }
 
 #pragma mark

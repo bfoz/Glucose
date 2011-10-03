@@ -99,9 +99,6 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	return NO;
     }
 
-    // Find the max width of the categoryName strings so it can be used for layout
-    [self updateCategoryNameMaxWidth];
-
     // Create an empty "Today" object if no LogDays are available
     if( 0 == [model numberOfLogDays] )
     {
@@ -196,17 +193,7 @@ sqlite3* openBundledDatabase()
 
     // Loop through the items to add
     for( Category* c in a )
-    {
-	// See if the category already exists
-	if( ![model categoryForCategoryID:c.categoryID] )
-	{
-	    [Category insertCategory:c intoDatabase:model.database];
-	    [model.categories addObject:c];
-	}
-    }
-
-    // Find the max width of the categoryName strings so it can be used for layout
-    [self updateCategoryNameMaxWidth];
+	[model addCategory:c];
 }
 
 - (void) appendBundledInsulinTypes
@@ -386,101 +373,9 @@ sqlite3* openBundledDatabase()
     return [LogEntry numLogEntriesForCategoryID:catID database:model.database];
 }
 
-#pragma mark Category Records
-
-// Create a new Category record and add it to the categories array
-- (void) addCategory:(NSString*)name
+- (unsigned) numberOfLogEntriesForCategory:(Category*)category
 {
-    Category* c = [Category newCategoryWithName:name database:model.database];
-    [model.categories addObject:c];
-    [c release];
-}
-
-// Purge a Category record from the database and the category array
-- (void) purgeCategoryAtIndex:(unsigned)index
-{
-    Category *const category = [model.categories objectAtIndex:index];
-
-    // Move all LogEntries in the deleted category to category "None"
-	NSArray* a = [NSArray arrayWithArray:model.days];
-	for( LogDay* s in a )
-	{
-		NSArray* entries = [NSArray arrayWithArray:s.entries];
-		for( LogEntry* e in entries )
-			if( e.category && (e.category == category) )
-			    e.category = nil;;
-	}
-
-    [LogEntry moveAllEntriesInCategory:category toCategory:nil database:model.database];
-    [Category deleteCategory:category fromDatabase:model.database];
-    [self removeCategoryAtIndex:index];
-}
-
-// Remove an Category record and generate a KV notification
-- (void) removeCategoryAtIndex:(unsigned)index
-{
-    [model.categories removeObjectAtIndex:index];
-}
-
-- (void) deleteEntriesForCategoryID:(unsigned)categoryID
-{
-	const char *query = "DELETE FROM localLogEntries WHERE categoryID=?";
-	sqlite3_stmt *statement;
-
-	if( sqlite3_prepare_v2(model.database, query, -1, &statement, NULL) == SQLITE_OK )
-	{
-		sqlite3_bind_int(statement, 1, categoryID);
-		int success = sqlite3_step(statement);
-		sqlite3_finalize(statement);
-		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(model.database));
-	}
-}
-
-- (void) updateCategory:(Category*)c
-{
-    [c flush:model.database];
-    [self updateCategoryNameMaxWidth];
-}
-
-// Flush the category list to the database
-//  !! This truncates the table first, then writes the entire array !!
-- (void) flushCategories
-{
-	// Truncate the category table
-	sqlite3_exec(model.database, "DELETE FROM LogEntryCategories", NULL, NULL, NULL);
-
-	static char *sql = "INSERT INTO LogEntryCategories (categoryID, sequence, name) VALUES(?,?,?)";
-	sqlite3_stmt *statement;
-	if( sqlite3_prepare_v2(model.database, sql, -1, &statement, NULL) != SQLITE_OK )
-		NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(model.database));
-
-	unsigned i = 0;
-	for( Category* c in model.categories )
-	{
-		sqlite3_bind_int(statement, 1, c.categoryID);
-		sqlite3_bind_int(statement, 2, i);
-		sqlite3_bind_text(statement, 3, [c.categoryName UTF8String], -1, SQLITE_TRANSIENT);
-		int success = sqlite3_step(statement);
-		sqlite3_reset(statement);		// Reset the query for the next use
-		sqlite3_clear_bindings(statement);	//Clear all bindings for next time
-		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(model.database));
-		++i;
-	}
-	sqlite3_finalize(statement);
-}
-
-- (void) updateCategoryNameMaxWidth
-{
-	float maxWidth = 0;
-	for( Category* c in model.categories )
-	{
-		const float a = [c.categoryName sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
-		if( a > maxWidth )
-			maxWidth = a;
-	}
-	maxCategoryNameWidth = maxWidth;
+    return [LogEntry numLogEntriesForCategoryID:category.categoryID database:model.database];
 }
 
 #pragma mark -
