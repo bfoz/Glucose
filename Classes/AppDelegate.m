@@ -56,8 +56,10 @@ unsigned maxInsulinTypeShortNameWidth = 0;
 	//  The background color is what shows up behind the flipping views
 	window.backgroundColor = [UIColor blackColor];
 	
-	// Register default defaults
-	NSArray* a = [NSArray arrayWithObjects:[NSNumber numberWithInt:6], [NSNumber numberWithInt:1], nil];	// NPH, Aspart
+    // Register default defaults
+    NSArray *const a = [NSArray arrayWithObjects:[NSNumber numberWithInt:1], // Aspart
+						 [NSNumber numberWithInt:6], // NPH
+						 nil];
 	NSArray* keys = [NSArray arrayWithObjects:kHighGlucoseWarning0, kLowGlucoseWarning0, kHighGlucoseWarning1, kLowGlucoseWarning1, kDefaultGlucoseUnits, kDefaultInsulinPrecision, kDefaultInsulinTypes, kExportGoogleShareEnable, nil];
 	NSArray* values = [NSArray arrayWithObjects:@"120", @"80", @"6.6", @"4.4", kGlucoseUnits_mgdL, [NSNumber numberWithInt:0], a, @"NO", nil];
 	NSDictionary* d = [NSDictionary dictionaryWithObjects:values forKeys:keys];
