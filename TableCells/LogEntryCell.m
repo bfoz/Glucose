@@ -10,9 +10,22 @@
 #import "LogEntryCell.h"
 #import "Constants.h"
 
+unsigned categoryNameWidth = 0;
+unsigned insulinTypeShortNameWidth = 0;
+
 @implementation LogEntryCell
 
 @synthesize	labelCategory, labelDose0, labelDose1, labelGlucose, labelTimestamp, labelType0, labelType1;
+
++ (void) setCategoryNameWidth:(unsigned)width
+{
+    categoryNameWidth = width;
+}
+
++ (void) setInsulinTypeShortNameWidth:(unsigned)width
+{
+    insulinTypeShortNameWidth = width;
+}
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -94,18 +107,18 @@
 	const unsigned y1 = y0 + h;
 
 	// Width of the Category/Timestamp column
-	const unsigned w0 = maxCategoryNameWidth > 80 ? maxCategoryNameWidth : 80;
+    const unsigned w0 = categoryNameWidth > 80 ? categoryNameWidth : 80;
 //	const unsigned w1 = (width - w0)/2;
 //	const unsigned w1 = width/3;
 //	const unsigned w2 = w1/2-10;
 	const unsigned w2 = 30;
 //	const unsigned w2 = width/6;
-	const unsigned w3 = maxInsulinTypeShortNameWidth;
+    const unsigned w3 = insulinTypeShortNameWidth;
 //	const unsigned w3 = width - (w0 + w1 + w2);
 
 	const unsigned x0 = insetRect.origin.x;
 //	const unsigned x2 = x0 + w0 + w1;	// Left origin of column 2
-	const unsigned x3 = insetRect.origin.x + insetRect.size.width - maxInsulinTypeShortNameWidth;
+    const unsigned x3 = insetRect.origin.x + insetRect.size.width - insulinTypeShortNameWidth;
 	const unsigned x2 = x3 - w2 - 3;	// Left origin of column 2
 //	const unsigned x3 = x2 + w2 + 3;
 

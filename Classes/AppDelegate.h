@@ -52,8 +52,6 @@
 
 @end
 
-extern unsigned maxCategoryNameWidth;
-extern unsigned maxInsulinTypeShortNameWidth;
 extern NSDateFormatter* shortDateFormatter;
 extern AppDelegate* appDelegate;
 

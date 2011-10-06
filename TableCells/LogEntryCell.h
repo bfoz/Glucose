@@ -38,4 +38,7 @@
 // Virtual properties
 @property (nonatomic, copy)	NSString*	note;
 
++ (void) setCategoryNameWidth:(unsigned)width;
++ (void) setInsulinTypeShortNameWidth:(unsigned)width;
+
 @end

@@ -83,13 +83,16 @@
     if( !categoryNameMaxWidth )
     {
 	float maxWidth = 0;
-	for( Category* c in categories )
+	for( Category* c in self.categories )
 	{
 	    const float a = [c.categoryName sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
 	    if( a > maxWidth )
 		maxWidth = a;
 	}
-	categoryNameMaxWidth = [NSNumber numberWithFloat:maxWidth];
+	if( maxWidth != 0 )
+	    categoryNameMaxWidth = [[NSNumber numberWithFloat:maxWidth] retain];
+	else
+	    return 0;
     }
     return [categoryNameMaxWidth unsignedIntValue];
 }
@@ -238,13 +241,16 @@
     if( !insulinTypeShortNameMaxWidth )
     {
 	float maxWidth = 0;
-	for( InsulinType* t in insulinTypes )
+	for( InsulinType* t in self.insulinTypes )
 	{
 	    const float a = [t.shortName sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
 	    if( a > maxWidth )
 		maxWidth = a;
 	}
-	insulinTypeShortNameMaxWidth = [NSNumber numberWithFloat:maxWidth];
+	if( maxWidth != 0 )
+	    insulinTypeShortNameMaxWidth = [[NSNumber numberWithFloat:maxWidth] retain];
+	else
+	    return 0;
     }
     return [insulinTypeShortNameMaxWidth unsignedIntValue];
 }

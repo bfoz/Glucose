@@ -37,9 +37,6 @@ AppDelegate* appDelegate = nil;
 
 NSDateFormatter* shortDateFormatter = nil;
 
-unsigned maxCategoryNameWidth = 0;
-unsigned maxInsulinTypeShortNameWidth = 0;
-
 #pragma mark -
 #pragma mark <UIApplicationDelegate>
 

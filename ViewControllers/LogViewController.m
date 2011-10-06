@@ -117,6 +117,10 @@
 {
 	[super viewWillAppear:animated];
 	[self.tableView reloadData];
+
+    // Update the LogEntryCell class width trackers
+    [LogEntryCell setInsulinTypeShortNameWidth:model.insulinTypeShortNameMaxWidth];
+    [LogEntryCell setCategoryNameWidth:model.categoryNameMaxWidth];
 }
 
 // Invoked when the user touches Edit.
