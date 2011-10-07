@@ -103,6 +103,7 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 	averageGlucose = sqlite3_column_double(statement, 2);
 
 	entries = [[NSMutableArray alloc] initWithCapacity:count];
+	units = NULL;
 	[self loadUnitsFromDatabase:sqlite3_db_handle(statement)];
     }
 
@@ -229,7 +230,7 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 
     if( averageGlucose != 0 )
     {
-	if( units )
+	if( self.units )
 	{
 	    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
 	    averageGlucoseString = [NSString localizedStringWithFormat:@"%.*f%@", precision, averageGlucose, units];
