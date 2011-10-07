@@ -19,6 +19,7 @@
     NSMutableArray* insulinTypes;
     NSMutableArray* insulinTypesForNewEntries;
     NSNumber*	    insulinTypeShortNameMaxWidth;
+    NSDateFormatter* shortDateFormatter;
 }
 
 @property (nonatomic, readonly)	NSArray*    categories;
@@ -65,6 +66,7 @@
 #pragma mark Log Days
 - (void) deleteLogDay:(LogDay*)day;
 - (LogDay*) logDayAtIndex:(unsigned)index;
+- (LogDay*) logDayForDate:(NSDate*)d;
 
 #pragma mark Log Entries
 - (NSMutableArray*) logEntriesForDay:(LogDay*)day;

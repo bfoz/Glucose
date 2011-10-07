@@ -328,7 +328,7 @@
 {
     if( logEntryViewController.entry.dirty )
     {
-	LogDay *const day = [appDelegate getSectionForDate:logEntryViewController.entry.timestamp];
+	LogDay *const day = [model logDayForDate:logEntryViewController.entry.timestamp];
 	if ( day != logEntryViewController.entrySection )
 	{
 	    [model moveLogEntry:logEntryViewController.entry

@@ -32,6 +32,8 @@
 	days = [[NSMutableArray alloc] init];
 	defaults = [NSUserDefaults standardUserDefaults];
 	insulinTypeShortNameMaxWidth = NULL;
+	shortDateFormatter = [[NSDateFormatter alloc] init];
+	[shortDateFormatter setDateStyle:NSDateFormatterShortStyle];
     }
 
     return self;
@@ -387,6 +389,47 @@ int orderInsulinTypesByIndex(id left, id right, void* insulinTypes)
 	    return [days objectAtIndex:index];
     }
     return NULL;
+}
+
+static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
+						 NSMonthCalendarUnit |
+						 NSDayCalendarUnit);
+
+- (LogDay*) logDayForDate:(NSDate*)date
+{
+    NSCalendar *const calendar = [NSCalendar currentCalendar];
+    NSDateComponents *const _date = [calendar components:DATE_COMPONENTS_FOR_DAY
+					        fromDate:date];
+    for( LogDay* s in self.days )
+    {
+	NSDateComponents *const c = [calendar components:DATE_COMPONENTS_FOR_DAY
+						fromDate:s.date];
+	if( (_date.day == c.day) &&
+	    (_date.month == c.month) &&
+	    (_date.year == c.year) )
+	    return s;
+    }
+
+    LogDay* day = [[LogDay alloc] initWithDate:date];
+    day.name = [shortDateFormatter stringFromDate:date];
+
+    /* At this point it's already known that the given date doesn't match
+    	anything in the array. So, only need to compare seconds; no need to
+    	create calendar components. */
+
+    // Find the index that the new LogDay should be inserted at
+    unsigned i = 0;
+    const double a = [date timeIntervalSince1970];
+    for( LogDay* s in self.days )
+    {
+	if( a > [s.date timeIntervalSince1970] )
+	    break;
+	++i;
+    }
+
+    [self.days insertObject:day atIndex:i];
+    [day release];
+    return day;
 }
 
 #pragma mark Log Entries

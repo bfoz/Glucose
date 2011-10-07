@@ -62,12 +62,6 @@ NSDateFormatter* shortDateFormatter = nil;
 	NSDictionary* d = [NSDictionary dictionaryWithObjects:values forKeys:keys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:d];
 
-	if( !shortDateFormatter )
-	{
-		shortDateFormatter = [[NSDateFormatter alloc] init];
-		[shortDateFormatter setDateStyle:NSDateFormatterShortStyle];
-	}
-
     // Create the Log Model object
     model = [[LogModel alloc] init];
     if( !model )
@@ -209,56 +203,6 @@ sqlite3* openBundledDatabase()
     // Loop through the items to add
     for( InsulinType* t in a )
 	[model addInsulinType:t];
-}
-
-#pragma mark -
-#pragma mark Array Management
-
-- (LogDay*) findSectionForDate:(NSDate*)d
-{
-	NSCalendar *const calendar = [NSCalendar currentCalendar];
-	static const unsigned components = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
-	NSDateComponents *const date = [calendar components:components fromDate:d];
-//	NSDate* today = [NSDate date];
-//	NSMutableDictionary* r = nil;
-	for( LogDay* s in model.days )
-	{
-		NSDateComponents *const c = [calendar components:components fromDate:s.date];
-//		NSDateComponents* c = [calendar components:components fromDate:s.date toDate:today options:0];
-		if( (date.day == c.day) && (date.month == c.month) && (date.year == c.year) )
-			return s;
-	}
-	return nil;
-}
-
-- (LogDay*) getSectionForDate:(NSDate*)date
-{
-	LogDay* s = [self findSectionForDate:date];
-	if( s )
-		return s;
-
-	s = [[LogDay alloc] initWithDate:date];
-	s.name = [shortDateFormatter stringFromDate:date];
-
-	// At this point it's already known that the given date doesn't match 
-	//	anything in the array. So, only need to compare seconds; no need to 
-	//	create calendar components.
-	unsigned i = 0;
-	if( model.numberOfLoadedLogDays )
-	{
-		// Find the index that entry should be inserted at
-		const double a = [date timeIntervalSince1970];
-		for( LogDay* s in model.days )
-		{
-			if( a > [s.date timeIntervalSince1970] )
-				break;
-			++i;
-		}
-	}
-
-    [model.days insertObject:s atIndex:i];
-    [s release];
-	return s;
 }
 
 #pragma mark -

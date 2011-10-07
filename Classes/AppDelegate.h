@@ -34,10 +34,6 @@
 @property (nonatomic, readonly)	LogViewController*	logViewController;
 @property (nonatomic, readonly) GDataServiceGoogleDocs*	docService;
 
-#pragma mark Array Management
-- (LogDay*) findSectionForDate:(NSDate*)date;
-- (LogDay*) getSectionForDate:(NSDate*)date;
-
 - (void) appendBundledCategories;
 - (void) appendBundledInsulinTypes;
 - (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
