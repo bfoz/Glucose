@@ -39,6 +39,11 @@
     return self;
 }
 
+- (NSString*) shortStringFromDate:(NSDate*)date
+{
+    return [shortDateFormatter stringFromDate:date];
+}
+
 - (void) close
 {
     if( database )

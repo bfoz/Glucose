@@ -403,7 +403,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 					// The From field defaults to the day after the last export
 					//  or the beginning of the LogEntry table if no last export
 					cell.textLabel.text = @"From";
-					cell.detailTextLabel.text = [shortDateFormatter stringFromDate:exportStart];
+					cell.detailTextLabel.text = [model shortStringFromDate:exportStart];
 					exportStartField = cell.detailTextLabel;
 					exportStartCell = cell;
 					break;
@@ -444,7 +444,13 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	NSDate *const lastExportedOn = [defaults objectForKey:kLastExportGoogleOnDate];
 
 	if( lastExportStart && lastExportEnd && lastExportedOn )
-	    return [NSString stringWithFormat:@"Last exported from %@ to %@ on %@", [shortDateFormatter stringFromDate:lastExportStart], [shortDateFormatter stringFromDate:lastExportEnd], [shortDateFormatter stringFromDate:lastExportedOn]];
+	{
+	    NSString* stringLastExportStart = [model shortStringFromDate:lastExportStart];
+	    NSString* stringLastExportEnd = [model shortStringFromDate:lastExportEnd];
+	    NSString* stringLastExportedOn = [model shortStringFromDate:lastExportedOn];
+	    if( stringLastExportStart && stringLastExportEnd && stringLastExportedOn )
+		return [NSString stringWithFormat:@"Last exported from %@ to %@ on %@", stringLastExportStart, stringLastExportEnd, stringLastExportedOn];
+	}
     }
     return nil;
 }
@@ -541,7 +547,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[defaults setObject:exportStart forKey:kLastExportGoogleFromDate];
 	[defaults setObject:exportEnd forKey:kLastExportGoogleToDate];
 	// Update the "Last Export On" row
-	exportLastField.text = [shortDateFormatter stringFromDate:[NSDate date]];
+	exportLastField.text = [model shortStringFromDate:[NSDate date]];
 	
     // Update the footer text
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:SECTION_EXPORT]
@@ -670,7 +676,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	return;
     }
 
-    NSString *const title = [NSString stringWithFormat:@"Glucose Export from %@ to %@", [shortDateFormatter stringFromDate:exportStart], [shortDateFormatter stringFromDate:exportEnd], nil];
+    NSString *const title = [NSString stringWithFormat:@"Glucose Export from %@ to %@", [model shortStringFromDate:exportStart], [model shortStringFromDate:exportEnd], nil];
 
     GDataEntryDocBase *docEntry = [GDataEntrySpreadsheetDoc documentEntry];
     [docEntry setUploadMIMEType:@"text/csv"];
@@ -859,7 +865,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[exportStart release];
 	exportStart = datePicker.date;
 	[exportStart retain];
-	exportStartField.text = [shortDateFormatter stringFromDate:exportStart];
+	exportStartField.text = [model shortStringFromDate:exportStart];
 	[self updateExportRowText];
 	[[NSUserDefaults standardUserDefaults] setObject:exportStart forKey:kLastExportGoogleFromDate];
 }
@@ -869,7 +875,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	[exportEnd release];
 	exportEnd = datePicker.date;
 	[exportEnd retain];
-	exportEndField.text = [shortDateFormatter stringFromDate:exportEnd];
+	exportEndField.text = [model shortStringFromDate:exportEnd];
 	[self updateExportRowText];
 	[[NSUserDefaults standardUserDefaults] setObject:exportEnd forKey:kLastExportGoogleToDate];
 }

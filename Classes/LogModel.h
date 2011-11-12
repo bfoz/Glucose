@@ -33,6 +33,7 @@
 @property (nonatomic, readonly)	unsigned    numberOfLogDays;
 
 - (id) init;
+- (NSString*) shortStringFromDate:(NSDate*)date;
 
 - (void) close;
 - (void) flush;
