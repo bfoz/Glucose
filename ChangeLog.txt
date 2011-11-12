@@ -1,3 +1,9 @@
+Version 0.7.2 - October 9, 2011
+- Fixed ordering of default insulins for new entries
+- Fixed InsulinType and Category name width trackers
+- Fixed initialization and isage of units in LogDay
+- Moved LogDay finding and creation to LogModel
+
 Version 0.7.1 - October 2, 2011
 - Fixed statement finalization in LogEntry
 - Fixed database handle opening after backgrounding
