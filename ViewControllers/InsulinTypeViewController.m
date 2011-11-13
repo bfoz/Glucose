@@ -322,15 +322,6 @@
 	    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidUnselectInsulinType:)] )
 		[delegate insulinTypeViewControllerDidUnselectInsulinType:t];
 	}
-
-	// Don't need to pop/dismiss when in multicheck mode (the nav controller handles it)
-	if( !multiCheck )
-	{
-	    if( self.parentViewController.modalViewController == self )
-		[self.parentViewController dismissModalViewControllerAnimated:YES];
-	    else
-		[self.navigationController popViewControllerAnimated:YES];
-	}
     }
 }
 

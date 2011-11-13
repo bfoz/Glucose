@@ -626,6 +626,8 @@ static NSUserDefaults* defaults = nil;
 
 - (void) categoryViewControllerDidSelectCategory:(Category *)category
 {
+    [self dismissModalViewControllerAnimated:YES];
+
     entry.category = category;
     if( editingNewEntry )
 	[glucoseCell becomeFirstResponder];
@@ -676,6 +678,8 @@ static NSUserDefaults* defaults = nil;
 
 - (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type
 {
+    [self dismissModalViewControllerAnimated:YES];
+
     // Update the insulin type for the entry's dose. If the entry doesn't have
     //	a dose at the specified index, append a new dose object with the
     //	selected type.

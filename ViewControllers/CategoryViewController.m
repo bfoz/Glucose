@@ -227,11 +227,6 @@
 	selectedCategory = row ? [model.categories objectAtIndex:row-1] : nil;
 	if( [delegate respondsToSelector:@selector(categoryViewControllerDidSelectCategory:)] )
 	    [delegate categoryViewControllerDidSelectCategory:selectedCategory];
-
-	if( self.parentViewController.modalViewController == self )
-	    [self.parentViewController dismissModalViewControllerAnimated:YES];
-	else
-	    [self.navigationController popViewControllerAnimated:YES];
     }
 
     // HI guidlines say row should be selected and then deselected
