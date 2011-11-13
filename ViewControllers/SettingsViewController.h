@@ -13,6 +13,7 @@
 @class CategoryViewController;
 @class ExportViewController;
 @class InsulinTypeViewController;
+@class PurgeViewController;
 @class LogModel;
 
 @protocol SettingsViewControllerDelegate;
@@ -34,7 +35,7 @@
     NSString*			lowGlucoseWarningKey;
 
     ExportViewController*	exportViewController;
-    UITableViewController*	purgeViewController;
+    PurgeViewController*	purgeViewController;
 }
 
 @property (nonatomic, retain)	id<SettingsViewControllerDelegate>    delegate;

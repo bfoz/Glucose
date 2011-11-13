@@ -10,6 +10,8 @@
 
 #import "SlidingViewController.h"
 
+@class LogModel;
+
 @interface PurgeViewController : SlidingViewController <UIAlertViewDelegate>
 {
 	NSDate*	purgeStart;
@@ -21,6 +23,11 @@
 	UILabel*			purgeEndField;
 	UITableViewCell*	purgeStartCell;
 	UITableViewCell*	purgeEndCell;
+
+@private
+    LogModel*			model;
 }
+
+@property (nonatomic, retain) LogModel*	model;
 
 @end

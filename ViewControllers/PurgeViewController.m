@@ -8,12 +8,15 @@
 
 #import "AppDelegate.h"
 #import "Constants.h"
+#import "LogModel.h"
 
 #import "PurgeViewController.h"
 
 #define	kPurgeButtonSection	1
 
 @implementation PurgeViewController
+
+@synthesize model;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -100,7 +103,13 @@
 	NSDate *const lastPurgedOn = [defaults objectForKey:kLastPurgedOnDate];
 
 	if( lastPurgeStart && lastPurgeEnd && lastPurgedOn )
-	    return [NSString stringWithFormat:@"Last purged from %@ to %@ on %@", [shortDateFormatter stringFromDate:purgeStart], [shortDateFormatter stringFromDate:purgeEnd], [shortDateFormatter stringFromDate:lastPurgedOn]];
+	{
+	    NSString* stringLastPurgeStart = [model shortStringFromDate:purgeStart];
+	    NSString* stringLastPurgeEnd = [model shortStringFromDate:lastPurgeEnd];
+	    NSString* stringLastPurgedOn = [model shortStringFromDate:lastPurgedOn];
+	    if( stringLastPurgeStart && stringLastPurgeEnd && stringLastPurgedOn )
+		return [NSString stringWithFormat:@"Last purged from %@ to %@ on %@", stringLastPurgeStart, stringLastPurgeEnd, stringLastPurgedOn];
+	}
     }
     return nil;
 }
@@ -138,7 +147,7 @@
 					// The From field defaults to the day after the end of last purge
 					//  or the beginning of the LogEntry table if no last export
 					cell.textLabel.text = @"From";
-					cell.detailTextLabel.text = [shortDateFormatter stringFromDate:purgeStart];
+					cell.detailTextLabel.text = [model shortStringFromDate:purgeStart];
 					purgeStartField = cell.detailTextLabel;
 					purgeStartCell = cell;
 					break;
@@ -180,7 +189,7 @@
 		case 1:
 		{
 			UIAlertView* alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Purge %u Records?", [appDelegate numLogEntriesFrom:purgeStart to:purgeEnd]]
-															message:[NSString stringWithFormat:@"Delete all records from %@ to %@?", [shortDateFormatter stringFromDate:purgeStart], [shortDateFormatter stringFromDate:purgeEnd]]
+															message:[NSString stringWithFormat:@"Delete all records from %@ to %@?", [model shortStringFromDate:purgeStart], [model shortStringFromDate:purgeEnd]]
 														    delegate:self
 												   cancelButtonTitle:@"Cancel"
 												   otherButtonTitles:@"OK",nil];
@@ -227,7 +236,7 @@
 	[purgeStart release];
 	purgeStart = datePicker.date;
 	[purgeStart retain];
-	purgeStartField.text = [shortDateFormatter stringFromDate:purgeStart];
+	purgeStartField.text = [model shortStringFromDate:purgeStart];
 	[self updatePurgeRowText];
 }
 
@@ -236,7 +245,7 @@
 	[purgeEnd release];
 	purgeEnd = datePicker.date;
 	[purgeEnd retain];
-	purgeEndField.text = [shortDateFormatter stringFromDate:purgeEnd];
+	purgeEndField.text = [model shortStringFromDate:purgeEnd];
 	[self updatePurgeRowText];
 }
 
