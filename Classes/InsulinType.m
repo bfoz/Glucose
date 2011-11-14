@@ -8,6 +8,7 @@
 
 #import "InsulinType.h"
 
+static const char *const sqlInsertUserInsulinType = "INSERT INTO InsulinTypes (typeID, sequence, shortName) SELECT MAX(1000,MAX(typeID)+1),MAX(sequence)+1,? FROM InsulinTypes";
 
 @implementation InsulinType
 
@@ -39,10 +40,9 @@
 // Create a new InsulinType record in the database and return an new InsulinType object
 + (InsulinType*) newInsulinTypeWithName:(NSString*)n database:(sqlite3*)database
 {
-	static char *sql = "INSERT INTO InsulinTypes (sequence, shortName) SELECT MAX(sequence)+1,? FROM InsulinTypes";
 	sqlite3_stmt *statement;
 	
-	if( sqlite3_prepare_v2(database, sql, -1, &statement, NULL) != SQLITE_OK )
+	if( sqlite3_prepare_v2(database, sqlInsertUserInsulinType, -1, &statement, NULL) != SQLITE_OK )
 		NSAssert1(0, @"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
 	
 	NSString* name;

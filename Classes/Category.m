@@ -8,6 +8,7 @@
 
 #import "Category.h"
 
+static const char *const sqlInsertUserCategory = "INSERT INTO LogEntryCategories (categoryID, sequence, name) SELECT MAX(1000,MAX(categoryID)+1),MAX(sequence)+1,? FROM LogEntryCategories";
 
 @implementation Category
 
@@ -61,10 +62,9 @@
 // Create a new Category record in the database and return an new Category object
 + (Category*) newCategoryWithName:(NSString*)n database:(sqlite3*)database
 {
-	static char *sql = "INSERT INTO LogEntryCategories (sequence, name) SELECT MAX(sequence)+1,? FROM LogEntryCategories";
 	sqlite3_stmt *statement;
 	
-	if( sqlite3_prepare_v2(database, sql, -1, &statement, NULL) != SQLITE_OK )
+    if( sqlite3_prepare_v2(database, sqlInsertUserCategory, -1, &statement, NULL) != SQLITE_OK )
 		NSAssert1(0, @"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
 	
 	NSString* name;
