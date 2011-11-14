@@ -484,7 +484,7 @@ enum AboutSectionRows
 
 - (void) categoryViewControllerCreateCategory
 {
-    [model addCategory:nil];
+    [model addCategoryWithName:nil];
 }
 
 - (void) categoryViewControllerDidDeleteCategory:(Category*)category

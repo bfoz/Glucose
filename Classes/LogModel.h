@@ -41,6 +41,7 @@
 #pragma mark Categories
 
 - (void) addCategory:(Category*)category;
+- (void) addCategoryWithName:(NSString*)name;
 - (Category*) categoryForCategoryID:(unsigned)categoryID;
 - (void) moveCategoryAtIndex:(unsigned)from toIndex:(unsigned)to;
 - (void) purgeCategory:(Category*)category;

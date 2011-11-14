@@ -77,6 +77,15 @@
     [self clearCategoryNameMaxWidth];
 }
 
+- (void) addCategoryWithName:(NSString*)name
+{
+    Category *const category = [Category newCategoryWithName:name
+						    database:self.database];
+    [categories addObject:category];
+    [category release];
+    [self clearCategoryNameMaxWidth];
+}
+
 - (Category*) categoryForCategoryID:(unsigned)categoryID
 {
     for( Category* category in self.categories )
