@@ -1,3 +1,6 @@
+Version 0.7.3 - November 19, 2011
+	- Fixed a few more display bugs
+
 Version 0.7.2 - October 9, 2011
 	- Fixed a few display bugs
 

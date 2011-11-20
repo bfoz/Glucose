@@ -1,3 +1,8 @@
+Version 0.7.3 - November 19, 2011
+- Fixed averages updating on LogView
+- Fixed crash on category creation
+- Fixed date display on Purge and Export screens
+
 Version 0.7.2 - October 9, 2011
 - Fixed ordering of default insulins for new entries
 - Fixed InsulinType and Category name width trackers
