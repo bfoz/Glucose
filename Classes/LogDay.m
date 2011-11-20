@@ -218,6 +218,10 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 		}
 	}
 	averageGlucose = i ? averageGlucose/i : 0;
+
+    // Invalidate averageGlucoseString so it can be updated later
+    [averageGlucoseString release];
+    averageGlucoseString = NULL;
 }
 
 #pragma mark -
