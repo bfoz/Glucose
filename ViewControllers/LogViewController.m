@@ -162,7 +162,9 @@
 {
     const unsigned numLoaded = [model numberOfLoadedLogDays];
 
-    // Schedule a section load if nothing has been loaded yet
+    /* Schedule a section load if nothing has been loaded yet
+	This should never happen because the AppDelegate ensures that there is 
+	always at least one day loaded, even if it's empty.	*/
     if( 0 == numLoaded )
 	[self performSelectorOnMainThread:@selector(loadNextSection) withObject:nil waitUntilDone:NO];
 

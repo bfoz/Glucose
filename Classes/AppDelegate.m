@@ -100,6 +100,8 @@ NSDateFormatter* shortDateFormatter = nil;
 	[model.days addObject:section];
 	[section release];
     }
+    else    // Otherwise, load the first LogDay from the database
+	[model logDayAtIndex:0];
 
 	// Configure and display the window
     [window addSubview:[navController view]];
