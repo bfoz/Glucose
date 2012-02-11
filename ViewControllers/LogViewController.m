@@ -31,7 +31,7 @@
 @synthesize dateFormatter;
 @synthesize delegate;
 @synthesize model;
-@synthesize logEntryViewController, settingsViewController;
+@synthesize settingsViewController;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -58,7 +58,6 @@
 - (void)dealloc
 {
 //    [tableView release];
-	[logEntryViewController release];
 	[super dealloc];
 }
 
@@ -79,13 +78,9 @@
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e isNew:(BOOL)n
 {
-    // Create the detail view lazily
-    if( !logEntryViewController )
-    {
-        logEntryViewController = [[LogEntryViewController alloc] initWithStyle:UITableViewStyleGrouped];
-	logEntryViewController.delegate = self;
-	logEntryViewController.model = model;
-    }
+    LogEntryViewController* logEntryViewController = [[LogEntryViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    logEntryViewController.delegate = self;
+    logEntryViewController.model = model;
 
 //    [entry hydrate];		// Force the LogEntry to be fully loaded from the database
     logEntryViewController.entry = entry;	// Give the view controller the LogEntry to display
@@ -94,6 +89,7 @@
     [self.navigationController pushViewController:logEntryViewController animated:YES];
     logEntryViewController.editingNewEntry = n;
     [logEntryViewController setEditing:e animated:NO];
+    [logEntryViewController release];
 }
 
 - (void) showSettings:(id)sender
@@ -326,21 +322,21 @@
 #pragma mark -
 #pragma mark <LogEntryViewDelegate>
 
-- (void) logEntryViewDidEndEditing
+- (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(LogEntry*)entry
 {
-    if( logEntryViewController.entry.dirty )
+    if( entry.dirty )
     {
-	LogDay *const day = [model logDayForDate:logEntryViewController.entry.timestamp];
-	if ( day != logEntryViewController.entrySection )
+	LogDay *const newDay = [model logDayForDate:entry.timestamp];
+	if ( newDay != view.entrySection )
 	{
-	    [model moveLogEntry:logEntryViewController.entry
-			fromDay:logEntryViewController.entrySection
-			  toDay:day];
-	    logEntryViewController.entrySection = day;
+	    [model moveLogEntry:entry
+			fromDay:view.entrySection
+			  toDay:newDay];
+	    view.entrySection = newDay;
 	}
 	else	// Only need to update if above block was skipped
-	    [day updateStatistics];
-	[logEntryViewController.entry flush:model.database];
+	    [newDay updateStatistics];
+	[entry flush:model.database];
     }
 }
 
@@ -348,10 +344,6 @@
 
 - (void) settingsViewControllerDidChangeGlucoseUnits
 {
-    // Dirty hack to force a reload of the log entry view whenever the glucose units setting changes
-    if( self.logEntryViewController )
-	self.logEntryViewController = nil;
-
     [self.tableView reloadData];
 }
 

@@ -13,7 +13,6 @@
 #import "ExportViewController.h"
 #import "InsulinTypeViewController.h"
 #import "LogModel.h"
-#import "LogViewController.h"
 #import "NumberField.h"
 #import "PurgeViewController.h"
 #import "SettingsViewController.h"
@@ -156,8 +155,6 @@ enum AboutSectionRows
     {
 	[defaults setObject:[NSNumber numberWithInt:0] forKey:kDefaultInsulinPrecision];	
     }
-    // Force the LogViewController to reload the LogEntryViewController so it can pick up the change
-    appDelegate.logViewController.logEntryViewController = nil;
 }
 
 #pragma mark -

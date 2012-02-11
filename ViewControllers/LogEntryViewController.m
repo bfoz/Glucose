@@ -133,8 +133,8 @@ static NSUserDefaults* defaults = nil;
     */
     if( self.editing && !e )
     {
-	if( [delegate respondsToSelector:@selector(logEntryViewDidEndEditing)] )
-	    [delegate logEntryViewDidEndEditing];
+	if( [delegate respondsToSelector:@selector(logEntryView:didEndEditing:)] )
+	    [delegate logEntryView:self didEndEditingEntry:self.entry];
     }
 
     // Not editing, so not editing a new entry

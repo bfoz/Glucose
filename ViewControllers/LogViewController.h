@@ -23,12 +23,10 @@
     NSDateFormatter *dateFormatter;
 //	unsigned	inspectingSectionID;
 //	NSMutableDictionary*	inspectingSection;
-	LogEntryViewController* logEntryViewController;
 	SettingsViewController*	settingsViewController;
 }
 @property (nonatomic, assign) id <LogViewDelegate>  delegate;
 @property (nonatomic, retain) LogModel*		    model;
-@property (nonatomic, retain) LogEntryViewController* logEntryViewController;
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e isNew:(BOOL)n;

@@ -58,6 +58,6 @@
 @protocol LogEntryViewDelegate <NSObject>
 
 @optional
-- (void) logEntryViewDidEndEditing;
+- (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(LogEntry*)entry;
 
 @end
