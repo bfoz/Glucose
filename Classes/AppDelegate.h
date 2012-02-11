@@ -23,7 +23,6 @@
 {
     IBOutlet UIWindow *window;
     UINavigationController* navController;
-	LogViewController*	logViewController;
 
 @private
     LogModel*	model;
@@ -31,7 +30,6 @@
 
 @property (nonatomic, retain)	UIWindow*	window;
 @property (nonatomic, retain)	UINavigationController* navController;
-@property (nonatomic, readonly)	LogViewController*	logViewController;
 @property (nonatomic, readonly) GDataServiceGoogleDocs*	docService;
 
 - (void) appendBundledCategories;

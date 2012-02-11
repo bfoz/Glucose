@@ -1,11 +1,3 @@
-//
-//  LogViewController.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 6/28/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import "AppDelegate.h"
 #import "Constants.h"
 
@@ -22,6 +14,8 @@
 @interface LogViewController () <SettingsViewControllerDelegate>
 
 @property (nonatomic, retain)	NSDateFormatter*	dateFormatter;
+@property (nonatomic, assign) id<LogViewDelegate>   delegate;
+@property (nonatomic, retain) LogModel*	model;
 @property (nonatomic, retain) SettingsViewController* settingsViewController;
 
 @end
@@ -29,14 +23,17 @@
 @implementation LogViewController
 
 @synthesize dateFormatter;
-@synthesize delegate;
-@synthesize model;
+@synthesize delegate = _delegate;
+@synthesize model = _model;
 @synthesize settingsViewController;
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id)initWithModel:(LogModel*)model delegate:(id<LogViewDelegate>)delegate
 {
-	if( self = [super initWithStyle:style] )
-	{
+    if( self = [super initWithStyle:UITableViewStylePlain] )
+    {
+	self.delegate = delegate;
+	self.model = model;
+
 		self.title = @"Glucose";
 
         UIButton* b = [[UIButton buttonWithType:UIButtonTypeInfoLight] retain];
@@ -57,8 +54,8 @@
 
 - (void)dealloc
 {
-//    [tableView release];
-	[super dealloc];
+    self.model = nil;
+    [super dealloc];
 }
 
 - (void)viewDidLoad
@@ -80,7 +77,7 @@
 {
     LogEntryViewController* logEntryViewController = [[LogEntryViewController alloc] initWithStyle:UITableViewStyleGrouped];
     logEntryViewController.delegate = self;
-    logEntryViewController.model = model;
+    logEntryViewController.model = _model;
 
 //    [entry hydrate];		// Force the LogEntry to be fully loaded from the database
     logEntryViewController.entry = entry;	// Give the view controller the LogEntry to display
@@ -98,7 +95,7 @@
     {
 	settingsViewController = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
 	settingsViewController.delegate = self;
-	settingsViewController.model = model;
+	settingsViewController.model = _model;
     }
 
 	[UIView beginAnimations:nil context:NULL];
@@ -115,8 +112,8 @@
 	[self.tableView reloadData];
 
     // Update the LogEntryCell class width trackers
-    [LogEntryCell setInsulinTypeShortNameWidth:model.insulinTypeShortNameMaxWidth];
-    [LogEntryCell setCategoryNameWidth:model.categoryNameMaxWidth];
+    [LogEntryCell setInsulinTypeShortNameWidth:_model.insulinTypeShortNameMaxWidth];
+    [LogEntryCell setCategoryNameWidth:_model.categoryNameMaxWidth];
 }
 
 // Invoked when the user touches Edit.
@@ -135,7 +132,7 @@
 - (void) addNewEntry:(id)sender
 {
     // Create a new record
-    LogEntry *const entry = [model createLogEntry];
+    LogEntry *const entry = [_model createLogEntry];
 
     // Display the detail view so the user can edit the new entry
     if( entry )
@@ -145,9 +142,9 @@
 // Force the delegate to load another section and then tell the UITableView about it
 - (void) loadNextSection
 {
-    const unsigned count = [model numberOfLoadedLogDays];
-
-    if( [model logDayAtIndex:count] )
+    const unsigned count = [_model numberOfLoadedLogDays];
+    NSLog(@"Loading day %d", count);
+    if( [_model logDayAtIndex:count] )
 	[self.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(count,1)]
 		      withRowAnimation:NO];
 }
@@ -156,7 +153,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    const unsigned numLoaded = [model numberOfLoadedLogDays];
+    const unsigned numLoaded = [_model numberOfLoadedLogDays];
 
     /* Schedule a section load if nothing has been loaded yet
 	This should never happen because the AppDelegate ensures that there is 
@@ -169,12 +166,12 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [model numberOfEntriesForLogDayAtIndex:section];
+    return [_model numberOfEntriesForLogDayAtIndex:section];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    LogDay *const day = [model logDayAtIndex:section];
+    LogDay *const day = [_model logDayAtIndex:section];
 
     /* Display "Today" instead of the date string if the LogDay corresponds to
 	the current date. Only the first section could possibly be the "today"
@@ -213,7 +210,7 @@
     }
 
     // Get the LogEntry for the cell
-    LogEntry *const entry = [model logEntryAtIndex:row inDayIndex:section];
+    LogEntry *const entry = [_model logEntryAtIndex:row inDayIndex:section];
 
 	// Configure the cell
 //	cell.entry = entry;
@@ -279,7 +276,7 @@
     // HI guidlines say row should be selected and then deselected
     [tv deselectRowAtIndexPath:path animated:YES];
 
-    LogDay *const s = [model logDayAtIndex:section];
+    LogDay *const s = [_model logDayAtIndex:section];
 
     [self inspectLogEntry:[s.entries objectAtIndex:row] inSection:s];
 }
@@ -290,7 +287,7 @@
     const unsigned numberOfSections = [tv numberOfSections];
     if( (numberOfSections == (path.section + 1)) && (path.row == 0) )
     {
-	if( numberOfSections < [model numberOfLogDays] )
+	if( numberOfSections < [_model numberOfLogDays] )
 	    [self performSelectorOnMainThread:@selector(loadNextSection) withObject:nil waitUntilDone:NO];
     }
 }
@@ -300,18 +297,18 @@
     // If the row was deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	LogDay *const day = [model logDayAtIndex:indexPath.section];
+	LogDay *const day = [_model logDayAtIndex:indexPath.section];
 	if( 1 == [day count] )	// If the section is about to be empty, delete it
 	{
-	    [model deleteLogDay:day];
+	    [_model deleteLogDay:day];
 
 	    // This must be called after deleting the section, otherwise UITableView will throw an exception
 	    [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationFade];
 	}
 	else
 	{
-	    [model deleteLogEntry:[model logEntryAtIndex:indexPath.row inDay:day]
-			    inDay:day];
+	    [_model deleteLogEntry:[_model logEntryAtIndex:indexPath.row inDay:day]
+			     inDay:day];
 
 	    // This must be called after deleting the row, otherwise UITableView will throw an exception
 	    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
@@ -326,17 +323,17 @@
 {
     if( entry.dirty )
     {
-	LogDay *const newDay = [model logDayForDate:entry.timestamp];
+	LogDay *const newDay = [_model logDayForDate:entry.timestamp];
 	if ( newDay != view.entrySection )
 	{
-	    [model moveLogEntry:entry
-			fromDay:view.entrySection
-			  toDay:newDay];
+	    [_model moveLogEntry:entry
+			 fromDay:view.entrySection
+			   toDay:newDay];
 	    view.entrySection = newDay;
 	}
 	else	// Only need to update if above block was skipped
 	    [newDay updateStatistics];
-	[entry flush:model.database];
+	[entry flush:_model.database];
     }
 }
 
@@ -359,4 +356,3 @@
 }
 
 @end
-

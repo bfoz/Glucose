@@ -33,7 +33,6 @@ AppDelegate* appDelegate = nil;
 
 @synthesize window;
 @synthesize navController;
-@synthesize logViewController;
 
 NSDateFormatter* shortDateFormatter = nil;
 
@@ -70,9 +69,7 @@ NSDateFormatter* shortDateFormatter = nil;
 	return NO;
     }
 
-    logViewController = [[LogViewController alloc] initWithStyle:UITableViewStylePlain];
-    logViewController.delegate = self;
-    logViewController.model = model;
+    LogViewController* logViewController = [[LogViewController alloc] initWithModel:model delegate:self];
     UINavigationController* aNavigationController = [[UINavigationController alloc] initWithRootViewController:logViewController];
     self.navController = aNavigationController;
 

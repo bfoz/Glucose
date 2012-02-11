@@ -17,16 +17,14 @@
 
 @interface LogViewController : UITableViewController <LogEntryViewDelegate>
 {
-    id <LogViewDelegate>    delegate;
-    LogModel*		    model;
-
     NSDateFormatter *dateFormatter;
 //	unsigned	inspectingSectionID;
 //	NSMutableDictionary*	inspectingSection;
 	SettingsViewController*	settingsViewController;
 }
-@property (nonatomic, assign) id <LogViewDelegate>  delegate;
-@property (nonatomic, retain) LogModel*		    model;
+
+
+- (id)initWithModel:(LogModel*)model delegate:(id<LogViewDelegate>)delegate;
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e isNew:(BOOL)n;
