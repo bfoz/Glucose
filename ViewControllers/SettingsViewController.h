@@ -45,6 +45,7 @@
 
 @protocol SettingsViewControllerDelegate <NSObject>
 
+- (void) settingsViewControllerDidChangeGlucoseUnits;
 - (void) settingsViewControllerDidPressBack;
 
 @end

@@ -346,6 +346,15 @@
 
 #pragma mark <SettingsViewControllerDelegate>
 
+- (void) settingsViewControllerDidChangeGlucoseUnits
+{
+    // Dirty hack to force a reload of the log entry view whenever the glucose units setting changes
+    if( self.logEntryViewController )
+	self.logEntryViewController = nil;
+
+    [self.tableView reloadData];
+}
+
 - (void) settingsViewControllerDidPressBack
 {
     [UIView beginAnimations:nil context:NULL];

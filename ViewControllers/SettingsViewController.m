@@ -139,8 +139,10 @@ enum AboutSectionRows
     }
     highGlucoseWarningField.text = [defaults stringForKey:highGlucoseWarningKey];
     lowGlucoseWarningField.text = [defaults stringForKey:lowGlucoseWarningKey];
-    // Force the LogViewController to reload the LogEntryViewController so it can pick up the change
-    appDelegate.logViewController.logEntryViewController = nil;
+    
+    // Inform the delegate of the change of units
+    if( delegate && [delegate respondsToSelector:@selector(settingsViewControllerDidChangeGlucoseUnits)] )
+	[delegate settingsViewControllerDidChangeGlucoseUnits];
 }
 
 - (void) fractionalInsulinAction:(UISwitch*)sender
