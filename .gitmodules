@@ -4,3 +4,9 @@
 [submodule "UIAutomationScripts/tuneup"]
 	path = UIAutomationScripts/tuneup
 	url = git://github.com/alexvollmer/tuneup_js.git
+[submodule "Externals/cedar"]
+	path = Externals/cedar
+	url = git://github.com/pivotal/cedar.git
+[submodule "Externals/OCMock"]
+	path = Externals/OCMock
+	url = git://github.com/erikdoe/ocmock.git

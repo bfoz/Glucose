@@ -23,7 +23,7 @@
 
 AppDelegate* appDelegate = nil;
 
-@interface AppDelegate ()
+@interface AppDelegate () <LogViewDelegate>
 
 - (void) createEditableCopyOfDatabaseIfNeeded;
 

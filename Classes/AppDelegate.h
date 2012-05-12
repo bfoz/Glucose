@@ -1,17 +1,6 @@
-//
-//  AppDelegate.h
-//  Glucose
-//
-//  Created by Brandon Fosdick on 6/27/08.
-//  Copyright __MyCompanyName__ 2008. All rights reserved.
-//
 
-#import <UIKit/UIKit.h>
 #import <sqlite3.h>
 
-#import "LogViewController.h"
-
-@class Category;
 @class InsulinType;
 @class LogEntry;
 @class LogDay;
@@ -19,7 +8,7 @@
 
 @class GDataServiceGoogleDocs;
 
-@interface AppDelegate : NSObject <UIApplicationDelegate, LogViewDelegate>
+@interface AppDelegate : NSObject <UIApplicationDelegate>
 {
     IBOutlet UIWindow *window;
     UINavigationController* navController;
