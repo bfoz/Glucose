@@ -11,7 +11,7 @@
 
 #define	URL_PROJECT_PAGE    @"http://bfoz.github.com/Glucose/"
 
-@interface SettingsViewController () <CategoryViewControllerDelegate>
+@interface SettingsViewController () <CategoryViewControllerDelegate, InsulinTypeViewControllerDelegate, MFMailComposeViewControllerDelegate, UITextFieldDelegate>
 @end
 
 @implementation SettingsViewController

@@ -13,12 +13,13 @@
 @class CategoryViewController;
 @class ExportViewController;
 @class InsulinTypeViewController;
+@class NumberField;
 @class PurgeViewController;
 @class LogModel;
 
 @protocol SettingsViewControllerDelegate;
 
-@interface SettingsViewController : SlidingViewController <InsulinTypeViewControllerDelegate, MFMailComposeViewControllerDelegate, UITextFieldDelegate>
+@interface SettingsViewController : SlidingViewController
 {
     id<SettingsViewControllerDelegate>    delegate;
     LogModel*		    model;

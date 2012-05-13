@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 #import "CategoryViewController.h"
 #import "Constants.h"
+#import "DoseFieldCell.h"
 #import "DualTableViewCell.h"
 #import "InsulinDose.h"
 #import "InsulinType.h"
@@ -10,6 +11,7 @@
 #import "LogEntry.h"
 #import "LogDay.h"
 #import "LogModel.h"
+#import "NumberFieldCell.h"
 #import "TextViewCell.h"
 
 // Post-translation section numbers
@@ -19,17 +21,22 @@
 
 #define	kInsulinCellID			@"InsulinCellID"
 
-@interface LogEntryViewController () <CategoryViewControllerDelegate>
+@interface LogEntryViewController () <CategoryViewControllerDelegate, DoseFieldCellDelegate, InsulinTypeViewControllerDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
 {
     CategoryViewController*	categoryViewController;
+    InsulinTypeViewController*	insulinTypeViewController;
+
+    BOOL	didSelectRow;
+    BOOL	didUndo;
+    unsigned	editedIndex;
 }
 
-@property (nonatomic)	NumberFieldCell*    glucoseCell;
-@property (nonatomic, readonly) NSDateFormatter* dateFormatter;
-@property (nonatomic, retain)	UITableViewCell*	cellTimestamp;
+@property (nonatomic, assign) NSDateFormatter*	dateFormatter;
+@property (nonatomic, assign) NumberFieldCell*	glucoseCell;
+@property (nonatomic, assign) UITableViewCell*	timestampCell;
 
-@property (nonatomic)	UILabel*    categoryLabel;
-@property (nonatomic)	UILabel*    timestampLabel;
+@property (nonatomic) UILabel*	categoryLabel;
+@property (nonatomic) UILabel*	timestampLabel;
 
 
 - (void)toggleDatePicker;
@@ -45,7 +52,7 @@
 @synthesize editingNewEntry;
 @synthesize logEntry = _logEntry;
 @synthesize glucoseCell;
-@synthesize cellTimestamp;
+@synthesize timestampCell;
 @synthesize model;
 
 static unsigned InsulinPrecision;
@@ -343,7 +350,7 @@ static NSUserDefaults* defaults = nil;
 	    cell.textLabel.textAlignment = UITextAlignmentCenter;
 	    if( (0 == section) && (0 == row) )	// Save a pointer to the timestamp cell
 	    {
-		self.cellTimestamp = cell;
+		self.timestampCell = cell;
 		self.timestampLabel = cell.textLabel;
 	    }
 	    else
@@ -578,8 +585,8 @@ static NSUserDefaults* defaults = nil;
 
 - (void)toggleDatePicker
 {
-    if( !(editCell == cellTimestamp) )
-	[self showDatePicker:cellTimestamp mode:UIDatePickerModeDateAndTime initialDate:self.logEntry.timestamp changeAction:@selector(dateChangeAction)];
+    if( !(editCell == timestampCell) )
+	[self showDatePicker:timestampCell mode:UIDatePickerModeDateAndTime initialDate:self.logEntry.timestamp changeAction:@selector(dateChangeAction)];
     else
 	[self hideDatePicker];
 }
@@ -587,7 +594,7 @@ static NSUserDefaults* defaults = nil;
 - (void)dateChangeAction
 {
     self.logEntry.timestamp = datePicker.date;
-    cellTimestamp.textLabel.text = [dateFormatter stringFromDate:self.logEntry.timestamp];
+    timestampCell.textLabel.text = [dateFormatter stringFromDate:self.logEntry.timestamp];
 }
 
 #pragma mark -
