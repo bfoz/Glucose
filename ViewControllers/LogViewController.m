@@ -4,6 +4,7 @@
 #import "InsulinDose.h"
 #import "InsulinType.h"
 #import "LogDay.h"
+#import "LogEntry.h"
 #import "LogModel.h"
 #import "LogViewController.h"
 #import "LogEntryCell.h"

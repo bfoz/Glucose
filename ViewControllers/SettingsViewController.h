@@ -18,7 +18,7 @@
 
 @protocol SettingsViewControllerDelegate;
 
-@interface SettingsViewController : SlidingViewController <CategoryViewControllerDelegate, InsulinTypeViewControllerDelegate, MFMailComposeViewControllerDelegate, UITextFieldDelegate>
+@interface SettingsViewController : SlidingViewController <InsulinTypeViewControllerDelegate, MFMailComposeViewControllerDelegate, UITextFieldDelegate>
 {
     id<SettingsViewControllerDelegate>    delegate;
     LogModel*		    model;

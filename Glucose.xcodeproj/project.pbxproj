@@ -31,6 +31,7 @@
 		1581CE23155F116600B069F2 /* libCedar-StaticLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1581CDE5155F091D00B069F2 /* libCedar-StaticLib.a */; };
 		1581CE24155F116600B069F2 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1581CDC8155F071E00B069F2 /* libOCMock.a */; };
 		1581CE28155F126900B069F2 /* AppDelegateSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1581CE27155F126900B069F2 /* AppDelegateSpec.mm */; };
+		1581CE2F155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1581CE2E155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm */; };
 		1585DEC10E6A217200FB9C39 /* glucose.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1585DEC00E6A217200FB9C39 /* glucose.sqlite */; };
 		1595CF570E999E1C00DA7CC6 /* PurgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1595CF560E999E1C00DA7CC6 /* PurgeViewController.m */; };
 		159A1E7B13BFD6A60021406D /* GDataFramework.m in Sources */ = {isa = PBXBuildFile; fileRef = 159A1BE413BFD6A50021406D /* GDataFramework.m */; };
@@ -235,12 +236,19 @@
 			remoteGlobalIDString = 96158A86144A915E005895CE;
 			remoteInfo = OCUnitAppLogicTests;
 		};
-		1581CE21155F0FB500B069F2 /* PBXContainerItemProxy */ = {
+		1581CE30155F377A00B069F2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			containerPortal = 1581CDCA155F091C00B069F2 /* Cedar.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 1D6058900D05DD3D006BFB54;
-			remoteInfo = Glucose;
+			remoteGlobalIDString = AEEE222811DC2B0600029872;
+			remoteInfo = "Cedar-StaticLib";
+		};
+		1581CE32155F378400B069F2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1581CDBA155F071D00B069F2 /* OCMock.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 030EF0DB14632FF700B04273;
+			remoteInfo = OCMockLib;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -286,10 +294,10 @@
 		1581CE0E155F0F9A00B069F2 /* UISpecs.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UISpecs.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1581CE0F155F0F9A00B069F2 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		1581CE15155F0F9A00B069F2 /* UISpecs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "UISpecs-Info.plist"; path = "UISpecs/UISpecs-Info.plist"; sourceTree = "<group>"; };
-		1581CE19155F0F9A00B069F2 /* UISpecs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UISpecs.h; sourceTree = "<group>"; };
-		1581CE1A155F0F9A00B069F2 /* UISpecs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UISpecs.m; sourceTree = "<group>"; };
 		1581CE1C155F0F9A00B069F2 /* UISpecs-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UISpecs-Prefix.pch"; path = "UISpecs/UISpecs-Prefix.pch"; sourceTree = "<group>"; };
 		1581CE27155F126900B069F2 /* AppDelegateSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegateSpec.mm; sourceTree = "<group>"; };
+		1581CE2E155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LogEntryViewControllerSpec.mm; sourceTree = "<group>"; };
+		1581CE48155F3AE500B069F2 /* UISpecs copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "UISpecs copy-Info.plist"; path = "/Users/bfoz/devel/Glucose/master/UISpecs copy-Info.plist"; sourceTree = "<absolute>"; };
 		1585DEC00E6A217200FB9C39 /* glucose.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = glucose.sqlite; sourceTree = "<group>"; };
 		1595CF550E999E1C00DA7CC6 /* PurgeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PurgeViewController.h; path = ViewControllers/PurgeViewController.h; sourceTree = "<group>"; };
 		1595CF560E999E1C00DA7CC6 /* PurgeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PurgeViewController.m; path = ViewControllers/PurgeViewController.m; sourceTree = "<group>"; };
@@ -552,10 +560,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1581CE23155F116600B069F2 /* libCedar-StaticLib.a in Frameworks */,
-				1581CE24155F116600B069F2 /* libOCMock.a in Frameworks */,
 				1581CE11155F0F9A00B069F2 /* UIKit.framework in Frameworks */,
 				1581CE12155F0F9A00B069F2 /* Foundation.framework in Frameworks */,
+				1581CE23155F116600B069F2 /* libCedar-StaticLib.a in Frameworks */,
+				1581CE24155F116600B069F2 /* libOCMock.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -688,9 +696,8 @@
 			isa = PBXGroup;
 			children = (
 				1581CE26155F123500B069F2 /* Application */,
-				1581CE19155F0F9A00B069F2 /* UISpecs.h */,
-				1581CE1A155F0F9A00B069F2 /* UISpecs.m */,
 				1581CE14155F0F9A00B069F2 /* Supporting Files */,
+				1581CE2D155F2DF100B069F2 /* ViewControllers */,
 			);
 			path = UISpecs;
 			sourceTree = "<group>";
@@ -710,6 +717,14 @@
 				1581CE27155F126900B069F2 /* AppDelegateSpec.mm */,
 			);
 			path = Application;
+			sourceTree = "<group>";
+		};
+		1581CE2D155F2DF100B069F2 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				1581CE2E155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm */,
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		159A1BDF13BFD6A50021406D /* GData Sources */ = {
@@ -1058,6 +1073,7 @@
 				15A321910ED28A7E00C16388 /* AddressBook.framework */,
 				15A321930ED28A7E00C16388 /* AddressBookUI.framework */,
 				1517983E1250156100E28662 /* MessageUI.framework */,
+				1581CE48155F3AE500B069F2 /* UISpecs copy-Info.plist */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -1110,7 +1126,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				1581CE22155F0FB500B069F2 /* PBXTargetDependency */,
+				1581CE33155F378400B069F2 /* PBXTargetDependency */,
+				1581CE31155F377A00B069F2 /* PBXTargetDependency */,
 			);
 			name = UISpecs;
 			productName = UISpecs;
@@ -1332,6 +1349,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1581CE28155F126900B069F2 /* AppDelegateSpec.mm in Sources */,
+				1581CE2F155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1476,10 +1494,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1581CE22155F0FB500B069F2 /* PBXTargetDependency */ = {
+		1581CE31155F377A00B069F2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1D6058900D05DD3D006BFB54 /* Glucose */;
-			targetProxy = 1581CE21155F0FB500B069F2 /* PBXContainerItemProxy */;
+			name = "Cedar-StaticLib";
+			targetProxy = 1581CE30155F377A00B069F2 /* PBXContainerItemProxy */;
+		};
+		1581CE33155F378400B069F2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OCMockLib;
+			targetProxy = 1581CE32155F378400B069F2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1526,15 +1549,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Glucose.app/Glucose";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UISpecs/UISpecs-Prefix.pch";
@@ -1551,9 +1571,7 @@
 					"$(SRCROOT)/Externals/OCMock/Source/**",
 				);
 				INFOPLIST_FILE = "UISpecs/UISpecs-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_LDFLAGS = (
-					"-lxml2",
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
@@ -1562,6 +1580,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
+				VALIDATE_PRODUCT = NO;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -1570,14 +1589,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Glucose.app/Glucose";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UISpecs/UISpecs-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -1590,9 +1607,7 @@
 					"$(SRCROOT)/Externals/OCMock/Source/**",
 				);
 				INFOPLIST_FILE = "UISpecs/UISpecs-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_LDFLAGS = (
-					"-lxml2",
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
@@ -1600,9 +1615,8 @@
 					SenTestingKit,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				VALIDATE_PRODUCT = YES;
+				VALIDATE_PRODUCT = NO;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = AppStore;
@@ -1611,14 +1625,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Glucose.app/Glucose";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UISpecs/UISpecs-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -1631,9 +1643,7 @@
 					"$(SRCROOT)/Externals/OCMock/Source/**",
 				);
 				INFOPLIST_FILE = "UISpecs/UISpecs-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_LDFLAGS = (
-					"-lxml2",
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
@@ -1641,9 +1651,8 @@
 					SenTestingKit,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				VALIDATE_PRODUCT = YES;
+				VALIDATE_PRODUCT = NO;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = AdHoc;
@@ -1737,6 +1746,7 @@
 				1581CE20155F0F9A00B069F2 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = AppStore;
 		};
 		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "Glucose" */ = {
 			isa = XCConfigurationList;

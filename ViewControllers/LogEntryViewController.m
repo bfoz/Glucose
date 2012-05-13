@@ -1,12 +1,5 @@
-//
-//  LogEntryViewController.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 6/30/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import "AppDelegate.h"
+#import "CategoryViewController.h"
 #import "Constants.h"
 #import "DualTableViewCell.h"
 #import "InsulinDose.h"
@@ -26,7 +19,10 @@
 
 #define	kInsulinCellID			@"InsulinCellID"
 
-@interface LogEntryViewController ()
+@interface LogEntryViewController () <CategoryViewControllerDelegate>
+{
+    CategoryViewController*	categoryViewController;
+}
 
 @property (nonatomic, retain)	NumberFieldCell*	glucoseCell;
 @property (nonatomic, readonly) NSDateFormatter* dateFormatter;
@@ -95,6 +91,8 @@ static NSUserDefaults* defaults = nil;
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.tableView.allowsSelectionDuringEditing = YES;
 }

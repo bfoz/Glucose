@@ -1,11 +1,3 @@
-//
-//  SettingsViewController.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 8/23/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import "AppDelegate.h"
 #import "Constants.h"
 
@@ -18,6 +10,9 @@
 #import "SettingsViewController.h"
 
 #define	URL_PROJECT_PAGE    @"http://bfoz.github.com/Glucose/"
+
+@interface SettingsViewController () <CategoryViewControllerDelegate>
+@end
 
 @implementation SettingsViewController
 

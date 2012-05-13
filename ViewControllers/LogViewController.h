@@ -1,16 +1,8 @@
-//
-//  LogViewController.h
-//  Glucose
-//
-//  Created by Brandon Fosdick on 6/28/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 
-#import "LogEntry.h"
 #import "LogEntryViewController.h"
 
+@class LogEntry;
 @class LogModel;
 @class SettingsViewController;
 @protocol LogViewDelegate;
