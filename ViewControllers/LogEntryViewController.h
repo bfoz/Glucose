@@ -26,13 +26,17 @@
 // Private
     InsulinTypeViewController*	insulinTypeViewController;
     NSDateFormatter*	dateFormatter;
-    NumberFieldCell*	glucoseCell;
     UITableViewCell*	cellTimestamp;
     BOOL	didSelectRow;
     BOOL	didUndo;
     unsigned	editedIndex;
     BOOL	editingNewEntry;
 }
+
+@property (nonatomic, readonly)	UILabel*    categoryLabel;
+@property (nonatomic, readonly)	UILabel*    timestampLabel;
+
+@property (nonatomic, readonly)	NumberFieldCell*	glucoseCell;
 
 @property (nonatomic, assign) id <LogEntryViewDelegate>	delegate;
 @property (nonatomic, retain) LogEntry* entry;
@@ -46,7 +50,6 @@
 
 @protocol LogEntryViewDelegate <NSObject>
 
-@optional
 - (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(LogEntry*)entry;
 
 @end

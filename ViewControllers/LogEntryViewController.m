@@ -24,9 +24,12 @@
     CategoryViewController*	categoryViewController;
 }
 
-@property (nonatomic, retain)	NumberFieldCell*	glucoseCell;
+@property (nonatomic)	NumberFieldCell*    glucoseCell;
 @property (nonatomic, readonly) NSDateFormatter* dateFormatter;
 @property (nonatomic, retain)	UITableViewCell*	cellTimestamp;
+
+@property (nonatomic)	UILabel*    categoryLabel;
+@property (nonatomic)	UILabel*    timestampLabel;
 
 
 - (void)toggleDatePicker;
@@ -36,6 +39,7 @@
 
 @implementation LogEntryViewController
 
+@synthesize categoryLabel, timestampLabel;
 @synthesize dateFormatter, entry, entrySection;
 @synthesize delegate;
 @synthesize editingNewEntry;
@@ -130,10 +134,7 @@ static NSUserDefaults* defaults = nil;
 	reflects the previous edit state.
     */
     if( self.editing && !e )
-    {
-	if( [delegate respondsToSelector:@selector(logEntryView:didEndEditing:)] )
-	    [delegate logEntryView:self didEndEditingEntry:self.entry];
-    }
+	[delegate logEntryView:self didEndEditingEntry:self.entry];
 
     // Not editing, so not editing a new entry
     if( !e )
@@ -297,6 +298,8 @@ static NSUserDefaults* defaults = nil;
 					   reuseIdentifier:cellID] autorelease];
 	    // Use the same font size for both labels
 	    cell.detailTextLabel.font = cell.textLabel.font;
+	    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+	    cell.textLabel.backgroundColor = [UIColor clearColor];
 	}
 	else if( @"eDualCellID" == cellID )
 	{
@@ -327,9 +330,15 @@ static NSUserDefaults* defaults = nil;
 	{
 	    // CGRectZero allows the cell to determine the appropriate size.
 	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+	    cell.textLabel.backgroundColor = [UIColor clearColor];
 	    cell.textLabel.textAlignment = UITextAlignmentCenter;
 	    if( (0 == section) && (0 == row) )	// Save a pointer to the timestamp cell
+	    {
 		self.cellTimestamp = cell;
+		self.timestampLabel = cell.textLabel;
+	    }
+	    else
+		self.categoryLabel = cell.textLabel;
 	}
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }

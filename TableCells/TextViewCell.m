@@ -19,6 +19,7 @@
 	{
 		self.selectionStyle = UITableViewCellSelectionStyleNone;
 		view = [[UITextView alloc] initWithFrame:CGRectZero];
+	    view.backgroundColor = [UIColor clearColor];
 //		view.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
 
 		view.delegate = self;

@@ -22,7 +22,7 @@
 	self.selectionStyle = UITableViewCellSelectionStyleNone;
 
 	doseField = [[NumberField alloc] initWithFrame:CGRectZero];
-
+	doseField.backgroundColor = [UIColor clearColor];
 	doseField.delegate = self;
 	doseField.textAlignment = UITextAlignmentRight;
 	doseField.textColor = [UIColor blueColor];
@@ -32,8 +32,10 @@
 	doseField.placeholder = @"Insulin";
 
 	typeField = [[UILabel alloc] initWithFrame:CGRectZero];
+	typeField.backgroundColor = [UIColor clearColor];
 	typeField.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
 
+	self.textLabel.backgroundColor = [UIColor clearColor];
 	self.textLabel.text = @"New Insulin Dose";
 	self.textLabel.textColor = [UIColor lightGrayColor];
 	self.textLabel.textAlignment = UITextAlignmentCenter;
