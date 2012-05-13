@@ -76,13 +76,11 @@
 
 - (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e isNew:(BOOL)n
 {
-    LogEntryViewController* logEntryViewController = [[LogEntryViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    LogEntryViewController* logEntryViewController = [[LogEntryViewController alloc] initWithLogEntry:entry];
     logEntryViewController.delegate = self;
     logEntryViewController.model = _model;
+    logEntryViewController.entrySection = section;
 
-//    [entry hydrate];		// Force the LogEntry to be fully loaded from the database
-    logEntryViewController.entry = entry;	// Give the view controller the LogEntry to display
-	logEntryViewController.entrySection = section;
     // Push the detail view on to the navigation controller's stack.
     [self.navigationController pushViewController:logEntryViewController animated:YES];
     logEntryViewController.editingNewEntry = n;

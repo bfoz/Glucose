@@ -40,9 +40,10 @@
 @implementation LogEntryViewController
 
 @synthesize categoryLabel, timestampLabel;
-@synthesize dateFormatter, entry, entrySection;
+@synthesize dateFormatter, entrySection;
 @synthesize delegate;
 @synthesize editingNewEntry;
+@synthesize logEntry = _logEntry;
 @synthesize glucoseCell;
 @synthesize cellTimestamp;
 @synthesize model;
@@ -50,14 +51,22 @@
 static unsigned InsulinPrecision;
 static NSUserDefaults* defaults = nil;
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id) initWithStyle:(UITableViewStyle)style
 {
-    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-    if (self = [super initWithStyle:style])
+    [self doesNotRecognizeSelector:_cmd];
+    return nil;
+}
+
+- (id) initWithLogEntry:(LogEntry*)logEntry
+{
+    self = [super initWithStyle:UITableViewStyleGrouped];
+    if( self )
     {
 	didUndo = NO;
 	editingNewEntry = NO;
 	
+	self.logEntry = logEntry;
+
 	// Create a date formatter to convert the date to a string format.
 	dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
@@ -127,14 +136,14 @@ static NSUserDefaults* defaults = nil;
 - (void)setEditing:(BOOL)e animated:(BOOL)animated
 {
     // Tell the entry first so it can flush itself and do any cleanup
-    [entry setEditing:e model:model];
+    [self.logEntry setEditing:e model:model];
 
     /* If ending edit mode...
 	Do this check before calling the super so that self.editing still
 	reflects the previous edit state.
     */
     if( self.editing && !e )
-	[delegate logEntryView:self didEndEditingEntry:self.entry];
+	[delegate logEntryView:self didEndEditingEntry:self.logEntry];
 
     // Not editing, so not editing a new entry
     if( !e )
@@ -183,7 +192,7 @@ static NSUserDefaults* defaults = nil;
     }
     else // otherwise revert the record and cancel editing
     {
-	[entry revert:model];		    // Reload the entry from the database
+	[self.logEntry revert:model];		    // Reload the entry from the database
 	[self setEditing:NO animated:NO];   // Cancel edit mode
     }
 }
@@ -196,7 +205,7 @@ static NSUserDefaults* defaults = nil;
     if( self.editing )
 	return 3;
     else
-	return 1 + ([entry.insulin count] ? 1 : 0) + (entry.note && [entry.note length] ? 1 : 0);
+	return 1 + ([self.logEntry.insulin count] ? 1 : 0) + (self.logEntry.note && [self.logEntry.note length] ? 1 : 0);
 }
 
 // Section 0 - Timestamp/Category/Glucose
@@ -204,7 +213,7 @@ static NSUserDefaults* defaults = nil;
 //	Row 2 (Glucose) => Row 1 if not editing and there is a glucose reading, but no category
 - (unsigned) translateRow:(unsigned)row inSection:(unsigned)section
 {
-    if( !self.editing && (0 == section) && (1==row) && !entry.category && entry.glucose )
+    if( !self.editing && (0 == section) && (1==row) && !self.logEntry.category && self.logEntry.glucose )
 	return 2;
     return row;
 }
@@ -213,7 +222,7 @@ static NSUserDefaults* defaults = nil;
 //  the Note section. So remap section 1 to section 2.
 - (unsigned) translateSection:(unsigned)section
 {
-    return ( !self.editing && (1==section) && ![entry.insulin count] ) ? 2 : section;
+    return ( !self.editing && (1==section) && ![self.logEntry.insulin count] ) ? 2 : section;
 }
 
 - (NSInteger)tableView:(UITableView *)tv numberOfRowsInSection:(NSInteger)section
@@ -224,14 +233,14 @@ static NSUserDefaults* defaults = nil;
 	    if( self.editing )
 		return 3;
 	    else
-		return 1 + (entry.glucose ? 1 : 0) + (entry.category ? 1 : 0);
+		return 1 + (self.logEntry.glucose ? 1 : 0) + (self.logEntry.category ? 1 : 0);
 	case 1:
 	    if( self.editing )
-		return [entry.insulin count];
+		return [self.logEntry.insulin count];
 	    else
 	    {
 		unsigned i = 0;
-		for( InsulinDose* d in entry.insulin )
+		for( InsulinDose* d in self.logEntry.insulin )
 		    if( d.dose && d.type )
 			++i;
 		return i;
@@ -240,7 +249,7 @@ static NSUserDefaults* defaults = nil;
 	    if( self.editing )
 		return 1;
 	    else
-		return entry.note && [entry.note length] ? 1 : 0;
+		return self.logEntry.note && [self.logEntry.note length] ? 1 : 0;
     }
     return 0;
 }
@@ -280,7 +289,7 @@ static NSUserDefaults* defaults = nil;
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if( entry == nil )
+    if( self.logEntry == nil )
 	return nil;
 
     const unsigned section = [self translateSection:indexPath.section];
@@ -348,12 +357,12 @@ static NSUserDefaults* defaults = nil;
 	switch( row )
 	{
 	    case 0:	// Timestamp
-		cell.textLabel.text = [dateFormatter stringFromDate:entry.timestamp];
+		cell.textLabel.text = [dateFormatter stringFromDate:self.logEntry.timestamp];
 		break;
 	    case 1:	// Category
-		if( entry.category )
+		if( self.logEntry.category )
 		{
-		    cell.textLabel.text = entry.category.categoryName;
+		    cell.textLabel.text = self.logEntry.category.categoryName;
 		    cell.textLabel.textColor = [UIColor darkTextColor];
 		}
 		else
@@ -366,18 +375,18 @@ static NSUserDefaults* defaults = nil;
 		if( self.editing )
 		{
 		    // precision must be set before number so the display text is formatted correctly
-		    if( entry.glucoseUnits && (entry.glucoseUnits == kGlucoseUnits_mmolL) )
+		    if( self.logEntry.glucoseUnits && (self.logEntry.glucoseUnits == kGlucoseUnits_mmolL) )
 			glucoseCell.precision = 1;
 		    else
 			glucoseCell.precision = 0;
-		    glucoseCell.number = entry.glucose;
-		    glucoseCell.label = entry.glucoseUnits;
+		    glucoseCell.number = self.logEntry.glucose;
+		    glucoseCell.label = self.logEntry.glucoseUnits;
 		}
 		else
 		{
-		    NSString *const units = entry.glucoseUnits;
+		    NSString *const units = self.logEntry.glucoseUnits;
 		    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
-		    cell.textLabel.text = entry.glucose ? [NSString localizedStringWithFormat:@"%.*f%@", precision, [entry.glucose floatValue], units] : nil;
+		    cell.textLabel.text = self.logEntry.glucose ? [NSString localizedStringWithFormat:@"%.*f%@", precision, [self.logEntry.glucose floatValue], units] : nil;
 		    // Color the glucose values accordingly
 		    NSString* keyHigh;
 		    NSString* keyLow;
@@ -391,9 +400,9 @@ static NSUserDefaults* defaults = nil;
 			keyHigh = kHighGlucoseWarning1;
 			keyLow = kLowGlucoseWarning1;
 		    }
-		    if( [entry.glucose floatValue] > [defaults floatForKey:keyHigh] )
+		    if( [self.logEntry.glucose floatValue] > [defaults floatForKey:keyHigh] )
 			cell.textLabel.textColor = [UIColor blueColor];
-		    else if( [entry.glucose floatValue] < [defaults floatForKey:keyLow] )
+		    else if( [self.logEntry.glucose floatValue] < [defaults floatForKey:keyLow] )
 			cell.textLabel.textColor = [UIColor redColor];
 		    else
 			cell.textLabel.textColor = [UIColor darkTextColor];
@@ -405,12 +414,12 @@ static NSUserDefaults* defaults = nil;
     {
 	// If the entry doesn't have a valid number for an insulin type use a regular cell and display the short name. 
 	// Otherwise, use a dual column cell.
-	InsulinDose* dose = [entry doseAtIndex:row];
+	InsulinDose* dose = [self.logEntry doseAtIndex:row];
 
 	if( kInsulinCellID == cellID )
 	{
 	    while( !(dose && dose.dose && dose.type) )
-		dose = [entry doseAtIndex:++row];
+		dose = [self.logEntry doseAtIndex:++row];
 	    if( dose )
 	    {
 		if( dose.dose )	// If the record has a valid value...
@@ -431,11 +440,11 @@ static NSUserDefaults* defaults = nil;
     }
     else if( 2 == section )
     {
-	cell.textLabel.text = entry.note;
+	cell.textLabel.text = self.logEntry.note;
 
 	// In editing mode, the cell is actually a TextViewCell that sets it's text differently
 	if( self.editing )
-	    ((TextViewCell *)cell).text = entry.note;
+	    ((TextViewCell *)cell).text = self.logEntry.note;
     }
 
     if( self.editing )
@@ -450,7 +459,7 @@ static NSUserDefaults* defaults = nil;
 {
     if( UITableViewCellEditingStyleDelete == editingStyle )
     {
-	[entry removeDoseAtIndex:path.row];
+	[self.logEntry removeDoseAtIndex:path.row];
 	[tv deleteRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
     }
     else if( UITableViewCellEditingStyleInsert == editingStyle )
@@ -502,7 +511,7 @@ static NSUserDefaults* defaults = nil;
 		    categoryViewController.delegate = self;
 		    categoryViewController.model = model;
 		}
-		categoryViewController.selectedCategory = entry.category;
+		categoryViewController.selectedCategory = self.logEntry.category;
 		[self presentModalViewController:categoryViewController animated:YES];
 		break;
 	    case 2: // Go into edit mode if the user taps anywhere on the row
@@ -520,7 +529,7 @@ static NSUserDefaults* defaults = nil;
 	    insulinTypeViewController.model = model;
 	}
 	editedIndex = row;
-	[insulinTypeViewController setSelectedInsulinType:(InsulinType*)[[[entry insulin] objectAtIndex:row] type]];
+	[insulinTypeViewController setSelectedInsulinType:(InsulinType*)[[[self.logEntry insulin] objectAtIndex:row] type]];
 	[self presentModalViewController:insulinTypeViewController animated:YES];
     }
     else if( 2 == section )
@@ -539,7 +548,7 @@ static NSUserDefaults* defaults = nil;
     if( indexPath.section != 1 )
 	return UITableViewCellEditingStyleNone;
 
-    if( indexPath.row >= [entry.insulin count] )
+    if( indexPath.row >= [self.logEntry.insulin count] )
 	return UITableViewCellEditingStyleInsert;
     else
 	return UITableViewCellEditingStyleDelete;
@@ -551,10 +560,10 @@ static NSUserDefaults* defaults = nil;
     {
 	const BOOL e = self.editing;
 	// If editing and there's no text, return a standard size
-	if( e && !entry.note )
+	if( e && !self.logEntry.note )
 	    return 44*2;
 	// Otherwise, resize for the text
-	CGSize s = [entry.note sizeWithFont:[UIFont boldSystemFontOfSize:[UIFont labelFontSize]]
+	CGSize s = [self.logEntry.note sizeWithFont:[UIFont boldSystemFontOfSize:[UIFont labelFontSize]]
 			  constrainedToSize:CGSizeMake(284, 2000) lineBreakMode:UILineBreakModeWordWrap];
 	CGFloat h = s.height+2*kCellTopOffset;
 	// If editing and the row started off with text, don't return smaller than two rows
@@ -570,15 +579,15 @@ static NSUserDefaults* defaults = nil;
 - (void)toggleDatePicker
 {
     if( !(editCell == cellTimestamp) )
-	[self showDatePicker:cellTimestamp mode:UIDatePickerModeDateAndTime initialDate:entry.timestamp changeAction:@selector(dateChangeAction)];
+	[self showDatePicker:cellTimestamp mode:UIDatePickerModeDateAndTime initialDate:self.logEntry.timestamp changeAction:@selector(dateChangeAction)];
     else
 	[self hideDatePicker];
 }
 
 - (void)dateChangeAction
 {
-    entry.timestamp = datePicker.date;
-    cellTimestamp.textLabel.text = [dateFormatter stringFromDate:entry.timestamp];
+    self.logEntry.timestamp = datePicker.date;
+    cellTimestamp.textLabel.text = [dateFormatter stringFromDate:self.logEntry.timestamp];
 }
 
 #pragma mark -
@@ -594,7 +603,7 @@ static NSUserDefaults* defaults = nil;
     if( didUndo )
 	didUndo = NO;	// Undo handled
     else if( cell == glucoseCell )
-	entry.glucose = cell.number;
+	self.logEntry.glucose = cell.number;
     [self didEndEditing];
 }
 
@@ -635,7 +644,7 @@ static NSUserDefaults* defaults = nil;
 {
     [self dismissModalViewControllerAnimated:YES];
 
-    entry.category = category;
+    self.logEntry.category = category;
     if( editingNewEntry )
 	[glucoseCell becomeFirstResponder];
 }
@@ -653,7 +662,7 @@ static NSUserDefaults* defaults = nil;
     if( didUndo )
 	didUndo = NO;	// Undo handled
     else
-	[entry setDose:[cell.doseField number] insulinDose:cell.dose];
+	[self.logEntry setDose:[cell.doseField number] insulinDose:cell.dose];
     [self didEndEditing];
 }
 
@@ -690,10 +699,10 @@ static NSUserDefaults* defaults = nil;
     // Update the insulin type for the entry's dose. If the entry doesn't have
     //	a dose at the specified index, append a new dose object with the
     //	selected type.
-    if( editedIndex < [entry.insulin count] )
-	[entry setDoseType:type at:editedIndex];
+    if( editedIndex < [self.logEntry.insulin count] )
+	[self.logEntry setDoseType:type at:editedIndex];
     else
-	[entry addDoseWithType:type];
+	[self.logEntry addDoseWithType:type];
     return YES;
 }
 
@@ -711,7 +720,7 @@ static NSUserDefaults* defaults = nil;
 	didUndo = NO;	// Undo handled
     else
     {
-	entry.note = ((TextViewCell *)editCell).text;
+	self.logEntry.note = ((TextViewCell *)editCell).text;
 	[self saveAction];
     }
 }

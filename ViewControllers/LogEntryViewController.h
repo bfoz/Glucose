@@ -19,8 +19,6 @@
 {
     id <LogEntryViewDelegate>	delegate;
     LogModel*			model;
-
-    LogEntry* entry;
     LogDay*		entrySection;
 
 // Private
@@ -39,10 +37,12 @@
 @property (nonatomic, readonly)	NumberFieldCell*	glucoseCell;
 
 @property (nonatomic, assign) id <LogEntryViewDelegate>	delegate;
-@property (nonatomic, retain) LogEntry* entry;
+@property (nonatomic, retain) LogEntry* logEntry;
 @property (nonatomic, retain) LogDay* entrySection;
 @property (nonatomic, assign) BOOL	editingNewEntry;
 @property (nonatomic, retain) LogModel*		    model;
+
+- (id)initWithLogEntry:(LogEntry*)logEntry;
 
 - (void)shaken;
 

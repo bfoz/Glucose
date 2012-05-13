@@ -37,7 +37,8 @@ describe(@"LogEntryViewController", ^{
     __block id mockLogEntry;
 
     beforeEach(^{
-	controller = [[[LogEntryViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+	mockLogEntry = [OCMockObject niceMockForClass:[LogEntry class]];
+	controller = [[[LogEntryViewController alloc] initWithLogEntry:mockLogEntry] autorelease];
 	controller.view should_not be_nil;
     });
 
@@ -69,8 +70,6 @@ describe(@"LogEntryViewController", ^{
 
     describe(@"when the Edit button is tapped", ^{
 	beforeEach(^{
-	    mockLogEntry = [OCMockObject niceMockForClass:[LogEntry class]];
-	    controller.entry = mockLogEntry;
 	    [controller.navigationItem.rightBarButtonItem tap];
 
 	    controller.tableView.visibleCells should_not be_nil;
