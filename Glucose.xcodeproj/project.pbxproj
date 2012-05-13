@@ -293,11 +293,8 @@
 		1581CDCA155F091C00B069F2 /* Cedar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Cedar.xcodeproj; path = Externals/cedar/Cedar.xcodeproj; sourceTree = "<group>"; };
 		1581CE0E155F0F9A00B069F2 /* UISpecs.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UISpecs.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1581CE0F155F0F9A00B069F2 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		1581CE15155F0F9A00B069F2 /* UISpecs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "UISpecs-Info.plist"; path = "UISpecs/UISpecs-Info.plist"; sourceTree = "<group>"; };
-		1581CE1C155F0F9A00B069F2 /* UISpecs-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UISpecs-Prefix.pch"; path = "UISpecs/UISpecs-Prefix.pch"; sourceTree = "<group>"; };
 		1581CE27155F126900B069F2 /* AppDelegateSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegateSpec.mm; sourceTree = "<group>"; };
 		1581CE2E155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LogEntryViewControllerSpec.mm; sourceTree = "<group>"; };
-		1581CE48155F3AE500B069F2 /* UISpecs copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "UISpecs copy-Info.plist"; path = "/Users/bfoz/devel/Glucose/master/UISpecs copy-Info.plist"; sourceTree = "<absolute>"; };
 		1585DEC00E6A217200FB9C39 /* glucose.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = glucose.sqlite; sourceTree = "<group>"; };
 		1595CF550E999E1C00DA7CC6 /* PurgeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PurgeViewController.h; path = ViewControllers/PurgeViewController.h; sourceTree = "<group>"; };
 		1595CF560E999E1C00DA7CC6 /* PurgeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PurgeViewController.m; path = ViewControllers/PurgeViewController.m; sourceTree = "<group>"; };
@@ -705,8 +702,6 @@
 		1581CE14155F0F9A00B069F2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				1581CE15155F0F9A00B069F2 /* UISpecs-Info.plist */,
-				1581CE1C155F0F9A00B069F2 /* UISpecs-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1073,7 +1068,6 @@
 				15A321910ED28A7E00C16388 /* AddressBook.framework */,
 				15A321930ED28A7E00C16388 /* AddressBookUI.framework */,
 				1517983E1250156100E28662 /* MessageUI.framework */,
-				1581CE48155F3AE500B069F2 /* UISpecs copy-Info.plist */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
