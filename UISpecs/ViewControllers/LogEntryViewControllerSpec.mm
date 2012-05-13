@@ -2,6 +2,7 @@
 #import "OCMock.h"
 
 #import "LogEntryViewController.h"
+#import "NumberFieldCell.h"
 
 using namespace Cedar::Matchers;
 
@@ -27,7 +28,6 @@ using namespace Cedar::Matchers;
 @end
 
 @interface LogEntry : NSObject
-
 @end
 
 SPEC_BEGIN(LogEntryViewControllerSpec)
@@ -60,7 +60,7 @@ describe(@"LogEntryViewController", ^{
 	[controller.tableView numberOfRowsInSection:0] should equal(1);
     });
 
-    xit(@"should have X rows in section 1", ^{
+    xit(@"should have 0 rows in section 1", ^{
 	[controller.tableView numberOfRowsInSection:1] should equal(0);
     });
 

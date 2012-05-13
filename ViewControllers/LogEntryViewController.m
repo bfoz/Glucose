@@ -225,16 +225,9 @@ static NSUserDefaults* defaults = nil;
     return row;
 }
 
-// Normally section 1 is the insulin does section. However, if there are no doses, section 1 becomes
-//  the Note section. So remap section 1 to section 2.
-- (unsigned) translateSection:(unsigned)section
-{
-    return ( !self.editing && (1==section) && ![self.logEntry.insulin count] ) ? 2 : section;
-}
-
 - (NSInteger)tableView:(UITableView *)tv numberOfRowsInSection:(NSInteger)section
 {
-    switch( [self translateSection:section] )
+    switch( section )
     {
 	case 0:
 	    if( self.editing )
@@ -299,7 +292,7 @@ static NSUserDefaults* defaults = nil;
     if( self.logEntry == nil )
 	return nil;
 
-    const unsigned section = [self translateSection:indexPath.section];
+    const unsigned section = indexPath.section;
     unsigned row = [self translateRow:indexPath.row inSection:section];
 
     NSString *const	cellID = [self cellIDForSection:section row:row];
@@ -501,7 +494,7 @@ static NSUserDefaults* defaults = nil;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)path
 {
     const unsigned row = path.row;
-    const unsigned section = [self translateSection:path.section];
+    const unsigned section = path.section;
 
     if( 0 == section )
     {
@@ -563,7 +556,7 @@ static NSUserDefaults* defaults = nil;
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath*)path
 {
-    if( kNoteSectionNum == [self translateSection:path.section] )
+    if( kNoteSectionNum == path.section )
     {
 	const BOOL e = self.editing;
 	// If editing and there's no text, return a standard size
