@@ -150,6 +150,10 @@
 		15A322480ED35C9F00C16388 /* ContactListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A322470ED35C9F00C16388 /* ContactListViewController.m */; };
 		15A3225A0ED3E0D000C16388 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A322590ED3E0D000C16388 /* Contact.m */; };
 		15AF2FE20EC1799F00FC2403 /* LogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 15AF2FE10EC1799F00FC2403 /* LogDay.m */; };
+		15C30BB8161D476500976444 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BB7161D476500976444 /* Default-568h@2x.png */; };
+		15C30BB9161D48BF00976444 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BB5161D474E00976444 /* Default@2x.png */; };
+		15C30BBB161D48C600976444 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BBA161D48C600976444 /* Default.png */; };
+		15C30BBD161D494700976444 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BBC161D494700976444 /* Icon@2x.png */; };
 		15E823D50E74BA7E003322DC /* ExportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E823D40E74BA7E003322DC /* ExportViewController.m */; };
 		15EC68CD13B1B74900016937 /* LogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EC68CC13B1B74900016937 /* LogModel.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
@@ -538,6 +542,10 @@
 		15A322590ED3E0D000C16388 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
 		15AF2FE00EC1799F00FC2403 /* LogDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogDay.h; sourceTree = "<group>"; };
 		15AF2FE10EC1799F00FC2403 /* LogDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogDay.m; sourceTree = "<group>"; };
+		15C30BB5161D474E00976444 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		15C30BB7161D476500976444 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		15C30BBA161D48C600976444 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		15C30BBC161D494700976444 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		15E823D30E74BA7E003322DC /* ExportViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExportViewController.h; path = ViewControllers/ExportViewController.h; sourceTree = "<group>"; };
 		15E823D40E74BA7E003322DC /* ExportViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExportViewController.m; path = ViewControllers/ExportViewController.m; sourceTree = "<group>"; };
 		15EC68CB13B1B74900016937 /* LogModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogModel.h; sourceTree = "<group>"; };
@@ -1054,6 +1062,10 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				15C30BBC161D494700976444 /* Icon@2x.png */,
+				15C30BBA161D48C600976444 /* Default.png */,
+				15C30BB7161D476500976444 /* Default-568h@2x.png */,
+				15C30BB5161D474E00976444 /* Default@2x.png */,
 				159A1BDF13BFD6A50021406D /* GData Sources */,
 				150829D90E500B2400FB556A /* Constants.h */,
 				150829BF0E500A1C00FB556A /* ViewControllers */,
@@ -1282,6 +1294,10 @@
 				1585DEC10E6A217200FB9C39 /* glucose.sqlite in Resources */,
 				159A1EBC13BFD6A60021406D /* GDataOAuthViewTouch.xib in Resources */,
 				159A1EBE13BFD6A60021406D /* GDataOAuthWindow.xib in Resources */,
+				15C30BB8161D476500976444 /* Default-568h@2x.png in Resources */,
+				15C30BB9161D48BF00976444 /* Default@2x.png in Resources */,
+				15C30BBB161D48C600976444 /* Default.png in Resources */,
+				15C30BBD161D494700976444 /* Icon@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
