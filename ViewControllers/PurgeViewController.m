@@ -33,7 +33,7 @@
 		purgeStart = [defaults objectForKey:kLastPurgeToDate];
 		// If the value exists, add one day and use it. Otherwise, use the current date.
 		if( purgeStart )
-			purgeStart = [purgeStart addTimeInterval:24*60*60];
+			purgeStart = [purgeStart dateByAddingTimeInterval:24*60*60];
 		else
 			purgeStart = [NSDate date];
 

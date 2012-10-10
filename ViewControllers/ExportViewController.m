@@ -59,7 +59,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		// If the value exists, add one day and use it. Otherwise, use the 
 		//  timestamp from the first record in the database.
 		if( exportStart )
-			exportStart = [exportStart addTimeInterval:24*60*60];
+			exportStart = [exportStart dateByAddingTimeInterval:24*60*60];
 		else
 		{
 			exportStart = [appDelegate earliestLogEntryDate];
