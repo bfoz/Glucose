@@ -11,6 +11,7 @@
 
 @implementation InsulinTypeViewController
 {
+    UITableViewCell*	editCell;
     NSMutableSet*	selectedInsulinTypes;
 }
 @synthesize delegate;
@@ -58,7 +59,7 @@
 
 	self.navigationItem.rightBarButtonItem = nil;
     }
-    [tableView reloadData];
+    [self.tableView reloadData];
 }
 
 #pragma mark Shake handling
@@ -389,7 +390,7 @@
     }
     else
 	// Reload the table on cancel to work around a display bug
-	[tableView reloadData];
+	[self.tableView reloadData];
 }
 
 #pragma mark -

@@ -11,6 +11,7 @@
 @implementation CategoryViewController
 {
     id <CategoryViewControllerDelegate>	__unsafe_unretained delegate;
+    UITableViewCell*	editCell;
 }
 @synthesize delegate;
 @synthesize model;
@@ -49,7 +50,7 @@
 
 		self.navigationItem.rightBarButtonItem = nil;
 	}
-	[tableView reloadData];
+	[self.tableView reloadData];
 }
 
 - (void)viewDidLoad
@@ -294,7 +295,7 @@
 	[self deleteCategory:deleteCategory atIndex:deleteRow];
     else
 	// Reload the table on cancel to work around a display bug
-	[tableView reloadData];
+	[self.tableView reloadData];
 }
 
 #pragma mark -

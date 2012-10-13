@@ -1,11 +1,10 @@
-#import "SlidingViewController.h"
 #import "TextFieldCell.h"	// Needed for TextFieldCellDelegate
 
 @class	Category;
 @class	LogModel;
 @protocol CategoryViewControllerDelegate;
 
-@interface CategoryViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
+@interface CategoryViewController : UITableViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
     LogModel*			model;
 

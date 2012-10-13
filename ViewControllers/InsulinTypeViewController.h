@@ -1,5 +1,4 @@
 #import <UIKit/UIKit.h>
-#import "SlidingViewController.h"
 #import "TextFieldCell.h"	// Needed for TextFieldCellDelegate
 
 @class LogEntry;
@@ -8,7 +7,7 @@
 
 @protocol InsulinTypeViewControllerDelegate;
 
-@interface InsulinTypeViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
+@interface InsulinTypeViewController : UITableViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
     id <InsulinTypeViewControllerDelegate>  __unsafe_unretained delegate;
     LogModel*				    model;
