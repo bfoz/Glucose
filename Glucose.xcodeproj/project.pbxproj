@@ -32,6 +32,8 @@
 		1581CE28155F126900B069F2 /* AppDelegateSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1581CE27155F126900B069F2 /* AppDelegateSpec.mm */; };
 		1581CE2F155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1581CE2E155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm */; };
 		1585DEC10E6A217200FB9C39 /* glucose.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1585DEC00E6A217200FB9C39 /* glucose.sqlite */; };
+		158F4094162A11AA0000DD52 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158F4093162A11AA0000DD52 /* DropboxSDK.framework */; };
+		158F4096162A11E10000DD52 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158F4095162A11E10000DD52 /* QuartzCore.framework */; };
 		1595CF570E999E1C00DA7CC6 /* PurgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1595CF560E999E1C00DA7CC6 /* PurgeViewController.m */; };
 		159B8F500E7243A7002C3975 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 159B8F4D0E7243A7002C3975 /* SettingsViewController.m */; };
 		159B8F510E7243A7002C3975 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 159B8F4F0E7243A7002C3975 /* SlidingViewController.m */; };
@@ -191,6 +193,8 @@
 		1581CE27155F126900B069F2 /* AppDelegateSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegateSpec.mm; sourceTree = "<group>"; };
 		1581CE2E155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LogEntryViewControllerSpec.mm; sourceTree = "<group>"; };
 		1585DEC00E6A217200FB9C39 /* glucose.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = glucose.sqlite; sourceTree = "<group>"; };
+		158F4093162A11AA0000DD52 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropboxSDK.framework; path = Frameworks/DropboxSDK.framework; sourceTree = "<group>"; };
+		158F4095162A11E10000DD52 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1595CF550E999E1C00DA7CC6 /* PurgeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PurgeViewController.h; path = ViewControllers/PurgeViewController.h; sourceTree = "<group>"; };
 		1595CF560E999E1C00DA7CC6 /* PurgeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PurgeViewController.m; path = ViewControllers/PurgeViewController.m; sourceTree = "<group>"; };
 		159B8F4C0E7243A7002C3975 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingsViewController.h; path = ViewControllers/SettingsViewController.h; sourceTree = "<group>"; };
@@ -244,6 +248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				158F4096162A11E10000DD52 /* QuartzCore.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				150829F20E500DCA00FB556A /* CoreGraphics.framework in Frameworks */,
@@ -252,6 +257,7 @@
 				15A321920ED28A7E00C16388 /* AddressBook.framework in Frameworks */,
 				15A321940ED28A7E00C16388 /* AddressBookUI.framework in Frameworks */,
 				1517983F1250156100E28662 /* MessageUI.framework in Frameworks */,
+				158F4094162A11AA0000DD52 /* DropboxSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +414,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				158F4095162A11E10000DD52 /* QuartzCore.framework */,
 				15C30BBC161D494700976444 /* Icon@2x.png */,
 				15C30BBA161D48C600976444 /* Default.png */,
 				15C30BB7161D476500976444 /* Default-568h@2x.png */,
@@ -452,12 +459,13 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				153F26A00E7F70C000F75D9F /* Security.framework */,
-				159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */,
 				150829F10E500DCA00FB556A /* CoreGraphics.framework */,
-				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
+				158F4093162A11AA0000DD52 /* DropboxSDK.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
+				159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */,
+				153F26A00E7F70C000F75D9F /* Security.framework */,
 				1581CE0F155F0F9A00B069F2 /* SenTestingKit.framework */,
+				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -786,6 +794,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Glucose_Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -917,6 +929,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -935,6 +951,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Glucose_Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
