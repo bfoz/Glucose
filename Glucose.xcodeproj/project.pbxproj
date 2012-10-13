@@ -19,7 +19,6 @@
 		150829F20E500DCA00FB556A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 150829F10E500DCA00FB556A /* CoreGraphics.framework */; };
 		150829FE0E500E1000FB556A /* LogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829FD0E500E1000FB556A /* LogViewController.m */; };
 		1517983F1250156100E28662 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1517983E1250156100E28662 /* MessageUI.framework */; };
-		1532B88F11EAAFDF00E38527 /* GlucoseWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 1532B88E11EAAFDF00E38527 /* GlucoseWindow.m */; };
 		153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 153F26A00E7F70C000F75D9F /* Security.framework */; };
 		155A24660F2971160077FC20 /* NumberFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 155A24650F2971160077FC20 /* NumberFieldCell.m */; };
 		155A26970F29B04B0077FC20 /* TextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829B70E50097100FB556A /* TextViewCell.m */; };
@@ -179,8 +178,6 @@
 		150829FC0E500E1000FB556A /* LogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogViewController.h; path = ViewControllers/LogViewController.h; sourceTree = "<group>"; };
 		150829FD0E500E1000FB556A /* LogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LogViewController.m; path = ViewControllers/LogViewController.m; sourceTree = "<group>"; };
 		1517983E1250156100E28662 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
-		1532B88D11EAAFDF00E38527 /* GlucoseWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlucoseWindow.h; sourceTree = "<group>"; };
-		1532B88E11EAAFDF00E38527 /* GlucoseWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlucoseWindow.m; sourceTree = "<group>"; };
 		153F26A00E7F70C000F75D9F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		155A24640F2971160077FC20 /* NumberFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NumberFieldCell.h; path = TableCells/NumberFieldCell.h; sourceTree = "<group>"; };
 		155A24650F2971160077FC20 /* NumberFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NumberFieldCell.m; path = TableCells/NumberFieldCell.m; sourceTree = "<group>"; };
@@ -280,8 +277,6 @@
 				15AF2FE10EC1799F00FC2403 /* LogDay.m */,
 				155A26A70F2AF5810077FC20 /* NumberField.h */,
 				155A26A80F2AF5810077FC20 /* NumberField.m */,
-				1532B88D11EAAFDF00E38527 /* GlucoseWindow.h */,
-				1532B88E11EAAFDF00E38527 /* GlucoseWindow.m */,
 				15EC68CB13B1B74900016937 /* LogModel.h */,
 				15EC68CC13B1B74900016937 /* LogModel.m */,
 			);
@@ -740,7 +735,6 @@
 				155A26970F29B04B0077FC20 /* TextViewCell.m in Sources */,
 				155A26990F29B0610077FC20 /* TextFieldCell.m in Sources */,
 				155A26A90F2AF5810077FC20 /* NumberField.m in Sources */,
-				1532B88F11EAAFDF00E38527 /* GlucoseWindow.m in Sources */,
 				15EC68CD13B1B74900016937 /* LogModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -11,7 +11,6 @@
 
 @implementation InsulinTypeViewController
 {
-    UITableViewCell*	editCell;
     NSMutableSet*	selectedInsulinTypes;
 }
 @synthesize delegate;
@@ -23,7 +22,6 @@
     if (self = [super initWithStyle:style])
     {
 	self.title = @"Insulin Types";
-	didUndo = NO;
 	dirty = NO;
 	multiCheck = NO;
     }
@@ -45,34 +43,10 @@
     }
     // Eanble the Add button while editing
     if( e )
-    {
-	[[NSNotificationCenter defaultCenter] addObserver:self
-						 selector:@selector(shaken)
-						     name:@"shaken"
-						   object:nil];
-
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(appendNewInsulinType)];
-    }
     else
-    {
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"shaken" object:nil];
-
 	self.navigationItem.rightBarButtonItem = nil;
-    }
     [self.tableView reloadData];
-}
-
-#pragma mark Shake handling
-
-- (void)shaken
-{
-    // If editing a field, revert that field
-    if( editCell )
-    {
-	didUndo = YES;	    // Flag that an undo operation is happening
-	[((TextFieldCell*)editCell).textField resignFirstResponder];
-	[self.tableView reloadData];
-    }
 }
 
 #pragma mark -
@@ -393,27 +367,15 @@
 	[self.tableView reloadData];
 }
 
-#pragma mark -
-#pragma mark <TextFieldCellDelegate>
-
-- (void)textFieldCellDidBeginEditing:(TextFieldCell*)cell
-{
-    editCell = cell;
-}
+#pragma mark - <TextFieldCellDelegate>
 
 - (void)textFieldCellDidEndEditing:(TextFieldCell*)cell
 {
-    if( didUndo )
-	didUndo = NO;	// Undo handled
-    else
-    {
-	InsulinType* type = cell.editedObject;
-	if( !type || !cell )
-	    return;
-	type.shortName = (cell.text && cell.text.length) ? cell.text : nil;
-	[model updateInsulinType:type];
-    }
-    editCell = nil;	//Not editing anything
+    InsulinType* type = cell.editedObject;
+    if( !type || !cell )
+	return;
+    type.shortName = (cell.text && cell.text.length) ? cell.text : nil;
+    [model updateInsulinType:type];
 }
 
 @end

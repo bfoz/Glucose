@@ -1,15 +1,6 @@
-//
-//  AppDelegate.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 6/27/08.
-//  Copyright __MyCompanyName__ 2008. All rights reserved.
-//
-
 #import "AppDelegate.h"
 #import "Category.h"
 #import "Constants.h"
-#import	"GlucoseWindow.h"
 #import "InsulinDose.h"
 #import "InsulinType.h"
 #import "LogEntry.h"
@@ -40,8 +31,7 @@ NSDateFormatter* shortDateFormatter = nil;
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {	
     // Create the top level window (instead of using a default nib)
-    // Use a subclass of UIWindow for capturing shake events
-    window = [[GlucoseWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
     // Initialize the global application delegate pointer
     appDelegate = self;

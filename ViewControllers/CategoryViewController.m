@@ -11,7 +11,6 @@
 @implementation CategoryViewController
 {
     id <CategoryViewControllerDelegate>	__unsafe_unretained delegate;
-    UITableViewCell*	editCell;
 }
 @synthesize delegate;
 @synthesize model;
@@ -21,7 +20,6 @@
 	if (self = [super initWithStyle:style])
 	{
 		self.title = @"Categories";
-	    didUndo = NO;
 		dirty = NO;
 	}
 	return self;
@@ -36,20 +34,9 @@
 
     // Eanble the Add button while editing
 	if( e )
-	{
-	    [[NSNotificationCenter defaultCenter] addObserver:self
-						     selector:@selector(shaken)
-							 name:@"shaken"
-						       object:nil];
-
-		self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(appendNewCategory)];
-	}
+	    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(appendNewCategory)];
 	else
-	{
-	    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"shaken" object:nil];
-
-		self.navigationItem.rightBarButtonItem = nil;
-	}
+	    self.navigationItem.rightBarButtonItem = nil;
 	[self.tableView reloadData];
 }
 
@@ -97,19 +84,6 @@
     [delegate categoryViewControllerDidDeleteCategory:category];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
 			  withRowAnimation:UITableViewRowAnimationFade];
-}
-
-#pragma mark Shake handling
-
-- (void)shaken
-{
-    // If editing a field, revert that field
-    if( editCell )
-    {
-	didUndo = YES;	    // Flag that an undo operation is happening
-	[((TextFieldCell*)editCell).textField resignFirstResponder];
-	[self.tableView reloadData];
-    }
 }
 
 #pragma mark <UITableViewDelegate>
@@ -298,27 +272,15 @@
 	[self.tableView reloadData];
 }
 
-#pragma mark -
-#pragma mark <TextFieldCellDelegate>
-
-- (void)textFieldCellDidBeginEditing:(TextFieldCell*)cell
-{
-    editCell = cell;
-}
+#pragma mark - <TextFieldCellDelegate>
 
 - (void)textFieldCellDidEndEditing:(TextFieldCell*)cell
 {
-    if( didUndo )
-	didUndo = NO;	// Undo handled
-    else
-    {
-	Category* c = cell.editedObject;
-	if( !c || !cell )
-		return;
-	c.categoryName = (cell.text && cell.text.length) ? cell.text : nil;
-	[model updateCategory:c];
-    }
-    editCell = nil;	//Not editing anything
+    Category* c = cell.editedObject;
+    if( !c || !cell )
+	return;
+    c.categoryName = (cell.text && cell.text.length) ? cell.text : nil;
+    [model updateCategory:c];
 }
 
 @end

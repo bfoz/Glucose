@@ -12,7 +12,6 @@
     id <InsulinTypeViewControllerDelegate>  __unsafe_unretained delegate;
     LogModel*				    model;
 
-    BOOL		didUndo;
     BOOL			dirty;
     BOOL			multiCheck;
     unsigned	    deleteRowNum;

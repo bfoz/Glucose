@@ -115,11 +115,6 @@ static NSUserDefaults* defaults = nil;
 {
     [super viewWillAppear:animated];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-					     selector:@selector(shaken)
-						 name:@"shaken"
-					       object:nil];
-
     didSelectRow = NO;		    // Remove any existing selection
     [self updateTitle];		    // Update the navigation item title
     [self.tableView reloadData];    // Redisplay the data
@@ -130,7 +125,6 @@ static NSUserDefaults* defaults = nil;
     if( !didSelectRow && self.editing )
 	[self setEditing:NO animated:YES];
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"shaken" object:nil];
     [super viewWillDisappear:animated];
 }
 
@@ -174,28 +168,6 @@ static NSUserDefaults* defaults = nil;
 	self.title = @"Edit Entry";
     else
 	self.title = @"Details";
-}
-
-#pragma mark Shake handling
-
-- (void)shaken
-{
-    // Ignore shakes when not editing
-    if( !self.editing )
-	return;
-
-    // If editing a field, revert that field
-    if( editCell )
-    {
-	didUndo = YES;	    // Flag that an undo operation is happening
-	[self saveAction];  // Cancel the edit
-	[self.tableView reloadData];
-    }
-    else // otherwise revert the record and cancel editing
-    {
-	[self.logEntry revert:model];		    // Reload the entry from the database
-	[self setEditing:NO animated:NO];   // Cancel edit mode
-    }
 }
 
 #pragma mark -

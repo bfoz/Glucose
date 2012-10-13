@@ -22,8 +22,6 @@
 
 - (id)initWithLogEntry:(LogEntry*)logEntry;
 
-- (void)shaken;
-
 @end
 
 @protocol LogEntryViewDelegate <NSObject>
