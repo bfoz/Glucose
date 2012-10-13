@@ -69,14 +69,13 @@ static const char *const sqlInsertUserCategory = "INSERT INTO LogEntryCategories
 	
 	NSString* name;
 	if( n && [n length])
-		name = [[NSString stringWithString:n] retain];
+		name = [NSString stringWithString:n];
 	else
-		name = [[NSString stringWithString:@"New Category"] retain];
+		name = [NSString stringWithString:@"New Category"];
 	
 	sqlite3_bind_text(statement, 1, [name UTF8String], -1, SQLITE_TRANSIENT);
     int success = sqlite3_step(statement);
 	sqlite3_finalize(statement);
-	[name release];
     NSAssert1(success != SQLITE_ERROR, @"Failed to insert: '%s'.", sqlite3_errmsg(database));
 	return [[Category alloc] initWithID:sqlite3_last_insert_rowid(database) name:name];
 }
@@ -99,7 +98,6 @@ static const char *const sqlInsertUserCategory = "INSERT INTO LogEntryCategories
 	NSString *const name = s ? [NSString stringWithUTF8String:(const char*)s] : @"";
 	Category* category = [[Category alloc] initWithID:categoryID name:name];
 	[result addObject:category];
-	[category release];
     }
     sqlite3_finalize(statement);
 
@@ -116,11 +114,6 @@ static const char *const sqlInsertUserCategory = "INSERT INTO LogEntryCategories
     return self;
 }
 
-- (void)dealloc
-{
-	[categoryName release];
-	[super dealloc];
-}
 
 - (void) flush:(sqlite3*)database
 {
@@ -145,7 +138,6 @@ static const char *const sqlInsertUserCategory = "INSERT INTO LogEntryCategories
 - (void) setCategoryName:(NSString*)n
 {
     if ((!categoryName && !n) || (categoryName && n && [categoryName isEqualToString:n])) return;
-    [categoryName release];
     categoryName = [n copy];	
 }
 

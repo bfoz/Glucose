@@ -23,8 +23,8 @@
 	UITableView*	tableView;
 }
 
-@property (nonatomic, retain)	UIBarButtonItem*	oldRightBarButtonItem;
-@property (nonatomic, retain)	UITableView*		tableView;
+@property (nonatomic, strong)	UIBarButtonItem*	oldRightBarButtonItem;
+@property (nonatomic, strong)	UITableView*		tableView;
 
 - (void)setViewMovedUp:(BOOL)movedUp;
 

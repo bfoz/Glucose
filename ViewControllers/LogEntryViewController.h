@@ -11,16 +11,16 @@
 
 @interface LogEntryViewController : SlidingViewController
 
-@property (nonatomic, readonly)	UILabel*    categoryLabel;
-@property (nonatomic, readonly)	UILabel*    timestampLabel;
+@property (unsafe_unretained, nonatomic, readonly)	UILabel*    categoryLabel;
+@property (unsafe_unretained, nonatomic, readonly)	UILabel*    timestampLabel;
 
-@property (nonatomic, readonly)	NumberFieldCell*	glucoseCell;
+@property (unsafe_unretained, nonatomic, readonly)	NumberFieldCell*	glucoseCell;
 
-@property (nonatomic, assign) id <LogEntryViewDelegate>	delegate;
-@property (nonatomic, retain) LogEntry* logEntry;
-@property (nonatomic, retain) LogDay*	entrySection;
+@property (nonatomic, unsafe_unretained) id <LogEntryViewDelegate>	delegate;
+@property (nonatomic, strong) LogEntry* logEntry;
+@property (nonatomic, strong) LogDay*	entrySection;
 @property (nonatomic, assign) BOOL	editingNewEntry;
-@property (nonatomic, retain) LogModel*	model;
+@property (nonatomic, strong) LogModel*	model;
 
 - (id)initWithLogEntry:(LogEntry*)logEntry;
 

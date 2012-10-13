@@ -47,14 +47,13 @@ static const char *const sqlInsertUserInsulinType = "INSERT INTO InsulinTypes (t
 	
 	NSString* name;
 	if( n && [n length])
-	name = [[NSString stringWithString:n] retain];
+	name = [NSString stringWithString:n];
 	else
-	name = [[NSString stringWithString:@"New Insulin Type"] retain];
+	name = [NSString stringWithString:@"New Insulin Type"];
 	
 	sqlite3_bind_text(statement, 1, [name UTF8String], -1, SQLITE_TRANSIENT);
     int success = sqlite3_step(statement);
 	sqlite3_finalize(statement);
-	[name release];
     NSAssert1(success != SQLITE_ERROR, @"Failed to insert: '%s'.", sqlite3_errmsg(database));
 	return [[InsulinType alloc] initWithID:sqlite3_last_insert_rowid(database) name:name];
 }
@@ -77,7 +76,6 @@ static const char *const sqlInsertUserInsulinType = "INSERT INTO InsulinTypes (t
 	NSString* shortName = s ? [NSString stringWithUTF8String:(const char*)s] : nil;
 	InsulinType* type = [[InsulinType alloc] initWithID:typeID name:shortName];
 	[types addObject:type];
-	[type release];
     }
     sqlite3_finalize(statement);
 
@@ -91,15 +89,8 @@ static const char *const sqlInsertUserInsulinType = "INSERT INTO InsulinTypes (t
     {
 		typeID = type;
 		shortName = name;
-		[shortName retain];
 	}
     return self;
-}
-
-- (void)dealloc
-{
-	[shortName release];
-	[super dealloc];	
 }
 
 - (void) deleteFromDatabase:(sqlite3*)database
@@ -141,7 +132,6 @@ static const char *const sqlInsertUserInsulinType = "INSERT INTO InsulinTypes (t
 {
     if ((!shortName && !n) || (shortName && n && [shortName isEqualToString:n]))
 		return;
-    [shortName release];
     shortName = [n copy];	
 }
 

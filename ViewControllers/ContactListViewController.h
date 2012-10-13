@@ -17,7 +17,7 @@
 	Contact*		selectedContact;
 }
 
-@property (nonatomic, retain) NSMutableArray* contacts;
+@property (nonatomic, strong) NSMutableArray* contacts;
 
 - (void) showPeoplePicker;
 

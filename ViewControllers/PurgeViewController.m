@@ -38,8 +38,6 @@
 			purgeStart = [NSDate date];
 
 		purgeEnd = [NSDate date];
-		[purgeStart retain];
-		[purgeEnd retain];
     }
     return self;
 }
@@ -48,13 +46,6 @@
 {
 	[super loadView];
 	self.tableView.scrollEnabled = NO;	// Disable scrolling
-}
-
-- (void)dealloc
-{
-	[purgeStart release];
-	[purgeEnd release];
-    [super dealloc];
 }
 
 - (void) updatePurgeRowText
@@ -131,9 +122,9 @@
     if( !cell )
     {
 	if( 0 == indexPath.section )	// Use an attribute-style cell
-	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"DateRange"] autorelease];
+	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"DateRange"];
 	else
-	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
@@ -194,7 +185,6 @@
 												   cancelButtonTitle:@"Cancel"
 												   otherButtonTitles:@"OK",nil];
 			[alert show];
-			[alert release];
 		}
 		break;
 	}
@@ -225,7 +215,6 @@
 										  cancelButtonTitle:nil
 										  otherButtonTitles:@"OK",nil];
 	[alert show];
-	[alert release];
 }
 
 #pragma mark -
@@ -233,18 +222,14 @@
 
 - (void) purgeStartChangeAction
 {
-	[purgeStart release];
 	purgeStart = datePicker.date;
-	[purgeStart retain];
 	purgeStartField.text = [model shortStringFromDate:purgeStart];
 	[self updatePurgeRowText];
 }
 
 - (void) purgeEndChangeAction
 {
-	[purgeEnd release];
 	purgeEnd = datePicker.date;
-	[purgeEnd retain];
 	purgeEndField.text = [model shortStringFromDate:purgeEnd];
 	[self updatePurgeRowText];
 }

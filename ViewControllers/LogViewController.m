@@ -14,10 +14,10 @@
 
 @interface LogViewController () <SettingsViewControllerDelegate>
 
-@property (nonatomic, retain)	NSDateFormatter*	dateFormatter;
-@property (nonatomic, assign) id<LogViewDelegate>   delegate;
-@property (nonatomic, retain) LogModel*	model;
-@property (nonatomic, retain) SettingsViewController* settingsViewController;
+@property (nonatomic, strong)	NSDateFormatter*	dateFormatter;
+@property (nonatomic, unsafe_unretained) id<LogViewDelegate>   delegate;
+@property (nonatomic, strong) LogModel*	model;
+@property (nonatomic, strong) SettingsViewController* settingsViewController;
 
 @end
 
@@ -37,26 +37,18 @@
 
 		self.title = @"Glucose";
 
-        UIButton* b = [[UIButton buttonWithType:UIButtonTypeInfoLight] retain];
+        UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
 		[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
 		self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:b];
-		[b release];
 
 	UIBarButtonItem* back = [[UIBarButtonItem alloc] initWithTitle: @"Log" style:UIBarButtonItemStyleBordered target: nil action: nil];
 	self.navigationItem.backBarButtonItem = back;
-	[back release];
 
 		// Create a date formatter to convert the date to a string format.
 		self.dateFormatter = [[NSDateFormatter alloc] init];
 		[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	}
 	return self;
-}
-
-- (void)dealloc
-{
-    self.model = nil;
-    [super dealloc];
 }
 
 - (void)viewDidLoad
@@ -85,7 +77,6 @@
     [self.navigationController pushViewController:logEntryViewController animated:YES];
     logEntryViewController.editingNewEntry = n;
     [logEntryViewController setEditing:e animated:NO];
-    [logEntryViewController release];
 }
 
 - (void) showSettings:(id)sender
@@ -204,7 +195,7 @@
     LogEntryCell *cell = (LogEntryCell*)[tableView dequeueReusableCellWithIdentifier:cellID];
     if( nil == cell )
     {
-	cell = [[[LogEntryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+	cell = [[LogEntryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
 

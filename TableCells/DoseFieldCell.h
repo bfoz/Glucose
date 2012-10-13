@@ -6,14 +6,14 @@
 
 @interface DoseFieldCell : UITableViewCell <NumberFieldDelegate>
 {
-    id <DoseFieldCellDelegate> delegate;
+    id <DoseFieldCellDelegate> __unsafe_unretained delegate;
     InsulinDose* dose;
     NumberField* doseField;
     UILabel* typeField;
 }
 
-@property (nonatomic, assign) id <DoseFieldCellDelegate> delegate;
-@property (nonatomic, retain) InsulinDose* dose;
+@property (nonatomic, unsafe_unretained) id <DoseFieldCellDelegate> delegate;
+@property (nonatomic, strong) InsulinDose* dose;
 @property (nonatomic, readonly) NumberField* doseField;
 @property (nonatomic, assign) int   precision;
 

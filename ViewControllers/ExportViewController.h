@@ -37,9 +37,9 @@
 	BOOL				showingContacts;
 }
 
-@property (nonatomic, retain) NSMutableDictionary*	keychainData;
-@property (nonatomic, retain) NSString*	failureTitle;
-@property (nonatomic, retain) LogModel*		    model;
+@property (nonatomic, strong) NSMutableDictionary*	keychainData;
+@property (nonatomic, strong) NSString*	failureTitle;
+@property (nonatomic, strong) LogModel*		    model;
 
 - (void) keychainInit;
 - (void) updateExportRowText;

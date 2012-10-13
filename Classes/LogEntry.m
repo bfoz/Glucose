@@ -278,7 +278,7 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 
 + (NSData*) createCSV:(LogModel*)model from:(NSDate*)from to:(NSDate*)to
 {
-    NSMutableData *data = [[NSMutableData dataWithCapacity:2048] retain];
+    NSMutableData *data = [NSMutableData dataWithCapacity:2048];
 	
 	if( !data )
 		return nil;
@@ -349,14 +349,12 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 			++numRows;
 		}
 		sqlite3_finalize(statement);
-		[f release];
 	}
 	
 	if( numRows )	// Return the data if there was any
 		return data;
 
 	// Return nil if now rows were retrieved
-	[data release];
 	return nil;
 }
 
@@ -435,16 +433,6 @@ _var = _val;
 	self.timestamp = date;;
     }
     return self;
-}
-
-- (void)dealloc
-{
-	[category release];
-	[glucose release];
-	[insulin release];
-	[note release];
-	[timestamp release];
-	[super dealloc];
 }
 
 - (void)deleteFromDatabase:(sqlite3 *)db
@@ -558,7 +546,7 @@ _var = _val;
 	    glucoseString = [NSString localizedStringWithFormat:@"%.0f", [glucose floatValue]];
     }
 
-    return [glucoseString retain];
+    return glucoseString;
 }
 
 // When entering edit mode setup defaults for any missing fields (like insulin doses)
@@ -585,7 +573,6 @@ _var = _val;
 	    ++i;
 	}
 	[insulin removeObjectsAtIndexes:indexes];
-	[indexes release];
     }
 }
 /*
@@ -622,9 +609,7 @@ _var = _val;
 {
 	if( category != c )
 	{
-		[category release];
 		category = c;
-		[category retain];
 		dirty = YES;
 	}
 }
@@ -659,9 +644,7 @@ _var = _val;
     if( g && ((glucose == g) || [glucose isEqualToNumber:g]) )
 	return;
 
-	[glucose release];
 	glucose = g;
-	[glucose retain];
 	dirty = YES;
 }
 
@@ -669,7 +652,6 @@ _var = _val;
 {
     if ((!note && !n) || (note && n && [note isEqualToString:n])) return;
     dirty = YES;
-    [note release];
     note = [n copy];	
 }
 
@@ -677,9 +659,7 @@ _var = _val;
 {
 	if( timestamp != ts )
 	{
-		[timestamp release];
 		timestamp = ts;
-		[timestamp retain];
 		dirty = YES;
 	}
 }

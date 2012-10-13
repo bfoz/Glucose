@@ -71,19 +71,6 @@ unsigned insulinTypeShortNameWidth = 0;
 	return self;
 }
 
-- (void)dealloc
-{
-	[labelCategory release];
-	[labelDose0 release];
-	[labelDose1 release];
-	[labelGlucose release];
-	[labelNote release];
-	[labelTimestamp release];
-	[labelType0 release];
-	[labelType1 release];
-	[super dealloc];
-}
-
 // If the cell's entry has a Note field, but...
 //	insulin, glucose		don't display note
 //	no insulin, glucose		don't display note
@@ -205,7 +192,6 @@ unsigned insulinTypeShortNameWidth = 0;
 		else
 		{	// Delete the UILabel if a nil, or empty, string is given
 			[labelNote removeFromSuperview];
-			[labelNote release];
 			labelNote = nil;
 			[self setNeedsLayout];
 		}

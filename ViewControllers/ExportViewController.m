@@ -55,8 +55,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 				exportStart = [NSDate date];
 		}
 		exportEnd = [NSDate date];
-		[exportEnd retain];
-		[exportStart retain];
 
 		shareSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
 		shareSwitch.on = [defaults boolForKey:kExportGoogleShareEnable];
@@ -72,19 +70,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 {
 	[super loadView];
 	self.tableView.scrollEnabled = NO;	// Disable scrolling
-}
-
-- (void)dealloc
-{
-	[exportEnd release];
-	[exportStart release];
-	[exportLastField release];
-	[gDocPasswordQuery release];
-	[keychainData release];
-	[progressAlert release];
-	[progressView release];
-	[shareSwitch release];
-	[super dealloc];
 }
 
 - (void) loadContactList
@@ -107,7 +92,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 			{
 				Contact* c = [[Contact alloc] initWithRecordID:[r intValue] emailID:[e intValue]];
 				[contacts addObject:c];
-		[c release];
 			}
 		}
 	}
@@ -125,8 +109,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	}
 	[defaults setObject:email forKey:kExportGoogleShareEmailList];
 	[defaults setObject:records forKey:kExportGoogleShareRecordList];
-	[email release];
-	[records release];
 }
 
 - (void) shareSwitchAction
@@ -344,9 +326,9 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	if( !cell )
 	{
 	if( 1 == section )	// Use an attribute-style cell
-	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID] autorelease];
+	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID];
 	else
-		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	}
 
@@ -488,7 +470,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		clvc.contacts = contacts;
 		[self.navigationController pushViewController:clvc animated:YES];
 		[clvc setEditing:YES animated:NO];
-	    [clvc release];
 		showingContacts = YES;
 	}
 	else if( (section == SECTION_EXPORT) && exportEnabled )
@@ -511,7 +492,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 {
 	if( contactsEnumerator )
 	{
-		[contactsEnumerator release];
 		contactsEnumerator = nil;
 	}
 	
@@ -560,7 +540,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 					  cancelButtonTitle:@"OK"
 					  otherButtonTitles: nil];
     [alert show];
-    [alert release];
     [self cleanupExport];
 }
 
@@ -626,9 +605,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (void) exportStartChangeAction
 {
-	[exportStart release];
 	exportStart = datePicker.date;
-	[exportStart retain];
 	exportStartField.text = [model shortStringFromDate:exportStart];
 	[self updateExportRowText];
 	[[NSUserDefaults standardUserDefaults] setObject:exportStart forKey:kLastExportGoogleFromDate];
@@ -636,9 +613,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (void) exportEndChangeAction
 {
-	[exportEnd release];
 	exportEnd = datePicker.date;
-	[exportEnd retain];
 	exportEndField.text = [model shortStringFromDate:exportEnd];
 	[self updateExportRowText];
 	[[NSUserDefaults standardUserDefaults] setObject:exportEnd forKey:kLastExportGoogleToDate];

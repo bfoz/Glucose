@@ -82,7 +82,6 @@
     Category *const category = [Category newCategoryWithName:name
 						    database:self.database];
     [categories addObject:category];
-    [category release];
     [self clearCategoryNameMaxWidth];
 }
 
@@ -106,7 +105,7 @@
 		maxWidth = a;
 	}
 	if( maxWidth != 0 )
-	    categoryNameMaxWidth = [[NSNumber numberWithFloat:maxWidth] retain];
+	    categoryNameMaxWidth = [NSNumber numberWithFloat:maxWidth];
 	else
 	    return 0;
     }
@@ -116,8 +115,6 @@
 // Clear the max width so it will be recomputed next time it's needed
 - (void) clearCategoryNameMaxWidth
 {
-    if( categoryNameMaxWidth )
-	[categoryNameMaxWidth release];
     categoryNameMaxWidth = NULL;
 }
 
@@ -147,7 +144,7 @@
 
 - (void) moveCategoryAtIndex:(unsigned)from toIndex:(unsigned)to
 {
-    Category *const c = [[self.categories objectAtIndex:from] retain];
+    Category *const c = [self.categories objectAtIndex:from];
 
     /* The previous line lazy-instantiated the categories array, so there's no
 	longer a need to use the accessor method. */
@@ -157,7 +154,6 @@
     // Flush the array to preserve the new sequence
     [self flushCategories];
 
-    [c release];
 }
 
 // Purge a Category record from the database and the category array
@@ -208,15 +204,12 @@
     InsulinType *const type = [InsulinType newInsulinTypeWithName:name
 							 database:self.database];
     [insulinTypes addObject:type];
-    [type release];
     [self clearInsulinTypeShortNameMaxWidth];
 }
 
 // Clear the max width so it will be recomputed next time it's needed
 - (void) clearInsulinTypeShortNameMaxWidth
 {
-    if( insulinTypeShortNameMaxWidth )
-	[insulinTypeShortNameMaxWidth release];
     insulinTypeShortNameMaxWidth = NULL;
 }
 
@@ -264,7 +257,7 @@
 		maxWidth = a;
 	}
 	if( maxWidth != 0 )
-	    insulinTypeShortNameMaxWidth = [[NSNumber numberWithFloat:maxWidth] retain];
+	    insulinTypeShortNameMaxWidth = [NSNumber numberWithFloat:maxWidth];
 	else
 	    return 0;
     }
@@ -273,7 +266,7 @@
 
 - (void) moveInsulinTypeAtIndex:(unsigned)from toIndex:(unsigned)to
 {
-    InsulinType *const type = [[self.insulinTypes objectAtIndex:from] retain];
+    InsulinType *const type = [self.insulinTypes objectAtIndex:from];
 
     /* The previous line lazy-instantiated the insulin types array, so there's
 	no longer a need to use the accessor method. */
@@ -283,7 +276,6 @@
     // Flush the array to preserve the new sequence
     [self flushInsulinTypes];
 
-    [type release];
 }
 
 // Purge an InsulinType record from the database and the insulinTypes array
@@ -442,7 +434,6 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     }
 
     [self.days insertObject:day atIndex:i];
-    [day release];
     return day;
 }
 

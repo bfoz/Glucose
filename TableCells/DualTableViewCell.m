@@ -43,14 +43,6 @@
 }
 */
 
-- (void)dealloc {
-	[leftLabel dealloc];
-	[rightLabel dealloc];
-	[leftText dealloc];
-	[rightText dealloc];
-	[super dealloc];
-}
-
 - (void)layoutSubviews
 {
 	[super layoutSubviews];

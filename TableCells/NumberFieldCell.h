@@ -13,20 +13,20 @@
 
 @interface NumberFieldCell : UITableViewCell <UITextFieldDelegate>
 {
-    id <NumberFieldCellDelegate> delegate;
+    id <NumberFieldCellDelegate> __unsafe_unretained delegate;
 
     NumberField*    field;
     UILabel*	_label;
 }
 
-@property (nonatomic, assign) id <NumberFieldCellDelegate> delegate;
+@property (nonatomic, unsafe_unretained) id <NumberFieldCellDelegate> delegate;
 
 @property (nonatomic, readonly)	UITextField*	field;
 @property (nonatomic, copy)	NSNumber*	number;
 @property (nonatomic, copy)	NSString*	label;
 
 @property (nonatomic)	UITextFieldViewMode	clearButtonMode;
-@property (nonatomic, retain)	UIFont*	font;
+@property (nonatomic, strong)	UIFont*	font;
 @property (nonatomic, copy)	NSString*	placeholder;
 @property (nonatomic, assign)	int	precision;
 @property (nonatomic)	UITextAlignment	textAlignment;

@@ -25,12 +25,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-	[contacts release];
-    [super dealloc];
-}
-
 - (void) setEditing:(BOOL)e animated:(BOOL)animated
 {
 	if( e )
@@ -66,7 +60,7 @@
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if( !cell )
 	{
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
@@ -80,7 +74,7 @@
 #else
     cell.textLabel.textAlignment = UITextAlignmentCenter;
     ABAddressBookRef book = ABAddressBookCreate();
-    cell.textLabel.text = (NSString*)ABRecordCopyCompositeName(ABAddressBookGetPersonWithRecordID(book, c.recordID));
+    cell.textLabel.text = (NSString*)CFBridgingRelease(ABRecordCopyCompositeName(ABAddressBookGetPersonWithRecordID(book, c.recordID)));
     CFRelease(book);
 #endif
 
@@ -119,7 +113,6 @@
 		pvc.personViewDelegate = self;
 		[pvc setHighlightedItemForProperty:kABPersonEmailProperty withIdentifier:selectedContact.emailID];
 		[self presentModalViewController:pvc animated:YES];
-		[pvc release];
 	}
 }
 
@@ -160,7 +153,6 @@
     c.emailID = identifier;
     
 	[contacts addObject:c];
-    [c release];
 	// insertRowsAtIndexPath calls cellForRowAtIndexPath before returning so
 	//  contacts array must be changed first. Unfortunately, this means count
 	//  can't be used here as an index.
@@ -173,7 +165,6 @@
 	picker.peoplePickerDelegate = self;
 	picker.displayedProperties = [NSArray arrayWithObject:[NSNumber numberWithInt:kABPersonEmailProperty]];
 	[self presentModalViewController:picker animated:YES];
-	[picker release];
 }
 
 - (void) peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController*)picker

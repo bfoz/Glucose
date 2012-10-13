@@ -71,8 +71,6 @@ NSDateFormatter* shortDateFormatter = nil;
     UINavigationController* aNavigationController = [[UINavigationController alloc] initWithRootViewController:logViewController];
     self.navController = aNavigationController;
 
-    [aNavigationController release];
-    [logViewController release];
 
     // The application ships with a default database in its bundle. If anything in the application
     // bundle is altered, the code sign will fail. We want the database to be editable by users, 
@@ -93,7 +91,6 @@ NSDateFormatter* shortDateFormatter = nil;
 	LogDay *const section = [[LogDay alloc] initWithDate:day];
 	section.name = [shortDateFormatter stringFromDate:day];
 	[model.days addObject:section];
-	[section release];
     }
     else    // Otherwise, load the first LogDay from the database
 	[model logDayAtIndex:0];
@@ -109,12 +106,6 @@ NSDateFormatter* shortDateFormatter = nil;
 {
     [model flush];	// Flush all entries
     [model close];	// Close all open databases
-}
-
-- (void)dealloc
-{
-	[window release];
-	[super dealloc];
 }
 
 // Save all changes to the database, then close it.
@@ -233,7 +224,6 @@ sqlite3* openBundledDatabase()
 		}
 		for( LogDay* s in a )
 			[model.days removeObjectIdenticalTo:s];
-	[a release];
 	}
 }
 

@@ -31,13 +31,6 @@
 	return self;
 }
 
-
-- (void)dealloc
-{
-	[view release];
-	[super dealloc];
-}
-
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
@@ -58,9 +51,7 @@
 
 - (void) setFont:(UIFont*)f
 {
-	[font release];
 	font = f;
-	[font retain];
 }
 
 - (NSString*) text

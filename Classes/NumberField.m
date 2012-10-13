@@ -1,7 +1,7 @@
 #import "NumberField.h"
 
 @interface NumberField () <UITextFieldDelegate>
-@property (nonatomic, assign) id<NumberFieldDelegate>	numberFieldDelegate;
+@property (nonatomic, unsafe_unretained) id<NumberFieldDelegate>	numberFieldDelegate;
 @end
 
 @implementation NumberField

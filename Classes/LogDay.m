@@ -53,11 +53,9 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 	LogDay *const  day = [[LogDay alloc] initWithStatement:statement];
 	day.name = [shortDateFormatter stringFromDate:day.date];
 	[days addObject:day];
-	[day release];
 	++count;
     }
     sqlite3_finalize(statement);
-    [shortDateFormatter release];
     return count;
 }
 
@@ -158,9 +156,7 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 
 - (void) hydrate:(LogModel*)model
 {
-    if( entries )
-	[entries release];
-    entries = [[LogEntry logEntriesForLogDay:self model:model] retain];
+    entries = [LogEntry logEntriesForLogDay:self model:model];
 }
 
 // Insert a new entry and maintain sort
@@ -220,7 +216,6 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 	averageGlucose = i ? averageGlucose/i : 0;
 
     // Invalidate averageGlucoseString so it can be updated later
-    [averageGlucoseString release];
     averageGlucoseString = NULL;
 }
 
@@ -243,7 +238,7 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 	    averageGlucoseString = [NSString localizedStringWithFormat:@"%.0f", averageGlucose];
     }
 
-    return [averageGlucoseString retain];
+    return averageGlucoseString;
 }
 
 // Return the units string for the units used by the day's entries

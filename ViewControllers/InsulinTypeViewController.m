@@ -41,12 +41,6 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
-- (void)dealloc
-{
-    [selectedInsulinTypes release];
-	[super dealloc];
-}
-
 - (void) setEditing:(BOOL)e animated:(BOOL)animated
 {
     [super setEditing:e animated:animated];
@@ -98,7 +92,7 @@
 	[selectedInsulinTypes addObject:type];
     }
     else
-	selectedInsulinTypes = [[NSMutableSet setWithObject:type] retain];
+	selectedInsulinTypes = [NSMutableSet setWithObject:type];
 }
 
 - (void) setSelectedInsulinTypes:(NSArray*)types
@@ -109,7 +103,7 @@
 	[selectedInsulinTypes addObjectsFromArray:types];
     }
     else
-	selectedInsulinTypes = [[NSMutableSet setWithArray:types] retain];
+	selectedInsulinTypes = [NSMutableSet setWithArray:types];
 }
 
 #pragma mark -
@@ -184,7 +178,6 @@
 					      cancelButtonTitle:@"Cancel"
 					      otherButtonTitles:@"OK", nil];
 	[alert show];
-	[alert release];
     }
     else
 	[self deleteInsulinTypeAtIndex:index];
@@ -220,7 +213,7 @@
 	    switch( section )
 	    {
 		case kInsulinTypesSectionNumber:
-		    cell = [[[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+		    cell = [[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 		    ((TextFieldCell*)cell).clearButtonMode = UITextFieldViewModeWhileEditing;
 		    cell.showsReorderControl = YES;
 		    ((TextFieldCell*)cell).delegate = self;
@@ -228,12 +221,12 @@
 		    ((TextFieldCell*)cell).textField.returnKeyType = UIReturnKeyDone;
 		    break;
 		case kRestoreDefaultsSectionNumber:
-		    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+		    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 		    break;
 	    }
 	}
 	else
-	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
     }
 
     switch( section )
@@ -363,7 +356,6 @@
 						  cancelButtonTitle:@"Cancel"
 						  otherButtonTitles:@"OK", nil];
 	    [alert show];
-	    [alert release];
 	}
 	else	// Otherwise, carry on
 	    [self confirmDeleteInsulinTypeAtIndex:path.row];

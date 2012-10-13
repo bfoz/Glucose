@@ -7,8 +7,8 @@
 	NSNumber*	dose;
 }
 
-@property (nonatomic, retain)	NSNumber*	dose;
-@property (nonatomic, retain)	InsulinType*	insulinType;
+@property (nonatomic, strong)	NSNumber*	dose;
+@property (nonatomic, strong)	InsulinType*	insulinType;
 
 + (InsulinDose*)withType:(InsulinType*)t;
 

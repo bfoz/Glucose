@@ -28,6 +28,6 @@
     LogModel*			model;
 }
 
-@property (nonatomic, retain) LogModel*	model;
+@property (nonatomic, strong) LogModel*	model;
 
 @end

@@ -23,12 +23,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-	[label dealloc];
-    [super dealloc];
-}
-
 - (void)layoutSubviews
 {
 	[super layoutSubviews];

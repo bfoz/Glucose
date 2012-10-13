@@ -18,7 +18,7 @@
 
 @interface InsulinTypeViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
-    id <InsulinTypeViewControllerDelegate>  delegate;
+    id <InsulinTypeViewControllerDelegate>  __unsafe_unretained delegate;
     LogModel*				    model;
 
     BOOL		didUndo;
@@ -33,8 +33,8 @@
     } alertReason;
 }
 
-@property (nonatomic, assign) id <InsulinTypeViewControllerDelegate>   delegate;
-@property (nonatomic, retain) LogModel*					model;
+@property (nonatomic, unsafe_unretained) id <InsulinTypeViewControllerDelegate>   delegate;
+@property (nonatomic, strong) LogModel*					model;
 @property (nonatomic, assign) BOOL	multiCheck;
 @property (nonatomic, readonly) NSMutableSet*	selectedInsulinTypes;
 

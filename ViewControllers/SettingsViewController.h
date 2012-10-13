@@ -39,8 +39,8 @@
     PurgeViewController*	purgeViewController;
 }
 
-@property (nonatomic, retain)	id<SettingsViewControllerDelegate>    delegate;
-@property (nonatomic, retain) LogModel*				    model;
+@property (nonatomic, strong)	id<SettingsViewControllerDelegate>    delegate;
+@property (nonatomic, strong) LogModel*				    model;
 
 @end
 

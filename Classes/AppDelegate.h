@@ -15,8 +15,8 @@
     LogModel*	model;
 }
 
-@property (nonatomic, retain)	UIWindow*	window;
-@property (nonatomic, retain)	UINavigationController* navController;
+@property (nonatomic, strong)	UIWindow*	window;
+@property (nonatomic, strong)	UINavigationController* navController;
 
 - (void) appendBundledCategories;
 - (void) appendBundledInsulinTypes;

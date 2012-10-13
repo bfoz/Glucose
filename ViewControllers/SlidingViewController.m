@@ -34,13 +34,6 @@
 	[v addSubview:tv];				// Reparent the UITableView
 	self.tableView = tv;			// Keep a pointer to the UITableView created by the super
 	self.view = v;					// Insert the new parent UIView
-	[v release];
-}
-
-- (void)dealloc
-{
-	[datePicker release];
-	[super dealloc];
 }
 
 - (void)setEditing:(BOOL)e animated:(BOOL)animated
@@ -67,7 +60,6 @@
 	editField = field;
 	self.oldRightBarButtonItem = self.navigationItem.rightBarButtonItem;
 	self.navigationItem.rightBarButtonItem = b;
-	[b release];
 }
 
 - (void) didEndEditing

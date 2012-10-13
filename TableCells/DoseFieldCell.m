@@ -38,13 +38,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [doseField release];
-    [typeField release];
-    [super dealloc];
-}
-
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -77,9 +70,7 @@
     if( dose != d )
 	[self setNeedsLayout];
 
-    [dose release];
     dose = d;
-    [dose retain];
     
     if( !dose )
 	return;

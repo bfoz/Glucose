@@ -2,7 +2,7 @@
 #import "NumberFieldCell.h"
 
 @interface NumberFieldCell () <NumberFieldDelegate>
-@property (nonatomic, retain)	UILabel*    _label;
+@property (nonatomic, strong)	UILabel*    _label;
 @end
 
 @implementation NumberFieldCell
@@ -22,13 +22,6 @@
 	[self.contentView addSubview:field];
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [field release];
-    [_label release];
-    [super dealloc];
 }
 
 - (void)layoutSubviews

@@ -88,14 +88,6 @@ enum AboutSectionRows
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 
-- (void)dealloc
-{
-    [defaultInsulinTypeViewController release];
-    [exportViewController release];
-    [purgeViewController release];
-    [super dealloc];
-}
-
 - (void) doneAction:(id)sender
 {
     // Cancel edit mode in case the controllers are reused later
@@ -180,7 +172,7 @@ enum AboutSectionRows
     UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
     if( !cell )
     {
-	cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+	cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
@@ -401,7 +393,6 @@ enum AboutSectionRows
 
 			// Present the mail composition interface.
 			[self presentModalViewController:mail animated:YES];
-			[mail release];	// Can safely release the controller now.
 		    }
 		    else
 		    {

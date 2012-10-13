@@ -31,12 +31,12 @@
     unsigned	editedIndex;
 }
 
-@property (nonatomic, retain) NSDateFormatter*	dateFormatter;
-@property (nonatomic, assign) NumberFieldCell*	glucoseCell;
-@property (nonatomic, assign) UITableViewCell*	timestampCell;
+@property (nonatomic, strong) NSDateFormatter*	dateFormatter;
+@property (unsafe_unretained, nonatomic, assign) NumberFieldCell*	glucoseCell;
+@property (nonatomic, unsafe_unretained) UITableViewCell*	timestampCell;
 
-@property (nonatomic) UILabel*	categoryLabel;
-@property (nonatomic) UILabel*	timestampLabel;
+@property (unsafe_unretained, nonatomic) UILabel*	categoryLabel;
+@property (unsafe_unretained, nonatomic) UILabel*	timestampLabel;
 
 
 - (void)toggleDatePicker;
@@ -296,8 +296,8 @@ static NSUserDefaults* defaults = nil;
     {
 	if( kInsulinCellID == cellID )
 	{
-	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1
-					   reuseIdentifier:cellID] autorelease];
+	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1
+					   reuseIdentifier:cellID];
 	    // Use the same font size for both labels
 	    cell.detailTextLabel.font = cell.textLabel.font;
 	    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
@@ -306,12 +306,12 @@ static NSUserDefaults* defaults = nil;
 	else if( @"eDualCellID" == cellID )
 	{
 	    // CGRectZero allows the cell to determine the appropriate size.
-	    cell = [[[DoseFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+	    cell = [[DoseFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	    ((DoseFieldCell*)cell).delegate = self;
 	}
 	else if( @"eGlucose" == cellID )
 	{
-	    glucoseCell = [[[NumberFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+	    glucoseCell = [[NumberFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	    glucoseCell.clearButtonMode = UITextFieldViewModeWhileEditing;
 	    glucoseCell.delegate = self;
 	    glucoseCell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
@@ -320,7 +320,7 @@ static NSUserDefaults* defaults = nil;
 	}
 	else if( @"NoteCellID" == cellID )
 	{
-	    cell = [[[TextViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+	    cell = [[TextViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	    ((TextViewCell*)cell).placeholder = @"Note";
 	    ((TextViewCell*)cell).delegate = self;
 	}
@@ -331,7 +331,7 @@ static NSUserDefaults* defaults = nil;
 	else	// Standard UITableView cell for Timestamp and Category
 	{
 	    // CGRectZero allows the cell to determine the appropriate size.
-	    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	    cell.textLabel.backgroundColor = [UIColor clearColor];
 	    cell.textLabel.textAlignment = UITextAlignmentCenter;
 	    if( (0 == section) && (0 == row) )	// Save a pointer to the timestamp cell
@@ -664,11 +664,9 @@ static NSUserDefaults* defaults = nil;
     if( editingNewEntry )
     {
 	// Get the index path for the next insulin row. If there is no next row, find the note row
-	NSIndexPath* path = [[tableView indexPathForCell:editCell] retain];
-	NSIndexPath* next = [[NSIndexPath indexPathForRow:path.row+1 inSection:kInsulinSectionNum] retain];
-	[path release];
-	UITableViewCell* cell = [[tableView cellForRowAtIndexPath:next] retain];
-	[next release];
+	NSIndexPath* path = [tableView indexPathForCell:editCell];
+	NSIndexPath* next = [NSIndexPath indexPathForRow:path.row+1 inSection:kInsulinSectionNum];
+	UITableViewCell* cell = [tableView cellForRowAtIndexPath:next];
 	if( cell )	// Found a next insulin row
 	{
 	    [tableView scrollToRowAtIndexPath:next atScrollPosition:UITableViewScrollPositionBottom animated:YES];
@@ -676,7 +674,6 @@ static NSUserDefaults* defaults = nil;
 	}
 	else		// Resign first responder if no more insulin rows
 	    [((DoseFieldCell*)editCell).doseField resignFirstResponder];
-	[cell release];
     }
     else
 	[((DoseFieldCell*)editCell).doseField resignFirstResponder];

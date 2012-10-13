@@ -150,7 +150,7 @@
 	    switch( section )
 	    {
 		case kCategoriesSectionNumber:
-			cell = [[[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+			cell = [[TextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 		    ((TextFieldCell*)cell).textField.clearButtonMode = UITextFieldViewModeWhileEditing;
 			cell.showsReorderControl = YES;
 			((TextFieldCell*)cell).delegate = self;
@@ -158,12 +158,12 @@
 		    ((TextFieldCell*)cell).textField.returnKeyType = UIReturnKeyDone;
 		    break;
 		case kRestoreDefaultsSectionNumber:
-		    cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+		    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 		    break;
 	    }
 		}
 		else
-			cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+			cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	}
 
 	// If not editing, the first row is "None", and the categories need to be shifted down one row.
@@ -273,7 +273,6 @@
 						  cancelButtonTitle:@"Cancel"
 						  otherButtonTitles:@"OK", nil];
 	    [alert show];
-	    [alert release];		
 	}
 	else
 	    [self deleteCategory:category atIndex:path.row];

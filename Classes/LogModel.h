@@ -22,12 +22,12 @@
     NSDateFormatter* shortDateFormatter;
 }
 
-@property (nonatomic, readonly)	NSArray*    categories;
+@property (unsafe_unretained, nonatomic, readonly)	NSArray*    categories;
 @property (nonatomic, readonly)	unsigned    categoryNameMaxWidth;
 @property (nonatomic, readonly)	sqlite3*    database;
 @property (nonatomic, readonly)	NSMutableArray*    days;
-@property (nonatomic, readonly)	NSArray*    insulinTypes;
-@property (nonatomic, readonly)	NSArray*    insulinTypesForNewEntries;
+@property (unsafe_unretained, nonatomic, readonly)	NSArray*    insulinTypes;
+@property (unsafe_unretained, nonatomic, readonly)	NSArray*    insulinTypesForNewEntries;
 @property (nonatomic, readonly)	unsigned    insulinTypeShortNameMaxWidth;
 @property (nonatomic, readonly)	unsigned    numberOfLoadedLogDays;
 @property (nonatomic, readonly)	unsigned    numberOfLogDays;

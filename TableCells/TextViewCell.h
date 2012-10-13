@@ -12,7 +12,7 @@
 
 @interface TextViewCell : UITableViewCell <UITextViewDelegate>
 {
-	id <TextViewCellDelegate> delegate;
+	id <TextViewCellDelegate> __unsafe_unretained delegate;
 	BOOL	dirty;
 	UIFont*	font;
 	NSString*	placeholder;
@@ -20,9 +20,9 @@
     UITextView*	view;
 }
 
-@property (nonatomic, assign) id <TextViewCellDelegate> delegate;
+@property (nonatomic, unsafe_unretained) id <TextViewCellDelegate> delegate;
 @property (nonatomic, assign)	BOOL	dirty;
-@property (nonatomic, retain)	UIFont*	font;
+@property (nonatomic, strong)	UIFont*	font;
 @property (nonatomic, copy)		NSString*	placeholder;
 @property (nonatomic, copy)		NSString*	text;
 @property (nonatomic, readonly) UITextView*	view;

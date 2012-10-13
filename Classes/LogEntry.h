@@ -22,14 +22,14 @@
 }
 
 @property (nonatomic, readonly)	unsigned	entryID;
-@property (nonatomic, retain)	Category*	category;
+@property (nonatomic, strong)	Category*	category;
 @property (nonatomic, readonly)	BOOL		dirty;
-@property (nonatomic, retain)	NSNumber*	glucose;
-@property (nonatomic, readonly)	NSString*	glucoseString;
-@property (nonatomic, retain)	NSString*	glucoseUnits;
+@property (nonatomic, strong)	NSNumber*	glucose;
+@property (unsafe_unretained, nonatomic, readonly)	NSString*	glucoseString;
+@property (nonatomic, strong)	NSString*	glucoseUnits;
 @property (nonatomic, readonly)	NSMutableArray*	insulin;
 @property (nonatomic, copy)		NSString*	note;
-@property (nonatomic, retain)	NSDate*		timestamp;
+@property (nonatomic, strong)	NSDate*		timestamp;
 
 #pragma mark LogEntry creation
 + (LogEntry*) createLogEntryInDatabase:(sqlite3*)database;
