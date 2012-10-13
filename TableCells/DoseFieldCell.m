@@ -57,7 +57,7 @@
     doseField.frame  = insetRect;
 
     // Display the normal text field as a placeholder if no dose or type has been set
-    if( dose && dose.type )
+    if( dose && dose.insulinType )
     {
 	doseField.hidden  = NO;
 	typeField.hidden = NO;
@@ -86,9 +86,9 @@
 
     doseField.number = d.dose;
     // Fake a placeholder type display for the UILabel when no insulin type is set for the row
-    if( d && d.type && d.type.shortName && [d.type.shortName length] )
+    if( d && d.insulinType && d.insulinType.shortName && [d.insulinType.shortName length] )
     {
-	typeField.text = d.type.shortName;
+	typeField.text = d.insulinType.shortName;
 	typeField.textColor = [UIColor darkTextColor];		
     }
     else

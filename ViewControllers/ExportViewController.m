@@ -493,10 +493,6 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	}
 	else if( (section == SECTION_EXPORT) && exportEnabled )
 	{
-		// Refresh the service object's credentials in case they've changed
-		[appDelegate setUserCredentialsWithUsername:usernameField.text
-										   password:passwordField.text];
-
 		// Create an alert for displaying a progress bar while uploading
 		progressAlert = [[UIAlertView alloc] initWithTitle:@"Exporting..." message:@"Fetching DocFeed"
 													   delegate:self cancelButtonTitle:nil otherButtonTitles:nil];
@@ -508,13 +504,8 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 		// Show the network activity indicator
 		[UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-
-	[self findExportFolder];
 	}
 }
-
-#pragma mark -
-#pragma mark Google Doc Export
 
 - (void) cleanupExport
 {

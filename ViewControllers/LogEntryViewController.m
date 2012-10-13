@@ -31,7 +31,7 @@
     unsigned	editedIndex;
 }
 
-@property (nonatomic, assign) NSDateFormatter*	dateFormatter;
+@property (nonatomic, retain) NSDateFormatter*	dateFormatter;
 @property (nonatomic, assign) NumberFieldCell*	glucoseCell;
 @property (nonatomic, assign) UITableViewCell*	timestampCell;
 
@@ -101,13 +101,6 @@ static NSUserDefaults* defaults = nil;
 	[v addSubview:l];
 }
 */
-- (void)dealloc
-{
-    [categoryViewController release];
-    [insulinTypeViewController release];
-    [dateFormatter release];
-    [super dealloc];
-}
 
 - (void)viewDidLoad
 {
@@ -241,7 +234,7 @@ static NSUserDefaults* defaults = nil;
 	    {
 		unsigned i = 0;
 		for( InsulinDose* d in self.logEntry.insulin )
-		    if( d.dose && d.type )
+		    if( d.dose && d.insulinType )
 			++i;
 		return i;
 	    }
@@ -418,17 +411,17 @@ static NSUserDefaults* defaults = nil;
 
 	if( kInsulinCellID == cellID )
 	{
-	    while( !(dose && dose.dose && dose.type) )
+	    while( !(dose && dose.dose && dose.insulinType) )
 		dose = [self.logEntry doseAtIndex:++row];
 	    if( dose )
 	    {
 		if( dose.dose )	// If the record has a valid value...
 		{
 		    cell.detailTextLabel.text = [dose.dose stringValue];    // Value
-		    cell.textLabel.text = dose.type.shortName;		    // Name
+		    cell.textLabel.text = dose.insulinType.shortName;		    // Name
 		}
-		else if(dose.type)
-		    cell.textLabel.text = dose.type.shortName;
+		else if(dose.insulinType)
+		    cell.textLabel.text = dose.insulinType.shortName;
 	    }
 	}
 	else if( @"eDualCellID" == cellID )
@@ -529,7 +522,7 @@ static NSUserDefaults* defaults = nil;
 	    insulinTypeViewController.model = model;
 	}
 	editedIndex = row;
-	[insulinTypeViewController setSelectedInsulinType:(InsulinType*)[[[self.logEntry insulin] objectAtIndex:row] type]];
+	[insulinTypeViewController setSelectedInsulinType:(InsulinType*)[[[self.logEntry insulin] objectAtIndex:row] insulinType]];
 	[self presentModalViewController:insulinTypeViewController animated:YES];
     }
     else if( 2 == section )

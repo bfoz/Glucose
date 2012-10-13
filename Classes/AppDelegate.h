@@ -6,8 +6,6 @@
 @class LogDay;
 @class LogModel;
 
-@class GDataServiceGoogleDocs;
-
 @interface AppDelegate : NSObject <UIApplicationDelegate>
 {
     IBOutlet UIWindow *window;
@@ -19,7 +17,6 @@
 
 @property (nonatomic, retain)	UIWindow*	window;
 @property (nonatomic, retain)	UINavigationController* navController;
-@property (nonatomic, readonly) GDataServiceGoogleDocs*	docService;
 
 - (void) appendBundledCategories;
 - (void) appendBundledInsulinTypes;

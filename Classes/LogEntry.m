@@ -495,10 +495,10 @@ _var = _val;
 			break;
 
 		// Dose and type are stored as a pair. If the pair is incomplete, store neither.
-		if( dose.dose && dose.type && ([dose.dose floatValue] != 0) )
+		if( dose.dose && dose.insulinType && ([dose.dose floatValue] != 0) )
 		{
 			sqlite3_bind_double(flush_statement, 5+i, [dose.dose doubleValue]);
-			sqlite3_bind_int(flush_statement, 7+i, [dose.type typeID]);			
+			sqlite3_bind_int(flush_statement, 7+i, [dose.insulinType typeID]);
 			++i;
 		}
 	}
@@ -580,7 +580,7 @@ _var = _val;
 	unsigned i = 0;
 	for( InsulinDose* d in insulin )
 	{
-	    if( !d.dose || !d.type || ([d.dose floatValue] == 0) )
+	    if( !d.dose || !d.insulinType || ([d.dose floatValue] == 0) )
 		[indexes addIndex:i];
 	    ++i;
 	}
@@ -647,9 +647,9 @@ _var = _val;
 - (void) setDoseType:(InsulinType*)type at:(unsigned)index
 {
 	InsulinDose* dose = [self.insulin objectAtIndex:index];
-	if( dose && type && (dose.type != type) )
+	if( dose && type && (dose.insulinType != type) )
 	{
-		dose.type = type;
+		dose.insulinType = type;
 		dirty = YES;
 	}
 }

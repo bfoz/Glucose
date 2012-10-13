@@ -301,7 +301,7 @@
 	{
 	    NSArray* doses = [NSArray arrayWithArray:e.insulin];
 	    for( InsulinDose* d in doses )
-		if( d.type && (d.type == type) )
+		if( d.insulinType && (d.insulinType == type) )
 		    [e.insulin removeObjectIdenticalTo:d];
 	}
     }
@@ -332,8 +332,8 @@
 
 int orderInsulinTypesByIndex(id left, id right, void* insulinTypes)
 {
-    unsigned a = [((NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:left];
-    unsigned b = [((NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:right];
+    unsigned a = [((__bridge NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:left];
+    unsigned b = [((__bridge NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:right];
     if( a < b )
 	return NSOrderedAscending;
     if( a == b )
@@ -353,7 +353,7 @@ int orderInsulinTypesByIndex(id left, id right, void* insulinTypes)
 	insulinTypes array. The NewLogEntry view uses the array order when
 	displaying new dose rows.   */
     [insulinTypesForNewEntries sortUsingFunction:orderInsulinTypesByIndex
-					 context:insulinTypes];
+					 context:(__bridge void *)(insulinTypes)];
 
     [[NSUserDefaults standardUserDefaults] setObject:a
 					      forKey:kDefaultInsulinTypes];

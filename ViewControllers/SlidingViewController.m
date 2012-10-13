@@ -113,7 +113,7 @@
 
 - (void) didHideDatePicker:(NSString*)animationID finished:(BOOL)finished context:(void*)context
 {
-	((UIDatePicker*)context).hidden = YES;	// State change
+	((__bridge UIDatePicker*)context).hidden = YES;	// State change
 }
 
 - (void) didShowDatePicker:(NSString*)animationID finished:(BOOL)finished context:(void*)context
@@ -131,7 +131,7 @@
 	[datePicker removeTarget:self action:NULL forControlEvents:UIControlEventValueChanged];
 	[self saveAction];
 	
-	[UIView beginAnimations:nil context:datePicker];
+	[UIView beginAnimations:nil context:(__bridge void *)(datePicker)];
 	[UIView setAnimationDelegate:self];
 	[UIView setAnimationDidStopSelector:@selector(didHideDatePicker:finished:context:)];
 	[UIView setAnimationDuration:0.3];
