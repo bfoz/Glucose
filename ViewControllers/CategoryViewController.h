@@ -7,19 +7,17 @@
 
 @interface CategoryViewController : SlidingViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
-    id <CategoryViewControllerDelegate>	__unsafe_unretained delegate;
     LogModel*			model;
 
     BOOL	didUndo;
 	BOOL			dirty;
     Category*	deleteCategory;
     unsigned	deleteRow;
-    Category*	__unsafe_unretained selectedCategory;
 }
 
 @property (nonatomic, unsafe_unretained) id <CategoryViewControllerDelegate>   delegate;
 @property (nonatomic, strong) LogModel*				    model;
-@property (nonatomic, unsafe_unretained) id selectedCategory;
+@property (nonatomic, strong) Category* selectedCategory;
 
 @end
 

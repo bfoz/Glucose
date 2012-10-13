@@ -32,11 +32,10 @@
 }
 
 @property (nonatomic, strong) NSDateFormatter*	dateFormatter;
-@property (unsafe_unretained, nonatomic, assign) NumberFieldCell*	glucoseCell;
 @property (nonatomic, unsafe_unretained) UITableViewCell*	timestampCell;
 
-@property (unsafe_unretained, nonatomic) UILabel*	categoryLabel;
-@property (unsafe_unretained, nonatomic) UILabel*	timestampLabel;
+@property (nonatomic, strong) UILabel*	categoryLabel;
+@property (nonatomic, strong) UILabel*	timestampLabel;
 
 
 - (void)toggleDatePicker;
@@ -45,13 +44,15 @@
 @end
 
 @implementation LogEntryViewController
+{
+    NumberFieldCell*	glucoseCell;
+}
 
 @synthesize categoryLabel, timestampLabel;
 @synthesize dateFormatter, entrySection;
 @synthesize delegate;
 @synthesize editingNewEntry;
 @synthesize logEntry = _logEntry;
-@synthesize glucoseCell;
 @synthesize timestampCell;
 @synthesize model;
 

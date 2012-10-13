@@ -11,10 +11,8 @@
 
 @interface LogEntryViewController : SlidingViewController
 
-@property (unsafe_unretained, nonatomic, readonly)	UILabel*    categoryLabel;
-@property (unsafe_unretained, nonatomic, readonly)	UILabel*    timestampLabel;
-
-@property (unsafe_unretained, nonatomic, readonly)	NumberFieldCell*	glucoseCell;
+@property (nonatomic, strong, readonly)	UILabel*    categoryLabel;
+@property (nonatomic, strong, readonly)	UILabel*    timestampLabel;
 
 @property (nonatomic, unsafe_unretained) id <LogEntryViewDelegate>	delegate;
 @property (nonatomic, strong) LogEntry* logEntry;

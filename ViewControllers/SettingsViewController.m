@@ -354,7 +354,7 @@ enum AboutSectionRows
 			defaultInsulinTypeViewController.title = @"Default Insulin Types";
 			defaultInsulinTypeViewController.multiCheck = YES;
 		    }
-		    [defaultInsulinTypeViewController setSelectedInsulinTypes:model.insulinTypesForNewEntries];
+		    [defaultInsulinTypeViewController setSelectedInsulinTypesWithArray:model.insulinTypesForNewEntries];
 		    [self.navigationController pushViewController:defaultInsulinTypeViewController animated:YES];
 		    break;
 	    }

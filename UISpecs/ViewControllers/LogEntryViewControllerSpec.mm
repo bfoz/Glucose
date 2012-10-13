@@ -112,11 +112,6 @@ describe(@"LogEntryViewController", ^{
 	    controller.categoryLabel.backgroundColor should equal([UIColor clearColor]);
 	});
 
-	it(@"should have a Glucose cell", ^{
-	    controller.glucoseCell should_not be_nil;
-	    controller.glucoseCell should be_instance_of([NumberFieldCell class]);
-	});
-
 	describe(@"Section 0", ^{
 	    it(@"should have 3 rows", ^{
 		[controller.tableView numberOfRowsInSection:0] should equal(3);
@@ -128,6 +123,12 @@ describe(@"LogEntryViewController", ^{
 		    cell should_not be_nil;
 		    cell should be_instance_of([UITableViewCell class]);
 		});
+	    });
+
+	    it(@"should have a NumberFieldCell for row 2", ^{
+		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:0]];
+		cell should_not be_nil;
+		cell should be_instance_of([NumberFieldCell class]);
 	    });
 	});
 

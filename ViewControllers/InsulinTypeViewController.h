@@ -1,11 +1,3 @@
-//
-//  InsulinTypeViewController.h
-//  Glucose
-//
-//  Created by Brandon Fosdick on 8/5/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 #import "SlidingViewController.h"
 #import "TextFieldCell.h"	// Needed for TextFieldCellDelegate
@@ -25,7 +17,6 @@
     BOOL			dirty;
     BOOL			multiCheck;
     unsigned	    deleteRowNum;
-    NSMutableSet*	selectedInsulinTypes;
     enum
     {
 	ALERT_REASON_DEFAULT_NEW_ENTRY_TYPE,
@@ -36,11 +27,10 @@
 @property (nonatomic, unsafe_unretained) id <InsulinTypeViewControllerDelegate>   delegate;
 @property (nonatomic, strong) LogModel*					model;
 @property (nonatomic, assign) BOOL	multiCheck;
-@property (nonatomic, readonly) NSMutableSet*	selectedInsulinTypes;
 
 - (void) setMultiCheck:(BOOL)e;
 - (void) setSelectedInsulinType:(InsulinType*)type;
-- (void) setSelectedInsulinTypes:(NSArray*)types;
+- (void) setSelectedInsulinTypesWithArray:(NSArray*)types;
 
 @end
 

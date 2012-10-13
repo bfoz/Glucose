@@ -48,7 +48,7 @@ static const char *const sqlInsertUserCategory = "INSERT INTO LogEntryCategories
     }
 
     if( !(c.categoryName && [c.categoryName length]) )
-	c.categoryName = [NSString stringWithString:@"New Category"];
+	c.categoryName = @"New Category";
 
     sqlite3_bind_int(statement, 1, c.categoryID);
     sqlite3_bind_text(statement, 2, [c.categoryName UTF8String], -1, SQLITE_TRANSIENT);
@@ -71,7 +71,7 @@ static const char *const sqlInsertUserCategory = "INSERT INTO LogEntryCategories
 	if( n && [n length])
 		name = [NSString stringWithString:n];
 	else
-		name = [NSString stringWithString:@"New Category"];
+		name = @"New Category";
 	
 	sqlite3_bind_text(statement, 1, [name UTF8String], -1, SQLITE_TRANSIENT);
     int success = sqlite3_step(statement);

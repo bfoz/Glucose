@@ -1,11 +1,3 @@
-//
-//  InsulinTypeViewController.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 8/5/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import "TextFieldCell.h"
 
 #import "AppDelegate.h"
@@ -18,11 +10,12 @@
 #define	kRestoreDefaultsSectionNumber		1
 
 @implementation InsulinTypeViewController
-
+{
+    NSMutableSet*	selectedInsulinTypes;
+}
 @synthesize delegate;
 @synthesize model;
 @synthesize multiCheck;
-@synthesize selectedInsulinTypes;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -95,7 +88,7 @@
 	selectedInsulinTypes = [NSMutableSet setWithObject:type];
 }
 
-- (void) setSelectedInsulinTypes:(NSArray*)types
+- (void) setSelectedInsulinTypesWithArray:(NSArray*)types
 {
     if( selectedInsulinTypes )
     {

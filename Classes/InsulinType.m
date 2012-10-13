@@ -26,7 +26,7 @@ static const char *const sqlInsertUserInsulinType = "INSERT INTO InsulinTypes (t
     }
 
     if( !(t.shortName && [t.shortName length]) )
-	t.shortName = [NSString stringWithString:@"New Insulin Type"];
+	t.shortName = @"New Insulin Type";
 
     sqlite3_bind_int(statement, 1, t.typeID);
     sqlite3_bind_text(statement, 2, [t.shortName UTF8String], -1, SQLITE_TRANSIENT);
@@ -49,7 +49,7 @@ static const char *const sqlInsertUserInsulinType = "INSERT INTO InsulinTypes (t
 	if( n && [n length])
 	name = [NSString stringWithString:n];
 	else
-	name = [NSString stringWithString:@"New Insulin Type"];
+	name = @"New Insulin Type";
 	
 	sqlite3_bind_text(statement, 1, [name UTF8String], -1, SQLITE_TRANSIENT);
     int success = sqlite3_step(statement);

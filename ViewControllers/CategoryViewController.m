@@ -1,11 +1,3 @@
-//
-//  CategoryViewController.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 7/4/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import "AppDelegate.h"
 #import "Category.h"
 #import "CategoryViewController.h"
@@ -17,10 +9,11 @@
 #define	kRestoreDefaultsSectionNumber		1
 
 @implementation CategoryViewController
-
+{
+    id <CategoryViewControllerDelegate>	__unsafe_unretained delegate;
+}
 @synthesize delegate;
 @synthesize model;
-@synthesize selectedCategory;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -186,14 +179,14 @@
 		    {
 			cell.textLabel.text = [[model.categories objectAtIndex:(row-1)] categoryName];
 			// Set the row as selected if it matches the currently selected category
-			if( [model.categories objectAtIndex:(row-1)] == selectedCategory )
+			if( [model.categories objectAtIndex:(row-1)] == self.selectedCategory )
 			    [tv selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
 		    }
 		    else	// The "None" row
 		    {
 			cell.textLabel.text = @"None";	// Dummy "none" category so the user can select no category
 			// Set the "None" row as selected if no category is currently selected
-			if( !selectedCategory )
+			if( !self.selectedCategory )
 			    [tv selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
 		    }
 		}
@@ -224,9 +217,9 @@
     {
 	const unsigned row = indexPath.row;
 	// Row 0 is the "None" row
-	selectedCategory = row ? [model.categories objectAtIndex:row-1] : nil;
+	self.selectedCategory = row ? [model.categories objectAtIndex:row-1] : nil;
 	if( [delegate respondsToSelector:@selector(categoryViewControllerDidSelectCategory:)] )
-	    [delegate categoryViewControllerDidSelectCategory:selectedCategory];
+	    [delegate categoryViewControllerDidSelectCategory:self.selectedCategory];
     }
 
     // HI guidlines say row should be selected and then deselected
