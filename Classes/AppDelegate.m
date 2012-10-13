@@ -17,8 +17,6 @@
 #import "LogModel.h"
 #import "LogViewController.h"
 
-#import "GDataDocs.h"
-
 #define	LOG_SQL		@"glucose.sqlite"
 
 AppDelegate* appDelegate = nil;
@@ -317,24 +315,6 @@ sqlite3* openBundledDatabase()
 - (unsigned) numberOfLogEntriesForCategory:(Category*)category
 {
     return [LogEntry numLogEntriesForCategoryID:category.categoryID database:model.database];
-}
-
-#pragma mark -
-#pragma mark GData Interface
-
-- (GDataServiceGoogleDocs *)docService
-{
-	static GDataServiceGoogleDocs*	service = nil;
-	if( !service )
-	{
-		service = [[GDataServiceGoogleDocs alloc] init];
-	}
-	return service;
-}
-
-- (void) setUserCredentialsWithUsername:(NSString*)user password:(NSString*)pass
-{
-	[self.docService setUserCredentialsWithUsername:user password:pass];
 }
 
 #pragma mark -

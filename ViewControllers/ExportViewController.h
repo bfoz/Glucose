@@ -1,18 +1,7 @@
-//
-//  ExportViewController.h
-//  Glucose
-//
-//  Created by Brandon Fosdick on 9/7/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 
 #import "SlidingViewController.h"
 
-@class GDataEntryDocBase;
-@class GDataFeedACL;
-@class GDataServiceTicket;
 @class LogModel;
 
 @interface ExportViewController : SlidingViewController <UITextFieldDelegate>
@@ -52,8 +41,6 @@
 @property (nonatomic, retain) NSString*	failureTitle;
 @property (nonatomic, retain) LogModel*		    model;
 
-- (void) addACLTicket:(GDataServiceTicket *)ticket finishedWithEntry:(GDataFeedACL*)object error:(NSError *)error;
-- (void) findExportFolder;
 - (void) keychainInit;
 - (void) updateExportRowText;
 

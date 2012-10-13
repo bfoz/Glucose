@@ -30,9 +30,6 @@
 - (NSDate*) earliestLogEntryDate;
 - (unsigned) numLogEntries;
 
-// Google Docs
-- (void) setUserCredentialsWithUsername:(NSString*)user password:(NSString*)pass;
-
 @end
 
 extern NSDateFormatter* shortDateFormatter;
