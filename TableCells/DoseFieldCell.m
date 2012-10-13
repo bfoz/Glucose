@@ -1,11 +1,3 @@
-//
-//  DoseFieldCell.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 7/26/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import "DoseFieldCell.h"
 #import "InsulinType.h"
 #import "Constants.h"
@@ -21,9 +13,8 @@
     {
 	self.selectionStyle = UITableViewCellSelectionStyleNone;
 
-	doseField = [[NumberField alloc] initWithFrame:CGRectZero];
+	doseField = [[NumberField alloc] initWithDelegate:self];
 	doseField.backgroundColor = [UIColor clearColor];
-	doseField.delegate = self;
 	doseField.textAlignment = UITextAlignmentRight;
 	doseField.textColor = [UIColor blueColor];
 	doseField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;

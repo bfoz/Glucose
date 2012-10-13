@@ -1,70 +1,21 @@
-//
-//  NumberField.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 1/23/09.
-//  Copyright 2009 __MyCompanyName__. All rights reserved.
-//
-
 #import "NumberField.h"
 
-@interface NumberField ()
-@property (nonatomic, retain)	NSMutableString*    input;
+@interface NumberField () <UITextFieldDelegate>
+@property (nonatomic, assign) id<NumberFieldDelegate>	numberFieldDelegate;
 @end
 
 @implementation NumberField
+@synthesize precision;
 
-@synthesize input, precision;
-
-- (id)initWithFrame:(CGRect)frame
+- (id)initWithDelegate:(id<NumberFieldDelegate>)delegate
 {
-    if (self = [super initWithFrame:frame])
+    if (self = [super initWithFrame:CGRectZero])
     {
+	self.delegate = self;
 	self.keyboardType = UIKeyboardTypeNumberPad;
+	self.numberFieldDelegate = delegate;
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [input release];
-    [super dealloc];
-}
-
-- (BOOL)fieldEditor:(id)fp8 shouldInsertText:(id)string replacingRange:(struct _NSRange)range
-{
-    // Behave normally if not using fractional digits
-    if( !precision )
-	return YES;
-
-    if( input.length )
-    {
-	// range.length is only non-zero when deleting characters
-	if( range.length )
-	    [input deleteCharactersInRange:NSMakeRange(input.length-range.length, range.length)];
-	else
-	    [input appendString:string];
-    }
-    else if( 0 == range.length )
-	self.input = [NSMutableString stringWithString:string];
-    else
-	return YES;	// Nothing to do if deleting from nil/empty input
-
-    const int i = input.length - 1;
-    if( i > 0 )
-	super.text = [NSString stringWithFormat:@"%@.%@", [input substringToIndex:i], [input substringFromIndex:i]];
-    else if( i == 0 )
-	super.text = [NSString stringWithFormat:@"0.%@", input];
-    else
-	super.text = nil;
-    
-    return NO;
-}
-
-- (void)_clearButtonClicked:(id)fp8
-{
-    self.input = nil;
-    [super _clearButtonClicked:fp8];
 }
 
 #pragma mark Propertes
@@ -81,17 +32,52 @@
 
 - (void) setNumber:(NSNumber*)n
 {
-    if( [n floatValue] )
-	self.text = [NSString localizedStringWithFormat:@"%.*f", precision, [n floatValue]];
-    else
-	self.text = nil;
+    self.text = [n floatValue] ? [NSString localizedStringWithFormat:@"%.*f", precision, [n floatValue]] : nil;
 }
 
-- (void) setText:(NSString*)t
+#pragma mark UITextFieldDelegate
+
+- (BOOL) textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    self.input = t ? [NSMutableString stringWithString:t] : nil;
-    [input replaceOccurrencesOfString:@"." withString:@"" options:0 range:NSMakeRange(0, input.length)];
-    super.text = t;
+    // Behave normally if not using fractional digits
+    if( 0 == self.precision )
+	return YES;
+
+    NSString* s = [[[super.text stringByReplacingOccurrencesOfString:@"0." withString:@""] stringByReplacingOccurrencesOfString:@"." withString:@""] stringByAppendingString:string];
+
+    // Allow backspace
+    if( range.length && (0 == [string length]) )
+        s = [s substringToIndex:(s.length - range.length)];
+
+    const int i = s.length - 1;
+    if( i > 0 )
+	super.text = [NSString stringWithFormat:@"%@.%@", [s substringToIndex:i], [s substringFromIndex:i]];
+    else if( i == 0 )
+	super.text = [NSString stringWithFormat:@"0.%@", s];
+    else
+	super.text = nil;
+
+    return NO;
+}
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    if( [self.numberFieldDelegate respondsToSelector:@selector(textFieldShouldBeginEditing:)] )
+	return [self.numberFieldDelegate textFieldShouldBeginEditing:self];
+    return YES;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if( [self.numberFieldDelegate respondsToSelector:@selector(textFieldDidBeginEditing:)] )
+	[self.numberFieldDelegate textFieldDidBeginEditing:self];
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    if( [self.numberFieldDelegate respondsToSelector:@selector(textFieldDidEndEditing:)] )
+	[self.numberFieldDelegate textFieldDidEndEditing:self];
+    [self setNeedsLayout];
 }
 
 @end

@@ -1,15 +1,7 @@
-//
-//  NumberFieldCell.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 1/22/09.
-//  Copyright 2009 __MyCompanyName__. All rights reserved.
-//
-
 #import "Constants.h"
 #import "NumberFieldCell.h"
 
-@interface NumberFieldCell ()
+@interface NumberFieldCell () <NumberFieldDelegate>
 @property (nonatomic, retain)	UILabel*    _label;
 @end
 
@@ -24,9 +16,8 @@
     {
 	self.selectionStyle = UITableViewCellSelectionStyleNone;
 	
-	field = [[NumberField alloc] initWithFrame:CGRectZero];
+	field = [[NumberField alloc] initWithDelegate:self];
 	field.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-	field.delegate = self;
 
 	[self.contentView addSubview:field];
     }

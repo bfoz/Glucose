@@ -1,18 +1,10 @@
-//
-//  DoseFieldCell.h
-//  Glucose
-//
-//  Created by Brandon Fosdick on 7/26/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 #import "InsulinDose.h"
 #import "NumberField.h"
 
 @protocol DoseFieldCellDelegate;
 
-@interface DoseFieldCell : UITableViewCell <UITextFieldDelegate>
+@interface DoseFieldCell : UITableViewCell <NumberFieldDelegate>
 {
     id <DoseFieldCellDelegate> delegate;
     InsulinDose* dose;

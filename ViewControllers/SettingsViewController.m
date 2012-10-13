@@ -11,7 +11,7 @@
 
 #define	URL_PROJECT_PAGE    @"http://bfoz.github.com/Glucose/"
 
-@interface SettingsViewController () <CategoryViewControllerDelegate, InsulinTypeViewControllerDelegate, MFMailComposeViewControllerDelegate, UITextFieldDelegate>
+@interface SettingsViewController () <CategoryViewControllerDelegate, InsulinTypeViewControllerDelegate, MFMailComposeViewControllerDelegate, NumberFieldDelegate>
 @end
 
 @implementation SettingsViewController
@@ -224,8 +224,8 @@ enum AboutSectionRows
 	    const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
 	    if( row )
 	    {
-		f = [[NumberField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 50, 20)];
-		f.delegate = self;
+		f = [[NumberField alloc] initWithDelegate:self];
+		f.frame = CGRectMake(0, kCellTopOffset*2, 50, 20);
 		f.precision = mgdL ? 0 : 1;
 		f.textAlignment = UITextAlignmentRight;
 		cell.accessoryView = f;
