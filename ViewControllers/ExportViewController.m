@@ -4,23 +4,29 @@
 
 #import "Constants.h"
 #import "ExportViewController.h"
+#import "DropboxExportViewController.h"
 
 enum Sections
 {
     kSectionDropBox = 0,
-    kSectionDateRange,
-    kSectionShare,
-    kSectionExport,
     NUM_SECTIONS
 };
 
-@implementation ExportViewController
+@interface ExportViewController () <DBRestClientDelegate>
+@property (nonatomic, strong) DBRestClient* dropboxClient;
+@end
 
+@implementation ExportViewController
+{
+    NSMutableDictionary*    accountInfo;
+}
 - (id)initWithStyle:(UITableViewStyle)style
 {
     if( self = [super initWithStyle:style] )
     {
 	self.title = @"Export";
+
+	accountInfo = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -30,6 +36,11 @@ enum Sections
     [super viewDidLoad];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dropboxSessionLinkedAccount:) name:kDropboxSessionLinkedAccountNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dropboxSessionUnlinkedAccount:) name:kDropboxSessionUnlinkedAccountNotification object:nil];
+
+    DBSession *const session = [DBSession sharedSession];
+    if( [session isLinked] )
+	[self.dropboxClient loadAccountInfo];
 
     self.tableView.scrollEnabled = NO;	// Disable scrolling
 }
@@ -90,7 +101,13 @@ enum Sections
 		}
 		else
 		{
-		    cell.textLabel.text = [NSString stringWithFormat:@"Export to account %@", [session.userIds objectAtIndex:row]];
+		    NSString* userID = [session.userIds objectAtIndex:row];
+		    DBAccountInfo* account = [accountInfo objectForKey:userID];
+		    NSString* accountName = account.displayName;
+		    if( accountName && accountName.length )
+			cell.textLabel.text = [NSString stringWithFormat:@"Export to %@", accountName];
+		    else
+			cell.textLabel.text = [NSString stringWithFormat:@"Export to account %@", userID];
 		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		}
 	    }
@@ -131,7 +148,8 @@ enum Sections
 	DBSession* session = [DBSession sharedSession];
 	if( session.isLinked )
 	{
-	    // FIXME: Push a DropboxExportViewController
+	    DropboxExportViewController* controller = [[DropboxExportViewController alloc] initWithUserID:[session.userIds objectAtIndex:indexPath.row] dataSource:self.model];
+	    [self.navigationController pushViewController:controller animated:YES];
 	}
 	else if( session.userIds.count == indexPath.row )
 	{
@@ -140,9 +158,37 @@ enum Sections
     }
 }
 
+#pragma mark Accessors
+
+- (DBRestClient *) dropboxClient
+{
+    if( !_dropboxClient)
+    {
+	_dropboxClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
+	_dropboxClient.delegate = self;
+    }
+    return _dropboxClient;
+}
+
+#pragma mark DBRestClientDelegate
+
+- (void)restClient:(DBRestClient*)client loadedAccountInfo:(DBAccountInfo*)info
+{
+    [accountInfo setObject:info forKey:info.userId];
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kSectionDropBox]
+		  withRowAnimation:UITableViewRowAnimationFade];
+}
+
 #pragma mark Notification Handlers
 
 - (void) dropboxSessionLinkedAccount:(NSNotification*)notification
+{
+    [self.dropboxClient loadAccountInfo];
+
+    [self.tableView reloadData];
+}
+
+- (void) dropboxSessionUnlinkedAccount:(NSNotification*)notification
 {
     [self.tableView reloadData];
 }

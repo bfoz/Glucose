@@ -19,6 +19,7 @@ static NSString *const dropboxAppKey	= @"pl5fl3zf43pk9c4";
 static NSString *const dropboxAppSecret = @"iw9oh6wtbg404s1";
 
 NSString* kDropboxSessionLinkedAccountNotification = @"DropboxSessionLinkedAccountNotification";
+NSString* kDropboxSessionUnlinkedAccountNotification = @"DropboxSessionUnlinkedAccountNotification";
 
 @interface AppDelegate () <LogViewDelegate>
 

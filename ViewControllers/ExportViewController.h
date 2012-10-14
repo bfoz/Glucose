@@ -1,8 +1,7 @@
 #import <UIKit/UIKit.h>
 
-#import "SlidingViewController.h"
-
 @class LogModel;
 
 @interface ExportViewController : UITableViewController
+@property (nonatomic, strong) LogModel*	model;
 @end

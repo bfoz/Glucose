@@ -10,14 +10,11 @@
 		150829BD0E5009B400FB556A /* DoseFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829BA0E5009B400FB556A /* DoseFieldCell.m */; };
 		150829BE0E5009B400FB556A /* DualTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829BC0E5009B400FB556A /* DualTableViewCell.m */; };
 		150829CA0E500A9700FB556A /* CategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829C50E500A9700FB556A /* CategoryViewController.m */; };
-		150829CB0E500A9700FB556A /* InsulinTypeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829C70E500A9700FB556A /* InsulinTypeViewController.m */; };
-		150829CC0E500A9700FB556A /* LogEntryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829C90E500A9700FB556A /* LogEntryViewController.m */; };
 		150829D50E500B0500FB556A /* Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829CE0E500B0500FB556A /* Category.m */; };
 		150829D60E500B0500FB556A /* InsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829D00E500B0500FB556A /* InsulinDose.m */; };
 		150829D70E500B0500FB556A /* InsulinType.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829D20E500B0500FB556A /* InsulinType.m */; };
 		150829D80E500B0500FB556A /* LogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829D40E500B0500FB556A /* LogEntry.m */; };
 		150829F20E500DCA00FB556A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 150829F10E500DCA00FB556A /* CoreGraphics.framework */; };
-		150829FE0E500E1000FB556A /* LogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829FD0E500E1000FB556A /* LogViewController.m */; };
 		1517983F1250156100E28662 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1517983E1250156100E28662 /* MessageUI.framework */; };
 		153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 153F26A00E7F70C000F75D9F /* Security.framework */; };
 		155A24660F2971160077FC20 /* NumberFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 155A24650F2971160077FC20 /* NumberFieldCell.m */; };
@@ -34,9 +31,28 @@
 		1585DEC10E6A217200FB9C39 /* glucose.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1585DEC00E6A217200FB9C39 /* glucose.sqlite */; };
 		158F4094162A11AA0000DD52 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158F4093162A11AA0000DD52 /* DropboxSDK.framework */; };
 		158F4096162A11E10000DD52 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158F4095162A11E10000DD52 /* QuartzCore.framework */; };
-		1595CF570E999E1C00DA7CC6 /* PurgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1595CF560E999E1C00DA7CC6 /* PurgeViewController.m */; };
-		159B8F500E7243A7002C3975 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 159B8F4D0E7243A7002C3975 /* SettingsViewController.m */; };
-		159B8F510E7243A7002C3975 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 159B8F4F0E7243A7002C3975 /* SlidingViewController.m */; };
+		158F409C162A3E7A0000DD52 /* DropboxExportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F409B162A3E7A0000DD52 /* DropboxExportViewController.m */; };
+		158F409D162A3E7A0000DD52 /* DropboxExportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F409B162A3E7A0000DD52 /* DropboxExportViewController.m */; };
+		158F40AC162A3EFC0000DD52 /* ExportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F409F162A3EFC0000DD52 /* ExportViewController.m */; };
+		158F40AD162A3EFC0000DD52 /* ExportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F409F162A3EFC0000DD52 /* ExportViewController.m */; };
+		158F40AE162A3EFC0000DD52 /* InsulinTypeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A1162A3EFC0000DD52 /* InsulinTypeViewController.m */; };
+		158F40AF162A3EFC0000DD52 /* InsulinTypeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A1162A3EFC0000DD52 /* InsulinTypeViewController.m */; };
+		158F40B0162A3EFC0000DD52 /* LogEntryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A3162A3EFC0000DD52 /* LogEntryViewController.m */; };
+		158F40B1162A3EFC0000DD52 /* LogEntryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A3162A3EFC0000DD52 /* LogEntryViewController.m */; };
+		158F40B2162A3EFC0000DD52 /* LogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A5162A3EFC0000DD52 /* LogViewController.m */; };
+		158F40B3162A3EFC0000DD52 /* LogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A5162A3EFC0000DD52 /* LogViewController.m */; };
+		158F40B4162A3EFC0000DD52 /* PurgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A7162A3EFC0000DD52 /* PurgeViewController.m */; };
+		158F40B5162A3EFC0000DD52 /* PurgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A7162A3EFC0000DD52 /* PurgeViewController.m */; };
+		158F40B6162A3EFC0000DD52 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A9162A3EFC0000DD52 /* SettingsViewController.m */; };
+		158F40B7162A3EFC0000DD52 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A9162A3EFC0000DD52 /* SettingsViewController.m */; };
+		158F40B8162A3EFC0000DD52 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40AB162A3EFC0000DD52 /* SlidingViewController.m */; };
+		158F40B9162A3EFC0000DD52 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40AB162A3EFC0000DD52 /* SlidingViewController.m */; };
+		158F40BB162A4B690000DD52 /* DropboxExportViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 158F40BA162A4B690000DD52 /* DropboxExportViewControllerSpec.mm */; };
+		158F40F1162A4D450000DD52 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 150829F10E500DCA00FB556A /* CoreGraphics.framework */; };
+		158F40F2162A4D750000DD52 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1517983E1250156100E28662 /* MessageUI.framework */; };
+		158F40F5162A562B0000DD52 /* DBSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40F4162A562B0000DD52 /* DBSession.m */; };
+		158F41DE162B73760000DD52 /* UIControl+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F41DD162B73760000DD52 /* UIControl+SpecHelper.m */; };
+		158F41E1162B93780000DD52 /* DBRestClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F41E0162B93780000DD52 /* DBRestClient.m */; };
 		159E81980E5156A40097EA6F /* LogEntryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 159E81970E5156A40097EA6F /* LogEntryCell.m */; };
 		159E84410E5558BD0097EA6F /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */; };
 		15A320720EC55E6500C16388 /* LabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A320710EC55E6500C16388 /* LabelCell.m */; };
@@ -49,7 +65,6 @@
 		15C30BB9161D48BF00976444 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BB5161D474E00976444 /* Default@2x.png */; };
 		15C30BBB161D48C600976444 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BBA161D48C600976444 /* Default.png */; };
 		15C30BBD161D494700976444 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BBC161D494700976444 /* Icon@2x.png */; };
-		15E823D50E74BA7E003322DC /* ExportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E823D40E74BA7E003322DC /* ExportViewController.m */; };
 		15EC68CD13B1B74900016937 /* LogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EC68CC13B1B74900016937 /* LogModel.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -161,12 +176,8 @@
 		150829BA0E5009B400FB556A /* DoseFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DoseFieldCell.m; path = TableCells/DoseFieldCell.m; sourceTree = "<group>"; };
 		150829BB0E5009B400FB556A /* DualTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DualTableViewCell.h; path = TableCells/DualTableViewCell.h; sourceTree = "<group>"; };
 		150829BC0E5009B400FB556A /* DualTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DualTableViewCell.m; path = TableCells/DualTableViewCell.m; sourceTree = "<group>"; };
-		150829C40E500A9700FB556A /* CategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CategoryViewController.h; path = ViewControllers/CategoryViewController.h; sourceTree = "<group>"; };
-		150829C50E500A9700FB556A /* CategoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CategoryViewController.m; path = ViewControllers/CategoryViewController.m; sourceTree = "<group>"; };
-		150829C60E500A9700FB556A /* InsulinTypeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InsulinTypeViewController.h; path = ViewControllers/InsulinTypeViewController.h; sourceTree = "<group>"; };
-		150829C70E500A9700FB556A /* InsulinTypeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InsulinTypeViewController.m; path = ViewControllers/InsulinTypeViewController.m; sourceTree = "<group>"; };
-		150829C80E500A9700FB556A /* LogEntryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogEntryViewController.h; path = ViewControllers/LogEntryViewController.h; sourceTree = "<group>"; };
-		150829C90E500A9700FB556A /* LogEntryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LogEntryViewController.m; path = ViewControllers/LogEntryViewController.m; sourceTree = "<group>"; };
+		150829C40E500A9700FB556A /* CategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoryViewController.h; sourceTree = "<group>"; };
+		150829C50E500A9700FB556A /* CategoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoryViewController.m; sourceTree = "<group>"; };
 		150829CD0E500B0500FB556A /* Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Category.h; sourceTree = "<group>"; };
 		150829CE0E500B0500FB556A /* Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Category.m; sourceTree = "<group>"; };
 		150829CF0E500B0500FB556A /* InsulinDose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsulinDose.h; sourceTree = "<group>"; };
@@ -177,8 +188,6 @@
 		150829D40E500B0500FB556A /* LogEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogEntry.m; sourceTree = "<group>"; };
 		150829D90E500B2400FB556A /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		150829F10E500DCA00FB556A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		150829FC0E500E1000FB556A /* LogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogViewController.h; path = ViewControllers/LogViewController.h; sourceTree = "<group>"; };
-		150829FD0E500E1000FB556A /* LogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LogViewController.m; path = ViewControllers/LogViewController.m; sourceTree = "<group>"; };
 		1517983E1250156100E28662 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		153F26A00E7F70C000F75D9F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		155A24640F2971160077FC20 /* NumberFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NumberFieldCell.h; path = TableCells/NumberFieldCell.h; sourceTree = "<group>"; };
@@ -195,12 +204,31 @@
 		1585DEC00E6A217200FB9C39 /* glucose.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = glucose.sqlite; sourceTree = "<group>"; };
 		158F4093162A11AA0000DD52 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropboxSDK.framework; path = Frameworks/DropboxSDK.framework; sourceTree = "<group>"; };
 		158F4095162A11E10000DD52 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		1595CF550E999E1C00DA7CC6 /* PurgeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PurgeViewController.h; path = ViewControllers/PurgeViewController.h; sourceTree = "<group>"; };
-		1595CF560E999E1C00DA7CC6 /* PurgeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PurgeViewController.m; path = ViewControllers/PurgeViewController.m; sourceTree = "<group>"; };
-		159B8F4C0E7243A7002C3975 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingsViewController.h; path = ViewControllers/SettingsViewController.h; sourceTree = "<group>"; };
-		159B8F4D0E7243A7002C3975 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SettingsViewController.m; path = ViewControllers/SettingsViewController.m; sourceTree = "<group>"; };
-		159B8F4E0E7243A7002C3975 /* SlidingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SlidingViewController.h; path = ViewControllers/SlidingViewController.h; sourceTree = "<group>"; };
-		159B8F4F0E7243A7002C3975 /* SlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SlidingViewController.m; path = ViewControllers/SlidingViewController.m; sourceTree = "<group>"; };
+		158F409A162A3E7A0000DD52 /* DropboxExportViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxExportViewController.h; sourceTree = "<group>"; };
+		158F409B162A3E7A0000DD52 /* DropboxExportViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DropboxExportViewController.m; sourceTree = "<group>"; };
+		158F409E162A3EFC0000DD52 /* ExportViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportViewController.h; sourceTree = "<group>"; };
+		158F409F162A3EFC0000DD52 /* ExportViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExportViewController.m; sourceTree = "<group>"; };
+		158F40A0162A3EFC0000DD52 /* InsulinTypeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsulinTypeViewController.h; sourceTree = "<group>"; };
+		158F40A1162A3EFC0000DD52 /* InsulinTypeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InsulinTypeViewController.m; sourceTree = "<group>"; };
+		158F40A2162A3EFC0000DD52 /* LogEntryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogEntryViewController.h; sourceTree = "<group>"; };
+		158F40A3162A3EFC0000DD52 /* LogEntryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogEntryViewController.m; sourceTree = "<group>"; };
+		158F40A4162A3EFC0000DD52 /* LogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogViewController.h; sourceTree = "<group>"; };
+		158F40A5162A3EFC0000DD52 /* LogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogViewController.m; sourceTree = "<group>"; };
+		158F40A6162A3EFC0000DD52 /* PurgeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgeViewController.h; sourceTree = "<group>"; };
+		158F40A7162A3EFC0000DD52 /* PurgeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PurgeViewController.m; sourceTree = "<group>"; };
+		158F40A8162A3EFC0000DD52 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		158F40A9162A3EFC0000DD52 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		158F40AA162A3EFC0000DD52 /* SlidingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlidingViewController.h; sourceTree = "<group>"; };
+		158F40AB162A3EFC0000DD52 /* SlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlidingViewController.m; sourceTree = "<group>"; };
+		158F40BA162A4B690000DD52 /* DropboxExportViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DropboxExportViewControllerSpec.mm; sourceTree = "<group>"; };
+		158F40F0162A4CE50000DD52 /* DropboxSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DropboxSDK.h; sourceTree = "<group>"; };
+		158F40F3162A562B0000DD52 /* DBSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBSession.h; sourceTree = "<group>"; };
+		158F40F4162A562B0000DD52 /* DBSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBSession.m; sourceTree = "<group>"; };
+		158F41DB162B730C0000DD52 /* SpecsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecsHelper.h; sourceTree = "<group>"; };
+		158F41DC162B73760000DD52 /* UIControl+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+SpecHelper.h"; sourceTree = "<group>"; };
+		158F41DD162B73760000DD52 /* UIControl+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+SpecHelper.m"; sourceTree = "<group>"; };
+		158F41DF162B93780000DD52 /* DBRestClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBRestClient.h; sourceTree = "<group>"; };
+		158F41E0162B93780000DD52 /* DBRestClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBRestClient.m; sourceTree = "<group>"; };
 		159E81960E5156A40097EA6F /* LogEntryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogEntryCell.h; path = TableCells/LogEntryCell.h; sourceTree = "<group>"; };
 		159E81970E5156A40097EA6F /* LogEntryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LogEntryCell.m; path = TableCells/LogEntryCell.m; sourceTree = "<group>"; };
 		159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
@@ -208,8 +236,8 @@
 		15A320710EC55E6500C16388 /* LabelCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LabelCell.m; path = TableCells/LabelCell.m; sourceTree = "<group>"; };
 		15A321910ED28A7E00C16388 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		15A321930ED28A7E00C16388 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
-		15A322460ED35C9F00C16388 /* ContactListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContactListViewController.h; path = ViewControllers/ContactListViewController.h; sourceTree = "<group>"; };
-		15A322470ED35C9F00C16388 /* ContactListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContactListViewController.m; path = ViewControllers/ContactListViewController.m; sourceTree = "<group>"; };
+		15A322460ED35C9F00C16388 /* ContactListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactListViewController.h; sourceTree = "<group>"; };
+		15A322470ED35C9F00C16388 /* ContactListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactListViewController.m; sourceTree = "<group>"; };
 		15A322580ED3E0D000C16388 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contact.h; sourceTree = "<group>"; };
 		15A322590ED3E0D000C16388 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
 		15AF2FE00EC1799F00FC2403 /* LogDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogDay.h; sourceTree = "<group>"; };
@@ -218,8 +246,6 @@
 		15C30BB7161D476500976444 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		15C30BBA161D48C600976444 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		15C30BBC161D494700976444 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
-		15E823D30E74BA7E003322DC /* ExportViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExportViewController.h; path = ViewControllers/ExportViewController.h; sourceTree = "<group>"; };
-		15E823D40E74BA7E003322DC /* ExportViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExportViewController.m; path = ViewControllers/ExportViewController.m; sourceTree = "<group>"; };
 		15EC68CB13B1B74900016937 /* LogModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogModel.h; sourceTree = "<group>"; };
 		15EC68CC13B1B74900016937 /* LogModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogModel.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -237,8 +263,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1581CE11155F0F9A00B069F2 /* UIKit.framework in Frameworks */,
+				158F40F1162A4D450000DD52 /* CoreGraphics.framework in Frameworks */,
 				1581CE12155F0F9A00B069F2 /* Foundation.framework in Frameworks */,
+				158F40F2162A4D750000DD52 /* MessageUI.framework in Frameworks */,
+				1581CE11155F0F9A00B069F2 /* UIKit.framework in Frameworks */,
 				1581CE23155F116600B069F2 /* libCedar-StaticLib.a in Frameworks */,
 				1581CE24155F116600B069F2 /* libOCMock.a in Frameworks */,
 			);
@@ -315,24 +343,26 @@
 			children = (
 				150829C40E500A9700FB556A /* CategoryViewController.h */,
 				150829C50E500A9700FB556A /* CategoryViewController.m */,
-				15E823D30E74BA7E003322DC /* ExportViewController.h */,
-				15E823D40E74BA7E003322DC /* ExportViewController.m */,
-				150829C60E500A9700FB556A /* InsulinTypeViewController.h */,
-				150829C70E500A9700FB556A /* InsulinTypeViewController.m */,
-				150829C80E500A9700FB556A /* LogEntryViewController.h */,
-				150829C90E500A9700FB556A /* LogEntryViewController.m */,
-				150829FC0E500E1000FB556A /* LogViewController.h */,
-				150829FD0E500E1000FB556A /* LogViewController.m */,
-				1595CF550E999E1C00DA7CC6 /* PurgeViewController.h */,
-				1595CF560E999E1C00DA7CC6 /* PurgeViewController.m */,
-				159B8F4C0E7243A7002C3975 /* SettingsViewController.h */,
-				159B8F4D0E7243A7002C3975 /* SettingsViewController.m */,
-				159B8F4E0E7243A7002C3975 /* SlidingViewController.h */,
-				159B8F4F0E7243A7002C3975 /* SlidingViewController.m */,
 				15A322460ED35C9F00C16388 /* ContactListViewController.h */,
 				15A322470ED35C9F00C16388 /* ContactListViewController.m */,
+				158F409A162A3E7A0000DD52 /* DropboxExportViewController.h */,
+				158F409B162A3E7A0000DD52 /* DropboxExportViewController.m */,
+				158F409E162A3EFC0000DD52 /* ExportViewController.h */,
+				158F409F162A3EFC0000DD52 /* ExportViewController.m */,
+				158F40A0162A3EFC0000DD52 /* InsulinTypeViewController.h */,
+				158F40A1162A3EFC0000DD52 /* InsulinTypeViewController.m */,
+				158F40A2162A3EFC0000DD52 /* LogEntryViewController.h */,
+				158F40A3162A3EFC0000DD52 /* LogEntryViewController.m */,
+				158F40A4162A3EFC0000DD52 /* LogViewController.h */,
+				158F40A5162A3EFC0000DD52 /* LogViewController.m */,
+				158F40A6162A3EFC0000DD52 /* PurgeViewController.h */,
+				158F40A7162A3EFC0000DD52 /* PurgeViewController.m */,
+				158F40A8162A3EFC0000DD52 /* SettingsViewController.h */,
+				158F40A9162A3EFC0000DD52 /* SettingsViewController.m */,
+				158F40AA162A3EFC0000DD52 /* SlidingViewController.h */,
+				158F40AB162A3EFC0000DD52 /* SlidingViewController.m */,
 			);
-			name = ViewControllers;
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		1581CDB9155F059300B069F2 /* Externals */ = {
@@ -372,9 +402,11 @@
 		1581CE13155F0F9A00B069F2 /* UISpecs */ = {
 			isa = PBXGroup;
 			children = (
+				158F40EE162A4C760000DD52 /* Helpers */,
 				1581CE26155F123500B069F2 /* Application */,
 				1581CE14155F0F9A00B069F2 /* Supporting Files */,
 				1581CE2D155F2DF100B069F2 /* ViewControllers */,
+				158F41DB162B730C0000DD52 /* SpecsHelper.h */,
 			);
 			path = UISpecs;
 			sourceTree = "<group>";
@@ -398,8 +430,31 @@
 			isa = PBXGroup;
 			children = (
 				1581CE2E155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm */,
+				158F40BA162A4B690000DD52 /* DropboxExportViewControllerSpec.mm */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		158F40EE162A4C760000DD52 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				158F41DC162B73760000DD52 /* UIControl+SpecHelper.h */,
+				158F41DD162B73760000DD52 /* UIControl+SpecHelper.m */,
+				158F40EF162A4CCD0000DD52 /* DropboxSDK */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		158F40EF162A4CCD0000DD52 /* DropboxSDK */ = {
+			isa = PBXGroup;
+			children = (
+				158F40F0162A4CE50000DD52 /* DropboxSDK.h */,
+				158F40F3162A562B0000DD52 /* DBSession.h */,
+				158F40F4162A562B0000DD52 /* DBSession.m */,
+				158F41DF162B93780000DD52 /* DBRestClient.h */,
+				158F41E0162B93780000DD52 /* DBRestClient.m */,
+			);
+			path = DropboxSDK;
 			sourceTree = "<group>";
 		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
@@ -414,7 +469,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				158F4095162A11E10000DD52 /* QuartzCore.framework */,
 				15C30BBC161D494700976444 /* Icon@2x.png */,
 				15C30BBA161D48C600976444 /* Default.png */,
 				15C30BB7161D476500976444 /* Default-568h@2x.png */,
@@ -463,6 +517,7 @@
 				158F4093162A11AA0000DD52 /* DropboxSDK.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */,
+				158F4095162A11E10000DD52 /* QuartzCore.framework */,
 				153F26A00E7F70C000F75D9F /* Security.framework */,
 				1581CE0F155F0F9A00B069F2 /* SenTestingKit.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
@@ -711,6 +766,18 @@
 			files = (
 				1581CE28155F126900B069F2 /* AppDelegateSpec.mm in Sources */,
 				1581CE2F155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm in Sources */,
+				158F409D162A3E7A0000DD52 /* DropboxExportViewController.m in Sources */,
+				158F40AD162A3EFC0000DD52 /* ExportViewController.m in Sources */,
+				158F40AF162A3EFC0000DD52 /* InsulinTypeViewController.m in Sources */,
+				158F40B1162A3EFC0000DD52 /* LogEntryViewController.m in Sources */,
+				158F40B3162A3EFC0000DD52 /* LogViewController.m in Sources */,
+				158F40B5162A3EFC0000DD52 /* PurgeViewController.m in Sources */,
+				158F40B7162A3EFC0000DD52 /* SettingsViewController.m in Sources */,
+				158F40B9162A3EFC0000DD52 /* SlidingViewController.m in Sources */,
+				158F40BB162A4B690000DD52 /* DropboxExportViewControllerSpec.mm in Sources */,
+				158F40F5162A562B0000DD52 /* DBSession.m in Sources */,
+				158F41DE162B73760000DD52 /* UIControl+SpecHelper.m in Sources */,
+				158F41E1162B93780000DD52 /* DBRestClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -723,18 +790,11 @@
 				150829BD0E5009B400FB556A /* DoseFieldCell.m in Sources */,
 				150829BE0E5009B400FB556A /* DualTableViewCell.m in Sources */,
 				150829CA0E500A9700FB556A /* CategoryViewController.m in Sources */,
-				150829CB0E500A9700FB556A /* InsulinTypeViewController.m in Sources */,
-				150829CC0E500A9700FB556A /* LogEntryViewController.m in Sources */,
 				150829D50E500B0500FB556A /* Category.m in Sources */,
 				150829D60E500B0500FB556A /* InsulinDose.m in Sources */,
 				150829D70E500B0500FB556A /* InsulinType.m in Sources */,
 				150829D80E500B0500FB556A /* LogEntry.m in Sources */,
-				150829FE0E500E1000FB556A /* LogViewController.m in Sources */,
 				159E81980E5156A40097EA6F /* LogEntryCell.m in Sources */,
-				159B8F500E7243A7002C3975 /* SettingsViewController.m in Sources */,
-				159B8F510E7243A7002C3975 /* SlidingViewController.m in Sources */,
-				15E823D50E74BA7E003322DC /* ExportViewController.m in Sources */,
-				1595CF570E999E1C00DA7CC6 /* PurgeViewController.m in Sources */,
 				15AF2FE20EC1799F00FC2403 /* LogDay.m in Sources */,
 				15A320720EC55E6500C16388 /* LabelCell.m in Sources */,
 				15A322480ED35C9F00C16388 /* ContactListViewController.m in Sources */,
@@ -744,6 +804,14 @@
 				155A26990F29B0610077FC20 /* TextFieldCell.m in Sources */,
 				155A26A90F2AF5810077FC20 /* NumberField.m in Sources */,
 				15EC68CD13B1B74900016937 /* LogModel.m in Sources */,
+				158F409C162A3E7A0000DD52 /* DropboxExportViewController.m in Sources */,
+				158F40AC162A3EFC0000DD52 /* ExportViewController.m in Sources */,
+				158F40AE162A3EFC0000DD52 /* InsulinTypeViewController.m in Sources */,
+				158F40B0162A3EFC0000DD52 /* LogEntryViewController.m in Sources */,
+				158F40B2162A3EFC0000DD52 /* LogViewController.m in Sources */,
+				158F40B4162A3EFC0000DD52 /* PurgeViewController.m in Sources */,
+				158F40B6162A3EFC0000DD52 /* SettingsViewController.m in Sources */,
+				158F40B8162A3EFC0000DD52 /* SlidingViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -817,6 +885,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -858,6 +927,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UISpecs/UISpecs-Prefix.pch";
@@ -895,6 +965,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UISpecs/UISpecs-Prefix.pch";

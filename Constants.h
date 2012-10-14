@@ -1,4 +1,5 @@
 extern NSString* kDropboxSessionLinkedAccountNotification;
+extern NSString* kDropboxSessionUnlinkedAccountNotification;
 
 /*
 
@@ -117,6 +118,9 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 #define kExportGoogleShareEnable		@"ExportGoogleShareEnable"
 #define kExportGoogleShareEmailList		@"ExportGoogleShareEmailList"
 #define kExportGoogleShareRecordList	@"ExportGoogleShareRecordList"
+#define kLastExportDropboxDate		@"LastExportDropboxDate"
+#define kLastExportDropboxEndDate	@"LastExportDropboxEndDate"
+#define kLastExportDropboxStartDate	@"LastExportDropboxStartDate"
 #define kLastExportGoogleFromDate		@"LastExportGoogleFromDate"
 #define kLastExportGoogleToDate			@"LastExportGoogleToDate"
 #define kLastExportGoogleOnDate			@"LastExportGoogleOnDate"

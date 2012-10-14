@@ -303,6 +303,7 @@ enum AboutSectionRows
 		    if( !exportViewController )
 		    {
 			exportViewController = [[ExportViewController alloc] initWithStyle:UITableViewStyleGrouped];
+			exportViewController.model = self.model;
 		    }
 		    [self.navigationController pushViewController:exportViewController animated:YES];
 		    break;
