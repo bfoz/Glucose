@@ -1,4 +1,7 @@
 #import "AppDelegate.h"
+
+#import <DropboxSDK/DropboxSDK.h>
+
 #import "Category.h"
 #import "Constants.h"
 #import "InsulinDose.h"
@@ -11,6 +14,11 @@
 #define	LOG_SQL		@"glucose.sqlite"
 
 AppDelegate* appDelegate = nil;
+
+static NSString *const dropboxAppKey	= @"pl5fl3zf43pk9c4";
+static NSString *const dropboxAppSecret = @"iw9oh6wtbg404s1";
+
+NSString* kDropboxSessionLinkedAccountNotification = @"DropboxSessionLinkedAccountNotification";
 
 @interface AppDelegate () <LogViewDelegate>
 
@@ -48,6 +56,11 @@ NSDateFormatter* shortDateFormatter = nil;
 	NSArray* values = [NSArray arrayWithObjects:@"120", @"80", @"6.6", @"4.4", kGlucoseUnits_mgdL, [NSNumber numberWithInt:0], a, @"NO", nil];
 	NSDictionary* d = [NSDictionary dictionaryWithObjects:values forKeys:keys];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:d];
+
+    DBSession* session = [[DBSession alloc] initWithAppKey:dropboxAppKey
+						 appSecret:dropboxAppSecret
+						      root:kDBRootAppFolder];
+    [DBSession setSharedSession:session];
 
     // Create the Log Model object
     model = [[LogModel alloc] init];
@@ -103,6 +116,21 @@ NSDateFormatter* shortDateFormatter = nil;
 {
     [model flush];	// Flush all entries
     [model close];	// Close all open databases
+}
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+    DBSession* session = [DBSession sharedSession];
+    if( [session handleOpenURL:url] )
+    {
+        if( session.isLinked )
+	{
+	    [[NSNotificationCenter defaultCenter] postNotificationName:kDropboxSessionLinkedAccountNotification object:session];
+        }
+        return YES;
+    }
+    // Add whatever other url handling code your app requires here
+    return NO;
 }
 
 #pragma mark -

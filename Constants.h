@@ -1,3 +1,5 @@
+extern NSString* kDropboxSessionLinkedAccountNotification;
+
 /*
 
 ===== IMPORTANT =====

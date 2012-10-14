@@ -1,4 +1,7 @@
 #import "AppDelegate.h"
+
+#import <DropboxSDK/DropboxSDK.h>
+
 #import "Category.h"
 #import "Constants.h"
 #import "Contact.h"
@@ -22,10 +25,14 @@
 
 #define	GENERIC_PASSWORD	0
 
-#define	SECTION_ACCOUNT		0
-#define	SECTION_DATE_RANGE	1
-#define	SECTION_SHARE		2
-#define	SECTION_EXPORT		3
+enum Sections
+{
+    kSectionDropBox = 0,
+    kSectionDateRange,
+    kSectionShare,
+    kSectionExport,
+    NUM_SECTIONS
+};
 
 @implementation ExportViewController
 
@@ -129,6 +136,18 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		}
 		showingContacts = NO;
 	}
+}
+
+- (void) viewDidLoad
+{
+    [super viewDidLoad];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dropboxSessionLinkedAccount:) name:kDropboxSessionLinkedAccountNotification object:nil];
+}
+
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark -
@@ -286,43 +305,45 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 #endif // TARGET_IPHONE_SIMULATOR
 }
 
-#pragma mark -
-#pragma mark <UITableViewDataSource>
+#pragma mark - <UITableViewDataSource>
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 4;
+    return NUM_SECTIONS;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	switch( section )
+    switch( section )
+    {
+	case kSectionDropBox:
 	{
-		case 0: return 2;	// Account info
-		case 1: return 2;	// Date range
-		case 2: return 1;	// Sharing
-		case 3: return 1;	// Export button
+	    DBSession *const session = [DBSession sharedSession];
+	    return [session isLinked] ? session.userIds.count+1 : 1;
 	}
-	return 0;
+	case 1: return 2;	// Date range
+	case 2: return 1;	// Sharing
+	case 3: return 1;	// Export button
+    }
+    return 0;
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {	
-	NSString* cellID;
-	const unsigned	row		= indexPath.row;
-	const unsigned	section	= indexPath.section;
+    NSString* cellID = @"cellID";
+    const unsigned row	    = indexPath.row;
+    const unsigned section  = indexPath.section;
 
 	switch( section )
 	{
 	case 1: cellID = @"DateRange"; break;
 		case 2: cellID = @"Share"; break;
 		case 3: cellID = @"Export"; break;
-		default: cellID = @"CellID"; break;
 	}
 
-	UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
+    UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
 	if( !cell )
 	{
 	if( 1 == section )	// Use an attribute-style cell
@@ -332,39 +353,33 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	}
 
-	UITextField*	f	= nil;
-	switch( section )
+    switch( section )
+    {
+	case kSectionDropBox:
 	{
-		case 0:
-			switch( row )
-			{
-				case 0:
-					cell.textLabel.text = @"Username";
-					f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 175, 20)];
-					f.clearButtonMode = UITextFieldViewModeWhileEditing;
-					f.delegate = self;
-					f.returnKeyType = UIReturnKeyDone;
-					f.textAlignment = UITextAlignmentRight;
-					f.text = [self.keychainData objectForKey:(id)kSecAttrAccount];
-					cell.accessoryView = f;
-					usernameCell = cell;
-					usernameField = f;
-					break;
-				case 1:
-					cell.textLabel.text = @"Password";
-					f = [[UITextField alloc] initWithFrame:CGRectMake(0, kCellTopOffset*2, 175, 20)];
-					f.clearButtonMode = UITextFieldViewModeWhileEditing;
-					f.delegate = self;
-					f.returnKeyType = UIReturnKeyDone;
-					f.secureTextEntry = YES;
-					f.textAlignment = UITextAlignmentRight;
-					f.text = [self.keychainData objectForKey:(id)kSecValueData];
-					cell.accessoryView = f;
-					passwordCell = cell;
-					passwordField = f;
-					break;
-			}
-			break;
+	    DBSession* session = [DBSession sharedSession];
+	    if( session.isLinked )
+	    {
+		if( session.userIds.count == row )
+		{
+		    cell.textLabel.text = @"Link another Dropbox account";
+		    cell.textLabel.textAlignment = UITextAlignmentCenter;
+		    cell.textLabel.textColor = [UIColor blueColor];
+		    cell.textLabel.font = [UIFont italicSystemFontOfSize:[UIFont systemFontSize]];
+		}
+		else
+		{
+		    cell.textLabel.text = [NSString stringWithFormat:@"Export to account %@", [session.userIds objectAtIndex:row]];
+		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		}
+	    }
+	    else
+	    {
+		cell.textLabel.text = @"Link your Dropbox account";
+		cell.textLabel.textAlignment = UITextAlignmentCenter;
+	    }
+	    break;
+	}
 		case 1:
 		{
 			switch( row )
@@ -406,7 +421,11 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-    if( SECTION_EXPORT == section )
+    if( kSectionDropBox == section )
+    {
+	return @"Linking a Dropbox account allows you to export your data to a folder in your Dropbox";
+    }
+    else if( kSectionExport == section )
     {
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	NSDate *const lastExportStart = [defaults objectForKey:kLastExportGoogleFromDate];
@@ -428,8 +447,8 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 - (NSString *)tableView:(UITableView *)tv titleForHeaderInSection:(NSInteger)section
 {
     switch( section )
-	{
-        case 0: return @"Google Account Information";
+    {
+        case 0: return @"Dropbox";
     }
     return nil;
 }
@@ -439,16 +458,20 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	const unsigned section = indexPath.section;
-	if( section == SECTION_ACCOUNT )
+    const unsigned section = indexPath.section;
+    if( section == kSectionDropBox )
+    {
+	DBSession* session = [DBSession sharedSession];
+	if( session.isLinked )
 	{
-		switch( indexPath.row )
-		{
-			case 0: [usernameField becomeFirstResponder]; break;
-			case 1: [passwordField becomeFirstResponder]; break;
-		}
+	    // FIXME: Push a DropboxExportViewController
 	}
-	else if( section == SECTION_DATE_RANGE )
+	else if( session.userIds.count == indexPath.row )
+	{
+	    [[DBSession sharedSession] linkFromController:self];
+	}
+    }
+	else if( section == kSectionDateRange )
 	{
 		switch( indexPath.row )
 		{
@@ -456,7 +479,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	    case 1: [self toggleDatePicker:exportEndCell mode:UIDatePickerModeDate initialDate:exportEnd changeAction:@selector(exportEndChangeAction)]; break;
 		}
 	}
-	else if( section == SECTION_SHARE )
+	else if( section == kSectionShare )
 	{
 		if( !shareSwitch.on )
 		{
@@ -472,7 +495,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 		[clvc setEditing:YES animated:NO];
 		showingContacts = YES;
 	}
-	else if( (section == SECTION_EXPORT) && exportEnabled )
+	else if( (section == kSectionExport) && exportEnabled )
 	{
 		// Create an alert for displaying a progress bar while uploading
 		progressAlert = [[UIAlertView alloc] initWithTitle:@"Exporting..." message:@"Fetching DocFeed"
@@ -509,7 +532,7 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	exportLastField.text = [model shortStringFromDate:[NSDate date]];
 	
     // Update the footer text
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:SECTION_EXPORT]
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kSectionExport]
 		  withRowAnimation:NO];
 
 	[self cleanupExport];
@@ -617,6 +640,13 @@ static const uint8_t kKeychainItemIdentifier[]	= "com.google.docs";
 	exportEndField.text = [model shortStringFromDate:exportEnd];
 	[self updateExportRowText];
 	[[NSUserDefaults standardUserDefaults] setObject:exportEnd forKey:kLastExportGoogleToDate];
+}
+
+#pragma mark Notification Handlers
+
+- (void) dropboxSessionLinkedAccount:(NSNotification*)notification
+{
+    [self.tableView reloadData];
 }
 
 @end
