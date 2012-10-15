@@ -1,11 +1,3 @@
-//
-//  PurgeViewController.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 10/5/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import "AppDelegate.h"
 #import "Constants.h"
 #import "LogModel.h"
@@ -14,79 +6,131 @@
 
 #define	kPurgeButtonSection	1
 
-@implementation PurgeViewController
-
-@synthesize model;
-
-- (id)initWithStyle:(UITableViewStyle)style
+enum Sections
 {
-    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-    if (self = [super initWithStyle:style])
-	{
-		self.title = @"Purge Records";
+    kSectionRange = 0,
+    kSectionPurgeButton,
+    NUM_SECTIONS
+};
 
-		// purgeStart defaults to the day after the last purge
-		//  or the current date if no last purge date is stored
-		// !! Don't default to the first LogEntry here to avoid accidentally
-		// !!  deleting the entire table
-		NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-		purgeStart = [defaults objectForKey:kLastPurgeToDate];
-		// If the value exists, add one day and use it. Otherwise, use the current date.
-		if( purgeStart )
-			purgeStart = [purgeStart dateByAddingTimeInterval:24*60*60];
-		else
-			purgeStart = [NSDate date];
+@interface PurgeViewController () <UITextFieldDelegate>
+@end
 
-		purgeEnd = [NSDate date];
+@implementation PurgeViewController
+{
+    NSDateFormatter*	dateFormatter;
+    UIDatePicker*	datePicker;
+    LogModel*	logModel;
+    unsigned	numberOfRecordsToPurge;
+
+    UITextField*    pickerField;
+    UIToolbar*	    pickerInputAccessoryView;
+    UILabel*	    pickerLabel;
+
+    NSDate* endDate;
+    NSDate* startDate;
+
+    UITextField*    endField;
+    UITextField*    startField;
+}
+
+- (id)initWithDataSource:(LogModel*)model
+{
+    if (self = [super initWithStyle:UITableViewStyleGrouped])
+    {
+	self.title = @"Purge Records";
+	logModel = model;
+
+	dateFormatter = [[NSDateFormatter alloc] init];
+	[dateFormatter setDateStyle:NSDateFormatterShortStyle];
+	[dateFormatter setDoesRelativeDateFormatting:YES];
+
+	// !! Don't default to the first LogEntry here to avoid accidentally deleting the entire table
+	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+	NSDate* savedStart = [defaults objectForKey:kLastPurgeToDate];
+	startDate = savedStart ? [savedStart dateByAddingTimeInterval:24*60*60] : [NSDate date];
+	endDate = [NSDate date];
+
+	AppDelegate* delegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
+	numberOfRecordsToPurge = [delegate numLogEntriesFrom:startDate to:endDate];
+
     }
     return self;
 }
 
-- (void) loadView
+- (UIView*) pickerInputAccessoryView
 {
-	[super loadView];
-	self.tableView.scrollEnabled = NO;	// Disable scrolling
+    if( !pickerInputAccessoryView )
+    {
+	pickerInputAccessoryView = [[UIToolbar alloc] init];
+	UIBarButtonItem* cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(didTapCancelButton)];
+	UIBarButtonItem* flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+	UIBarButtonItem* barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didTapDoneButton)];
+	[pickerInputAccessoryView setItems:[NSArray arrayWithObjects:cancelButton, flexibleSpace, barButton, nil] animated:NO];
+	[pickerInputAccessoryView sizeToFit];
+    }
+
+    return pickerInputAccessoryView;
 }
 
-- (void) updatePurgeRowText
+- (UIDatePicker*) pickerInputView
 {
-	unsigned num = [appDelegate numLogEntriesFrom:purgeStart to:purgeEnd];
-	if( num )
-	{
-		purgeCell.textLabel.text = [NSString stringWithFormat:@"Purge %u Records", num];
-		purgeCell.textLabel.textColor = [UIColor blackColor];
-		purgeEnabled = YES;
-	}
-	else
-	{
-		purgeCell.textLabel.text = @"Empty Date Range Selected";
-		purgeCell.textLabel.textColor = [UIColor grayColor];
-		purgeEnabled = NO;
-	}
+    if( !datePicker )
+    {
+	datePicker = [[UIDatePicker alloc] init];
+	datePicker.datePickerMode = UIDatePickerModeDate;
+	[datePicker addTarget:self action:@selector(datePickerDidChangeValue:) forControlEvents:UIControlEventValueChanged];
+    }
+    return datePicker;
 }
 
-#pragma mark -
-#pragma mark <UITableViewDataSource>
+- (UITextField*) createPickerTextFieldWithFrame:(CGRect)frame
+{
+    UITextField* field = [[UITextField alloc] initWithFrame:frame];
+    field.delegate = self;
+    field.hidden = YES;
+    field.inputAccessoryView = [self pickerInputAccessoryView];
+    field.inputView = [self pickerInputView];
+
+    return field;
+}
+
+- (NSString*) textForPurgeButton
+{
+    if( numberOfRecordsToPurge )
+	return [NSString stringWithFormat:@"Purge %u record%@", numberOfRecordsToPurge, (numberOfRecordsToPurge > 1) ? @"s" : @""];
+    return @"No records to purge";
+}
+
+- (void) updateThePurgeButton
+{
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kSectionPurgeButton]
+		  withRowAnimation:UITableViewRowAnimationFade];
+}
+
+#pragma mark UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return NUM_SECTIONS;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	switch( section )
-	{
-		case 0:	return 2;
-		case kPurgeButtonSection: return 1;
-	}
+    switch( section )
+    {
+	case kSectionRange:	    return 2;
+	case kSectionPurgeButton:   return 1;
+    }
     return 0;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-    if( kPurgeButtonSection == section )
+    if( kSectionRange == section )
+	return @"Records for the selected start and end days, as well as everything in between, will be purged.";
+    else if( kSectionPurgeButton == section )
     {
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	NSDate *const lastPurgeStart = [defaults objectForKey:kLastPurgeFromDate];
@@ -95,11 +139,11 @@
 
 	if( lastPurgeStart && lastPurgeEnd && lastPurgedOn )
 	{
-	    NSString* stringLastPurgeStart = [model shortStringFromDate:purgeStart];
-	    NSString* stringLastPurgeEnd = [model shortStringFromDate:lastPurgeEnd];
-	    NSString* stringLastPurgedOn = [model shortStringFromDate:lastPurgedOn];
-	    if( stringLastPurgeStart && stringLastPurgeEnd && stringLastPurgedOn )
-		return [NSString stringWithFormat:@"Last purged from %@ to %@ on %@", stringLastPurgeStart, stringLastPurgeEnd, stringLastPurgedOn];
+	    if( lastPurgeStart && lastPurgeEnd && lastPurgedOn )
+		return [NSString stringWithFormat:@"Last purged from %@ to %@ on %@",
+			[dateFormatter stringFromDate:lastPurgeStart],
+			[dateFormatter stringFromDate:lastPurgeEnd],
+			[dateFormatter stringFromDate:lastPurgedOn]];
 	}
     }
     return nil;
@@ -107,133 +151,152 @@
 
 - (NSString *)tableView:(UITableView *)tv titleForHeaderInSection:(NSInteger)section
 {
-    switch( section )
-	{
-		case 0: return @"Date Range (inclusive)";
-    }
+    if( kSectionRange )
+	return @"Select a date range to purge";
     return nil;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    static NSString *CellIdentifier = @"Cell";
-    
-    UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:CellIdentifier];
+- (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *cellIdentifier = @"Cell";
+    const unsigned section = indexPath.section;
+
+    UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellIdentifier];
     if( !cell )
     {
-	if( 0 == indexPath.section )	// Use an attribute-style cell
-	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"DateRange"];
-	else
-	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-	cell.selectionStyle = UITableViewCellSelectionStyleNone;
+	UITableViewCellStyle style = (kSectionRange == section) ? UITableViewCellStyleValue1 : UITableViewCellStyleDefault;
+	cell = [[UITableViewCell alloc] initWithStyle:style reuseIdentifier:cellIdentifier];
     }
 
-	switch( indexPath.section )
-	{
+    switch( section )
+    {
+	case kSectionRange:
+	    switch( indexPath.row )
+	    {
 		case 0:
-		{
-			switch( indexPath.row )
-			{
-				case 0:
-					// The From field defaults to the day after the end of last purge
-					//  or the beginning of the LogEntry table if no last export
-					cell.textLabel.text = @"From";
-					cell.detailTextLabel.text = [model shortStringFromDate:purgeStart];
-					purgeStartField = cell.detailTextLabel;
-					purgeStartCell = cell;
-					break;
-				case 1:
-					// The To field defaults to Today
-					cell.textLabel.text = @"To";
-					cell.detailTextLabel.text = @"Today";
-					purgeEndField = cell.detailTextLabel;
-					purgeEndCell = cell;
-					break;
-			}
-		}
-		break;
-		case kPurgeButtonSection:
-		{
-			cell.textLabel.textAlignment = UITextAlignmentCenter;
-			purgeCell = cell;
-			[self updatePurgeRowText];
-		}
-		break;
-	}
-	return cell;
+		    cell.textLabel.text = @"Start Date";
+		    cell.detailTextLabel.text = [dateFormatter stringFromDate:startDate];
+		    startField = [self createPickerTextFieldWithFrame:cell.detailTextLabel.frame];
+		    [cell addSubview:startField];
+		    break;
+		case 1:
+		    cell.textLabel.text = @"End Date";
+		    cell.detailTextLabel.text = [dateFormatter stringFromDate:endDate];
+		    endField = [self createPickerTextFieldWithFrame:cell.detailTextLabel.frame];
+		    break;
+	    }
+	    break;
+	case kSectionPurgeButton:
+	    cell.textLabel.text = [self textForPurgeButton];
+	    cell.textLabel.textAlignment = UITextAlignmentCenter;
+	    cell.textLabel.textColor = numberOfRecordsToPurge ? [UIColor darkTextColor] : [UIColor grayColor];
+	    break;
+    }
+    return cell;
 }
 
-#pragma mark -
-#pragma mark <UITableViewDelegate>
+#pragma mark UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	switch( indexPath.section )
-	{
-		case 0:
-			switch( indexPath.row )
-			{
-				case 0: [self toggleDatePicker:purgeStartCell mode:UIDatePickerModeDate initialDate:purgeStart changeAction:@selector(purgeStartChangeAction)]; break;
-				case 1: [self toggleDatePicker:purgeEndCell mode:UIDatePickerModeDate initialDate:purgeEnd changeAction:@selector(purgeEndChangeAction)]; break;
-			}
-			break;
-		case 1:
-		{
-			UIAlertView* alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Purge %u Records?", [appDelegate numLogEntriesFrom:purgeStart to:purgeEnd]]
-															message:[NSString stringWithFormat:@"Delete all records from %@ to %@?", [model shortStringFromDate:purgeStart], [model shortStringFromDate:purgeEnd]]
-														    delegate:self
-												   cancelButtonTitle:@"Cancel"
-												   otherButtonTitles:@"OK",nil];
-			[alert show];
-		}
-		break;
-	}
+    const unsigned section = indexPath.section;
+    if( kSectionRange == section )
+    {
+	if( indexPath.row )
+	    [endField becomeFirstResponder];
+	else
+	    [startField becomeFirstResponder];
+    }
+    else if( (kSectionPurgeButton == section) && numberOfRecordsToPurge )
+    {
+	[[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Purge %u Records?", numberOfRecordsToPurge]
+				    message:[NSString stringWithFormat:@"Delete all records from %@ to %@?", [dateFormatter stringFromDate:startDate], [dateFormatter stringFromDate:endDate]]
+				   delegate:self
+			  cancelButtonTitle:@"Cancel"
+			  otherButtonTitles:@"OK",nil] show];
+    }
+
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
-#pragma mark -
-#pragma mark <UIAlertViewDelegate>
+#pragma mark UIAlertViewDelegate
 
 - (void) alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-	if( 0 == buttonIndex )	// Nothing to do if Cancel was clicked
-		return;
+    if( 0 == buttonIndex )	// Nothing to do if Cancel was clicked
+	return;
 
-	[appDelegate deleteLogEntriesFrom:purgeStart to:purgeEnd];
+    [(AppDelegate*)[UIApplication sharedApplication].delegate deleteLogEntriesFrom:startDate to:endDate];
 
-	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-	[defaults setObject:purgeStart forKey:kLastPurgeFromDate];
-	[defaults setObject:purgeEnd forKey:kLastPurgeToDate];
-	[defaults setObject:[NSDate date] forKey:kLastPurgedOnDate];
+    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:startDate forKey:kLastPurgeFromDate];
+    [defaults setObject:endDate forKey:kLastPurgeToDate];
+    [defaults setObject:[NSDate date] forKey:kLastPurgedOnDate];
 
-    // Update the footer text
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kPurgeButtonSection]
-		  withRowAnimation:NO];
-
-	UIAlertView* alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Purge Complete", [appDelegate numLogEntriesFrom:purgeStart to:purgeEnd]]
-													message:nil
-												   delegate:nil
-										  cancelButtonTitle:nil
-										  otherButtonTitles:@"OK",nil];
-	[alert show];
+    [[[UIAlertView alloc] initWithTitle:@"Purge Complete"
+				message:nil
+			       delegate:nil
+		      cancelButtonTitle:@"Ok"
+		      otherButtonTitles:nil] show];
+    [self.tableView reloadData];
 }
 
-#pragma mark -
-#pragma mark Date/Time Picker
+#pragma mark Actions
 
-- (void) purgeStartChangeAction
+- (void) datePickerDidChangeValue:(UIDatePicker*)sender
 {
-	purgeStart = datePicker.date;
-	purgeStartField.text = [model shortStringFromDate:purgeStart];
-	[self updatePurgeRowText];
+    pickerLabel.text = [dateFormatter stringFromDate:sender.date];
 }
 
-- (void) purgeEndChangeAction
+- (void) didTapCancelButton
 {
-	purgeEnd = datePicker.date;
-	purgeEndField.text = [model shortStringFromDate:purgeEnd];
-	[self updatePurgeRowText];
+    UITextField* temp = pickerField;
+    pickerField = nil;
+    [temp resignFirstResponder];
 }
 
+- (void) didTapDoneButton
+{
+    [pickerField resignFirstResponder];
+}
+
+#pragma mark UITextFieldDelegate
+
+- (void) textFieldDidBeginEditing:(UITextField *)textField
+{
+    pickerField = textField;
+    if( textField == endField )
+    {
+	pickerLabel = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionRange]].detailTextLabel;
+	self.pickerInputView.date = endDate;
+    }
+    else if( textField == startField )
+    {
+	pickerLabel = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionRange]].detailTextLabel;
+	self.pickerInputView.date = startDate;
+    }
+}
+
+- (void) textFieldDidEndEditing:(UITextField *)textField
+{
+    if( pickerField )
+    {
+	if( textField == endField )
+	    endDate = self.pickerInputView.date;
+	else if( textField == startField )
+	    startDate = self.pickerInputView.date;
+	pickerField = nil;
+    }
+
+    if( textField == endField )
+	pickerLabel.text = [dateFormatter stringFromDate:endDate];
+    else if( textField == startField )
+	pickerLabel.text = [dateFormatter stringFromDate:startDate];
+
+    numberOfRecordsToPurge = [(AppDelegate*)[UIApplication sharedApplication].delegate numLogEntriesFrom:startDate to:endDate];
+
+    [self updateThePurgeButton];
+}
 
 @end
 

@@ -308,12 +308,8 @@ enum AboutSectionRows
 		    [self.navigationController pushViewController:exportViewController animated:YES];
 		    break;
 		case kPurgeRow:
-		    if( !purgeViewController )
-		    {
-			purgeViewController = [[PurgeViewController alloc] initWithStyle:UITableViewStyleGrouped];
-			purgeViewController.model = model;
-		    }
-		    [self.navigationController pushViewController:purgeViewController animated:YES];
+		    [self.navigationController pushViewController:[[PurgeViewController alloc] initWithDataSource:model]
+							 animated:YES];
 		    break;
 	    }
 	    break;
