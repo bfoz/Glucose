@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 #import "CategoryViewController.h"
 #import "Constants.h"
+#import "DateField.h"
 #import "DoseFieldCell.h"
 #import "DualTableViewCell.h"
 #import "InsulinDose.h"
@@ -14,14 +15,17 @@
 #import "NumberFieldCell.h"
 #import "TextViewCell.h"
 
-// Post-translation section numbers
-#define	kGlucoseSectionNum		0
-#define	kInsulinSectionNum		1
-#define	kNoteSectionNum			2
-
 #define	kInsulinCellID			@"InsulinCellID"
 
-@interface LogEntryViewController () <CategoryViewControllerDelegate, DoseFieldCellDelegate, InsulinTypeViewControllerDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
+enum Sections
+{
+    kSectionGlucose = 0,
+    kSectionInsulin,
+    kSectionNote,
+    NUM_SECTIONS
+};
+
+@interface LogEntryViewController () <CategoryViewControllerDelegate, DateFieldDelegate, DoseFieldCellDelegate, InsulinTypeViewControllerDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
 {
     CategoryViewController*	categoryViewController;
     InsulinTypeViewController*	insulinTypeViewController;
@@ -37,15 +41,12 @@
 @property (nonatomic, strong) UILabel*	categoryLabel;
 @property (nonatomic, strong) UILabel*	timestampLabel;
 
-
-- (void)toggleDatePicker;
-- (void) updateTitle;
-
 @end
 
 @implementation LogEntryViewController
 {
     NumberFieldCell*	glucoseCell;
+    DateField*	    timestampField;
 }
 
 @synthesize categoryLabel, timestampLabel;
@@ -87,21 +88,6 @@ static NSUserDefaults* defaults = nil;
     }
     return self;
 }
-/*
-- (void)loadView
-{
-//	NSArray* items = [NSArray arrayWithObjects:@"Details", @"Note"];
-	NSMutableArray* items = [[NSMutableArray alloc] init];
-	[items addObject:@"Detail"];
-	[items addObject:@"Note"];
-	UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:items];
-	CGRect f = CGRectMake(10,50,100,100);
-	UILabel* l = [[UILabel alloc] initWithFrame:f];
-	l.text = @"Glucose";
-	[v addSubview:s];
-	[v addSubview:l];
-}
-*/
 
 - (void)viewDidLoad
 {
@@ -155,11 +141,6 @@ static NSUserDefaults* defaults = nil;
     [self.tableView reloadData];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
 - (void) updateTitle
 {
     if( self.editingNewEntry )
@@ -176,7 +157,7 @@ static NSUserDefaults* defaults = nil;
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tv
 {
     if( self.editing )
-	return 3;
+	return NUM_SECTIONS;
     else
 	return 1 + ([self.logEntry.insulin count] ? 1 : 0) + (self.logEntry.note && [self.logEntry.note length] ? 1 : 0);
 }
@@ -261,13 +242,16 @@ static NSUserDefaults* defaults = nil;
     const unsigned section = indexPath.section;
     unsigned row = [self translateRow:indexPath.row inSection:section];
 
-    NSString *const	cellID = [self cellIDForSection:section row:row];
+    NSString *const cellID = [self cellIDForSection:section row:row];
 
     UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];	// Get the appropriate cell
 
     if( !cell )	// Create a new cell if needed
     {
-	if( kInsulinCellID == cellID )
+	cell.selectionStyle = UITableViewCellSelectionStyleNone;
+	if( (kSectionGlucose == section) && (0 == row) )
+	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+	else if( kInsulinCellID == cellID )
 	{
 	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1
 					   reuseIdentifier:cellID];
@@ -303,28 +287,33 @@ static NSUserDefaults* defaults = nil;
 	}
 	else	// Standard UITableView cell for Timestamp and Category
 	{
-	    // CGRectZero allows the cell to determine the appropriate size.
 	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	    cell.textLabel.backgroundColor = [UIColor clearColor];
 	    cell.textLabel.textAlignment = UITextAlignmentCenter;
 	    if( (0 == section) && (0 == row) )	// Save a pointer to the timestamp cell
-	    {
-		self.timestampCell = cell;
-		self.timestampLabel = cell.textLabel;
-	    }
+	    {}
 	    else
 		self.categoryLabel = cell.textLabel;
 	}
-	cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
-    if( 0 == section )
+    if( kSectionGlucose == section )
     {
 	switch( row )
 	{
 	    case 0:	// Timestamp
+	    {
 		cell.textLabel.text = [dateFormatter stringFromDate:self.logEntry.timestamp];
+		cell.textLabel.textAlignment = UITextAlignmentCenter;
+		timestampField = [[DateField alloc] initWithFrame:cell.textLabel.frame];
+		timestampField.delegate = self;
+		timestampField.hidden = YES;
+		[cell addSubview:timestampField];
+		self.timestampCell = cell;
+		self.timestampLabel = cell.textLabel;
+		cell.selectionStyle = UITableViewCellSelectionStyleBlue;
 		break;
+	    }
 	    case 1:	// Category
 		if( self.logEntry.category )
 		{
@@ -468,7 +457,8 @@ static NSUserDefaults* defaults = nil;
 	switch( path.row )
 	{
 	    case 0: 
-		[self toggleDatePicker];
+		[timestampField becomeFirstResponder];
+		[self.tableView deselectRowAtIndexPath:path animated:YES];
 		break;
 	    case 1: 
 		if( !categoryViewController )
@@ -522,7 +512,7 @@ static NSUserDefaults* defaults = nil;
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath*)path
 {
-    if( kNoteSectionNum == path.section )
+    if( kSectionNote == path.section )
     {
 	const BOOL e = self.editing;
 	// If editing and there's no text, return a standard size
@@ -537,23 +527,6 @@ static NSUserDefaults* defaults = nil;
 	return MAX(h, (e ? 44*2 : 44));
     }
     return 44;
-}
-
-#pragma mark -
-#pragma mark Timestamp picker
-
-- (void)toggleDatePicker
-{
-    if( !(editCell == timestampCell) )
-	[self showDatePicker:timestampCell mode:UIDatePickerModeDateAndTime initialDate:self.logEntry.timestamp changeAction:@selector(dateChangeAction)];
-    else
-	[self hideDatePicker];
-}
-
-- (void)dateChangeAction
-{
-    self.logEntry.timestamp = datePicker.date;
-    timestampCell.textLabel.text = [dateFormatter stringFromDate:self.logEntry.timestamp];
 }
 
 #pragma mark -
@@ -575,33 +548,33 @@ static NSUserDefaults* defaults = nil;
 
 - (void)saveGlucoseAction:(id)sender
 {
-    [(NumberFieldCell*)editCell resignFirstResponder];
+    [glucoseCell resignFirstResponder];
 }
 
-#pragma mark -
-#pragma mark <UITextFieldDelegate>
-/*
-- (BOOL)textFieldShouldBeginEditing:(UITextField*)textField
+#pragma mark UITextFieldDelegate
+
+- (void) dateFieldDidChangeValue:(DateField *)dateField
 {
-	NSLog(@"textFieldShouldBeginEditing");
-	// Don't display units while the glucose field is being edited (they get in the way)
-	if( textField == glucoseTextField )
-	{
-		NSLog(@"begin editing %@ = %@", textField.placeholder, textField.text);
-		if( textField.text.length == 0 )
-		if( entry.glucose == nil )
-			textField.text = @"";
-		else
-			textField.text = [entry.glucose stringValue];
-	}
-	return YES;
+    timestampLabel.text = [dateFormatter stringFromDate:dateField.date];
 }
 
-- (BOOL)textFieldShouldEndEditing:(UITextField*)textField
+- (void) textFieldDidBeginEditing:(DateField*)dateField
 {
-	return YES;
+    dateField.date = self.logEntry.timestamp;
 }
-*/
+
+- (void) textFieldDidEndEditing:(DateField *)dateField
+{
+    if( timestampField )
+	self.logEntry.timestamp = dateField.date;
+    timestampField = dateField;
+    timestampLabel.text = [dateFormatter stringFromDate:self.logEntry.timestamp];
+}
+
+- (void) dateFieldWillCancelEditing:(DateField *)dateField
+{
+    timestampField = nil;
+}
 
 #pragma mark -
 #pragma mark <CategoryViewControllerDelegate>
@@ -638,7 +611,7 @@ static NSUserDefaults* defaults = nil;
     {
 	// Get the index path for the next insulin row. If there is no next row, find the note row
 	NSIndexPath* path = [tableView indexPathForCell:editCell];
-	NSIndexPath* next = [NSIndexPath indexPathForRow:path.row+1 inSection:kInsulinSectionNum];
+	NSIndexPath* next = [NSIndexPath indexPathForRow:path.row+1 inSection:kSectionInsulin];
 	UITableViewCell* cell = [tableView cellForRowAtIndexPath:next];
 	if( cell )	// Found a next insulin row
 	{

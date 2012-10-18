@@ -53,6 +53,7 @@
 		158F40F5162A562B0000DD52 /* DBSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40F4162A562B0000DD52 /* DBSession.m */; };
 		158F41DE162B73760000DD52 /* UIControl+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F41DD162B73760000DD52 /* UIControl+SpecHelper.m */; };
 		158F41E1162B93780000DD52 /* DBRestClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F41E0162B93780000DD52 /* DBRestClient.m */; };
+		15922D6C162FBF9D00693C2C /* DateFieldSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15922D6B162FBF9D00693C2C /* DateFieldSpec.mm */; };
 		159E81980E5156A40097EA6F /* LogEntryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 159E81970E5156A40097EA6F /* LogEntryCell.m */; };
 		159E84410E5558BD0097EA6F /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */; };
 		15A320720EC55E6500C16388 /* LabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A320710EC55E6500C16388 /* LabelCell.m */; };
@@ -61,6 +62,8 @@
 		15A322480ED35C9F00C16388 /* ContactListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A322470ED35C9F00C16388 /* ContactListViewController.m */; };
 		15A3225A0ED3E0D000C16388 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A322590ED3E0D000C16388 /* Contact.m */; };
 		15AF2FE20EC1799F00FC2403 /* LogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 15AF2FE10EC1799F00FC2403 /* LogDay.m */; };
+		15C2E7C5162D29D4002115FD /* DateField.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C2E7C4162D29D4002115FD /* DateField.m */; };
+		15C2E7C6162D29D4002115FD /* DateField.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C2E7C4162D29D4002115FD /* DateField.m */; };
 		15C30BB8161D476500976444 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BB7161D476500976444 /* Default-568h@2x.png */; };
 		15C30BB9161D48BF00976444 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BB5161D474E00976444 /* Default@2x.png */; };
 		15C30BBB161D48C600976444 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BBA161D48C600976444 /* Default.png */; };
@@ -229,6 +232,7 @@
 		158F41DD162B73760000DD52 /* UIControl+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+SpecHelper.m"; sourceTree = "<group>"; };
 		158F41DF162B93780000DD52 /* DBRestClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBRestClient.h; sourceTree = "<group>"; };
 		158F41E0162B93780000DD52 /* DBRestClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBRestClient.m; sourceTree = "<group>"; };
+		15922D6B162FBF9D00693C2C /* DateFieldSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DateFieldSpec.mm; sourceTree = "<group>"; };
 		159E81960E5156A40097EA6F /* LogEntryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LogEntryCell.h; path = TableCells/LogEntryCell.h; sourceTree = "<group>"; };
 		159E81970E5156A40097EA6F /* LogEntryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LogEntryCell.m; path = TableCells/LogEntryCell.m; sourceTree = "<group>"; };
 		159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
@@ -242,6 +246,8 @@
 		15A322590ED3E0D000C16388 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
 		15AF2FE00EC1799F00FC2403 /* LogDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogDay.h; sourceTree = "<group>"; };
 		15AF2FE10EC1799F00FC2403 /* LogDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogDay.m; sourceTree = "<group>"; };
+		15C2E7C3162D29D3002115FD /* DateField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateField.h; sourceTree = "<group>"; };
+		15C2E7C4162D29D4002115FD /* DateField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DateField.m; sourceTree = "<group>"; };
 		15C30BB5161D474E00976444 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		15C30BB7161D476500976444 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		15C30BBA161D48C600976444 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
@@ -313,6 +319,8 @@
 				155A26A80F2AF5810077FC20 /* NumberField.m */,
 				15EC68CB13B1B74900016937 /* LogModel.h */,
 				15EC68CC13B1B74900016937 /* LogModel.m */,
+				15C2E7C3162D29D3002115FD /* DateField.h */,
+				15C2E7C4162D29D4002115FD /* DateField.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -402,6 +410,7 @@
 		1581CE13155F0F9A00B069F2 /* UISpecs */ = {
 			isa = PBXGroup;
 			children = (
+				15922D6A162FBF8E00693C2C /* Classes */,
 				158F40EE162A4C760000DD52 /* Helpers */,
 				1581CE26155F123500B069F2 /* Application */,
 				1581CE14155F0F9A00B069F2 /* Supporting Files */,
@@ -455,6 +464,14 @@
 				158F41E0162B93780000DD52 /* DBRestClient.m */,
 			);
 			path = DropboxSDK;
+			sourceTree = "<group>";
+		};
+		15922D6A162FBF8E00693C2C /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				15922D6B162FBF9D00693C2C /* DateFieldSpec.mm */,
+			);
+			path = Classes;
 			sourceTree = "<group>";
 		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
@@ -778,6 +795,8 @@
 				158F40F5162A562B0000DD52 /* DBSession.m in Sources */,
 				158F41DE162B73760000DD52 /* UIControl+SpecHelper.m in Sources */,
 				158F41E1162B93780000DD52 /* DBRestClient.m in Sources */,
+				15C2E7C6162D29D4002115FD /* DateField.m in Sources */,
+				15922D6C162FBF9D00693C2C /* DateFieldSpec.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -812,6 +831,7 @@
 				158F40B4162A3EFC0000DD52 /* PurgeViewController.m in Sources */,
 				158F40B6162A3EFC0000DD52 /* SettingsViewController.m in Sources */,
 				158F40B8162A3EFC0000DD52 /* SlidingViewController.m in Sources */,
+				15C2E7C5162D29D4002115FD /* DateField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
