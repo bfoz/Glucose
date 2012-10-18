@@ -332,7 +332,7 @@ static NSUserDefaults* defaults = nil;
 		    // precision must be set before number so the display text is formatted correctly
 		    glucoseCell.precision = self.logEntry.glucosePrecision;
 		    glucoseCell.number = self.logEntry.glucose;
-		    glucoseCell.label = self.logEntry.glucoseUnits;
+		    glucoseCell.labelText = self.logEntry.glucoseUnits;
 		}
 		else
 		{

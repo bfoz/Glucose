@@ -2,13 +2,15 @@
 #import "NumberFieldCell.h"
 
 @interface NumberFieldCell () <NumberFieldDelegate>
-@property (nonatomic, strong)	UILabel*    _label;
 @end
 
 @implementation NumberFieldCell
+{
+    UILabel*	label;
+}
 
 @synthesize delegate;
-@synthesize field, _label;
+@synthesize field;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -31,21 +33,21 @@
     CGRect insetFrame = CGRectInset([self.contentView bounds], kCellLeftOffset, kCellTopOffset);
     insetFrame.size.height = kTextFieldHeight;
 
-    if( field.hasNumber && _label.text )
+    if( field.hasNumber && label.text )
     {
 	CGFloat x =  insetFrame.size.width / 2;
 	CGRect fieldFrame = CGRectMake(insetFrame.origin.x, insetFrame.origin.y, x, insetFrame.size.height);
 	CGRect unitsFrame = CGRectMake(insetFrame.origin.x+x, insetFrame.origin.y, x, insetFrame.size.height);
 	field.frame = fieldFrame;
 	field.textAlignment = UITextAlignmentRight;
-	_label.frame = unitsFrame;
-	_label.hidden = NO;
+	label.frame = unitsFrame;
+	label.hidden = NO;
     }
     else
     {
 	field.frame  = insetFrame;
 	field.textAlignment = UITextAlignmentCenter;
-	_label.hidden = YES; // Hide the label in case it had been shown by a previous layout
+	label.hidden = YES; // Hide the label in case it had been shown by a previous layout
     }
 }
 
@@ -105,24 +107,25 @@
     field.font = f;
 }
 
-- (NSString*) label
+- (NSString*) labelText
 {
-    return _label.text;
+    return label.text;
 }
 
-- (void) setLabel:(NSString*)s
+- (void) setLabelText:(NSString*)s
 {
     if( s )
     {
-	if( !_label )
+	if( !label )
 	{
-	    _label = [[UILabel alloc] initWithFrame:CGRectZero];
-	    [self.contentView addSubview:_label];
+	    label = [[UILabel alloc] initWithFrame:CGRectZero];
+	    label.backgroundColor = [UIColor clearColor];
+	    [self.contentView addSubview:label];
 	}
-	_label.text = s;
+	label.text = s;
     }
     else
-	self._label = nil;
+	label = nil;
 }
 
 - (NSNumber*) number
