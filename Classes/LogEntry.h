@@ -26,6 +26,7 @@
 @property (nonatomic, readonly)	BOOL		dirty;
 @property (nonatomic, strong)	NSNumber*	glucose;
 @property (unsafe_unretained, nonatomic, readonly)	NSString*	glucoseString;
+@property (nonatomic, readonly) unsigned	glucosePrecision;
 @property (nonatomic, strong)	NSString*	glucoseUnits;
 @property (nonatomic, readonly)	NSMutableArray*	insulin;
 @property (nonatomic, copy)		NSString*	note;

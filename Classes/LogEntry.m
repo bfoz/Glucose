@@ -42,6 +42,10 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 
 #define	kHeaderString	@"timestamp,glucose,glucoseUnits,category,dose0,type0,dose1,type1,note\n"
 
+@interface LogEntry ()
+@property (nonatomic) unsigned	glucosePrecision;
+@end
+
 @implementation LogEntry
 
 @synthesize entryID, category, dirty;
@@ -362,12 +366,13 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 
 - (id)init
 {
-	if( self = [super init] )
+    if( self = [super init] )
     {
 	dirty = NO;
-		insulin = [[NSMutableArray alloc] init];
-	}
-    return self;		
+	self.glucosePrecision = 0;
+	insulin = [[NSMutableArray alloc] init];
+    }
+    return self;
 }
 
 #define ASSIGN_NOT_NULL(_s, _c, _var, _val)		\
@@ -412,6 +417,9 @@ _var = _val;
 	    [self.insulin addObject:[InsulinDose withType:[model insulinTypeForInsulinTypeID:sqlite3_column_int(statement, 8)]]];
 	    [self setDose:[NSNumber numberWithInt:sqlite3_column_int(statement, 6)] insulinDose:[self.insulin lastObject]];
 	}
+
+	if( glucoseUnits && (0 != glucoseUnits.length) )
+	    self.glucosePrecision = (self.glucoseUnits == kGlucoseUnits_mgdL) ? 0 : 1;
 
 	// Empty the array if there are no valid doses
 	unsigned count = 0;

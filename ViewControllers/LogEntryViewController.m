@@ -330,18 +330,14 @@ static NSUserDefaults* defaults = nil;
 		if( self.editing )
 		{
 		    // precision must be set before number so the display text is formatted correctly
-		    if( self.logEntry.glucoseUnits && (self.logEntry.glucoseUnits == kGlucoseUnits_mmolL) )
-			glucoseCell.precision = 1;
-		    else
-			glucoseCell.precision = 0;
+		    glucoseCell.precision = self.logEntry.glucosePrecision;
 		    glucoseCell.number = self.logEntry.glucose;
 		    glucoseCell.label = self.logEntry.glucoseUnits;
 		}
 		else
 		{
 		    NSString *const units = self.logEntry.glucoseUnits;
-		    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
-		    cell.textLabel.text = self.logEntry.glucose ? [NSString localizedStringWithFormat:@"%.*f%@", precision, [self.logEntry.glucose floatValue], units] : nil;
+		    cell.textLabel.text = self.logEntry.glucose ? [NSString localizedStringWithFormat:@"%.*f%@", self.logEntry.glucosePrecision, [self.logEntry.glucose floatValue], units] : nil;
 		    // Color the glucose values accordingly
 		    NSString* keyHigh;
 		    NSString* keyLow;
