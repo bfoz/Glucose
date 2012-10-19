@@ -6,6 +6,14 @@
 
 using namespace Cedar::Matchers;
 
+enum Sections
+{
+    kSectionGlucose = 0,
+    kSectionInsulin,
+    kSectionNote,
+    NUM_SECTIONS
+};
+
 @implementation UIControl (SpecHelper)
 
 - (void)tap
@@ -31,6 +39,10 @@ using namespace Cedar::Matchers;
 @property (nonatomic, strong)	NSNumber*	glucose;
 @end
 
+@interface LogEntryViewController (UISpecs)
+- (void) categoryViewControllerDidSelectCategory:(id)category;
+@end
+
 SPEC_BEGIN(LogEntryViewControllerSpec)
 
 describe(@"LogEntryViewController", ^{
@@ -41,6 +53,8 @@ describe(@"LogEntryViewController", ^{
 	mockLogEntry = [OCMockObject niceMockForClass:[LogEntry class]];
 	controller = [[[LogEntryViewController alloc] initWithLogEntry:mockLogEntry] autorelease];
 	controller.view should_not be_nil;
+
+	UINavigationController* navigation = [[UINavigationController alloc] initWithRootViewController:controller];
     });
 
     it(@"should have a right bar button item for editing", ^{
@@ -270,6 +284,32 @@ describe(@"LogEntryViewController", ^{
 
 	it(@"should have 1 row in section 2", ^{
 	    [controller.tableView numberOfRowsInSection:2] should equal(1);
+	});
+
+	describe(@"when the Category row is tapped", ^{
+	    beforeEach(^{
+		[controller tableView:controller.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionGlucose]];
+	    });
+
+	    it(@"should display a modal Category picker", ^{
+		controller.modalViewController should_not be_nil;
+	    });
+
+	    describe(@"when a Category is picked", ^{
+		beforeEach(^{
+		    [controller categoryViewControllerDidSelectCategory:nil];
+		    [controller viewDidAppear:NO];
+		});
+
+		it(@"should dismiss the picker", ^{
+		    controller.modalViewController should be_nil;
+		});
+
+		xit(@"should make the Glucose row the first responder", ^{
+		    NumberFieldCell* cell = (NumberFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:kSectionGlucose]];
+		    cell.field.isFirstResponder should be_truthy;
+		});
+	    });
 	});
 
 	describe(@"when the Done button is tapped", ^{

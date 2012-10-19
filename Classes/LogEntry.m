@@ -10,6 +10,7 @@
 
 #import "LogEntry.h"
 
+#import "Category.h"
 #import "InsulinDose.h"
 #import "InsulinType.h"
 #import "LogDay.h"

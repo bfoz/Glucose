@@ -218,8 +218,7 @@
 	return [NSIndexPath indexPathForRow:([model.categories count]-1) inSection:toPath.section];
 }
 
-#pragma mark -
-#pragma mark <UITableViewDataSource>
+#pragma mark - <UITableViewDataSource>
 
 - (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)path
 {
@@ -260,8 +259,7 @@
     return nil;
 }
 
-#pragma mark -
-#pragma mark <UIAlertViewDelegate>
+#pragma mark - <UIAlertViewDelegate>
 
 - (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {

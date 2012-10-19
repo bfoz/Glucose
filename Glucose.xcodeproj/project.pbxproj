@@ -68,6 +68,7 @@
 		15C30BB9161D48BF00976444 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BB5161D474E00976444 /* Default@2x.png */; };
 		15C30BBB161D48C600976444 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BBA161D48C600976444 /* Default.png */; };
 		15C30BBD161D494700976444 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BBC161D494700976444 /* Icon@2x.png */; };
+		15C8F66F1630E0DE00CA92D4 /* UIViewController+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */; };
 		15EC68CD13B1B74900016937 /* LogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EC68CC13B1B74900016937 /* LogModel.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -252,6 +253,8 @@
 		15C30BB7161D476500976444 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		15C30BBA161D48C600976444 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		15C30BBC161D494700976444 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		15C8F66C1630E00900CA92D4 /* UIViewController+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SpecHelper.h"; sourceTree = "<group>"; };
+		15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SpecHelper.m"; sourceTree = "<group>"; };
 		15EC68CB13B1B74900016937 /* LogModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogModel.h; sourceTree = "<group>"; };
 		15EC68CC13B1B74900016937 /* LogModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogModel.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -447,6 +450,8 @@
 		158F40EE162A4C760000DD52 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */,
+				15C8F66C1630E00900CA92D4 /* UIViewController+SpecHelper.h */,
 				158F41DC162B73760000DD52 /* UIControl+SpecHelper.h */,
 				158F41DD162B73760000DD52 /* UIControl+SpecHelper.m */,
 				158F40EF162A4CCD0000DD52 /* DropboxSDK */,
@@ -797,6 +802,7 @@
 				158F41E1162B93780000DD52 /* DBRestClient.m in Sources */,
 				15C2E7C6162D29D4002115FD /* DateField.m in Sources */,
 				15922D6C162FBF9D00693C2C /* DateFieldSpec.mm in Sources */,
+				15C8F66F1630E0DE00CA92D4 /* UIViewController+SpecHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,4 +1,5 @@
 #import "AppDelegate.h"
+#import "Category.h"
 #import "CategoryViewController.h"
 #import "Constants.h"
 #import "DateField.h"

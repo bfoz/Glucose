@@ -1,7 +1,6 @@
 #import <sqlite3.h>
 
-#import "Category.h"
-
+@class Category;
 @class InsulinDose;
 @class InsulinType;
 @class LogDay;

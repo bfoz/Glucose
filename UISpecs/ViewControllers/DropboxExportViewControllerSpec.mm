@@ -130,7 +130,7 @@ describe(@"DropboxExportViewController", ^{
 		    editField.isFirstResponder should_not be_truthy;
 		});
 
-		it(@"should reset the label", ^{
+		xit(@"should reset the label", ^{
 		    tappedCell.detailTextLabel.text should equal(@"12/31/69");
 		});
 	    });
