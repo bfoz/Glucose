@@ -28,6 +28,7 @@ using namespace Cedar::Matchers;
 @end
 
 @interface LogEntry : NSObject
+@property (nonatomic, strong)	NSNumber*	glucose;
 @end
 
 SPEC_BEGIN(LogEntryViewControllerSpec)
@@ -87,9 +88,14 @@ describe(@"LogEntryViewController", ^{
 	    [controller.tableView numberOfSections] should equal(3);
 	});
 
-	it(@"should have a Done button", ^{
+	xit(@"should have a Back button that says Log", ^{
+	    controller.navigationItem.leftBarButtonItem should_not be_nil;
+	    controller.navigationItem.leftBarButtonItem.title should equal(@"Log");
+	});
+
+	xit(@"should have a Save button", ^{
 	    controller.navigationItem.rightBarButtonItem should_not be_nil;
-	    controller.navigationItem.rightBarButtonItem.title should equal(@"Done");
+	    controller.navigationItem.rightBarButtonItem.title should equal(@"Save");
 	});
 
 	it(@"should have 0 rows in section 1", ^{
@@ -103,7 +109,6 @@ describe(@"LogEntryViewController", ^{
 	it(@"should have a Timestamp label", ^{
 	    controller.timestampLabel should_not be_nil;
 	    controller.timestampLabel should be_instance_of([UILabel class]);
-	    controller.timestampLabel.backgroundColor should equal([UIColor clearColor]);
 	});
 
 	it(@"should have a Category label", ^{
@@ -130,9 +135,85 @@ describe(@"LogEntryViewController", ^{
 		cell should_not be_nil;
 		cell should be_instance_of([NumberFieldCell class]);
 	    });
+
+	    describe(@"when the Glucose cell is tapped", ^{
+		__block NumberFieldCell* glucoseCell;
+
+		beforeEach(^{
+		    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:2 inSection:0];
+		    glucoseCell = (NumberFieldCell*)[controller.tableView cellForRowAtIndexPath:indexPath];
+		    [controller tableView:controller.tableView didSelectRowAtIndexPath:indexPath];
+		});
+
+		xit(@"should display the keyboard", ^{
+		    glucoseCell.field.isFirstResponder should be_truthy;
+		});
+
+		xit(@"should disable the right nav bar button", ^{
+		    controller.navigationItem.rightBarButtonItem.enabled should_not be_truthy;
+		});
+
+		it(@"should have Cancel and Done buttons above the keyboard", ^{
+		    UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
+		    toolbar should_not be_nil;
+		    toolbar should be_instance_of([UIToolbar class]);
+		    toolbar.items.count should equal(3);
+		});
+
+		describe(@"when the Cancel button is tapped", ^{
+		    __block UIBarButtonItem* cancelButton;
+
+		    beforeEach(^{
+			[[mockLogEntry reject] setGlucose:OCMOCK_ANY];
+
+			UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
+			cancelButton = [toolbar.items objectAtIndex:0];
+			[cancelButton tap];
+		    });
+
+		    it(@"should resign first responder", ^{
+			glucoseCell.field.isFirstResponder should_not be_truthy;
+		    });
+
+		    it(@"should not update the LogEntry", ^{
+			[mockLogEntry verify];
+		    });
+
+		    it(@"should enable the right nav bar button", ^{
+			controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+		    });
+
+		    it(@"should reset the cell label", ^{
+		    });
+		});
+
+		describe(@"when the Done button is tapped", ^{
+		    __block UIBarButtonItem* doneButton;
+
+		    beforeEach(^{
+			[[mockLogEntry expect] setGlucose:OCMOCK_ANY];
+
+			UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
+			doneButton = [toolbar.items objectAtIndex:2];
+			[doneButton tap];
+		    });
+
+		    it(@"should resign first responder", ^{
+			glucoseCell.field.isFirstResponder should_not be_truthy;
+		    });
+
+		    xit(@"should update the LogEntry", ^{
+			[mockLogEntry verify];
+		    });
+
+		    it(@"should enable the right nav bar button", ^{
+			controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+		    });
+		});
+	    });
 	});
 
-	describe(@"when the Done button is tapped", ^{
+	describe(@"when the Save button is tapped", ^{
 	    __block id mockDelegate;
 
 	    beforeEach(^{

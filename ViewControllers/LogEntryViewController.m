@@ -36,7 +36,6 @@ enum Sections
 }
 
 @property (nonatomic, strong) NSDateFormatter*	dateFormatter;
-@property (nonatomic, unsafe_unretained) UITableViewCell*	timestampCell;
 
 @property (nonatomic, strong) UILabel*	categoryLabel;
 @property (nonatomic, strong) UILabel*	timestampLabel;
@@ -47,6 +46,8 @@ enum Sections
 {
     NumberFieldCell*	glucoseCell;
     DateField*	    timestampField;
+    UIToolbar*	    inputToolbar;
+    UITextField*    currentEditingField;
 }
 
 @synthesize categoryLabel, timestampLabel;
@@ -54,7 +55,6 @@ enum Sections
 @synthesize delegate;
 @synthesize editingNewEntry;
 @synthesize logEntry = _logEntry;
-@synthesize timestampCell;
 @synthesize model;
 
 static unsigned InsulinPrecision;
@@ -71,7 +71,6 @@ static NSUserDefaults* defaults = nil;
     self = [super initWithStyle:UITableViewStyleGrouped];
     if( self )
     {
-	didUndo = NO;
 	editingNewEntry = NO;
 	
 	self.logEntry = logEntry;
@@ -104,6 +103,15 @@ static NSUserDefaults* defaults = nil;
     didSelectRow = NO;		    // Remove any existing selection
     [self updateTitle];		    // Update the navigation item title
     [self.tableView reloadData];    // Redisplay the data
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+    if( ![self isMovingToParentViewController] )
+	if( editingNewEntry )
+	    [glucoseCell becomeFirstResponder];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -149,6 +157,35 @@ static NSUserDefaults* defaults = nil;
 	self.title = @"Edit Entry";
     else
 	self.title = @"Details";
+}
+
+#pragma mark Accessor
+
+- (UIToolbar*) inputToolbar
+{
+    if( !inputToolbar )
+    {
+	inputToolbar = [[UIToolbar alloc] init];
+	UIBarButtonItem* cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(didTapCancelButton)];
+	UIBarButtonItem* flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+	UIBarButtonItem* barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didTapDoneButton)];
+	[inputToolbar setItems:[NSArray arrayWithObjects:cancelButton, flexibleSpace, barButton, nil] animated:NO];
+	[inputToolbar sizeToFit];
+    }
+    return inputToolbar;
+}
+
+#pragma mark Actions
+
+- (void) didTapCancelButton
+{
+    currentEditingField = nil;
+    [glucoseCell resignFirstResponder];
+}
+
+- (void) didTapDoneButton
+{
+    [glucoseCell resignFirstResponder];
 }
 
 #pragma mark -
@@ -271,6 +308,7 @@ static NSUserDefaults* defaults = nil;
 	    glucoseCell = [[NumberFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	    glucoseCell.clearButtonMode = UITextFieldViewModeWhileEditing;
 	    glucoseCell.delegate = self;
+	    glucoseCell.field.inputAccessoryView = self.inputToolbar;
 	    glucoseCell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
 	    glucoseCell.placeholder = @"Glucose";
 	    cell = glucoseCell;
@@ -309,7 +347,6 @@ static NSUserDefaults* defaults = nil;
 		timestampField.delegate = self;
 		timestampField.hidden = YES;
 		[cell addSubview:timestampField];
-		self.timestampCell = cell;
 		self.timestampLabel = cell.textLabel;
 		cell.selectionStyle = UITableViewCellSelectionStyleBlue;
 		break;
@@ -525,26 +562,24 @@ static NSUserDefaults* defaults = nil;
     return 44;
 }
 
-#pragma mark -
-#pragma mark <NumberFieldCellDelegate>
+#pragma mark NumberFieldCellDelegate
 
 - (void)numberFieldCellDidBeginEditing:(NumberFieldCell*)cell
 {
-    [self didBeginEditing:cell field:cell.field action:@selector(saveGlucoseAction:)];
+    currentEditingField = cell.field;
+    self.navigationItem.rightBarButtonItem.enabled = NO;
 }
 
 - (void)numberFieldCellDidEndEditing:(NumberFieldCell*)cell
 {
-    if( didUndo )
-	didUndo = NO;	// Undo handled
-    else if( cell == glucoseCell )
-	self.logEntry.glucose = cell.number;
-    [self didEndEditing];
-}
-
-- (void)saveGlucoseAction:(id)sender
-{
-    [glucoseCell resignFirstResponder];
+    if( currentEditingField )
+    {
+	if( cell == glucoseCell )
+	    self.logEntry.glucose = cell.number;
+    }
+    glucoseCell.number = self.logEntry.glucose;
+    currentEditingField = nil;
+    self.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
 #pragma mark UITextFieldDelegate
@@ -572,16 +607,12 @@ static NSUserDefaults* defaults = nil;
     timestampField = nil;
 }
 
-#pragma mark -
-#pragma mark <CategoryViewControllerDelegate>
+#pragma mark CategoryViewControllerDelegate
 
 - (void) categoryViewControllerDidSelectCategory:(Category *)category
 {
     [self dismissModalViewControllerAnimated:YES];
-
     self.logEntry.category = category;
-    if( editingNewEntry )
-	[glucoseCell becomeFirstResponder];
 }
 
 #pragma mark -
