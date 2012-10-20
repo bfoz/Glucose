@@ -2,6 +2,7 @@
 #import "OCMock.h"
 
 #import "DoseFieldCell.h"
+#import "LogEntry.h"
 #import "LogEntryViewController.h"
 #import "NumberFieldCell.h"
 
@@ -33,14 +34,6 @@ enum Sections
     else
         [self.target performSelector:self.action];
 }
-
-@end
-
-@interface LogEntry : NSObject
-
-@property (nonatomic, strong)	NSNumber*	glucose;
-
-- (void) setDose:(NSNumber*)d insulinDose:(InsulinDose*)dose;
 
 @end
 
