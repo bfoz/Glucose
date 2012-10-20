@@ -334,12 +334,8 @@ enum AboutSectionRows
 	    switch( row )
 	    {
 		case kExportRow:
-		    if( !exportViewController )
-		    {
-			exportViewController = [[ExportViewController alloc] initWithStyle:UITableViewStyleGrouped];
-			exportViewController.model = self.model;
-		    }
-		    [self.navigationController pushViewController:exportViewController animated:YES];
+		    [self.navigationController pushViewController:[[ExportViewController alloc] initWithDataSource:self.model]
+							 animated:YES];
 		    break;
 		case kPurgeRow:
 		    [self.navigationController pushViewController:[[PurgeViewController alloc] initWithDataSource:model]

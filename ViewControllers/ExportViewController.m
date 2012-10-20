@@ -19,14 +19,15 @@ enum Sections
 @implementation ExportViewController
 {
     NSMutableDictionary*    accountInfo;
+    LogModel*	logModel;
 }
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    if( self = [super initWithStyle:style] )
-    {
-	self.title = @"Export";
 
+- (id)initWithDataSource:(LogModel*)model
+{
+    if( self = [super initWithStyle:UITableViewStyleGrouped] )
+    {
 	accountInfo = [[NSMutableDictionary alloc] init];
+	logModel = model;
     }
     return self;
 }
@@ -34,6 +35,8 @@ enum Sections
 - (void) viewDidLoad
 {
     [super viewDidLoad];
+
+    self.title = @"Export";
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dropboxSessionLinkedAccount:) name:kDropboxSessionLinkedAccountNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dropboxSessionUnlinkedAccount:) name:kDropboxSessionUnlinkedAccountNotification object:nil];
@@ -148,7 +151,7 @@ enum Sections
 	DBSession* session = [DBSession sharedSession];
 	if( session.isLinked )
 	{
-	    DropboxExportViewController* controller = [[DropboxExportViewController alloc] initWithUserID:[session.userIds objectAtIndex:indexPath.row] dataSource:self.model];
+	    DropboxExportViewController* controller = [[DropboxExportViewController alloc] initWithUserID:[session.userIds objectAtIndex:indexPath.row] dataSource:logModel];
 	    [self.navigationController pushViewController:controller animated:YES];
 	}
 	else if( session.userIds.count == indexPath.row )

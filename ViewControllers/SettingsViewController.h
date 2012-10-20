@@ -2,7 +2,6 @@
 #import <UIKit/UIKit.h>
 
 @class CategoryViewController;
-@class ExportViewController;
 @class InsulinTypeViewController;
 @class NumberField;
 @class PurgeViewController;
@@ -23,8 +22,6 @@
     NumberField*		lowGlucoseWarningField;
     NSString*			highGlucoseWarningKey;
     NSString*			lowGlucoseWarningKey;
-
-    ExportViewController*	exportViewController;
 }
 
 @property (nonatomic, strong)	id<SettingsViewControllerDelegate>    delegate;

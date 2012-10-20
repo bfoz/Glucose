@@ -3,5 +3,7 @@
 @class LogModel;
 
 @interface ExportViewController : UITableViewController
-@property (nonatomic, strong) LogModel*	model;
+
+- (id)initWithDataSource:(LogModel*)model;
+
 @end
