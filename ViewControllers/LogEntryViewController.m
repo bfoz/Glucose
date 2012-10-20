@@ -180,13 +180,14 @@ static NSUserDefaults* defaults = nil;
 
 - (void) didTapCancelButton
 {
+    UITextField* tmp = currentEditingField;
     currentEditingField = nil;
-    [glucoseCell resignFirstResponder];
+    [tmp resignFirstResponder];
 }
 
 - (void) didTapDoneButton
 {
-    [glucoseCell resignFirstResponder];
+    [currentEditingField resignFirstResponder];
 }
 
 #pragma mark -
@@ -219,7 +220,7 @@ static NSUserDefaults* defaults = nil;
 		return 3;
 	    else
 		return 1 + (self.logEntry.glucose ? 1 : 0) + (self.logEntry.category ? 1 : 0);
-	case 1:
+	case kSectionInsulin:
 	    if( self.editing )
 		return [self.logEntry.insulin count];
 	    else
@@ -300,9 +301,10 @@ static NSUserDefaults* defaults = nil;
 	}
 	else if( @"eDualCellID" == cellID )
 	{
-	    // CGRectZero allows the cell to determine the appropriate size.
-	    cell = [[DoseFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
-	    ((DoseFieldCell*)cell).delegate = self;
+	    DoseFieldCell* doseFieldCell = [[DoseFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+	    doseFieldCell.delegate = self;
+	    doseFieldCell.doseField.inputAccessoryView = self.inputToolbar;
+	    cell = doseFieldCell;
 	}
 	else if( @"eGlucose" == cellID )
 	{
@@ -399,7 +401,7 @@ static NSUserDefaults* defaults = nil;
 		break;
 	}
     }
-    else if( 1 == section )
+    else if( kSectionInsulin == section )
     {
 	// If the entry doesn't have a valid number for an insulin type use a regular cell and display the short name. 
 	// Otherwise, use a dual column cell.
@@ -509,7 +511,7 @@ static NSUserDefaults* defaults = nil;
 		break;
 	}
     }
-    else if( 1 == section )
+    else if( kSectionInsulin == section )
     {
 	didSelectRow = YES; // The next viewWillDisapper is from a push, not a pop
 	if( !insulinTypeViewController )
@@ -576,7 +578,7 @@ static NSUserDefaults* defaults = nil;
     if( currentEditingField )
     {
 	if( cell == glucoseCell )
-	    self.logEntry.glucose = cell.number;
+	    self.logEntry.glucose = ((NumberFieldCell*)currentEditingField).number;
     }
     glucoseCell.number = self.logEntry.glucose;
     currentEditingField = nil;
@@ -616,41 +618,35 @@ static NSUserDefaults* defaults = nil;
     self.logEntry.category = category;
 }
 
-#pragma mark -
-#pragma mark <DoseFieldCellDelegate>
+#pragma mark DoseFieldCellDelegate
 
 - (void)doseDidBeginEditing:(DoseFieldCell*)cell
 {
-    [self didBeginEditing:cell field:cell.doseField action:@selector(saveDoseAction:)];
+    currentEditingField = cell.doseField;
+    self.navigationItem.rightBarButtonItem.enabled = NO;
 }
 
 - (void)doseDidEndEditing:(DoseFieldCell *)cell
 {
-    if( didUndo )
-	didUndo = NO;	// Undo handled
-    else
-	[self.logEntry setDose:[cell.doseField number] insulinDose:cell.dose];
-    [self didEndEditing];
-}
-
-- (void)saveDoseAction:(id)sender
-{
-    if( editingNewEntry )
+    if( currentEditingField )
     {
-	// Get the index path for the next insulin row. If there is no next row, find the note row
-	NSIndexPath* path = [tableView indexPathForCell:editCell];
-	NSIndexPath* next = [NSIndexPath indexPathForRow:path.row+1 inSection:kSectionInsulin];
-	UITableViewCell* cell = [tableView cellForRowAtIndexPath:next];
-	if( cell )	// Found a next insulin row
+	[self.logEntry setDose:[cell.doseField number] insulinDose:cell.dose];
+	if( editingNewEntry )
 	{
-	    [tableView scrollToRowAtIndexPath:next atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-	    [((DoseFieldCell*)cell).doseField becomeFirstResponder];
+	    NSIndexPath* path = [tableView indexPathForCell:cell];
+	    NSIndexPath* next = [NSIndexPath indexPathForRow:path.row+1 inSection:kSectionInsulin];
+	    DoseFieldCell* cell = (DoseFieldCell*)[tableView cellForRowAtIndexPath:next];
+	    if( cell )	// Found a next insulin row
+	    {
+		[cell.doseField becomeFirstResponder];
+		return;
+	    }
 	}
-	else		// Resign first responder if no more insulin rows
-	    [((DoseFieldCell*)editCell).doseField resignFirstResponder];
     }
-    else
-	[((DoseFieldCell*)editCell).doseField resignFirstResponder];
+    cell.dose = cell.dose;
+
+    currentEditingField = nil;
+    self.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
 #pragma mark -

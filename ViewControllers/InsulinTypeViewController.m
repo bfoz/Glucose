@@ -57,9 +57,10 @@
     if( selectedInsulinTypes )
     {
 	[selectedInsulinTypes removeAllObjects];
-	[selectedInsulinTypes addObject:type];
+	if( type )
+	    [selectedInsulinTypes addObject:type];
     }
-    else
+    else if( type )
 	selectedInsulinTypes = [NSMutableSet setWithObject:type];
 }
 

@@ -1,6 +1,7 @@
 #import "SpecHelper.h"
 #import "OCMock.h"
 
+#import "DoseFieldCell.h"
 #import "LogEntryViewController.h"
 #import "NumberFieldCell.h"
 
@@ -36,7 +37,11 @@ enum Sections
 @end
 
 @interface LogEntry : NSObject
+
 @property (nonatomic, strong)	NSNumber*	glucose;
+
+- (void) setDose:(NSNumber*)d insulinDose:(InsulinDose*)dose;
+
 @end
 
 @interface LogEntryViewController (UISpecs)
@@ -52,9 +57,9 @@ describe(@"LogEntryViewController", ^{
     beforeEach(^{
 	mockLogEntry = [OCMockObject niceMockForClass:[LogEntry class]];
 	controller = [[[LogEntryViewController alloc] initWithLogEntry:mockLogEntry] autorelease];
-	controller.view should_not be_nil;
 
 	UINavigationController* navigation = [[UINavigationController alloc] initWithRootViewController:controller];
+	navigation.topViewController.view should_not be_nil;
     });
 
     it(@"should have a right bar button item for editing", ^{
@@ -308,6 +313,74 @@ describe(@"LogEntryViewController", ^{
 		xit(@"should make the Glucose row the first responder", ^{
 		    NumberFieldCell* cell = (NumberFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:kSectionGlucose]];
 		    cell.field.isFirstResponder should be_truthy;
+		});
+	    });
+	});
+
+	describe(@"when the first Dose row is tapped", ^{
+	    beforeEach(^{
+		[controller tableView:controller.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
+	    });
+
+	    it(@"should present an insulin type picker", ^{
+		controller.modalViewController should_not be_nil;
+	    });
+	});
+
+	describe(@"when the dose field of the first dose row is tapped", ^{
+	    __block DoseFieldCell* cell;
+
+	    beforeEach(^{
+		cell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
+		[cell.doseField becomeFirstResponder];
+	    });
+
+	    xit(@"should show the keyboard", ^{
+		cell.doseField.isFirstResponder should be_truthy;
+	    });
+
+	    xit(@"should have a toolbar above the keyboard", ^{
+		cell.doseField.inputAccessoryView should_not be_nil;
+	    });
+
+	    describe(@"when the Cancel button is tapped", ^{
+		beforeEach(^{
+		    [[mockLogEntry reject] setDose:OCMOCK_ANY insulinDose:OCMOCK_ANY];
+
+		    UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
+		    UIBarButtonItem* cancelButton = [toolbar.items objectAtIndex:0];
+		    [cancelButton tap];
+		});
+
+		it(@"should resign first responder", ^{
+		    cell.doseField.isFirstResponder should_not be_truthy;
+		});
+
+		it(@"should not update the LogEntry", ^{
+		    [mockLogEntry verify];
+		});
+
+		it(@"should reset the label", ^{
+		});
+	    });
+
+	    describe(@"when the Done button is tapped", ^{
+		beforeEach(^{
+		    [[mockLogEntry expect] setDose:OCMOCK_ANY insulinDose:OCMOCK_ANY];
+
+		});
+
+		xit(@"should resign first responder", ^{
+		    cell.doseField.isFirstResponder should_not be_truthy;
+		});
+
+		xit(@"should update the LogEntry", ^{
+		    [mockLogEntry verify];
+		});
+
+		xit(@"should cause the next row to become first responder", ^{
+		    DoseFieldCell* nextCell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionInsulin]];
+		    nextCell.doseField.isFirstResponder should be_truthy;
 		});
 	    });
 	});
