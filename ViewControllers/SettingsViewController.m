@@ -15,6 +15,10 @@
 @end
 
 @implementation SettingsViewController
+{
+    UIToolbar*	    inputToolbar;
+    UITextField*    currentEditingField;
+}
 
 @synthesize delegate;
 @synthesize model;
@@ -144,6 +148,36 @@ enum AboutSectionRows
     }
 }
 
+#pragma mark Accessor
+
+- (UIToolbar*) inputToolbar
+{
+    if( !inputToolbar )
+    {
+	inputToolbar = [[UIToolbar alloc] init];
+	UIBarButtonItem* cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(didTapCancelButton)];
+	UIBarButtonItem* flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+	UIBarButtonItem* barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didTapDoneButton)];
+	[inputToolbar setItems:[NSArray arrayWithObjects:cancelButton, flexibleSpace, barButton, nil] animated:NO];
+	[inputToolbar sizeToFit];
+    }
+    return inputToolbar;
+}
+
+#pragma mark Actions
+
+- (void) didTapCancelButton
+{
+    UITextField* tmp = currentEditingField;
+    currentEditingField = nil;
+    [tmp resignFirstResponder];
+}
+
+- (void) didTapDoneButton
+{
+    [currentEditingField resignFirstResponder];
+}
+
 #pragma mark -
 #pragma mark <UITableViewDataSource>
 
@@ -226,16 +260,16 @@ enum AboutSectionRows
 	    {
 		case kHighGlucoseWarningRow:
 		    cell.textLabel.text = @"High Glucose Warning";
+		    f.inputAccessoryView = self.inputToolbar;
 		    f.text = [defaults stringForKey:highGlucoseWarningKey];
 		    f.textColor = [UIColor blueColor];
-		    highGlucoseWarningCell = cell;
 		    highGlucoseWarningField = f;
 		    break;
 		case kLowGlucoseWarningRow:
 		    cell.textLabel.text = @"Low Glucose Warning";
+		    f.inputAccessoryView = self.inputToolbar;
 		    f.text = [defaults stringForKey:lowGlucoseWarningKey];
 		    f.textColor = [UIColor redColor];
-		    lowGlucoseWarningCell = cell;
 		    lowGlucoseWarningField = f;
 		    break;
 		case kGlucoseUnitsRow:
@@ -422,42 +456,31 @@ enum AboutSectionRows
     return NO;
 }
 
-#pragma mark -
-#pragma mark <UITextFieldDelegate>
+#pragma mark UITextFieldDelegate
 
-- (UITableViewCell*) cellForField:(UITextField*)field
+- (void) textFieldDidBeginEditing:(UITextField*)field
 {
-    if( field == highGlucoseWarningField )
-	return highGlucoseWarningCell;
-    else if( field == lowGlucoseWarningField )
-	return lowGlucoseWarningCell;
-    return nil;
+    currentEditingField = field;
+    self.navigationItem.rightBarButtonItem.enabled = NO;
 }
 
-- (SEL) selectorForField:(UITextField*)field
+- (void) textFieldDidEndEditing:(UITextField *)textField
 {
-    if( field == highGlucoseWarningField )
-	return @selector(saveHighGlucoseWarningAction);
-    else if( field == lowGlucoseWarningField )
-	return @selector(saveLowGlucoseWarningAction);
-    return nil;
-}
+    if( currentEditingField )
+    {
+	if( textField == highGlucoseWarningField )
+	    [[NSUserDefaults standardUserDefaults] setObject:textField.text forKey:highGlucoseWarningKey];
+	else if( textField == lowGlucoseWarningField )
+	    [[NSUserDefaults standardUserDefaults] setObject:textField.text forKey:lowGlucoseWarningKey];
+    }
 
-- (void)textFieldDidBeginEditing:(UITextField*)field
-{
-    [self didBeginEditing:[self cellForField:field] field:field action:[self selectorForField:field]];
-}
+    if( textField == highGlucoseWarningField )
+	textField.text = [[NSUserDefaults standardUserDefaults] stringForKey:highGlucoseWarningKey];
+    else if( textField == lowGlucoseWarningField )
+	textField.text = [[NSUserDefaults standardUserDefaults] stringForKey:lowGlucoseWarningKey];
 
-- (void)saveHighGlucoseWarningAction
-{
-    [[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:highGlucoseWarningKey];
-    [self saveAction];
-}
-
-- (void)saveLowGlucoseWarningAction
-{
-    [[NSUserDefaults standardUserDefaults] setObject:[editField text] forKey:lowGlucoseWarningKey];
-    [self saveAction];
+    currentEditingField = nil;
+    self.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
 #pragma mark -

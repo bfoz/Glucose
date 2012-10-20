@@ -1,6 +1,5 @@
 #import <MessageUI/MessageUI.h>
 #import <UIKit/UIKit.h>
-#import "SlidingViewController.h"
 
 @class CategoryViewController;
 @class ExportViewController;
@@ -11,7 +10,7 @@
 
 @protocol SettingsViewControllerDelegate;
 
-@interface SettingsViewController : SlidingViewController
+@interface SettingsViewController : UITableViewController
 {
     id<SettingsViewControllerDelegate>    delegate;
     LogModel*		    model;
@@ -20,8 +19,6 @@
     InsulinTypeViewController*	defaultInsulinTypeViewController;
     InsulinTypeViewController*	insulinTypeViewController;
 
-    UITableViewCell*	highGlucoseWarningCell;
-    UITableViewCell*	lowGlucoseWarningCell;
     NumberField*		highGlucoseWarningField;
     NumberField*		lowGlucoseWarningField;
     NSString*			highGlucoseWarningKey;
