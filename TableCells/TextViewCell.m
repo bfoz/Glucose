@@ -1,81 +1,68 @@
-//
-//  TextViewCell.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 8/7/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
-
 #import "TextViewCell.h"
 #import "Constants.h"
 
 @implementation TextViewCell
 
-@synthesize delegate, dirty, font, placeholder, text, view;
+@synthesize delegate, dirty, font, placeholder, text;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
-    if( self = [super initWithStyle:style reuseIdentifier:reuseIdentifier] )
-	{
-		self.selectionStyle = UITableViewCellSelectionStyleNone;
-		view = [[UITextView alloc] initWithFrame:CGRectZero];
-	    view.backgroundColor = [UIColor clearColor];
-//		view.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
+    if( self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] )
+    {
+	dirty = NO;
 
-		view.delegate = self;
-		[self.contentView addSubview:view];
-		[self layoutSubviews];
+	self.selectionStyle = UITableViewCellSelectionStyleNone;
+	_textView = [[UITextView alloc] initWithFrame:CGRectZero];
+	_textView.backgroundColor = [UIColor clearColor];
+	_textView.delegate = self;
+	[self.contentView addSubview:_textView];
 
-		dirty = NO;
-	}
-	return self;
+	[self setNeedsLayout];
+    }
+    return self;
 }
 
 - (void)layoutSubviews
 {
-	[super layoutSubviews];
-	
-	CGRect insetRect = CGRectInset([self.contentView bounds], kCellLeftOffset, 0);
-//	CGRect insetRect = CGRectInset([self.contentView bounds], kCellLeftOffset, kCellTopOffset);
-	self.view.frame = insetRect;
+    [super layoutSubviews];
+
+    self.textView.frame = self.contentView.bounds;
 }
 
 - (void) enablePlaceholder
 {
-	view.text = placeholder;
-	view.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
-	view.textColor = [UIColor lightGrayColor];
+    self.textView.text = placeholder;
+    self.textView.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
+    self.textView.textColor = [UIColor lightGrayColor];
 }
 
 #pragma mark Propertes
 
 - (void) setFont:(UIFont*)f
 {
-	font = f;
+    font = f;
 }
 
 - (NSString*) text
 {
-    return view.text;
+    return self.textView.text;
 }
 
 - (void) setText:(NSString*)t
 {
-    // Use the TextView's accessor method to handle storing the new string
-    view.text = t;
+    self.textView.text = t;
 
-	if( t && [t length])
-	{
-		dirty = YES;
-		view.font = nil;
-		view.textColor = nil;
-	}
-	else
-	{
-		dirty = NO;
-		[self enablePlaceholder];
-	}
-	
+    if( t && [t length])
+    {
+	dirty = YES;
+	self.textView.font = nil;
+	self.textView.textColor = nil;
+    }
+    else
+    {
+	dirty = NO;
+	[self enablePlaceholder];
+    }
 }
 
 #pragma mark UITextFieldDelegate
@@ -84,33 +71,33 @@
 {
     if (self.delegate && [self.delegate respondsToSelector:@selector(textViewCellShouldBeginEditing:)])
         return [self.delegate textViewCellShouldBeginEditing:self];
-	return YES;
+    return YES;
 }
 
-- (void)textViewDidBeginEditing:(UITextView *)textView
+- (void) textViewDidBeginEditing:(UITextView *)textView
 {
-	if( !dirty && [textView hasText])
-	{
-		textView.text = nil;	// Clear the placeholder text
-		textView.font = nil;	// Set the font and color
-		textView.textColor = nil;
-	}
-    if (self.delegate && [self.delegate respondsToSelector:@selector(textViewCellDidBeginEditing:)])
-        return [self.delegate textViewCellDidBeginEditing:self];
+    if( !dirty && [textView hasText])
+    {
+	textView.text = nil;	// Clear the placeholder text
+	textView.font = nil;	// Set the font and color
+	textView.textColor = nil;
+    }
+    if( self.delegate && [self.delegate respondsToSelector:@selector(textViewCellDidBeginEditing:)] )
+        [self.delegate textViewCellDidBeginEditing:self];
 }
 
-- (void)textViewDidEndEditing:(UITextView *)textView
+- (void) textViewDidEndEditing:(UITextView *)textView
 {
-	if( [textView hasText] )
-		dirty = YES;
-	else
-	{
-		[self enablePlaceholder];
-		dirty = NO;
-	}
+    if( [textView hasText] )
+	dirty = YES;
+    else
+    {
+	[self enablePlaceholder];
+	dirty = NO;
+    }
 
-//    if (self.delegate && [self.delegate respondsToSelector:@selector(textViewCellDidEndEditing:)])
-//        [self.delegate textViewCellDidEndEditing:self];
+    if( self.delegate && [self.delegate respondsToSelector:@selector(textViewCellDidEndEditing:)] )
+        [self.delegate textViewCellDidEndEditing:self];
 }
 
 @end

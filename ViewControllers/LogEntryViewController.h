@@ -1,5 +1,4 @@
 #import <UIKit/UIKit.h>
-#import "SlidingViewController.h"
 
 @class LogEntry;
 @class LogDay;
@@ -8,7 +7,7 @@
 
 @protocol LogEntryViewDelegate;
 
-@interface LogEntryViewController : SlidingViewController
+@interface LogEntryViewController : UITableViewController
 
 @property (nonatomic, strong, readonly)	UILabel*    categoryLabel;
 @property (nonatomic, strong, readonly)	UILabel*    timestampLabel;

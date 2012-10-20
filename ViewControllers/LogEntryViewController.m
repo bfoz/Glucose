@@ -289,7 +289,10 @@ static NSUserDefaults* defaults = nil;
     {
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	if( (kSectionGlucose == section) && (0 == row) )
+	{
 	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+	    cell.accessoryType = self.editing ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
+	}
 	else if( kInsulinCellID == cellID )
 	{
 	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1
@@ -305,6 +308,7 @@ static NSUserDefaults* defaults = nil;
 	    doseFieldCell.delegate = self;
 	    doseFieldCell.doseField.inputAccessoryView = self.inputToolbar;
 	    cell = doseFieldCell;
+	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	}
 	else if( @"eGlucose" == cellID )
 	{
@@ -315,12 +319,17 @@ static NSUserDefaults* defaults = nil;
 	    glucoseCell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
 	    glucoseCell.placeholder = @"Glucose";
 	    cell = glucoseCell;
+	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	}
 	else if( @"NoteCellID" == cellID )
 	{
-	    cell = [[TextViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
-	    ((TextViewCell*)cell).placeholder = @"Note";
-	    ((TextViewCell*)cell).delegate = self;
+	    TextViewCell* textViewCell = [[TextViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+	    textViewCell.placeholder = @"Add a Note";
+	    textViewCell.delegate = self;
+	    textViewCell.textView.inputAccessoryView = self.inputToolbar;
+
+	    cell = textViewCell;
+	    cell.accessoryType = UITableViewCellAccessoryNone;
 	}
 	else if( @"NoteID" == cellID )
 	{
@@ -329,6 +338,7 @@ static NSUserDefaults* defaults = nil;
 	else	// Standard UITableView cell for Timestamp and Category
 	{
 	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+	    cell.accessoryType = self.editing ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
 	    cell.textLabel.backgroundColor = [UIColor clearColor];
 	    cell.textLabel.textAlignment = UITextAlignmentCenter;
 	    if( (0 == section) && (0 == row) )	// Save a pointer to the timestamp cell
@@ -429,7 +439,7 @@ static NSUserDefaults* defaults = nil;
 	    dcell.precision = InsulinPrecision;
 	}
     }
-    else if( 2 == section )
+    else if( kSectionNote == section )
     {
 	cell.textLabel.text = self.logEntry.note;
 
@@ -437,11 +447,6 @@ static NSUserDefaults* defaults = nil;
 	if( self.editing )
 	    ((TextViewCell *)cell).text = self.logEntry.note;
     }
-
-    if( self.editing )
-	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    else
-	cell.accessoryType = UITableViewCellAccessoryNone;
 
     return cell;
 }
@@ -633,9 +638,9 @@ static NSUserDefaults* defaults = nil;
 	[self.logEntry setDose:[cell.doseField number] insulinDose:cell.dose];
 	if( editingNewEntry )
 	{
-	    NSIndexPath* path = [tableView indexPathForCell:cell];
+	    NSIndexPath* path = [self.tableView indexPathForCell:cell];
 	    NSIndexPath* next = [NSIndexPath indexPathForRow:path.row+1 inSection:kSectionInsulin];
-	    DoseFieldCell* cell = (DoseFieldCell*)[tableView cellForRowAtIndexPath:next];
+	    DoseFieldCell* cell = (DoseFieldCell*)[self.tableView cellForRowAtIndexPath:next];
 	    if( cell )	// Found a next insulin row
 	    {
 		[cell.doseField becomeFirstResponder];
@@ -666,23 +671,21 @@ static NSUserDefaults* defaults = nil;
     return YES;
 }
 
-#pragma mark -
-#pragma mark <TextViewCellDelegate>
+#pragma mark TextViewCellDelegate
 
-- (void)textViewCellDidBeginEditing:(TextViewCell*)cell
+- (void) textViewCellDidBeginEditing:(TextViewCell*)cell
 {
-    [self didBeginEditing:cell field:cell.view action:@selector(saveNoteAction:)];
+    currentEditingField = (UITextField*)cell.textView;
+    self.navigationItem.rightBarButtonItem.enabled = NO;
 }
 
-- (void)saveNoteAction:(id)sender
+- (void) textViewCellDidEndEditing:(TextViewCell*)cell
 {
-    if( didUndo )
-	didUndo = NO;	// Undo handled
-    else
-    {
-	self.logEntry.note = ((TextViewCell *)editCell).text;
-	[self saveAction];
-    }
+    if( currentEditingField )
+	self.logEntry.note = cell.text;
+    cell.text = self.logEntry.note;
+
+    self.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
 @end
