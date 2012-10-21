@@ -69,6 +69,8 @@
 		15C30BBB161D48C600976444 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BBA161D48C600976444 /* Default.png */; };
 		15C30BBD161D494700976444 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BBC161D494700976444 /* Icon@2x.png */; };
 		15C6D50A16327F7000D6838D /* UIView+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C6D50916327F7000D6838D /* UIView+SpecHelper.m */; };
+		15C6D5C516337D5300D6838D /* libFlurry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15C6D5C416337D5300D6838D /* libFlurry.a */; };
+		15C6D5C716337EE100D6838D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15C6D5C616337EE000D6838D /* SystemConfiguration.framework */; };
 		15C8F66F1630E0DE00CA92D4 /* UIViewController+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */; };
 		15EC68CD13B1B74900016937 /* LogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EC68CC13B1B74900016937 /* LogModel.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
@@ -256,6 +258,9 @@
 		15C30BBC161D494700976444 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		15C6D50816327F7000D6838D /* UIView+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SpecHelper.h"; sourceTree = "<group>"; };
 		15C6D50916327F7000D6838D /* UIView+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SpecHelper.m"; sourceTree = "<group>"; };
+		15C6D5C316337D5300D6838D /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
+		15C6D5C416337D5300D6838D /* libFlurry.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry.a; sourceTree = "<group>"; };
+		15C6D5C616337EE000D6838D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		15C8F66C1630E00900CA92D4 /* UIViewController+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SpecHelper.h"; sourceTree = "<group>"; };
 		15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SpecHelper.m"; sourceTree = "<group>"; };
 		15EC68CB13B1B74900016937 /* LogModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogModel.h; sourceTree = "<group>"; };
@@ -288,6 +293,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15C6D5C716337EE100D6838D /* SystemConfiguration.framework in Frameworks */,
 				158F4096162A11E10000DD52 /* QuartzCore.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
@@ -298,6 +304,7 @@
 				15A321940ED28A7E00C16388 /* AddressBookUI.framework in Frameworks */,
 				1517983F1250156100E28662 /* MessageUI.framework in Frameworks */,
 				158F4094162A11AA0000DD52 /* DropboxSDK.framework in Frameworks */,
+				15C6D5C516337D5300D6838D /* libFlurry.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,6 +491,16 @@
 			path = Classes;
 			sourceTree = "<group>";
 		};
+		15C6D5C216337D5300D6838D /* Flurry */ = {
+			isa = PBXGroup;
+			children = (
+				15C6D5C316337D5300D6838D /* Flurry.h */,
+				15C6D5C416337D5300D6838D /* libFlurry.a */,
+			);
+			name = Flurry;
+			path = Frameworks/Flurry;
+			sourceTree = "<group>";
+		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -496,6 +513,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				15C6D5C616337EE000D6838D /* SystemConfiguration.framework */,
 				15C30BBC161D494700976444 /* Icon@2x.png */,
 				15C30BBA161D48C600976444 /* Default.png */,
 				15C30BB7161D476500976444 /* Default-568h@2x.png */,
@@ -540,6 +558,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				15C6D5C216337D5300D6838D /* Flurry */,
 				150829F10E500DCA00FB556A /* CoreGraphics.framework */,
 				158F4093162A11AA0000DD52 /* DropboxSDK.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
@@ -904,6 +923,10 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks/Flurry\"",
+				);
 				PRODUCT_NAME = Glucose;
 			};
 			name = AdHoc;
@@ -1044,6 +1067,10 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks/Flurry\"",
+				);
 				PRODUCT_NAME = Glucose;
 			};
 			name = Debug;
@@ -1060,10 +1087,15 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Glucose_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = "APPSTORE=1";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks/Flurry\"",
+				);
 				PRODUCT_NAME = Glucose;
 			};
 			name = AppStore;

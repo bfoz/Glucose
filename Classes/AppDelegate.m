@@ -11,6 +11,10 @@
 #import "LogModel.h"
 #import "LogViewController.h"
 
+#ifdef APPSTORE
+#import "Flurry.h"
+#endif
+
 #define	LOG_SQL		@"glucose.sqlite"
 
 AppDelegate* appDelegate = nil;
@@ -38,7 +42,11 @@ NSDateFormatter* shortDateFormatter = nil;
 #pragma mark <UIApplicationDelegate>
 
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
-{	
+{
+#ifdef APPSTORE
+    [Flurry startSession:@"X4DCQH62JV4JXP72BJJR"];
+#endif
+
     // Create the top level window (instead of using a default nib)
     window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
