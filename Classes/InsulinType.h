@@ -20,7 +20,6 @@
 
 + (BOOL) insertInsulinType:(InsulinType*)t intoDatabase:(sqlite3*)database;
 + (InsulinType*) newInsulinTypeWithName:(NSString*)n database:(sqlite3*)database;
-+ (BOOL) loadInsulinTypes:(NSMutableArray*)types fromDatabase:(sqlite3*)database;
 
 // Initialize with a Name and ID
 - (id)initWithID:(NSInteger)type name:(NSString*)name;

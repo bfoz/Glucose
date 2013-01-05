@@ -8,14 +8,12 @@
 #import "InsulinType.h"
 #import "LogEntry.h"
 #import "LogDay.h"
-#import "LogModel.h"
+#import "LogModel+SQLite.h"
 #import "LogViewController.h"
 
 #ifdef APPSTORE
 #import "Flurry.h"
 #endif
-
-#define	LOG_SQL		@"glucose.sqlite"
 
 AppDelegate* appDelegate = nil;
 
@@ -152,37 +150,24 @@ NSDateFormatter* shortDateFormatter = nil;
 - (void)createEditableCopyOfDatabaseIfNeeded
 {
     // First, test for existence.
-    BOOL success;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSError *error;
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *writableDBPath = [documentsDirectory stringByAppendingPathComponent:LOG_SQL];
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    NSString *writableDBPath = [LogModel writeableSqliteDBPath];
     if( [fileManager fileExistsAtPath:writableDBPath] )
-		return;
+	return;
 
-	NSLog(@"Database did not exist\n");
+    NSLog(@"Database did not exist\n");
     // The writable database does not exist, so copy the default to the appropriate location.
-    NSString *defaultDBPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:LOG_SQL];
-    success = [fileManager copyItemAtPath:defaultDBPath toPath:writableDBPath error:&error];
-    if (!success) {
+    NSError *error;
+    BOOL success = [fileManager copyItemAtPath:[LogModel bundledDatabasePath]
+					toPath:writableDBPath
+					 error:&error];
+    if( !success )
         NSAssert1(0, @"Failed to create writable database file with message '%@'.", [error localizedDescription]);
-    }
 }
 
 sqlite3* openBundledDatabase()
 {
-    sqlite3*	db;
-
-    // Open the default databse from the main bundle
-    NSString *defaultDBPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:LOG_SQL];
-    if( sqlite3_open([defaultDBPath UTF8String], &db) != SQLITE_OK )
-    {
-	sqlite3_close(db);	// Cleanup after failure (release resources)
-	NSLog(@"Failed to open database with message '%s'.", sqlite3_errmsg(db));
-	return NULL;
-    }
-    return db;
+    return [LogModel openDatabasePath:[LogModel bundledDatabasePath]];
 }
 
 // Add the categories from the bundled defaults database
@@ -193,10 +178,9 @@ sqlite3* openBundledDatabase()
 	return;
 
     // Load the default categories
-    NSMutableArray* a = [NSMutableArray arrayWithCapacity:1];
-    [Category loadCategories:a fromDatabase:db];
+    NSArray* a = [LogModel loadCategoriesFromDatabase:db];
 
-    sqlite3_close(db);	    // Close the database
+    [LogModel closeDatabase:db];
 
     // Loop through the items to add
     for( Category* c in a )
@@ -210,10 +194,9 @@ sqlite3* openBundledDatabase()
 	return;
 
     // Load the default insulin types
-    NSMutableArray* a = [NSMutableArray arrayWithCapacity:1];
-    [InsulinType loadInsulinTypes:a fromDatabase:db];
+    NSArray* a = [LogModel loadInsulinTypesFromDatabase:db];
 
-    sqlite3_close(db);	    // Close the database
+    [LogModel closeDatabase:db];
 
     // Loop through the items to add
     for( InsulinType* t in a )

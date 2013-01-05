@@ -58,30 +58,6 @@ static const char *const sqlInsertUserInsulinType = "INSERT INTO InsulinTypes (t
 	return [[InsulinType alloc] initWithID:sqlite3_last_insert_rowid(database) name:name];
 }
 
-+ (BOOL) loadInsulinTypes:(NSMutableArray*)types fromDatabase:(sqlite3*)database
-{
-    const char *const query = "SELECT typeID, sequence, shortName FROM InsulinTypes ORDER BY sequence";
-    sqlite3_stmt* statement;
-
-    if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) != SQLITE_OK )
-    {
-	NSLog(@"loadInsulinTypes: Failed to prepare statement with message '%s'", sqlite3_errmsg(database));
-	return NO;
-    }
-
-    while( sqlite3_step(statement) == SQLITE_ROW )
-    {
-	int typeID = sqlite3_column_int(statement, 0);
-	const unsigned char *const s = sqlite3_column_text(statement, 2);
-	NSString* shortName = s ? [NSString stringWithUTF8String:(const char*)s] : nil;
-	InsulinType* type = [[InsulinType alloc] initWithID:typeID name:shortName];
-	[types addObject:type];
-    }
-    sqlite3_finalize(statement);
-
-    return YES;
-}
-
 // Initialize with a Name and ID
 - (id)initWithID:(NSInteger)type name:(NSString*)name
 {

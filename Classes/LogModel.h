@@ -13,7 +13,6 @@
 @private
     NSMutableArray* categories;
     NSNumber*	    categoryNameMaxWidth;
-    sqlite3*	    database;		// SQLite database handle
     NSMutableArray* days;
     NSUserDefaults* defaults;
     NSMutableArray* insulinTypes;

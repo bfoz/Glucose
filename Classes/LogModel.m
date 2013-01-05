@@ -1,6 +1,7 @@
 #import <sqlite3.h>
 
 #import "LogModel.h"
+#import "LogModel+SQLite.h"
 
 #import "Constants.h"
 #import "Category.h"
@@ -8,8 +9,6 @@
 #import "InsulinType.h"
 #import "LogDay.h"
 #import "LogEntry.h"
-
-#define	LOG_SQL		@"glucose.sqlite"
 
 @interface LogModel ()
 
@@ -21,6 +20,9 @@
 @end
 
 @implementation LogModel
+{
+    sqlite3*	database;
+}
 
 @synthesize days;
 
@@ -49,8 +51,7 @@
     if( database )
     {
 	[LogEntry finalize];
-
-	sqlite3_close(database);
+	[LogModel closeDatabase:database];
 	database = NULL;
     }
 }
@@ -500,10 +501,8 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 - (NSArray*) categories
 {
     if( !categories )
-    {
-	categories = [[NSMutableArray alloc] init];
-	[Category loadCategories:categories fromDatabase:self.database];
-    }
+	categories = [LogModel loadCategoriesFromDatabase:self.database];
+
     return categories;
 }
 
@@ -511,25 +510,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 {
     if( !database )
     {
-	NSArray *const paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString *const documentsDirectory = [paths objectAtIndex:0];
-	NSString *const path = [documentsDirectory stringByAppendingPathComponent:LOG_SQL];
-	// Open the database. The database was prepared outside the application.
-	if( sqlite3_open([path UTF8String], &database) != SQLITE_OK )
-	{
-	    // sqlite3_open() doesn't always return a valid connection object on failure
-	    if( database )
-	    {
-		sqlite3_close(database);	// Cleanup after failure (release resources)
-		NSLog(@"Failed to open database with message '%s'.", sqlite3_errmsg(database));
-		database = NULL;
-	    }
-	    else
-		NSLog(@"Failed to allocate a database object");
-
-	    return NULL;
-	}
-
+	database = [LogModel openDatabasePath:[LogModel writeableSqliteDBPath]];
         numberOfLogDays = [LogDay numberOfDays:database];
     }
 
@@ -539,10 +520,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 - (NSArray*) insulinTypes
 {
     if( !insulinTypes )
-    {
-	insulinTypes = [NSMutableArray new];
-	[InsulinType loadInsulinTypes:insulinTypes fromDatabase:self.database];
-    }
+	insulinTypes = [LogModel loadInsulinTypesFromDatabase:self.database];
 
     return insulinTypes;
 }
