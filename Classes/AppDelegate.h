@@ -18,8 +18,6 @@
 @property (nonatomic, strong)	UIWindow*	window;
 @property (nonatomic, strong)	UINavigationController* navController;
 
-- (void) appendBundledCategories;
-- (void) appendBundledInsulinTypes;
 - (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
 - (unsigned) numLogEntriesForInsulinTypeID:(unsigned)typeID;
 - (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to;

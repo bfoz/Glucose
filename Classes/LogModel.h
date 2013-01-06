@@ -45,6 +45,7 @@
 - (void) moveCategoryAtIndex:(unsigned)from toIndex:(unsigned)to;
 - (void) purgeCategory:(Category*)category;
 - (void) updateCategory:(Category*)category;
+- (void) restoreBundledCategories;
 
 # pragma mark Insulin Types
 
@@ -56,6 +57,7 @@
 - (void) purgeInsulinType:(InsulinType*)type;
 - (void) removeInsulinType:(InsulinType*)type;
 - (void) updateInsulinType:(InsulinType*)type;
+- (void) restoreBundledInsulinTypes;
 
 #pragma mark Insulin Types for New Entries
 

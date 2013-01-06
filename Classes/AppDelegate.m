@@ -24,9 +24,6 @@ NSString* kDropboxSessionLinkedAccountNotification = @"DropboxSessionLinkedAccou
 NSString* kDropboxSessionUnlinkedAccountNotification = @"DropboxSessionUnlinkedAccountNotification";
 
 @interface AppDelegate () <LogViewDelegate>
-
-- (void) createEditableCopyOfDatabaseIfNeeded;
-
 @end
 
 @implementation AppDelegate
@@ -163,44 +160,6 @@ NSDateFormatter* shortDateFormatter = nil;
 					 error:&error];
     if( !success )
         NSAssert1(0, @"Failed to create writable database file with message '%@'.", [error localizedDescription]);
-}
-
-sqlite3* openBundledDatabase()
-{
-    return [LogModel openDatabasePath:[LogModel bundledDatabasePath]];
-}
-
-// Add the categories from the bundled defaults database
-- (void) appendBundledCategories
-{
-    sqlite3* db = openBundledDatabase();
-    if( !db )
-	return;
-
-    // Load the default categories
-    NSArray* a = [LogModel loadCategoriesFromDatabase:db];
-
-    [LogModel closeDatabase:db];
-
-    // Loop through the items to add
-    for( Category* c in a )
-	[model addCategory:c];
-}
-
-- (void) appendBundledInsulinTypes
-{
-    sqlite3* db = openBundledDatabase();
-    if( !db )
-	return;
-
-    // Load the default insulin types
-    NSArray* a = [LogModel loadInsulinTypesFromDatabase:db];
-
-    [LogModel closeDatabase:db];
-
-    // Loop through the items to add
-    for( InsulinType* t in a )
-	[model addInsulinType:t];
 }
 
 #pragma mark -

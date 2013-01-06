@@ -2,7 +2,11 @@
 #import <sqlite3.h>
 
 #import "LogModel.h"
+#import "LogModel+CoreData.h"
 #import "LogModel+SQLite.h"
+
+#import "ManagedCategory.h"
+#import "ManagedInsulinType.h"
 
 #import "Constants.h"
 #import "Category.h"
@@ -192,6 +196,25 @@
     [self clearCategoryNameMaxWidth];
 }
 
+- (void) restoreBundledCategories
+{
+    sqlite3* bundledDatabase = [LogModel openDatabasePath:[LogModel bundledDatabasePath]];
+    if( !bundledDatabase )
+	return;
+
+    NSArray* bundledCategories = [LogModel loadCategoriesFromDatabase:bundledDatabase];
+    [LogModel closeDatabase:bundledDatabase];
+
+    unsigned index = 0;
+    for( Category* category in bundledCategories )
+    {
+	ManagedCategory* managedCategory = [LogModel insertManagedCategoryIntoContext:self.managedObjectContext];
+	managedCategory.name = category.categoryName;
+	managedCategory.sequenceNumber = [NSNumber numberWithUnsignedInt:index];
+	++index;
+    }
+}
+
 #pragma mark
 #pragma mark Insulin Types
 
@@ -317,6 +340,25 @@
 {
     [type flush:self.database];
     [self clearInsulinTypeShortNameMaxWidth];
+}
+
+- (void) restoreBundledInsulinTypes
+{
+    sqlite3* bundledDatabase = [LogModel openDatabasePath:[LogModel bundledDatabasePath]];
+    if( !bundledDatabase )
+	return;
+
+    NSArray* bundledInsulinTypes = [LogModel loadInsulinTypesFromDatabase:bundledDatabase];
+    [LogModel closeDatabase:bundledDatabase];
+
+    unsigned index = 0;
+    for( InsulinType* insulinType in bundledInsulinTypes )
+    {
+	ManagedInsulinType* managedInsulinType = [LogModel insertManagedInsulinTypeIntoContext:self.managedObjectContext];
+	managedInsulinType.shortName = insulinType.shortName;
+	managedInsulinType.sequenceNumber = [NSNumber numberWithUnsignedInt:index];
+	++index;
+    }
 }
 
 #pragma mark
@@ -506,7 +548,11 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 - (NSArray*) categories
 {
     if( !categories )
-	categories = [LogModel loadCategoriesFromDatabase:self.database];
+    {
+	NSError* error = nil;
+	categories = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedCategoriesInContext:self.managedObjectContext]
+						      error:&error]];
+    }
 
     return categories;
 }
@@ -525,7 +571,11 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 - (NSArray*) insulinTypes
 {
     if( !insulinTypes )
-	insulinTypes = [LogModel loadInsulinTypesFromDatabase:self.database];
+    {
+	NSError* error = nil;
+	insulinTypes = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedInsulinTypesInContext:self.managedObjectContext]
+												  error:&error]];
+    }
 
     return insulinTypes;
 }
@@ -561,6 +611,36 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
 #pragma mark Core Data
 
++ (void) importFromBundledDatabaseIntoContext:(NSManagedObjectContext*)managedObjectContext
+{
+    sqlite3* database = [LogModel openDatabasePath:[LogModel bundledDatabasePath]];
+    if( !database )
+	return;
+
+    NSArray* bundledCategories = [LogModel loadCategoriesFromDatabase:database];
+    NSArray* bundledInsulinTypes = [LogModel loadInsulinTypesFromDatabase:database];
+
+    [LogModel closeDatabase:database];
+
+    unsigned index = 0;
+    for( Category* category in bundledCategories )
+    {
+	ManagedCategory* managedCategory = [LogModel insertManagedCategoryIntoContext:managedObjectContext];
+	managedCategory.name = category.categoryName;
+	managedCategory.sequenceNumber = [NSNumber numberWithUnsignedInt:index];
+	++index;
+    }
+
+    index = 0;
+    for( InsulinType* insulinType in bundledInsulinTypes )
+    {
+	ManagedInsulinType* managedInsulinType = [LogModel insertManagedInsulinTypeIntoContext:managedObjectContext];
+	managedInsulinType.shortName = insulinType.shortName;
+	managedInsulinType.sequenceNumber = [NSNumber numberWithUnsignedInt:index];
+	++index;
+    }
+}
+
 - (NSURL*) applicationDocumentsDirectory
 {
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
@@ -568,20 +648,35 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
 - (NSURL*) sqlitePersistentStoreURL
 {
-    return [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"Glucose.sqlite"];
+    return [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"GlucoseCoreData.sqlite"];
 }
 
 - (NSManagedObjectContext*) managedObjectContext
 {
     if( !_managedObjectContext )
     {
+	BOOL sqliteDatabaseAlreadyExisted = [[NSFileManager defaultManager] fileExistsAtPath:[[self sqlitePersistentStoreURL] path]];
 	NSPersistentStoreCoordinator* coordinator = [self persistentStoreCoordinator];
 	if( coordinator )
 	{
 	    _managedObjectContext = [[NSManagedObjectContext alloc] init];
-	    [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+	    _managedObjectContext.persistentStoreCoordinator = coordinator;
+
+	    if( !sqliteDatabaseAlreadyExisted )
+	    {
+		NSManagedObjectContext* importContext = [[NSManagedObjectContext alloc] init];
+		importContext.persistentStoreCoordinator = coordinator;
+		importContext.undoManager = nil;    // Disable the undo manager so it doesn't store history that we don't care about
+
+		[LogModel importFromBundledDatabaseIntoContext:importContext];
+
+		NSError* error;
+		if( ![importContext save:&error] )
+		    NSLog(@"Couldn't save after importing bundled database: %@", [error localizedDescription]);
+	    }
 	}
     }
+
     return _managedObjectContext;
 }
 

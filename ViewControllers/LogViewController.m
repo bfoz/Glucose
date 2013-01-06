@@ -84,7 +84,7 @@
 {
     if( !settingsViewController )
     {
-	settingsViewController = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+	settingsViewController = [[SettingsViewController alloc] init];
 	settingsViewController.delegate = self;
 	settingsViewController.model = _model;
     }

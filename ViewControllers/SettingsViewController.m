@@ -64,9 +64,9 @@ enum AboutSectionRows
     NUM_ABOUT_ROWS
 };
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id)init
 {
-    if( self = [super initWithStyle:style] )
+    if( self = [super initWithStyle:UITableViewStyleGrouped] )
     {
 	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
 	const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
@@ -495,7 +495,7 @@ enum AboutSectionRows
 
 - (void) categoryViewControllerDidSelectRestoreDefaults
 {
-    [appDelegate appendBundledCategories];    // Restore the missing defaults
+    [model restoreBundledCategories];
 }
 
 #pragma mark -
@@ -526,7 +526,7 @@ enum AboutSectionRows
 
 - (void) insulinTypeViewControllerDidSelectRestoreDefaults
 {
-    [appDelegate appendBundledInsulinTypes];	// Restore the missing defaults
+    [model restoreBundledInsulinTypes];
 }
 
 - (void) insulinTypeViewControllerDidUnselectInsulinType:(InsulinType*)type
