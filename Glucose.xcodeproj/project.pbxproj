@@ -75,6 +75,17 @@
 		15E59E601698CD410067BDC1 /* LogModel+SQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */; };
 		15E59E611698CD410067BDC1 /* LogModel+SQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */; };
 		15E59EC11698E6620067BDC1 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */; };
+		15E59FE5169918FA0067BDC1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E59FE4169918FA0067BDC1 /* CoreData.framework */; };
+		15E59FE6169919030067BDC1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E59FE4169918FA0067BDC1 /* CoreData.framework */; };
+		15E59FE91699195E0067BDC1 /* Glucose.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 15E59FE71699195E0067BDC1 /* Glucose.xcdatamodeld */; };
+		15E59FEC169919790067BDC1 /* ManagedCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59FEB169919790067BDC1 /* ManagedCategory.m */; };
+		15E59FED169919790067BDC1 /* ManagedCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59FEB169919790067BDC1 /* ManagedCategory.m */; };
+		15E59FF01699197A0067BDC1 /* ManagedInsulinType.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59FEF1699197A0067BDC1 /* ManagedInsulinType.m */; };
+		15E59FF11699197A0067BDC1 /* ManagedInsulinType.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59FEF1699197A0067BDC1 /* ManagedInsulinType.m */; };
+		15E59FF41699197A0067BDC1 /* ManagedLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59FF31699197A0067BDC1 /* ManagedLogEntry.m */; };
+		15E59FF51699197A0067BDC1 /* ManagedLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59FF31699197A0067BDC1 /* ManagedLogEntry.m */; };
+		15E59FF81699197A0067BDC1 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59FF71699197A0067BDC1 /* ManagedInsulinDose.m */; };
+		15E59FF91699197A0067BDC1 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59FF71699197A0067BDC1 /* ManagedInsulinDose.m */; };
 		15EC68CD13B1B74900016937 /* LogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EC68CC13B1B74900016937 /* LogModel.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -268,6 +279,16 @@
 		15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SpecHelper.m"; sourceTree = "<group>"; };
 		15E59E5E1698CD410067BDC1 /* LogModel+SQLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+SQLite.h"; sourceTree = "<group>"; };
 		15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LogModel+SQLite.m"; sourceTree = "<group>"; };
+		15E59FE4169918FA0067BDC1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		15E59FE81699195E0067BDC1 /* Glucose.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Glucose.xcdatamodel; sourceTree = "<group>"; };
+		15E59FEA169919790067BDC1 /* ManagedCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedCategory.h; sourceTree = "<group>"; };
+		15E59FEB169919790067BDC1 /* ManagedCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedCategory.m; sourceTree = "<group>"; };
+		15E59FEE1699197A0067BDC1 /* ManagedInsulinType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedInsulinType.h; sourceTree = "<group>"; };
+		15E59FEF1699197A0067BDC1 /* ManagedInsulinType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedInsulinType.m; sourceTree = "<group>"; };
+		15E59FF21699197A0067BDC1 /* ManagedLogEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedLogEntry.h; sourceTree = "<group>"; };
+		15E59FF31699197A0067BDC1 /* ManagedLogEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedLogEntry.m; sourceTree = "<group>"; };
+		15E59FF61699197A0067BDC1 /* ManagedInsulinDose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedInsulinDose.h; sourceTree = "<group>"; };
+		15E59FF71699197A0067BDC1 /* ManagedInsulinDose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedInsulinDose.m; sourceTree = "<group>"; };
 		15EC68CB13B1B74900016937 /* LogModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogModel.h; sourceTree = "<group>"; };
 		15EC68CC13B1B74900016937 /* LogModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogModel.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -285,6 +306,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15E59FE6169919030067BDC1 /* CoreData.framework in Frameworks */,
 				158F40F1162A4D450000DD52 /* CoreGraphics.framework in Frameworks */,
 				1581CE12155F0F9A00B069F2 /* Foundation.framework in Frameworks */,
 				158F40F2162A4D750000DD52 /* MessageUI.framework in Frameworks */,
@@ -299,6 +321,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15E59FE5169918FA0067BDC1 /* CoreData.framework in Frameworks */,
 				15C6D5C716337EE100D6838D /* SystemConfiguration.framework in Frameworks */,
 				158F4096162A11E10000DD52 /* QuartzCore.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
@@ -516,6 +539,22 @@
 			path = Categories;
 			sourceTree = "<group>";
 		};
+		15E59E621698D24E0067BDC1 /* Core Data Models */ = {
+			isa = PBXGroup;
+			children = (
+				15E59FEA169919790067BDC1 /* ManagedCategory.h */,
+				15E59FEB169919790067BDC1 /* ManagedCategory.m */,
+				15E59FF61699197A0067BDC1 /* ManagedInsulinDose.h */,
+				15E59FF71699197A0067BDC1 /* ManagedInsulinDose.m */,
+				15E59FEE1699197A0067BDC1 /* ManagedInsulinType.h */,
+				15E59FEF1699197A0067BDC1 /* ManagedInsulinType.m */,
+				15E59FF21699197A0067BDC1 /* ManagedLogEntry.h */,
+				15E59FF31699197A0067BDC1 /* ManagedLogEntry.m */,
+			);
+			name = "Core Data Models";
+			path = CoreDataModels;
+			sourceTree = "<group>";
+		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -529,6 +568,7 @@
 			isa = PBXGroup;
 			children = (
 				15E59E591698CB240067BDC1 /* Categories */,
+				15E59E621698D24E0067BDC1 /* Core Data Models */,
 				15C30BBC161D494700976444 /* Icon@2x.png */,
 				15C30BBA161D48C600976444 /* Default.png */,
 				15C30BB7161D476500976444 /* Default-568h@2x.png */,
@@ -562,6 +602,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				15E59FE71699195E0067BDC1 /* Glucose.xcdatamodeld */,
 				15051FFE0E6E47CC00E0BAE4 /* Entitlements.plist */,
 				1585DEC00E6A217200FB9C39 /* glucose.sqlite */,
 				1576A8B50E6667F7004EBBC0 /* Icon.png */,
@@ -573,6 +614,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				15E59FE4169918FA0067BDC1 /* CoreData.framework */,
 				150829F10E500DCA00FB556A /* CoreGraphics.framework */,
 				158F4093162A11AA0000DD52 /* DropboxSDK.framework */,
 				15C6D5C216337D5300D6838D /* Flurry */,
@@ -845,6 +887,10 @@
 				15C8F66F1630E0DE00CA92D4 /* UIViewController+SpecHelper.m in Sources */,
 				15C6D50A16327F7000D6838D /* UIView+SpecHelper.m in Sources */,
 				15E59E611698CD410067BDC1 /* LogModel+SQLite.m in Sources */,
+				15E59FED169919790067BDC1 /* ManagedCategory.m in Sources */,
+				15E59FF11699197A0067BDC1 /* ManagedInsulinType.m in Sources */,
+				15E59FF51699197A0067BDC1 /* ManagedLogEntry.m in Sources */,
+				15E59FF91699197A0067BDC1 /* ManagedInsulinDose.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -881,6 +927,11 @@
 				158F40B8162A3EFC0000DD52 /* SlidingViewController.m in Sources */,
 				15C2E7C5162D29D4002115FD /* DateField.m in Sources */,
 				15E59E601698CD410067BDC1 /* LogModel+SQLite.m in Sources */,
+				15E59FE91699195E0067BDC1 /* Glucose.xcdatamodeld in Sources */,
+				15E59FEC169919790067BDC1 /* ManagedCategory.m in Sources */,
+				15E59FF01699197A0067BDC1 /* ManagedInsulinType.m in Sources */,
+				15E59FF41699197A0067BDC1 /* ManagedLogEntry.m in Sources */,
+				15E59FF81699197A0067BDC1 /* ManagedInsulinDose.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -917,7 +968,7 @@
 				GDATA_INCLUDE_DOCS_SERVICE = 1;
 				GDATA_REQUIRE_SERVICE_INCLUDES = 1;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = "-lxml2";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
@@ -941,6 +992,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks/Flurry\"",
@@ -1085,6 +1137,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks/Flurry\"",
@@ -1110,6 +1163,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks/Flurry\"",
@@ -1135,7 +1189,7 @@
 				GDATA_INCLUDE_DOCS_SERVICE = 1;
 				GDATA_REQUIRE_SERVICE_INCLUDES = 1;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lxml2";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -1160,7 +1214,7 @@
 				GDATA_INCLUDE_DOCS_SERVICE = 1;
 				GDATA_REQUIRE_SERVICE_INCLUDES = 1;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = "-lxml2";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
@@ -1202,6 +1256,19 @@
 			defaultConfigurationName = AppStore;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		15E59FE71699195E0067BDC1 /* Glucose.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				15E59FE81699195E0067BDC1 /* Glucose.xcdatamodel */,
+			);
+			currentVersion = 15E59FE81699195E0067BDC1 /* Glucose.xcdatamodel */;
+			path = Glucose.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
 }
