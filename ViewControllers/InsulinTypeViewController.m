@@ -19,9 +19,9 @@
 @synthesize model;
 @synthesize multiCheck;
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id) init
 {
-    if (self = [super initWithStyle:style])
+    if( self = [super initWithStyle:UITableViewStyleGrouped] )
     {
 	self.title = @"Insulin Types";
 	dirty = NO;

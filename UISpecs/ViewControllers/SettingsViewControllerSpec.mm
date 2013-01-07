@@ -1,5 +1,4 @@
-#import "SpecHelper.h"
-#import "OCMock.h"
+#import "SpecsHelper.h"
 
 #import "LogModel.h"
 #import "CategoryViewController.h"
@@ -24,6 +23,35 @@ describe(@"SettingsViewController", ^{
 	controller.model = mockLogModel;
 
 	controller.view should_not be_nil;
+    });
+
+    it(@"should set the title", ^{
+	controller.title should equal(@"Settings");
+    });
+
+    it(@"should hide the stock Back button", ^{
+	controller.navigationItem.hidesBackButton should be_truthy;
+    });
+
+    describe(@"when the Done button is tapped", ^{
+	__block id mockDelegate;
+
+	beforeEach(^{
+	    mockDelegate = [OCMockObject mockForProtocol:@protocol(SettingsViewControllerDelegate)];
+	    controller.delegate = mockDelegate;
+
+	    [[mockDelegate expect] settingsViewControllerDidPressBack];
+	    [[mockLogModel expect] flushInsulinTypesForNewEntries];
+	    [controller.navigationItem.rightBarButtonItem tap];
+	});
+
+	it(@"should inform the delegate", ^{
+	    [mockDelegate verify];
+	});
+
+	it(@"should flush insulin types for new entries", ^{
+	    [mockLogModel verify];
+	});
     });
 
     describe(@"Category view controller delegate", ^{

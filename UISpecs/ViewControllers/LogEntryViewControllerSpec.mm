@@ -1,5 +1,4 @@
-#import "SpecHelper.h"
-#import "OCMock.h"
+#import "SpecsHelper.h"
 
 #import "DoseFieldCell.h"
 #import "LogEntry.h"
@@ -15,27 +14,6 @@ enum Sections
     kSectionNote,
     NUM_SECTIONS
 };
-
-@implementation UIControl (SpecHelper)
-
-- (void)tap
-{
-    [self sendActionsForControlEvents:UIControlEventTouchUpInside];
-}
-
-@end
-
-@implementation UIBarButtonItem (SpecHelper)
-
-- (void)tap
-{
-    if( [self.customView isKindOfClass:[UIButton class]] )
-        [(UIButton*)self.customView tap];
-    else
-        [self.target performSelector:self.action];
-}
-
-@end
 
 @interface LogEntryViewController (UISpecs)
 - (void) categoryViewControllerDidSelectCategory:(id)category;

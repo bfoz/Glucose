@@ -14,10 +14,6 @@
     id<SettingsViewControllerDelegate>    delegate;
     LogModel*		    model;
 
-    CategoryViewController*	categoryViewController;
-    InsulinTypeViewController*	defaultInsulinTypeViewController;
-    InsulinTypeViewController*	insulinTypeViewController;
-
     NumberField*		highGlucoseWarningField;
     NumberField*		lowGlucoseWarningField;
     NSString*			highGlucoseWarningKey;

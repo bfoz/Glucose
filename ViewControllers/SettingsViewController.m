@@ -94,11 +94,6 @@ enum AboutSectionRows
 
 - (void) doneAction:(id)sender
 {
-    // Cancel edit mode in case the controllers are reused later
-    [categoryViewController setEditing:NO animated:NO];	
-    [insulinTypeViewController setEditing:NO animated:NO];
-    [insulinTypeViewController setMultiCheck:NO];
-
     // Persist changes to NSUserDefaults
     [model flushInsulinTypesForNewEntries];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -347,42 +342,43 @@ enum AboutSectionRows
 	    switch( row )
 	    {
 		case kCategoryRow:
-		    if( !categoryViewController )	// Get the view controller from appDelegate
-		    {
-			categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStyleGrouped];
-			categoryViewController.delegate = self;
-			categoryViewController.model = model;
-		    }
+		{
+		    CategoryViewController* categoryViewController = [[CategoryViewController alloc] init];
+		    categoryViewController.delegate = self;
+		    categoryViewController.model = model;
+
 		    [self.navigationController pushViewController:categoryViewController animated:YES];
 		    // Set editing mode after pushing the view controller. The UITableView doesn't exist
 		    //  until loadView has been called. Until then, there's nothing to set editing mode on.
 		    [categoryViewController setEditing:YES animated:NO];
+
 		    break;
+		}
 		case kInsulinTypeRow:
-		    if( !insulinTypeViewController )
-		    {
-			insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
-			insulinTypeViewController.delegate = self;
-			insulinTypeViewController.model = model;
-			[insulinTypeViewController setMultiCheck:NO];
-		    }
+		{
+		    InsulinTypeViewController* insulinTypeViewController = [[InsulinTypeViewController alloc] init];
+		    insulinTypeViewController.delegate = self;
+		    insulinTypeViewController.model = model;
+		    [insulinTypeViewController setMultiCheck:NO];
+
 		    [self.navigationController pushViewController:insulinTypeViewController animated:YES];
 		    // Set editing mode after pushing the view controller. The UITableView doesn't exist
 		    //  until loadView has been called. Until then, there's nothing to set editing mode on.
 		    [insulinTypeViewController setEditing:YES animated:NO];
 		    break;
+		}
 		case kDefaultInsulinRow:
-		    if( !defaultInsulinTypeViewController )
-		    {
-			defaultInsulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
-			defaultInsulinTypeViewController.delegate = self;
-			defaultInsulinTypeViewController.model = model;
-			defaultInsulinTypeViewController.title = @"Default Insulin Types";
-			defaultInsulinTypeViewController.multiCheck = YES;
-		    }
+		{
+		    InsulinTypeViewController* defaultInsulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
+		    defaultInsulinTypeViewController.delegate = self;
+		    defaultInsulinTypeViewController.model = model;
+		    defaultInsulinTypeViewController.title = @"Default Insulin Types";
+		    defaultInsulinTypeViewController.multiCheck = YES;
 		    [defaultInsulinTypeViewController setSelectedInsulinTypesWithArray:model.insulinTypesForNewEntries];
+
 		    [self.navigationController pushViewController:defaultInsulinTypeViewController animated:YES];
 		    break;
+		}
 	    }
 	    break;
 	case kSectionThresholdsUnits:

@@ -49,7 +49,7 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 
 @implementation LogEntry
 
-@synthesize entryID, category, dirty;
+@synthesize entryID, dirty;
 @synthesize glucose;
 @synthesize glucoseUnits;
 @synthesize insulin;
@@ -482,7 +482,7 @@ _var = _val;
 	const unsigned a = (glucoseUnits == kGlucoseUnits_mgdL) ? 0 : 1;
 	sqlite3_bind_int(flush_statement, 3, a);	// glucoseUnits
 
-	if( category )
+	if( self.category )
 		sqlite3_bind_int(flush_statement, 4, [self.category categoryID]);
 
 	unsigned i = 0;
@@ -616,9 +616,9 @@ _var = _val;
 
 - (void) setCategory:(Category*)c
 {
-	if( category != c )
+	if( self.category != c )
 	{
-		category = c;
+		self.category = c;
 		dirty = YES;
 	}
 }

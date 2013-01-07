@@ -9,7 +9,6 @@
 @interface LogEntry : NSObject
 {
 	unsigned	entryID;
-	Category*	category;
     NSNumber*	glucose;
     NSString*	glucoseString;
 	NSString*	glucoseUnits;
