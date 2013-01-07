@@ -1,9 +1,9 @@
 #import "AppDelegate.h"
-#import "Category.h"
 #import "CategoryViewController.h"
 #import "Constants.h"
 #import "LogEntry.h"
 #import "LogModel.h"
+#import "ManagedCategory.h"
 
 #define	kCategoriesSectionNumber		0
 #define	kRestoreDefaultsSectionNumber		1
@@ -11,6 +11,7 @@
 @implementation CategoryViewController
 {
     id <CategoryViewControllerDelegate>	__unsafe_unretained delegate;
+    ManagedCategory*	deleteCategory;
 }
 @synthesize delegate;
 @synthesize model;
@@ -79,7 +80,7 @@
     }
 }
 
-- (void) deleteCategory:(Category*)category atIndex:(unsigned)index
+- (void) deleteCategory:(ManagedCategory*)category atIndex:(unsigned)index
 {
     [delegate categoryViewControllerDidDeleteCategory:category];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
@@ -143,16 +144,16 @@
 
 		if( self.editing )
 		{
-		    Category *const c = [model.categories objectAtIndex:row];
+		    ManagedCategory *const c = [model.categories objectAtIndex:row];
 		    ((TextFieldCell*)cell).editedObject = c;
-		    ((TextFieldCell*)cell).textField.text = [c categoryName];
-		    cell.accessibilityLabel = [c categoryName];
+		    ((TextFieldCell*)cell).textField.text = [c name];
+		    cell.accessibilityLabel = [c name];
 		}
 		else
 		{
 		    if( row )	// A regular category row
 		    {
-			cell.textLabel.text = [[model.categories objectAtIndex:(row-1)] categoryName];
+			cell.textLabel.text = [[model.categories objectAtIndex:(row-1)] name];
 			// Set the row as selected if it matches the currently selected category
 			if( [model.categories objectAtIndex:(row-1)] == self.selectedCategory )
 			    [tv selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
@@ -222,20 +223,19 @@
 
 - (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)path
 {
-    Category *const category = [model.categories objectAtIndex:path.row];
+    ManagedCategory *const category = [model.categories objectAtIndex:path.row];
 
     // If row is deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	// Get number of records for the category
-	const unsigned numRecords = [appDelegate numRowsForCategoryID:category.categoryID];
+	const unsigned numRecords = category.logEntries.count;
 	// Ask the user for confirmation if numRecords != 0
 	if( numRecords )
 	{
 	    deleteCategory = category;
 	    deleteRow = path.row;
 	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" 
-							    message:[NSString stringWithFormat:@"Deleting category '%@' will move %u log entr%@ to category 'None'", category.categoryName, numRecords, ((numRecords>1)?@"ies":@"y")]
+							    message:[NSString stringWithFormat:@"Deleting category '%@' will move %u log entr%@ to category 'None'", category.name, numRecords, ((numRecords>1)?@"ies":@"y")]
 							   delegate:self
 						  cancelButtonTitle:@"Cancel"
 						  otherButtonTitles:@"OK", nil];
@@ -274,10 +274,10 @@
 
 - (void)textFieldCellDidEndEditing:(TextFieldCell*)cell
 {
-    Category* c = cell.editedObject;
+    ManagedCategory* c = cell.editedObject;
     if( !c || !cell )
 	return;
-    c.categoryName = (cell.text && cell.text.length) ? cell.text : nil;
+    c.name = (cell.text && cell.text.length) ? cell.text : nil;
     [model updateCategory:c];
 }
 

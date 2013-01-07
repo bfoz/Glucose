@@ -3,6 +3,7 @@
 
 @class LogEntry;
 @class LogModel;
+@class ManagedInsulinType;
 @class TextFieldCell;
 
 @protocol InsulinTypeViewControllerDelegate;
@@ -27,7 +28,7 @@
 @property (nonatomic, assign) BOOL	multiCheck;
 
 - (void) setMultiCheck:(BOOL)e;
-- (void) setSelectedInsulinType:(InsulinType*)type;
+- (void) setSelectedInsulinType:(ManagedInsulinType*)type;
 - (void) setSelectedInsulinTypesWithArray:(NSArray*)types;
 
 @end
@@ -36,10 +37,10 @@
 
 @optional
 - (void) insulinTypeViewControllerCreateInsulinType;
-- (void) insulinTypeViewControllerDidDeleteInsulinType:(InsulinType*)type;
+- (void) insulinTypeViewControllerDidDeleteInsulinType:(ManagedInsulinType*)type;
 - (void) insulinTypeViewControllerDidEndMultiSelect;
-- (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type;
+- (BOOL) insulinTypeViewControllerDidSelectInsulinType:(ManagedInsulinType*)type;
 - (void) insulinTypeViewControllerDidSelectRestoreDefaults;
-- (void) insulinTypeViewControllerDidUnselectInsulinType:(InsulinType*)type;
+- (void) insulinTypeViewControllerDidUnselectInsulinType:(ManagedInsulinType*)type;
 
 @end

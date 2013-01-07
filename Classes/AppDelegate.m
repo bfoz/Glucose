@@ -239,11 +239,6 @@ NSDateFormatter* shortDateFormatter = nil;
 	return num;
 }
 
-- (unsigned) numLogEntriesForInsulinTypeID:(unsigned)typeID
-{
-    return [LogEntry numLogEntriesForInsulinTypeID:typeID database:model.database];
-}
-
 - (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to
 {
 	const char* q = "SELECT COUNT() from localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime')";
@@ -264,16 +259,6 @@ NSDateFormatter* shortDateFormatter = nil;
 		sqlite3_finalize(statement);
 	}
 	return num;
-}
-
-- (unsigned) numRowsForCategoryID:(unsigned)catID
-{
-    return [LogEntry numLogEntriesForCategoryID:catID database:model.database];
-}
-
-- (unsigned) numberOfLogEntriesForCategory:(Category*)category
-{
-    return [LogEntry numLogEntriesForCategoryID:category.categoryID database:model.database];
 }
 
 #pragma mark -

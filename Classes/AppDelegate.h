@@ -19,9 +19,7 @@
 @property (nonatomic, strong)	UINavigationController* navController;
 
 - (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
-- (unsigned) numLogEntriesForInsulinTypeID:(unsigned)typeID;
 - (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
-- (unsigned) numRowsForCategoryID:(unsigned)catID;
 - (NSDate*) earliestLogEntryDate;
 - (unsigned) numLogEntries;
 

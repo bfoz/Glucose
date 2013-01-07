@@ -1,5 +1,7 @@
 #import "TextFieldCell.h"
 
+#import "ManagedInsulinType.h"
+
 #import "AppDelegate.h"
 #import "InsulinType.h"
 #import "InsulinTypeViewController.h"
@@ -125,8 +127,7 @@
 {
     if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidDeleteInsulinType:)] )
     {
-	InsulinType *const type = [model.insulinTypes objectAtIndex:index];
-	[delegate insulinTypeViewControllerDidDeleteInsulinType:type];
+	[delegate insulinTypeViewControllerDidDeleteInsulinType:[model.insulinTypes objectAtIndex:index]];
 	[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
 			      withRowAnimation:UITableViewRowAnimationFade];
     }
@@ -134,15 +135,15 @@
 
 - (void) confirmDeleteInsulinTypeAtIndex:(unsigned)index
 {
-    InsulinType *const type = [model.insulinTypes objectAtIndex:index];
-    const unsigned numRecords = [appDelegate numLogEntriesForInsulinTypeID:type.typeID];
+    ManagedInsulinType *const insulinType = [model.insulinTypes objectAtIndex:index];
+    const unsigned numRecords = [model numberOfLogEntriesForInsulinType:insulinType];
     // Ask the user for confirmation if numRecords != 0
     if( numRecords )
     {
 	alertReason = ALERT_REASON_TYPE_NOT_EMPTY;
 	deleteRowNum = index;
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?"
-							message:[NSString stringWithFormat:@"Deleting 'Insulin %@' will delete dose information from %u log entr%@", type.shortName, numRecords, ((numRecords>1)?@"ies":@"y")]
+							message:[NSString stringWithFormat:@"Deleting 'Insulin %@' will delete dose information from %u log entr%@", insulinType.shortName, numRecords, ((numRecords>1)?@"ies":@"y")]
 						       delegate:self
 					      cancelButtonTitle:@"Cancel"
 					      otherButtonTitles:@"OK", nil];

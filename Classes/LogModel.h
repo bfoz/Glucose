@@ -2,6 +2,8 @@
 #import <sqlite3.h>
 
 @class Category;
+@class ManagedCategory;
+@class ManagedInsulinType;
 @class InsulinType;
 @class LogDay;
 @class LogEntry;
@@ -11,22 +13,20 @@
     unsigned	    numberOfLogDays;	// Number of LogDays available in the database
 
 @private
-    NSMutableArray* categories;
     NSNumber*	    categoryNameMaxWidth;
     NSMutableArray* days;
     NSUserDefaults* defaults;
-    NSMutableArray* insulinTypes;
-    NSMutableArray* insulinTypesForNewEntries;
     NSNumber*	    insulinTypeShortNameMaxWidth;
     NSDateFormatter* shortDateFormatter;
 }
 
-@property (unsafe_unretained, nonatomic, readonly)	NSArray*    categories;
+@property (nonatomic, strong, readonly)	NSMutableArray*	categories;
+@property (nonatomic, strong, readonly)	NSMutableArray*	insulinTypes;
+@property (nonatomic, strong, readonly)	NSMutableArray*	insulinTypesForNewEntries;
+
 @property (nonatomic, readonly)	unsigned    categoryNameMaxWidth;
 @property (nonatomic, readonly)	sqlite3*    database;
 @property (nonatomic, readonly)	NSMutableArray*    days;
-@property (unsafe_unretained, nonatomic, readonly)	NSArray*    insulinTypes;
-@property (unsafe_unretained, nonatomic, readonly)	NSArray*    insulinTypesForNewEntries;
 @property (nonatomic, readonly)	unsigned    insulinTypeShortNameMaxWidth;
 @property (nonatomic, readonly)	unsigned    numberOfLoadedLogDays;
 @property (nonatomic, readonly)	unsigned    numberOfLogDays;
@@ -44,7 +44,7 @@
 - (Category*) categoryForCategoryID:(unsigned)categoryID;
 - (void) moveCategoryAtIndex:(unsigned)from toIndex:(unsigned)to;
 - (void) purgeCategory:(Category*)category;
-- (void) updateCategory:(Category*)category;
+- (void) updateCategory:(ManagedCategory*)category;
 - (void) restoreBundledCategories;
 
 # pragma mark Insulin Types
@@ -54,6 +54,7 @@
 - (void) flushInsulinTypes;
 - (InsulinType*) insulinTypeForInsulinTypeID:(unsigned)typeID;
 - (void) moveInsulinTypeAtIndex:(unsigned)from toIndex:(unsigned)to;
+- (unsigned) numberOfLogEntriesForInsulinType:(ManagedInsulinType*)insulinType;
 - (void) purgeInsulinType:(InsulinType*)type;
 - (void) removeInsulinType:(InsulinType*)type;
 - (void) updateInsulinType:(InsulinType*)type;

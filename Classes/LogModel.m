@@ -19,7 +19,6 @@
 
 - (void) clearCategoryNameMaxWidth;
 - (void) clearInsulinTypeShortNameMaxWidth;
-- (void) flushCategories;
 - (void) removeCategory:(Category*)type;
 
 @end
@@ -34,6 +33,9 @@
 }
 
 @synthesize days;
+@synthesize categories = _categories;
+@synthesize insulinTypes = _insulinTypes;
+@synthesize insulinTypesForNewEntries = _insulinTypesForNewEntries;
 
 - (id) init
 {
@@ -79,10 +81,10 @@
 
 - (void) addCategory:(Category*)category
 {
-    if( ![categories containsObject:category] )
+    if( ![self.categories containsObject:category] )
     {
 	[Category insertCategory:category intoDatabase:self.database];
-	[categories addObject:category];
+	[self.categories addObject:category];
     }
     [self clearCategoryNameMaxWidth];
 }
@@ -91,7 +93,7 @@
 {
     Category *const category = [Category newCategoryWithName:name
 						    database:self.database];
-    [categories addObject:category];
+    [self.categories addObject:category];
     [self clearCategoryNameMaxWidth];
 }
 
@@ -108,9 +110,9 @@
     if( !categoryNameMaxWidth )
     {
 	float maxWidth = 0;
-	for( Category* c in self.categories )
+	for( ManagedCategory* c in self.categories )
 	{
-	    const float a = [c.categoryName sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
+	    const float a = [c.name sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
 	    if( a > maxWidth )
 		maxWidth = a;
 	}
@@ -131,25 +133,10 @@
 // Flush the category list to the database
 - (void) flushCategories
 {
-    static char *sql = "REPLACE INTO LogEntryCategories (categoryID, sequence, name) VALUES(?,?,?)";
-    sqlite3_stmt *statement;
-    if( sqlite3_prepare_v2(self.database, sql, -1, &statement, NULL) != SQLITE_OK )
-	NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
-
-    unsigned i = 0;
-    for( Category* c in categories )
-    {
-	sqlite3_bind_int(statement, 1, c.categoryID);
-	sqlite3_bind_int(statement, 2, i);
-	sqlite3_bind_text(statement, 3, [c.categoryName UTF8String], -1, SQLITE_TRANSIENT);
-	int success = sqlite3_step(statement);
-	sqlite3_reset(statement);		// Reset the query for the next use
-	sqlite3_clear_bindings(statement);	//Clear all bindings for next time
-	if( success != SQLITE_DONE )
-	    NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
-	++i;
-    }
-    sqlite3_finalize(statement);
+    unsigned index = 0;
+    for( ManagedCategory* category in self.categories )
+	category.sequenceNumber = index;
+    categoryNameMaxWidth = nil;
 }
 
 - (void) moveCategoryAtIndex:(unsigned)from toIndex:(unsigned)to
@@ -158,8 +145,8 @@
 
     /* The previous line lazy-instantiated the categories array, so there's no
 	longer a need to use the accessor method. */
-    [categories removeObjectAtIndex:from];
-    [categories insertObject:c atIndex:to];
+    [self.categories removeObjectAtIndex:from];
+    [self.categories insertObject:c atIndex:to];
 
     // Flush the array to preserve the new sequence
     [self flushCategories];
@@ -186,13 +173,13 @@
 
 - (void) removeCategory:(Category*)type
 {
-    [categories removeObject:type];
+    [self.categories removeObject:type];
     [self clearCategoryNameMaxWidth];
 }
 
-- (void) updateCategory:(Category*)category
+- (void) updateCategory:(ManagedCategory*)category
 {
-    [category flush:self.database];
+    [self save];
     [self clearCategoryNameMaxWidth];
 }
 
@@ -210,7 +197,7 @@
     {
 	ManagedCategory* managedCategory = [LogModel insertManagedCategoryIntoContext:self.managedObjectContext];
 	managedCategory.name = category.categoryName;
-	managedCategory.sequenceNumber = [NSNumber numberWithUnsignedInt:index];
+	managedCategory.sequenceNumber = index;
 	++index;
     }
 }
@@ -220,10 +207,10 @@
 
 - (void) addInsulinType:(InsulinType*)type
 {
-    if( ![insulinTypes containsObject:type] )
+    if( ![self.insulinTypes containsObject:type] )
     {
 	[InsulinType insertInsulinType:type intoDatabase:self.database];
-	[insulinTypes addObject:type];
+	[self.insulinTypes addObject:type];
     }
     [self clearInsulinTypeShortNameMaxWidth];
 }
@@ -232,7 +219,7 @@
 {
     InsulinType *const type = [InsulinType newInsulinTypeWithName:name
 							 database:self.database];
-    [insulinTypes addObject:type];
+    [self.insulinTypes addObject:type];
     [self clearInsulinTypeShortNameMaxWidth];
 }
 
@@ -245,25 +232,10 @@
 // Flush the insulin types list to the database
 - (void) flushInsulinTypes
 {
-    static char *sql = "REPLACE INTO InsulinTypes (typeID, sequence, shortName) VALUES(?,?,?)";
-    sqlite3_stmt *statement;
-    if( sqlite3_prepare_v2(self.database, sql, -1, &statement, NULL) != SQLITE_OK )
-	NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
-
-    unsigned i = 0;
-    for( InsulinType* type in insulinTypes )
-    {
-	sqlite3_bind_int(statement, 1, type.typeID);
-	sqlite3_bind_int(statement, 2, i);
-	sqlite3_bind_text(statement, 3, [type.shortName UTF8String], -1, SQLITE_TRANSIENT);
-	int success = sqlite3_step(statement);
-	sqlite3_reset(statement);		// Reset the query for the next use
-	sqlite3_clear_bindings(statement);	// Clear all bindings for next time
-	if( success != SQLITE_DONE )
-	    NSAssert1(0, @"Error: failed to flush with message '%s'.", sqlite3_errmsg(database));
-	++i;
-    }
-    sqlite3_finalize(statement);
+    unsigned index = 0;
+    for( ManagedInsulinType* insulinType in self.insulinTypes )
+	insulinType.sequenceNumber = index;
+    insulinTypeShortNameMaxWidth = NULL;
 }
 
 - (InsulinType*) insulinTypeForInsulinTypeID:(unsigned)typeID
@@ -299,12 +271,23 @@
 
     /* The previous line lazy-instantiated the insulin types array, so there's
 	no longer a need to use the accessor method. */
-    [insulinTypes removeObjectAtIndex:from];
-    [insulinTypes insertObject:type atIndex:to];
+    [self.insulinTypes removeObjectAtIndex:from];
+    [self.insulinTypes insertObject:type atIndex:to];
 
     // Flush the array to preserve the new sequence
     [self flushInsulinTypes];
 
+}
+
+- (unsigned) numberOfLogEntriesForInsulinType:(ManagedInsulinType*)insulinType
+{
+    NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] init];
+    fetchRequest.entity = [NSEntityDescription entityForName:@"LogEntry" inManagedObjectContext:self.managedObjectContext];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"ANY insulinDoses.insulinType == %@", insulinType];
+
+    NSError* error = nil;
+    return [self.managedObjectContext countForFetchRequest:fetchRequest
+						     error:&error];
 }
 
 // Purge an InsulinType record from the database and the insulinTypes array
@@ -332,13 +315,13 @@
 - (void) removeInsulinType:(InsulinType*)type
 {
     [self removeInsulinTypeForNewEntries:type];
-    [insulinTypes removeObject:type];
+    [self.insulinTypes removeObject:type];
     [self clearInsulinTypeShortNameMaxWidth];
 }
 
 - (void) updateInsulinType:(InsulinType*)type
 {
-    [type flush:self.database];
+    [self save];
     [self clearInsulinTypeShortNameMaxWidth];
 }
 
@@ -356,7 +339,7 @@
     {
 	ManagedInsulinType* managedInsulinType = [LogModel insertManagedInsulinTypeIntoContext:self.managedObjectContext];
 	managedInsulinType.shortName = insulinType.shortName;
-	managedInsulinType.sequenceNumber = [NSNumber numberWithUnsignedInt:index];
+	managedInsulinType.sequenceNumber = index;
 	++index;
     }
 }
@@ -366,7 +349,7 @@
 
 - (void) addInsulinTypeForNewEntries:(InsulinType*)type
 {
-    [insulinTypesForNewEntries addObject:type];
+    [self.insulinTypesForNewEntries addObject:type];
     [self flushInsulinTypesForNewEntries];
 }
 
@@ -383,17 +366,17 @@ int orderInsulinTypesByIndex(id left, id right, void* insulinTypes)
 
 - (void) flushInsulinTypesForNewEntries
 {
-    const unsigned count = [insulinTypesForNewEntries count];
+    const unsigned count = [self.insulinTypesForNewEntries count];
     NSMutableArray *const a = [NSMutableArray arrayWithCapacity:count];
 
-    for( InsulinType* type in insulinTypesForNewEntries )
+    for( InsulinType* type in self.insulinTypesForNewEntries )
 	[a addObject:[NSNumber numberWithInt:type.typeID]];
 
     /* Sort the array before flushing it to keep it in the same order as the
 	insulinTypes array. The NewLogEntry view uses the array order when
 	displaying new dose rows.   */
-    [insulinTypesForNewEntries sortUsingFunction:orderInsulinTypesByIndex
-					 context:(__bridge void *)(insulinTypes)];
+    [self.insulinTypesForNewEntries sortUsingFunction:orderInsulinTypesByIndex
+					      context:(__bridge void *)(self.insulinTypes)];
 
     [[NSUserDefaults standardUserDefaults] setObject:a
 					      forKey:kDefaultInsulinTypes];
@@ -401,16 +384,16 @@ int orderInsulinTypesByIndex(id left, id right, void* insulinTypes)
 
 - (void) removeInsulinTypeForNewEntries:(InsulinType*)type
 {
-    if( [insulinTypesForNewEntries containsObject:type] )
+    if( [self.insulinTypesForNewEntries containsObject:type] )
     {
-	[insulinTypesForNewEntries removeObjectIdenticalTo:type];
+	[self.insulinTypesForNewEntries removeObjectIdenticalTo:type];
 	[self flushInsulinTypesForNewEntries];
     }
 }
 
 - (void) removeInsulinTypeForNewEntriesAtIndex:(unsigned)index
 {
-    [insulinTypesForNewEntries removeObjectAtIndex:index];
+    [self.insulinTypesForNewEntries removeObjectAtIndex:index];
     [self flushInsulinTypesForNewEntries];
 }
 
@@ -547,14 +530,14 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
 - (NSArray*) categories
 {
-    if( !categories )
+    if( !_categories )
     {
 	NSError* error = nil;
-	categories = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedCategoriesInContext:self.managedObjectContext]
-						      error:&error]];
+	_categories = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedCategoriesInContext:self.managedObjectContext]
+											      error:&error]];
     }
 
-    return categories;
+    return _categories;
 }
 
 - (sqlite3*) database
@@ -570,30 +553,30 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
 - (NSArray*) insulinTypes
 {
-    if( !insulinTypes )
+    if( !_insulinTypes )
     {
 	NSError* error = nil;
-	insulinTypes = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedInsulinTypesInContext:self.managedObjectContext]
+	_insulinTypes = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedInsulinTypesInContext:self.managedObjectContext]
 												  error:&error]];
     }
 
-    return insulinTypes;
+    return _insulinTypes;
 }
 
 - (NSArray*) insulinTypesForNewEntries
 {
-    if( !insulinTypesForNewEntries )
+    if( !_insulinTypesForNewEntries )
     {
-	insulinTypesForNewEntries = [NSMutableArray new];
+	_insulinTypesForNewEntries = [NSMutableArray new];
 	for( NSNumber* typeID in [defaults objectForKey:kDefaultInsulinTypes] )
 	{
 	    InsulinType *const t = [self insulinTypeForInsulinTypeID:[typeID intValue]];
 	    if( t )
-		[insulinTypesForNewEntries addObject:t];
+		[_insulinTypesForNewEntries addObject:t];
 	}
     }
 
-    return insulinTypesForNewEntries;
+    return _insulinTypesForNewEntries;
 }
 
 - (unsigned) numberOfLoadedLogDays
@@ -627,7 +610,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     {
 	ManagedCategory* managedCategory = [LogModel insertManagedCategoryIntoContext:managedObjectContext];
 	managedCategory.name = category.categoryName;
-	managedCategory.sequenceNumber = [NSNumber numberWithUnsignedInt:index];
+	managedCategory.sequenceNumber = index;
 	++index;
     }
 
@@ -636,7 +619,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     {
 	ManagedInsulinType* managedInsulinType = [LogModel insertManagedInsulinTypeIntoContext:managedObjectContext];
 	managedInsulinType.shortName = insulinType.shortName;
-	managedInsulinType.sequenceNumber = [NSNumber numberWithUnsignedInt:index];
+	managedInsulinType.sequenceNumber = index;
 	++index;
     }
 }
@@ -724,6 +707,16 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     }
 
     return _persistentStoreCoordinator;
+}
+
+- (void) save
+{
+    if( _managedObjectContext )
+    {
+	NSError *error;
+	if( ![_managedObjectContext save:&error] )
+	    NSLog(@"Couldn't save because: %@", [error localizedDescription]);
+    }
 }
 
 @end

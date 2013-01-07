@@ -1,6 +1,6 @@
 #import "TextFieldCell.h"	// Needed for TextFieldCellDelegate
 
-@class	Category;
+@class	ManagedCategory;
 @class	LogModel;
 @protocol CategoryViewControllerDelegate;
 
@@ -9,13 +9,12 @@
     LogModel*			model;
 
 	BOOL			dirty;
-    Category*	deleteCategory;
     unsigned	deleteRow;
 }
 
 @property (nonatomic, unsafe_unretained) id <CategoryViewControllerDelegate>   delegate;
 @property (nonatomic, strong) LogModel*				    model;
-@property (nonatomic, strong) Category* selectedCategory;
+@property (nonatomic, strong) ManagedCategory* selectedCategory;
 
 @end
 
@@ -23,8 +22,8 @@
 
 @optional
 - (void) categoryViewControllerCreateCategory;
-- (void) categoryViewControllerDidDeleteCategory:(Category*)category;
-- (void) categoryViewControllerDidSelectCategory:(Category*)category;
+- (void) categoryViewControllerDidDeleteCategory:(ManagedCategory*)category;
+- (void) categoryViewControllerDidSelectCategory:(ManagedCategory*)category;
 - (void) categoryViewControllerDidSelectRestoreDefaults;
 
 @end
