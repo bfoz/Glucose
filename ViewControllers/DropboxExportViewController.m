@@ -62,19 +62,18 @@ enum Sections
 	startDate = [NSDate dateWithTimeIntervalSince1970:0];
 	endDate = [NSDate date];
 
-	AppDelegate* delegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
 	NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
 	NSDate* savedStart = [defaults objectForKey:kLastExportDropboxEndDate];
 	if( savedStart )
 	    startDate = [savedStart dateByAddingTimeInterval:24*60*60];
 	else
 	{
-	    savedStart = [delegate earliestLogEntryDate];
+	    savedStart = [logModel dateOfEarliestLogEntry];
 	    if( savedStart )
 		startDate = savedStart;
 	}
 
-	numberOfRecordsToExport = [delegate numLogEntriesFrom:startDate to:endDate];
+	numberOfRecordsToExport = [model numberOfLogEntriesFromDate:startDate toDate:endDate];
     }
     return self;
 }
@@ -236,9 +235,7 @@ enum Sections
     const unsigned section = indexPath.section;
     if( (kSectionExport == section) && numberOfRecordsToExport )
     {
-	NSData* data = [LogEntry createCSV:logModel
-				      from:startDate
-					to:endDate];
+	NSData* data = [logModel csvDataFromDate:startDate toDate:endDate];
 	NSString* filename = [NSString stringWithFormat:@"Export from %@ to %@.csv", [logModel shortStringFromDate:startDate], [logModel shortStringFromDate:endDate]];
 	filename = [filename stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
 	tempPath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
@@ -398,7 +395,7 @@ enum Sections
     else if( textField == startField )
 	pickerLabel.text = [dateFormatter stringFromDate:startDate];
 
-    numberOfRecordsToExport = [(AppDelegate*)[UIApplication sharedApplication].delegate numLogEntriesFrom:startDate to:endDate];
+    numberOfRecordsToExport = [logModel numberOfLogEntriesFromDate:startDate toDate:endDate];
 
     [self updateTheExportButton];
 }

@@ -18,11 +18,6 @@
 @property (nonatomic, strong)	UIWindow*	window;
 @property (nonatomic, strong)	UINavigationController* navController;
 
-- (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
-- (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
-- (NSDate*) earliestLogEntryDate;
-- (unsigned) numLogEntries;
-
 @end
 
 extern NSDateFormatter* shortDateFormatter;

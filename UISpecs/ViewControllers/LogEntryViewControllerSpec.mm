@@ -1,8 +1,9 @@
 #import "SpecsHelper.h"
 
 #import "DoseFieldCell.h"
-#import "LogEntry.h"
 #import "LogEntryViewController.h"
+#import "LogModel+SpecHelper.h"
+#import "ManagedLogEntry+App.h"
 #import "NumberFieldCell.h"
 
 using namespace Cedar::Matchers;
@@ -22,15 +23,23 @@ enum Sections
 SPEC_BEGIN(LogEntryViewControllerSpec)
 
 describe(@"LogEntryViewController", ^{
-    __block LogEntryViewController *controller;
-    __block id mockLogEntry;
+    __block LogEntryViewController* controller;
+    __block ManagedLogEntry*	logEntry;
 
     beforeEach(^{
-	mockLogEntry = [OCMockObject niceMockForClass:[LogEntry class]];
-	controller = [[[LogEntryViewController alloc] initWithLogEntry:mockLogEntry] autorelease];
+	LogModel* logModel = [[LogModel alloc] init];
+	logEntry = [logModel insertManagedLogEntry];
+
+	controller = [[[LogEntryViewController alloc] initWithLogEntry:logEntry] autorelease];
+	controller.model = logModel;
 
 	UINavigationController* navigation = [[UINavigationController alloc] initWithRootViewController:controller];
 	navigation.topViewController.view should_not be_nil;
+    });
+
+    it(@"should not be editing", ^{
+	controller.editing should_not be_truthy;
+	controller.editingNewEntry should_not be_truthy;
     });
 
     it(@"should have a right bar button item for editing", ^{
@@ -154,8 +163,6 @@ describe(@"LogEntryViewController", ^{
 		    __block UIBarButtonItem* cancelButton;
 
 		    beforeEach(^{
-			[[mockLogEntry reject] setGlucose:OCMOCK_ANY];
-
 			UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
 			cancelButton = [toolbar.items objectAtIndex:0];
 			[cancelButton tap];
@@ -166,7 +173,6 @@ describe(@"LogEntryViewController", ^{
 		    });
 
 		    it(@"should not update the LogEntry", ^{
-			[mockLogEntry verify];
 		    });
 
 		    it(@"should enable the right nav bar button", ^{
@@ -181,7 +187,6 @@ describe(@"LogEntryViewController", ^{
 		    __block UIBarButtonItem* doneButton;
 
 		    beforeEach(^{
-			[[mockLogEntry expect] setGlucose:OCMOCK_ANY];
 
 			UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
 			doneButton = [toolbar.items objectAtIndex:2];
@@ -193,7 +198,6 @@ describe(@"LogEntryViewController", ^{
 		    });
 
 		    xit(@"should update the LogEntry", ^{
-			[mockLogEntry verify];
 		    });
 
 		    it(@"should enable the right nav bar button", ^{
@@ -230,6 +234,15 @@ describe(@"LogEntryViewController", ^{
 
     describe(@"when initialized with a new entry", ^{
 	beforeEach(^{
+	    ManagedInsulinType* insulinType0 = [controller.model insertManagedInsulinType];
+	    ManagedInsulinType* insulinType1 = [controller.model insertManagedInsulinType];
+	    [controller.model.insulinTypesForNewEntries addObject:insulinType0];
+	    [controller.model.insulinTypesForNewEntries addObject:insulinType1];
+
+	    controller.model.insulinTypesForNewEntries.count should_not equal(0);
+
+	    controller.logEntry = [controller.model insertManagedLogEntryWithUndo];
+
 	    controller.editingNewEntry = YES;
 	    [controller setEditing:YES animated:NO];
 	});
@@ -258,6 +271,7 @@ describe(@"LogEntryViewController", ^{
 	    it(@"should show a disclosure indicator on row 0", ^{
 		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
 		cell.accessoryType should equal(UITableViewCellAccessoryDisclosureIndicator);
+		cell.textLabel.text should_not be_nil;
 	    });
 
 	    it(@"should show a disclosure indicator on row 1", ^{
@@ -271,8 +285,8 @@ describe(@"LogEntryViewController", ^{
 	    });
 	});
 
-	it(@"should have 0 rows in section 1", ^{
-	    [controller.tableView numberOfRowsInSection:1] should equal(0);
+	it(@"should have the proper number of rows in section 1", ^{
+	    [controller.tableView numberOfRowsInSection:1] should equal(controller.model.insulinTypesForNewEntries.count);
 	});
 
 	describe(@"Section 2 - Note", ^{
@@ -334,49 +348,76 @@ describe(@"LogEntryViewController", ^{
 		cell.doseField.isFirstResponder should be_truthy;
 	    });
 
-	    xit(@"should have a toolbar above the keyboard", ^{
+	    it(@"should have a toolbar above the keyboard", ^{
 		cell.doseField.inputAccessoryView should_not be_nil;
 	    });
 
-	    describe(@"when the Cancel button is tapped", ^{
+	    describe(@"when the dose is changed", ^{
+		__block NSNumber* originalDose;
+		__block NSString* originalText;
+
 		beforeEach(^{
-		    [[mockLogEntry reject] setDose:OCMOCK_ANY insulinDose:OCMOCK_ANY];
+		    ManagedInsulinDose* insulinDose = [controller.logEntry.insulinDoses objectAtIndex:0];
+		    originalDose = insulinDose.dose;
 
-		    UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
-		    UIBarButtonItem* cancelButton = [toolbar.items objectAtIndex:0];
-		    [cancelButton tap];
+		    originalText = cell.doseField.text;
+
+		    cell.doseField.text = @"1";
 		});
 
-		it(@"should resign first responder", ^{
-		    cell.doseField.isFirstResponder should_not be_truthy;
+		describe(@"when the accessory toolbar Cancel button is tapped", ^{
+		    beforeEach(^{
+
+			UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
+			UIBarButtonItem* cancelButton = [toolbar.items objectAtIndex:0];
+			[cancelButton tap];
+		    });
+
+		    it(@"should resign first responder", ^{
+			cell.doseField.isFirstResponder should_not be_truthy;
+		    });
+
+		    it(@"should not update the LogEntry", ^{
+			ManagedInsulinDose* insulinDose = [controller.logEntry.insulinDoses objectAtIndex:0];
+			[insulinDose.dose isEqualToNumber:originalDose] should be_truthy;
+			insulinDose.dose should equal(originalDose);
+		    });
 		});
 
-		it(@"should not update the LogEntry", ^{
-		    [mockLogEntry verify];
-		});
+		describe(@"when the accessory toolbar Done button is tapped", ^{
+		    xit(@"should resign first responder", ^{
+			cell.doseField.isFirstResponder should_not be_truthy;
+		    });
 
-		it(@"should reset the label", ^{
+		    xit(@"should update the LogEntry", ^{
+		    });
+
+		    xit(@"should cause the next row to become first responder", ^{
+			DoseFieldCell* nextCell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionInsulin]];
+			nextCell.doseField.isFirstResponder should be_truthy;
+		    });
 		});
 	    });
 
-	    describe(@"when the Done button is tapped", ^{
-		beforeEach(^{
-		    [[mockLogEntry expect] setDose:OCMOCK_ANY insulinDose:OCMOCK_ANY];
+	    describe(@"when the dose is not changed", ^{
+	    });
+	});
 
-		});
+	describe(@"when the Back button is tapped", ^{
+	    __block id mockDelegate;
 
-		xit(@"should resign first responder", ^{
-		    cell.doseField.isFirstResponder should_not be_truthy;
-		});
+	    beforeEach(^{
+		mockDelegate = [OCMockObject mockForProtocol:@protocol(LogEntryViewDelegate)];
+		controller.delegate = mockDelegate;
 
-		xit(@"should update the LogEntry", ^{
-		    [mockLogEntry verify];
-		});
+		[[mockDelegate expect] logEntryViewControllerDidCancelEditing];
 
-		xit(@"should cause the next row to become first responder", ^{
-		    DoseFieldCell* nextCell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionInsulin]];
-		    nextCell.doseField.isFirstResponder should be_truthy;
-		});
+//		[controller.navigationItem.leftBarButtonItem tap];
+		[controller viewWillDisappear:NO];
+	    });
+
+	    it(@"should inform the delegate", ^{
+		[mockDelegate verify];
 	    });
 	});
 

@@ -19,6 +19,9 @@
 #define	kAllColumns	    "ID,timestamp,glucose,glucoseUnits,categoryID,dose0,dose1,typeID0,typeID1,note"
 #define	kLocalLogEntryTable "localLogEntries"
 
+#define	kGlucoseUnits_mgdL		@" mg/dL"
+#define	kGlucoseUnits_mmolL		@" mmol/L"
+
 // Static variables for compiled SQL queries. This implementation choice is to be able to share a one time
 // compilation of each query across all instances of the class. Each time a query is used, variables may be bound
 // to it, it will be "stepped", and then reset for the next usage. When the application begins to terminate,
@@ -111,13 +114,13 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
     return entry;
 }
 
-+ (NSMutableArray*) logEntriesForLogDay:(LogDay*)day model:(LogModel*)model
++ (NSMutableArray*) logEntriesForLogDay:(LogDay*)day model:(LogModel*)model database:(sqlite3*)database
 {
     if( !statementLoadLogDay )
     {
-        if( sqlite3_prepare_v2(model.database, sqlLoadLogDay, -1, &statementLoadLogDay, NULL) != SQLITE_OK )
+        if( sqlite3_prepare_v2(database, sqlLoadLogDay, -1, &statementLoadLogDay, NULL) != SQLITE_OK )
 	{
-            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(model.database));
+            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
 	    return NULL;
 	}
     }
@@ -281,7 +284,7 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
     statementLoadTimestampForID = NULL;
 }
 
-+ (NSData*) createCSV:(LogModel*)model from:(NSDate*)from to:(NSDate*)to
++ (NSData*) createCSV:(LogModel*)model from:(NSDate*)from to:(NSDate*)to database:(sqlite3*)database
 {
     NSMutableData *data = [NSMutableData dataWithCapacity:2048];
 	
@@ -292,7 +295,7 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 	const char* q = "SELECT timestamp,glucose,glucoseUnits,categoryID,dose0,typeID0,dose1,typeID1,note FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime') ORDER BY timestamp ASC";
 	sqlite3_stmt *statement;
 	unsigned numRows = 0;
-	if( sqlite3_prepare_v2(model.database, q, -1, &statement, NULL) == SQLITE_OK )
+	if( sqlite3_prepare_v2(database, q, -1, &statement, NULL) == SQLITE_OK )
 	{
 		sqlite3_bind_int(statement, 1, [from timeIntervalSince1970]);
 		sqlite3_bind_int(statement, 2, [to timeIntervalSince1970]);
@@ -328,17 +331,17 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 						break;
 					case 3:	// categoryID
 					{
-						const int a = sqlite3_column_int(statement, i);
-						Category* c = [model categoryForCategoryID:a];
-						s = [c.categoryName UTF8String];
+//						const int a = sqlite3_column_int(statement, i);
+//						Category* c = [model categoryForCategoryID:a];
+//						s = [c.categoryName UTF8String];
 					}
 						break;
 					case 5:	// typeID0
 					case 7:	// typeID1
 					{
-						const int a = sqlite3_column_int(statement, i);
-						InsulinType* t = [model insulinTypeForInsulinTypeID:a];
-						s = [t.shortName UTF8String];
+//						const int a = sqlite3_column_int(statement, i);
+//						InsulinType* t = [model insulinTypeForInsulinTypeID:a];
+//						s = [t.shortName UTF8String];
 					}
 						break;
 					default:
@@ -404,18 +407,18 @@ _var = _val;
 	if( SQLITE_NULL == sqlite3_column_type(statement, 4) )
 	    self.category = nil;
 	else
-	    self.category = [model categoryForCategoryID:sqlite3_column_int(statement, 4)];
+//	    self.category = [model categoryForCategoryID:sqlite3_column_int(statement, 4)];
 
 	if( (SQLITE_NULL != sqlite3_column_type(statement, 5)) &&
 	    (SQLITE_NULL != sqlite3_column_type(statement, 7)) )
 	{
-	    [self.insulin addObject:[InsulinDose withType:[model insulinTypeForInsulinTypeID:sqlite3_column_int(statement, 7)]]];
+//	    [self.insulin addObject:[InsulinDose withType:[model insulinTypeForInsulinTypeID:sqlite3_column_int(statement, 7)]]];
 	    [self setDose:[NSNumber numberWithInt:sqlite3_column_int(statement, 5)] insulinDose:[self.insulin lastObject]];
 	}
 	if( (SQLITE_NULL != sqlite3_column_type(statement, 6)) &&
 	    (SQLITE_NULL != sqlite3_column_type(statement, 8)) )
 	{
-	    [self.insulin addObject:[InsulinDose withType:[model insulinTypeForInsulinTypeID:sqlite3_column_int(statement, 8)]]];
+//	    [self.insulin addObject:[InsulinDose withType:[model insulinTypeForInsulinTypeID:sqlite3_column_int(statement, 8)]]];
 	    [self setDose:[NSNumber numberWithInt:sqlite3_column_int(statement, 6)] insulinDose:[self.insulin lastObject]];
 	}
 
@@ -514,13 +517,13 @@ _var = _val;
 	dirty = NO;		// Squeaky clean
 }
 
-- (void) revert:(LogModel*)model
+- (void) revert:(LogModel*)model database:(sqlite3*)database
 {
     if( !statementLoadEntryforID )
     {
-        if( sqlite3_prepare_v2(model.database, sqlLoadEntryforID, -1, &statementLoadEntryforID, NULL) != SQLITE_OK )
+        if( sqlite3_prepare_v2(database, sqlLoadEntryforID, -1, &statementLoadEntryforID, NULL) != SQLITE_OK )
 	{
-            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(model.database));
+            NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
 	    return;
 	}
     }

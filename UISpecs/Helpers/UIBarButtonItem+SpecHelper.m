@@ -1,13 +1,15 @@
-//
-//  UIBarButtonItem+SpecHelper.m
-//  Glucose
-//
-//  Created by Brandon Fosdick on 01/06/13.
-//
-//
-
 #import "UIBarButtonItem+SpecHelper.h"
 
+#import "UIControl+SpecHelper.h"
+
 @implementation UIBarButtonItem (SpecHelper)
+
+- (void)tap
+{
+    if( [self.customView isKindOfClass:[UIButton class]] )
+        [(UIButton*)self.customView tap];
+    else
+        [self.target performSelector:self.action];
+}
 
 @end

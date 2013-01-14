@@ -104,8 +104,8 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
 #define kTransitionDuration	0.75
 
-#define	kGlucoseUnits_mgdL		@" mg/dL"
-#define	kGlucoseUnits_mmolL		@" mmol/L"
+//#define	kGlucoseUnits_mgdL		@" mg/dL"
+//#define	kGlucoseUnits_mmolL		@" mmol/L"
 
 // Keys for NSUserDefaults
 #define	kDefaultGlucoseUnits	@"DefaultGlucoseUnits"

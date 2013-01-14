@@ -38,7 +38,7 @@
 
 - (void) deleteAllEntriesFromDatabase:(sqlite3*)database;
 - (void) deleteEntry:(LogEntry*)entry fromDatabase:(sqlite3*)database;
-- (void) hydrate:(LogModel*)model;
+- (void) hydrate:(LogModel*)model database:(sqlite3*)database;
 - (void) insertEntry:(LogEntry*)entry;
 - (void) insertEntry:(LogEntry*)entry atIndex:(unsigned)index;
 - (void) sortEntries;

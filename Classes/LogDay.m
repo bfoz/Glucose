@@ -154,9 +154,9 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
     }
 }
 
-- (void) hydrate:(LogModel*)model
+- (void) hydrate:(LogModel*)model database:(sqlite3*)database
 {
-    entries = [LogEntry logEntriesForLogDay:self model:model];
+    entries = [LogEntry logEntriesForLogDay:self model:model database:database];
 }
 
 // Insert a new entry and maintain sort
@@ -231,8 +231,8 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
     {
 	if( self.units )
 	{
-	    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
-	    averageGlucoseString = [NSString localizedStringWithFormat:@"%.*f%@", precision, averageGlucose, units];
+//	    const unsigned precision = (units == kGlucoseUnits_mgdL) ? 0 : 1;
+//	    averageGlucoseString = [NSString localizedStringWithFormat:@"%.*f%@", precision, averageGlucose, units];
 	}
 	else
 	    averageGlucoseString = [NSString localizedStringWithFormat:@"%.0f", averageGlucose];

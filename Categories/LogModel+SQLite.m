@@ -2,6 +2,8 @@
 
 #import "Category.h"
 #import "InsulinType.h"
+#import "LogEntry.h"
+#import "LogDay.h"
 
 #define	LOG_SQL		@"glucose.sqlite"
 

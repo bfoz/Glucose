@@ -68,18 +68,6 @@ enum AboutSectionRows
 {
     if( self = [super initWithStyle:UITableViewStyleGrouped] )
     {
-	NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-	const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
-
-	highGlucoseWarningKey = mgdL ? kHighGlucoseWarning0 : kHighGlucoseWarning1;
-	lowGlucoseWarningKey = mgdL ? kLowGlucoseWarning0 : kLowGlucoseWarning1;
-
-/*
-        UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
-		[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
-		self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:b];
-		[b release];
- */
     }
     return self;
 }
@@ -104,26 +92,21 @@ enum AboutSectionRows
 
 - (void) glucoseUnitsAction:(UISegmentedControl*)sender
 {
-    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
     switch( sender.selectedSegmentIndex )
     {
 	case 0:
-	    [defaults setObject:kGlucoseUnits_mgdL forKey:kDefaultGlucoseUnits];
-	    highGlucoseWarningKey = kHighGlucoseWarning0;
-	    lowGlucoseWarningKey = kLowGlucoseWarning0;
+	    model.glucoseUnitsSetting = kGlucoseUnits_mgdL;
 	    highGlucoseWarningField.precision = 0;
 	    lowGlucoseWarningField.precision = 0;
 	    break;
 	case 1:
-	    [defaults setObject:kGlucoseUnits_mmolL forKey:kDefaultGlucoseUnits];
-	    highGlucoseWarningKey = kHighGlucoseWarning1;
-	    lowGlucoseWarningKey = kLowGlucoseWarning1;
+	    model.glucoseUnitsSetting = kGlucoseUnits_mmolL;
 	    highGlucoseWarningField.precision = 1;
 	    lowGlucoseWarningField.precision = 1;
 	    break;
     }
-    highGlucoseWarningField.text = [defaults stringForKey:highGlucoseWarningKey];
-    lowGlucoseWarningField.text = [defaults stringForKey:lowGlucoseWarningKey];
+    highGlucoseWarningField.text = [model highGlucoseWarningThresholdString];
+    lowGlucoseWarningField.text = [model lowGlucoseWarningThresholdString];
     
     // Inform the delegate of the change of units
     if( delegate && [delegate respondsToSelector:@selector(settingsViewControllerDidChangeGlucoseUnits)] )
@@ -241,13 +224,11 @@ enum AboutSectionRows
 	case kSectionThresholdsUnits:
 	{	    
 	    NumberField* f;
-	    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-	    const BOOL mgdL = [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL];
 	    if( row )
 	    {
 		f = [[NumberField alloc] initWithDelegate:self];
 		f.frame = CGRectMake(0, kCellTopOffset*2, 50, 20);
-		f.precision = mgdL ? 0 : 1;
+		f.precision = (kGlucoseUnits_mgdL == model.glucoseUnitsSetting) ? 0 : 1;
 		f.textAlignment = UITextAlignmentRight;
 		cell.accessoryView = f;
 	    }
@@ -256,23 +237,23 @@ enum AboutSectionRows
 		case kHighGlucoseWarningRow:
 		    cell.textLabel.text = @"High Glucose Warning";
 		    f.inputAccessoryView = self.inputToolbar;
-		    f.text = [defaults stringForKey:highGlucoseWarningKey];
+		    f.text = [model highGlucoseWarningThresholdString];
 		    f.textColor = [UIColor blueColor];
 		    highGlucoseWarningField = f;
 		    break;
 		case kLowGlucoseWarningRow:
 		    cell.textLabel.text = @"Low Glucose Warning";
 		    f.inputAccessoryView = self.inputToolbar;
-		    f.text = [defaults stringForKey:lowGlucoseWarningKey];
+		    f.text = [model lowGlucoseWarningThresholdString];
 		    f.textColor = [UIColor redColor];
 		    lowGlucoseWarningField = f;
 		    break;
 		case kGlucoseUnitsRow:
 		    cell.textLabel.text = @"Glucose Units";
-		    UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:kGlucoseUnits_mgdL,kGlucoseUnits_mmolL,nil]];
+		    UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:@[GlucoseUnitsTypeString_mgdL,GlucoseUnitsTypeString_mmolL]];
 		    s.segmentedControlStyle = UISegmentedControlStyleBar;
 		    [s addTarget:self action:@selector(glucoseUnitsAction:) forControlEvents:UIControlEventValueChanged];
-		    s.selectedSegmentIndex = mgdL ? 0 : 1;
+		    s.selectedSegmentIndex = (kGlucoseUnits_mgdL == model.glucoseUnitsSetting) ? 0 : 1;
 		    cell.accessoryView = s;
 		    break;
 	    }
@@ -460,16 +441,23 @@ enum AboutSectionRows
 {
     if( currentEditingField )
     {
-	if( textField == highGlucoseWarningField )
-	    [[NSUserDefaults standardUserDefaults] setObject:textField.text forKey:highGlucoseWarningKey];
-	else if( textField == lowGlucoseWarningField )
-	    [[NSUserDefaults standardUserDefaults] setObject:textField.text forKey:lowGlucoseWarningKey];
+	NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
+	formatter.numberStyle = NSNumberFormatterDecimalStyle;
+	NSNumber* threshold = [formatter numberFromString:textField.text];
+
+	if( threshold )
+	{
+	    if( textField == highGlucoseWarningField )
+		[model setHighGlucoseWarningThreshold:threshold];
+	    else if( textField == lowGlucoseWarningField )
+		[model setLowGlucoseWarningThreshold:threshold];
+	}
     }
 
     if( textField == highGlucoseWarningField )
-	textField.text = [[NSUserDefaults standardUserDefaults] stringForKey:highGlucoseWarningKey];
+	textField.text = [model highGlucoseWarningThresholdString];
     else if( textField == lowGlucoseWarningField )
-	textField.text = [[NSUserDefaults standardUserDefaults] stringForKey:lowGlucoseWarningKey];
+	textField.text = [model lowGlucoseWarningThresholdString];
 
     currentEditingField = nil;
     self.navigationItem.rightBarButtonItem.enabled = YES;
@@ -481,17 +469,19 @@ enum AboutSectionRows
 - (void) categoryViewControllerCreateCategory
 {
     [model addCategoryWithName:nil];
+    [model save];
 }
 
-- (void) categoryViewControllerDidDeleteCategory:(Category*)category
+- (void) categoryViewControllerDidDeleteCategory:(ManagedCategory*)category
 {
-    // Purge the record from the database and the categories array
-    [model purgeCategory:category];
+    [model removeCategory:category];
+    [model save];
 }
 
 - (void) categoryViewControllerDidSelectRestoreDefaults
 {
     [model restoreBundledCategories];
+    [model save];
 }
 
 #pragma mark -
@@ -502,9 +492,9 @@ enum AboutSectionRows
     [model addInsulinTypeWithName:nil];
 }
 
-- (void) insulinTypeViewControllerDidDeleteInsulinType:(InsulinType*)type;
+- (void) insulinTypeViewControllerDidDeleteInsulinType:(ManagedInsulinType*)type;
 {
-    [model purgeInsulinType:type];
+    [model removeInsulinType:type];
 }
 
 - (void) insulinTypeViewControllerDidEndMultiSelect
@@ -512,7 +502,7 @@ enum AboutSectionRows
     [model flushInsulinTypesForNewEntries];
 }
 
-- (BOOL) insulinTypeViewControllerDidSelectInsulinType:(InsulinType*)type
+- (BOOL) insulinTypeViewControllerDidSelectInsulinType:(ManagedInsulinType*)type
 {
     if( [model.insulinTypesForNewEntries count] >= 2 )
 	return NO;
@@ -525,7 +515,7 @@ enum AboutSectionRows
     [model restoreBundledInsulinTypes];
 }
 
-- (void) insulinTypeViewControllerDidUnselectInsulinType:(InsulinType*)type
+- (void) insulinTypeViewControllerDidUnselectInsulinType:(ManagedInsulinType*)type
 {
     [model removeInsulinTypeForNewEntries:type];
 }

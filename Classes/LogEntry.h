@@ -32,7 +32,7 @@
 
 #pragma mark LogEntry creation
 + (LogEntry*) createLogEntryInDatabase:(sqlite3*)database;
-+ (NSMutableArray*) logEntriesForLogDay:(LogDay*)day model:(LogModel*)model;
++ (NSMutableArray*) logEntriesForLogDay:(LogDay*)day model:(LogModel*)model database:(sqlite3*)database;
 
 + (void) deleteDosesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database;
 + (void) deleteLogEntriesForInsulinTypeID:(unsigned)typeID fromDatabase:(sqlite3*)database;
@@ -42,7 +42,7 @@
 + (NSString*) unitsStringForInteger:(unsigned)units;
 
 + (void) finalize;		// Finalize (delete) all of the SQLite compiled queries
-+ (NSData*) createCSV:(LogModel*)model from:(NSDate*)from to:(NSDate*)to;
++ (NSData*) createCSV:(LogModel*)model from:(NSDate*)from to:(NSDate*)to database:(sqlite3*)database;
 
 - (id) initWithID:(unsigned)entry date:(NSDate*)date;
 - (id) initWithStatement:(sqlite3_stmt*)statement model:(LogModel*)model;
@@ -50,7 +50,7 @@
 - (void)deleteFromDatabase:(sqlite3 *)db;
 //- (void)dehydrate:(sqlite3 *)db;	// Flush and reduce memory footprint
 - (void)flush:(sqlite3 *)db;		// Flush to database if dirty
-- (void) revert:(LogModel*)model;	// Undo any changes
+- (void) revert:(LogModel*)model database:(sqlite3*)database;	// Undo any changes
 - (void) setEditing:(BOOL)edit model:(LogModel*)model;
 
 - (void) addDoseWithType:(InsulinType*)t;

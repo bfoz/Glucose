@@ -16,8 +16,6 @@
 
     NumberField*		highGlucoseWarningField;
     NumberField*		lowGlucoseWarningField;
-    NSString*			highGlucoseWarningKey;
-    NSString*			lowGlucoseWarningKey;
 }
 
 @property (nonatomic, strong)	id<SettingsViewControllerDelegate>    delegate;

@@ -3,10 +3,10 @@
 #import "ManagedInsulinType.h"
 
 #import "AppDelegate.h"
-#import "InsulinType.h"
 #import "InsulinTypeViewController.h"
 #import "LogEntry.h"
 #import "LogModel.h"
+#import "ManagedInsulinType.h"
 
 #define	kInsulinTypesSectionNumber		0
 #define	kRestoreDefaultsSectionNumber		1
@@ -204,7 +204,7 @@
 	case kInsulinTypesSectionNumber:
 	{
 	    // Get the row's insulin type object
-	    InsulinType *const type = [model.insulinTypes objectAtIndex:indexPath.row];
+	    ManagedInsulinType *const type = [model.insulinTypes objectAtIndex:indexPath.row];
 
 	    // Put a checkmark on the currently selected row(s)
 	    if( [selectedInsulinTypes containsObject:type] )
@@ -262,7 +262,7 @@
     else
     {
 	UITableViewCell *const cell = [tv cellForRowAtIndexPath:indexPath];
-	InsulinType *const t = [model.insulinTypes objectAtIndex:indexPath.row];
+	ManagedInsulinType *const t = [model.insulinTypes objectAtIndex:indexPath.row];
 
 	// Toggle the checkmark on the selected row and notify the delegate
 	//  The delegate can block the selection event by returning NO
@@ -315,7 +315,7 @@
     {
 	// If the row corresponds to a type that's used as a default insulin
 	//  type for new log entries, then ask the user for confirmation first
-	InsulinType *const type = [model.insulinTypes objectAtIndex:path.row];
+	ManagedInsulinType *const type = [model.insulinTypes objectAtIndex:path.row];
 	if( NSNotFound != [model.insulinTypesForNewEntries indexOfObjectIdenticalTo:type] )
 	{
 	    alertReason = ALERT_REASON_DEFAULT_NEW_ENTRY_TYPE;
@@ -373,7 +373,7 @@
 
 - (void)textFieldCellDidEndEditing:(TextFieldCell*)cell
 {
-    InsulinType* type = cell.editedObject;
+    ManagedInsulinType* type = cell.editedObject;
     if( !type || !cell )
 	return;
     type.shortName = (cell.text && cell.text.length) ? cell.text : nil;

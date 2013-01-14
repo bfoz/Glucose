@@ -1,11 +1,11 @@
 #import "DoseFieldCell.h"
-#import "InsulinType.h"
+#import "ManagedInsulinType.h"
 #import "Constants.h"
 
 @implementation DoseFieldCell
 
 @synthesize delegate;
-@synthesize dose, doseField;
+@synthesize doseField;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -50,7 +50,7 @@
     doseField.frame  = insetRect;
 
     // Display the normal text field as a placeholder if no dose or type has been set
-    if( dose && dose.insulinType )
+    if( self.dose && self.dose.insulinType )
     {
 	doseField.hidden  = NO;
 	typeField.hidden = NO;
@@ -64,15 +64,15 @@
     }
 }
 
-- (void)setDose:(InsulinDose*)d
+- (void)setDose:(ManagedInsulinDose*)d
 {
     // Need to redo layout if dose has changed
-    if( dose != d )
+    if( _dose != d )
 	[self setNeedsLayout];
 
-    dose = d;
+    _dose = d;
     
-    if( !dose )
+    if( !_dose )
 	return;
 
     doseField.number = d.dose;

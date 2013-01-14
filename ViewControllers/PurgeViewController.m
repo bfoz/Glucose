@@ -51,9 +51,7 @@ enum Sections
 	startDate = savedStart ? [savedStart dateByAddingTimeInterval:24*60*60] : [NSDate date];
 	endDate = [NSDate date];
 
-	AppDelegate* delegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
-	numberOfRecordsToPurge = [delegate numLogEntriesFrom:startDate to:endDate];
-
+	numberOfRecordsToPurge = [logModel numberOfLogEntriesFromDate:startDate toDate:endDate];
     }
     return self;
 }
@@ -226,7 +224,7 @@ enum Sections
     if( 0 == buttonIndex )	// Nothing to do if Cancel was clicked
 	return;
 
-    [(AppDelegate*)[UIApplication sharedApplication].delegate deleteLogEntriesFrom:startDate to:endDate];
+    [logModel deleteLogEntriesFrom:startDate to:endDate];
 
     NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:startDate forKey:kLastPurgeFromDate];
@@ -293,7 +291,7 @@ enum Sections
     else if( textField == startField )
 	pickerLabel.text = [dateFormatter stringFromDate:startDate];
 
-    numberOfRecordsToPurge = [(AppDelegate*)[UIApplication sharedApplication].delegate numLogEntriesFrom:startDate to:endDate];
+    numberOfRecordsToPurge = [logModel numberOfLogEntriesFromDate:startDate toDate:endDate];
 
     [self updateThePurgeButton];
 }

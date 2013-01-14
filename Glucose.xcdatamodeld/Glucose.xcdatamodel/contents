@@ -1,32 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1811" systemVersion="12C60" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Category" representedClassName="ManagedCategory" syncable="YES">
-        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="sequenceNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="sequenceNumber" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <relationship name="logEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogEntry" inverseName="category" inverseEntity="LogEntry" syncable="YES"/>
     </entity>
     <entity name="InsulinDose" representedClassName="ManagedInsulinDose" syncable="YES">
-        <attribute name="dose" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
-        <relationship name="insulinType" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InsulinType" inverseName="insulinDoses" inverseEntity="InsulinType" syncable="YES"/>
-        <relationship name="logEntry" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="LogEntry" inverseName="insulinDoses" inverseEntity="LogEntry" syncable="YES"/>
+        <attribute name="dose" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="insulinType" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InsulinType" inverseName="insulinDoses" inverseEntity="InsulinType" syncable="YES"/>
+        <relationship name="logEntry" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="LogEntry" inverseName="insulinDoses" inverseEntity="LogEntry" syncable="YES"/>
     </entity>
     <entity name="InsulinType" representedClassName="ManagedInsulinType" syncable="YES">
-        <attribute name="sequenceNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="shortName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sequenceNumber" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="shortName" attributeType="String" syncable="YES"/>
         <relationship name="insulinDoses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="InsulinDose" inverseName="insulinType" inverseEntity="InsulinDose" syncable="YES"/>
     </entity>
+    <entity name="LogDay" representedClassName="ManagedLogDay" syncable="YES">
+        <attribute name="averageGlucose" optional="YES" transient="YES" attributeType="Float" syncable="YES"/>
+        <attribute name="averageGlucoseString" optional="YES" transient="YES" attributeType="String" syncable="YES"/>
+        <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="logEntries" optional="YES" toMany="YES" deletionRule="Deny" ordered="YES" destinationEntity="LogEntry" inverseName="logDay" inverseEntity="LogEntry" syncable="YES"/>
+    </entity>
     <entity name="LogEntry" representedClassName="ManagedLogEntry" syncable="YES">
-        <attribute name="glucose" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="glucose" optional="YES" attributeType="Float" syncable="YES"/>
         <attribute name="glucoseUnits" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="timestamp" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="timestamp" attributeType="Date" syncable="YES"/>
         <relationship name="category" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="logEntries" inverseEntity="Category" syncable="YES"/>
         <relationship name="insulinDoses" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="InsulinDose" inverseName="logEntry" inverseEntity="InsulinDose" syncable="YES"/>
+        <relationship name="logDay" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="LogDay" inverseName="logEntries" inverseEntity="LogDay" syncable="YES"/>
     </entity>
     <elements>
         <element name="Category" positionX="214" positionY="177" width="128" height="90"/>
         <element name="InsulinDose" positionX="216" positionY="279" width="128" height="90"/>
         <element name="InsulinType" positionX="403" positionY="279" width="128" height="90"/>
-        <element name="LogEntry" positionX="27" positionY="180" width="128" height="135"/>
+        <element name="LogDay" positionX="-144" positionY="180" width="128" height="105"/>
+        <element name="LogEntry" positionX="27" positionY="180" width="128" height="150"/>
     </elements>
 </model>

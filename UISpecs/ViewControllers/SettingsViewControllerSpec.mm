@@ -57,6 +57,7 @@ describe(@"SettingsViewController", ^{
     describe(@"Category view controller delegate", ^{
 	it(@"should inform the model when the user restores the default categories", ^{
 	    [[mockLogModel expect] restoreBundledCategories];
+	    [[mockLogModel expect] save];
 	    [controller categoryViewControllerDidSelectRestoreDefaults];
 	    [mockLogModel verify];
 	});

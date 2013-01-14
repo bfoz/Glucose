@@ -4,6 +4,9 @@
 
 @interface LogModel (CoreData)
 
++ (NSURL*) applicationDocumentsDirectory;
++ (NSURL*) sqlitePersistentStoreURL;
+
 + (NSFetchRequest*) fetchRequestForOrderedCategoriesInContext:(NSManagedObjectContext*)managedObjectContext;
 + (NSFetchRequest*) fetchRequestForOrderedInsulinTypesInContext:(NSManagedObjectContext*)managedObjectContext;
 

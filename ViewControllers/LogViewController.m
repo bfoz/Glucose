@@ -2,13 +2,17 @@
 #import "Constants.h"
 
 #import "Category.h"
-#import "InsulinDose.h"
 #import "InsulinType.h"
 #import "LogDay.h"
 #import "LogEntry.h"
 #import "LogModel.h"
 #import "LogViewController.h"
 #import "LogEntryCell.h"
+#import "ManagedCategory.h"
+#import "ManagedInsulinDose.h"
+#import "ManagedInsulinType.h"
+#import "ManagedLogDay+App.h"
+#import "ManagedLogEntry+App.h"
 #import "SettingsViewController.h"
 
 #define	ANIMATION_DURATION	    0.5	    // seconds
@@ -57,22 +61,21 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addNewEntry:)];
 }
 
-- (void) inspectNewLogEntry:(LogEntry*)entry
+- (void) inspectNewLogEntry:(ManagedLogEntry*)entry
 {
-    [self inspectLogEntry:entry inSection:nil setEditing:YES isNew:YES];
+    [self inspectLogEntry:entry setEditing:YES isNew:YES];
 }
 
-- (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section;
+- (void) inspectLogEntry:(ManagedLogEntry*)entry
 {
-    [self inspectLogEntry:entry inSection:section setEditing:NO isNew:NO];
+    [self inspectLogEntry:entry setEditing:NO isNew:NO];
 }
 
-- (void) inspectLogEntry:(LogEntry*)entry inSection:(LogDay*)section setEditing:(BOOL)e isNew:(BOOL)n
+- (void) inspectLogEntry:(ManagedLogEntry*)entry setEditing:(BOOL)e isNew:(BOOL)n
 {
     LogEntryViewController* logEntryViewController = [[LogEntryViewController alloc] initWithLogEntry:entry];
     logEntryViewController.delegate = self;
     logEntryViewController.model = _model;
-    logEntryViewController.entrySection = section;
 
     // Push the detail view on to the navigation controller's stack.
     [self.navigationController pushViewController:logEntryViewController animated:YES];
@@ -122,69 +125,47 @@
 
 - (void) addNewEntry:(id)sender
 {
-    // Create a new record
-    LogEntry *const entry = [_model createLogEntry];
-
-    // Display the detail view so the user can edit the new entry
-    if( entry )
-	[self inspectNewLogEntry:entry];
-}
-
-// Force the delegate to load another section and then tell the UITableView about it
-- (void) loadNextSection
-{
-    const unsigned count = [_model numberOfLoadedLogDays];
-    NSLog(@"Loading day %d", count);
-    if( [_model logDayAtIndex:count] )
-	[self.tableView insertSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(count,1)]
-		      withRowAnimation:NO];
+    ManagedLogEntry *const entry = [_model insertManagedLogEntryWithUndo];
+    [self inspectNewLogEntry:entry];
 }
 
 #pragma mark <UITableViewDataSource>
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    const unsigned numLoaded = [_model numberOfLoadedLogDays];
-
-    /* Schedule a section load if nothing has been loaded yet
-	This should never happen because the AppDelegate ensures that there is 
-	always at least one day loaded, even if it's empty.	*/
-    if( 0 == numLoaded )
-	[self performSelectorOnMainThread:@selector(loadNextSection) withObject:nil waitUntilDone:NO];
-
-    return numLoaded;
+    return MAX(1, _model.logDays.count);
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_model numberOfEntriesForLogDayAtIndex:section];
+    if( 0 == _model.logDays.count )
+	return 0;
+    ManagedLogDay* logDay = [_model.logDays objectAtIndex:section];
+    return logDay.logEntries.count;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    LogDay *const day = [_model logDayAtIndex:section];
+    if( 0 == _model.logDays.count )
+	return @"Today";
+
+    ManagedLogDay *const logDay = [_model.logDays objectAtIndex:section];
 
     /* Display "Today" instead of the date string if the LogDay corresponds to
 	the current date. Only the first section could possibly be the "today"
 	section, so don't bother checking the others.	*/
-    NSString* name = day.name;
     if( 0 == section )
     {
 	// Make sure it really is today
 	NSCalendar *const calendar = [NSCalendar currentCalendar];
 	static const unsigned components = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
 	NSDateComponents *const today = [calendar components:components fromDate:[NSDate date]];
-	NSDateComponents *const c = [calendar components:components fromDate:day.date];
+	NSDateComponents *const c = [calendar components:components fromDate:logDay.date];
 	if( (today.day == c.day) && (today.month == c.month) && (today.year == c.year) )
-	    name = @"Today";
+	    return @"Today";
     }
 
-    NSString *const average = day.averageGlucoseString;
-
-    // Don't display the average if it's zero
-    NSString *const format = average ? @"%@ (%@)" : @"%@";
-
-    return [NSString stringWithFormat:format, name, average, nil];
+    return logDay.titleForHeader;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -201,75 +182,50 @@
     }
 
     // Get the LogEntry for the cell
-    LogEntry *const entry = [_model logEntryAtIndex:row inDayIndex:section];
+    ManagedLogDay* logDay = [_model.logDays objectAtIndex:section];
+    ManagedLogEntry* logEntry = [logDay.logEntries objectAtIndex:row];
 
-	// Configure the cell
-//	cell.entry = entry;
-	cell.labelTimestamp.text = [dateFormatter stringFromDate:entry.timestamp];
-	cell.labelCategory.text = entry.category ? entry.category.categoryName : @"";
-    cell.labelGlucose.text = entry.glucoseString;
-	cell.note = entry.note;
+    // Configure the cell
+    cell.labelTimestamp.text = [dateFormatter stringFromDate:logEntry.timestamp];
+    cell.labelCategory.text = logEntry.category ? logEntry.category.name : @"";
+    cell.labelGlucose.text = logEntry.glucoseString;
+    cell.note = logEntry.note;
 
-	// Color the glucose values accordingly
-    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
-    const float glucose = [entry.glucose floatValue];
-    float thresholdHigh, threshholdLow;
-    if( kGlucoseUnits_mgdL == entry.glucoseUnits )
-    {
-	thresholdHigh = [defaults floatForKey:kHighGlucoseWarning0];
-	threshholdLow = [defaults floatForKey:kLowGlucoseWarning0];
-    }
-    else
-    {
-	thresholdHigh = [defaults floatForKey:kHighGlucoseWarning1];
-	threshholdLow = [defaults floatForKey:kLowGlucoseWarning1];
-    }
-    if( glucose > thresholdHigh )
+    // Color the glucose values accordingly
+    const float glucose = [logEntry.glucose floatValue];
+
+    if( glucose > [_model highGlucoseWarningThreshold] )
 	cell.labelGlucose.textColor = [UIColor blueColor];
-    else if( glucose < threshholdLow )
+    else if( glucose < [_model lowGlucoseWarningThreshold] )
 	cell.labelGlucose.textColor = [UIColor redColor];
     else
 	cell.labelGlucose.textColor = [UIColor darkTextColor];
 
-	InsulinDose* dose = [entry doseAtIndex:0];
-	if( dose && dose.dose && dose.insulinType )
-	{
-		cell.labelDose0.text = [dose.dose stringValue];
-		cell.labelType0.text = dose.insulinType.shortName;
-	}
-	else
-	{
-		cell.labelDose0.text = nil;
-		cell.labelType0.text = nil;
-	}
-	dose = [entry doseAtIndex:1];
-	if( dose && dose.dose && dose.insulinType )
-	{
-		cell.labelDose1.text = [dose.dose stringValue];
-		cell.labelType1.text = dose.insulinType.shortName;
-	}
-	else
-	{
-		cell.labelDose1.text = nil;
-		cell.labelType1.text = nil;
-	}
-	
-	return cell;
+    if( logEntry.insulinDoses.count )
+    {
+	ManagedInsulinDose* insulinDose = [logEntry.insulinDoses objectAtIndex:0];
+	cell.labelDose0.text = [insulinDose.dose stringValue];
+	cell.labelType0.text = insulinDose.insulinType.shortName;
+    }
+
+    if( logEntry.insulinDoses.count > 1 )
+    {
+	ManagedInsulinDose* insulinDose = [logEntry.insulinDoses objectAtIndex:1];
+	cell.labelDose1.text = [insulinDose.dose stringValue];
+	cell.labelType1.text = insulinDose.insulinType.shortName;
+    }
+    return cell;
 }
 
 #pragma mark <UITableViewDelegate>
 
 - (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)path
 {
-    const unsigned section = path.section;
-    const unsigned row = path.row;
-
     // HI guidlines say row should be selected and then deselected
     [tv deselectRowAtIndexPath:path animated:YES];
 
-    LogDay *const s = [_model logDayAtIndex:section];
-
-    [self inspectLogEntry:[s.entries objectAtIndex:row] inSection:s];
+    ManagedLogDay *const logDay = [_model.logDays objectAtIndex:path.section];
+    [self inspectLogEntry:[logDay.logEntries objectAtIndex:path.row]];
 }
 
 - (void)tableView:(UITableView *)tv willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)path
@@ -278,7 +234,7 @@
     const unsigned numberOfSections = [tv numberOfSections];
     if( (numberOfSections == (path.section + 1)) && (path.row == 0) )
     {
-	if( numberOfSections < [_model numberOfLogDays] )
+	if( numberOfSections < _model.logDays.count )
 	    [self performSelectorOnMainThread:@selector(loadNextSection) withObject:nil waitUntilDone:NO];
     }
 }
@@ -288,18 +244,18 @@
     // If the row was deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	LogDay *const day = [_model logDayAtIndex:indexPath.section];
-	if( 1 == [day count] )	// If the section is about to be empty, delete it
+	ManagedLogDay *const logDay = [_model.logDays objectAtIndex:indexPath.section];
+	if( 1 == logDay.logEntries.count )	// If the section is about to be empty, delete it
 	{
-	    [_model deleteLogDay:day];
+	    [_model deleteLogDay:logDay];
 
 	    // This must be called after deleting the section, otherwise UITableView will throw an exception
 	    [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationFade];
 	}
 	else
 	{
-	    [_model deleteLogEntry:[_model logEntryAtIndex:indexPath.row inDay:day]
-			     inDay:day];
+	    [_model deleteLogEntry:[logDay.logEntries objectAtIndex:indexPath.row]
+			   fromDay:logDay];
 
 	    // This must be called after deleting the row, otherwise UITableView will throw an exception
 	    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
@@ -307,24 +263,23 @@
     }
 }
 
-#pragma mark -
-#pragma mark <LogEntryViewDelegate>
+#pragma mark - <LogEntryViewDelegate>
 
-- (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(LogEntry*)entry
+- (void) logEntryViewControllerDidCancelEditing
 {
-    if( entry.dirty )
+    [self.model undo];
+}
+
+- (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(ManagedLogEntry*)logEntry
+{
+    if( logEntry.hasChanges )
     {
-	LogDay *const newDay = [_model logDayForDate:entry.timestamp];
-	if ( newDay != view.entrySection )
-	{
-	    [_model moveLogEntry:entry
-			 fromDay:view.entrySection
-			   toDay:newDay];
-	    view.entrySection = newDay;
-	}
-	else	// Only need to update if above block was skipped
-	    [newDay updateStatistics];
-	[entry flush:_model.database];
+	ManagedLogDay *const newDay = [_model logDayForDate:logEntry.timestamp];
+	if( newDay != logEntry.logDay )
+	    logEntry.logDay = newDay;
+	[newDay updateStatistics];
+
+	[self.model commitChanges];
     }
 }
 

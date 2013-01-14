@@ -52,15 +52,6 @@ NSDateFormatter* shortDateFormatter = nil;
 	//  The background color is what shows up behind the flipping views
 	window.backgroundColor = [UIColor blackColor];
 	
-    // Register default defaults
-    NSArray *const a = [NSArray arrayWithObjects:[NSNumber numberWithInt:1], // Aspart
-						 [NSNumber numberWithInt:6], // NPH
-						 nil];
-	NSArray* keys = [NSArray arrayWithObjects:kHighGlucoseWarning0, kLowGlucoseWarning0, kHighGlucoseWarning1, kLowGlucoseWarning1, kDefaultGlucoseUnits, kDefaultInsulinPrecision, kDefaultInsulinTypes, kExportGoogleShareEnable, nil];
-	NSArray* values = [NSArray arrayWithObjects:@"120", @"80", @"6.6", @"4.4", kGlucoseUnits_mgdL, [NSNumber numberWithInt:0], a, @"NO", nil];
-	NSDictionary* d = [NSDictionary dictionaryWithObjects:values forKeys:keys];
-	[[NSUserDefaults standardUserDefaults] registerDefaults:d];
-
     DBSession* session = [[DBSession alloc] initWithAppKey:dropboxAppKey
 						 appSecret:dropboxAppSecret
 						      root:kDBRootAppFolder];
@@ -84,42 +75,10 @@ NSDateFormatter* shortDateFormatter = nil;
     // so we need to create a copy of it in the application's Documents directory.     
     [self createEditableCopyOfDatabaseIfNeeded];
 
-    // Try to open the log database
-    if( ![model database] )
-    {
-	NSLog(@"Could not open log database");
-	return NO;
-    }
-
-    // Create an empty "Today" object if no LogDays are available
-    if( 0 == [model numberOfLogDays] )
-    {
-	NSDate *const day = [NSDate date];
-	LogDay *const section = [[LogDay alloc] initWithDate:day];
-	section.name = [shortDateFormatter stringFromDate:day];
-	[model.days addObject:section];
-    }
-    else    // Otherwise, load the first LogDay from the database
-	[model logDayAtIndex:0];
-
-	// Configure and display the window
     [window addSubview:[navController view]];
     [window makeKeyAndVisible];
 
     return YES;
-}
-
-- (void)applicationDidEnterBackground:(UIApplication *)application
-{
-    [model flush];	// Flush all entries
-    [model close];	// Close all open databases
-}
-
-// Save all changes to the database, then close it.
-- (void)applicationWillTerminate:(UIApplication *)application
-{
-    [model flush];	// Flush all entries
-    [model close];	// Close all open databases
 }
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
@@ -160,105 +119,6 @@ NSDateFormatter* shortDateFormatter = nil;
 					 error:&error];
     if( !success )
         NSAssert1(0, @"Failed to create writable database file with message '%@'.", [error localizedDescription]);
-}
-
-#pragma mark -
-#pragma mark Record Management
-
-- (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to
-{
-	const char *query = "DELETE FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime')";
-	sqlite3_stmt *statement;
-
-	if( sqlite3_prepare_v2(model.database, query, -1, &statement, NULL) == SQLITE_OK )
-	{
-		sqlite3_bind_int(statement, 1, [from timeIntervalSince1970]);
-		sqlite3_bind_int(statement, 2, [to timeIntervalSince1970]);
-		int success = sqlite3_step(statement);
-		sqlite3_finalize(statement);
-		if( success != SQLITE_DONE )
-			NSAssert1(0, @"Error: failed to delete from database with message '%s'.", sqlite3_errmsg(model.database));
-
-		// Delete the corresponding sections
-		NSMutableArray* a = [[NSMutableArray alloc] init];
-		for( LogDay* s in model.days )
-		{
-			NSDate *const d = s.date;
-			NSComparisonResult b = [from compare:d];
-			NSComparisonResult c = [to compare:d];
-			
-			if( ((b == NSOrderedAscending) || (b == NSOrderedSame)) && 
-			    ((c == NSOrderedDescending) || (c == NSOrderedSame)) )
-				[a addObject:s];
-		}
-		for( LogDay* s in a )
-			[model.days removeObjectIdenticalTo:s];
-	}
-}
-
-- (NSDate*) earliestLogEntryDate
-{
-	if( ![self numLogEntries] )
-		return nil;
-	
-	const char* q = "SELECT MIN(timestamp) from localLogEntries";
-	sqlite3_stmt *statement;
-	NSDate* d = nil;
-
-	if( sqlite3_prepare_v2(model.database, q, -1, &statement, NULL) == SQLITE_OK )
-	{
-		unsigned i = 0;
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			NSAssert(i==0, @"Too many rows returned for MIN()");
-			d = [NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 0)];
-			++i;
-		}
-		sqlite3_finalize(statement);
-	}
-	return d;
-}
-
-- (unsigned) numLogEntries
-{
-	const char* q = "SELECT COUNT() from localLogEntries";
-	sqlite3_stmt *statement;
-	unsigned num = 0;
-
-	if( sqlite3_prepare_v2(model.database, q, -1, &statement, NULL) == SQLITE_OK )
-	{
-		unsigned i = 0;
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			NSAssert(i==0, @"Too many rows returned for COUNT()");
-			num = sqlite3_column_int(statement, 0);
-			++i;
-		}
-		sqlite3_finalize(statement);
-	}
-	return num;
-}
-
-- (unsigned) numLogEntriesFrom:(NSDate*)from to:(NSDate*)to
-{
-	const char* q = "SELECT COUNT() from localLogEntries WHERE date(timestamp,'unixepoch','localtime') >= date(?,'unixepoch','localtime') AND date(timestamp,'unixepoch','localtime') <= date(?,'unixepoch','localtime')";
-	sqlite3_stmt *statement;
-	unsigned num = 0;
-
-	if( sqlite3_prepare_v2(model.database, q, -1, &statement, NULL) == SQLITE_OK )
-	{
-		sqlite3_bind_int(statement, 1, [from timeIntervalSince1970]);
-		sqlite3_bind_int(statement, 2, [to timeIntervalSince1970]);
-		unsigned i = 0;
-		while( sqlite3_step(statement) == SQLITE_ROW )
-		{
-			NSAssert(i==0, @"Too many rows returned for COUNT() in numLogEntriesFrom:to:");
-			num = sqlite3_column_int(statement, 0);
-			++i;
-		}
-		sqlite3_finalize(statement);
-	}
-	return num;
 }
 
 #pragma mark -

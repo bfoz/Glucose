@@ -2,7 +2,7 @@
 //  ManagedCategory.h
 //  Glucose
 //
-//  Created by Brandon Fosdick on 01/06/13.
+//  Created by Brandon Fosdick on 01/13/13.
 //
 //
 

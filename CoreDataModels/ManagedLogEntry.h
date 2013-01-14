@@ -2,14 +2,14 @@
 //  ManagedLogEntry.h
 //  Glucose
 //
-//  Created by Brandon Fosdick on 01/05/13.
+//  Created by Brandon Fosdick on 01/13/13.
 //
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class ManagedCategory, ManagedInsulinDose;
+@class ManagedCategory, ManagedInsulinDose, ManagedLogDay;
 
 @interface ManagedLogEntry : NSManagedObject
 
@@ -19,6 +19,7 @@
 @property (nonatomic, retain) NSDate * timestamp;
 @property (nonatomic, retain) ManagedCategory *category;
 @property (nonatomic, retain) NSOrderedSet *insulinDoses;
+@property (nonatomic, retain) ManagedLogDay *logDay;
 @end
 
 @interface ManagedLogEntry (CoreDataGeneratedAccessors)

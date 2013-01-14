@@ -10,6 +10,16 @@
 
 @implementation LogModel (CoreData)
 
++ (NSURL*) applicationDocumentsDirectory
+{
+    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+}
+
++ (NSURL*) sqlitePersistentStoreURL
+{
+    return [[LogModel applicationDocumentsDirectory] URLByAppendingPathComponent:@"GlucoseCoreData.sqlite"];
+}
+
 + (NSFetchRequest*) fetchRequestForOrderedCategoriesInContext:(NSManagedObjectContext*)managedObjectContext
 {
     NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] init];

@@ -6,33 +6,52 @@
 #import "LogModel+SQLite.h"
 
 #import "ManagedCategory.h"
+#import "ManagedInsulinDose.h"
 #import "ManagedInsulinType.h"
+#import "ManagedLogDay.h"
+#import "ManagedLogEntry+App.h"
 
 #import "Constants.h"
 #import "Category.h"
 #import "InsulinDose.h"
 #import "InsulinType.h"
-#import "LogDay.h"
 #import "LogEntry.h"
+
+#define	kSettingsGlucoseUnitsValue_mgdL		@0
+#define	kSettingsGlucoseUnitsValue_mmolL	@1
+
+static NSString* kSettingsGlucoseUnitsKey	= @"DefaultGlucoseUnits";
+static NSString* kSettingsHighGlucoseWarningThresholdKey_mgdL	= @"HighGlucoseWarning0";
+static NSString* kSettingsHighGlucoseWarningThresholdKey_mmolL	= @"HighGlucoseWarning1";
+static NSString* kSettingsLowGlucoseWarningThresholdKey_mgdL	= @"LowGlucoseWarning0";
+static NSString* kSettingsLowGlucoseWarningThresholdKey_mmolL	= @"HighGlucoseWarning1";
+
+static NSNumber* kDefaultHighGlucoseWarningThreshold_mgdL;
+static NSNumber* kDefaultHighGlucoseWarningThreshold_mmolL;
+static NSNumber* kDefaultLowGlucoseWarningThreshold_mgdL;
+static NSNumber* kDefaultLowGlucoseWarningThreshold_mmolL;
+
+NSString* GlucoseUnitsTypeString_mgdL	= @"mg/dL";
+NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 
 @interface LogModel ()
 
 - (void) clearCategoryNameMaxWidth;
 - (void) clearInsulinTypeShortNameMaxWidth;
-- (void) removeCategory:(Category*)type;
+
+- (NSManagedObjectContext*) managedObjectContext;
 
 @end
 
 @implementation LogModel
 {
-    sqlite3*	database;
+    NSMutableArray* _logDays;
 
     NSManagedObjectContext*	    _managedObjectContext;
     NSManagedObjectModel*	    _managedObjectModel;
     NSPersistentStoreCoordinator*   _persistentStoreCoordinator;
 }
 
-@synthesize days;
 @synthesize categories = _categories;
 @synthesize insulinTypes = _insulinTypes;
 @synthesize insulinTypesForNewEntries = _insulinTypesForNewEntries;
@@ -42,7 +61,12 @@
     self = [super init];
     if( self )
     {
-	days = [[NSMutableArray alloc] init];
+	kDefaultHighGlucoseWarningThreshold_mgdL   = @120;
+	kDefaultLowGlucoseWarningThreshold_mgdL    = @80;
+
+	kDefaultHighGlucoseWarningThreshold_mmolL  = @6.6;
+	kDefaultLowGlucoseWarningThreshold_mmolL   = @4.4;
+
 	defaults = [NSUserDefaults standardUserDefaults];
 	insulinTypeShortNameMaxWidth = NULL;
 	shortDateFormatter = [[NSDateFormatter alloc] init];
@@ -52,57 +76,81 @@
     return self;
 }
 
+- (void) dealloc
+{
+    _managedObjectContext = nil;
+    _persistentStoreCoordinator = nil;
+}
+
 - (NSString*) shortStringFromDate:(NSDate*)date
 {
     return [shortDateFormatter stringFromDate:date];
-}
-
-- (void) close
-{
-    if( database )
-    {
-	[LogEntry finalize];
-	[LogModel closeDatabase:database];
-	database = NULL;
-    }
 }
 
 - (void) flush
 {
     [self flushInsulinTypes];
     [self flushInsulinTypesForNewEntries];
-    for( LogDay* day in days )
-	for( LogEntry* entry in day.entries )
-	    [entry flush:self.database];
+    [self save];
 }
 
-#pragma mark
+- (NSData*) csvDataFromDate:(NSDate*)startDate toDate:(NSDate*)endDate
+{
+    NSMutableData* data = [NSMutableData dataWithCapacity:2048];
+
+    if( !data )
+	return nil;
+
+    NSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"LogEntry"];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"(timestamp >= %@) AND (timestamp <= %@)", startDate, endDate];
+
+    NSError* error = nil;
+    NSArray* fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+
+    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
+
+    NSNumberFormatter* numberFormatter = [[NSNumberFormatter alloc] init];
+    numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+
+    // Append the header row
+    NSString* headerString = @"timestamp,glucose,glucoseUnits,category,dose0,type0,dose1,type1,note\n";
+    const char* utfHeader = [headerString UTF8String];
+    [data appendBytes:utfHeader length:strlen(utfHeader)];
+
+    for( ManagedLogEntry* logEntry in fetchedObjects )
+    {
+	NSMutableArray* columns = [NSMutableArray array];
+
+	[columns addObject:[dateFormatter stringFromDate:logEntry.timestamp]];
+	[columns addObject:logEntry.glucoseUnitsString];
+	[columns addObject:logEntry.category.name];
+
+	for( ManagedInsulinDose* insulinDose in logEntry.insulinDoses )
+	{
+	    [columns addObject:[numberFormatter stringFromNumber:insulinDose.dose]];
+	    [columns addObject:insulinDose.insulinType.shortName];
+	}
+
+	if( logEntry.note )
+	    [columns addObject:logEntry.note];
+
+	[data appendBytes:"\"" length:strlen("\"")];
+	[data appendData:[[columns componentsJoinedByString:@"\",\""] dataUsingEncoding:NSUTF8StringEncoding]];
+	[data appendBytes:"\"\n" length:strlen("\"\n")];
+    }
+
+    return data;
+}
+
 #pragma mark Categories
 
-- (void) addCategory:(Category*)category
+- (ManagedCategory*) addCategoryWithName:(NSString*)name
 {
-    if( ![self.categories containsObject:category] )
-    {
-	[Category insertCategory:category intoDatabase:self.database];
-	[self.categories addObject:category];
-    }
-    [self clearCategoryNameMaxWidth];
-}
-
-- (void) addCategoryWithName:(NSString*)name
-{
-    Category *const category = [Category newCategoryWithName:name
-						    database:self.database];
-    [self.categories addObject:category];
-    [self clearCategoryNameMaxWidth];
-}
-
-- (Category*) categoryForCategoryID:(unsigned)categoryID
-{
-    for( Category* category in self.categories )
-	if( category.categoryID == categoryID )
-	    return category;
-    return NULL;
+    ManagedCategory* category = [NSEntityDescription insertNewObjectForEntityForName:@"Category" inManagedObjectContext:self.managedObjectContext];
+    category.name = name;
+    return category;
 }
 
 - (unsigned) categoryNameMaxWidth
@@ -153,27 +201,10 @@
 
 }
 
-// Purge a Category record from the database and the category array
-- (void) purgeCategory:(Category*)category
+- (void) removeCategory:(ManagedCategory*)category
 {
-    // Move all LogEntries in the deleted category to category "None"
-    NSArray* a = [NSArray arrayWithArray:self.days];
-    for( LogDay* s in a )
-    {
-	NSArray* entries = [NSArray arrayWithArray:s.entries];
-	for( LogEntry* e in entries )
-	    if( e.category && (e.category == category) )
-		e.category = nil;;
-    }
-
-    [LogEntry moveAllEntriesInCategory:category toCategory:nil database:self.database];
-    [Category deleteCategory:category fromDatabase:self.database];
-    [self removeCategory:category];
-}
-
-- (void) removeCategory:(Category*)type
-{
-    [self.categories removeObject:type];
+    [self.managedObjectContext deleteObject:category];
+    [self.categories removeObject:category];
     [self clearCategoryNameMaxWidth];
 }
 
@@ -205,22 +236,11 @@
 #pragma mark
 #pragma mark Insulin Types
 
-- (void) addInsulinType:(InsulinType*)type
+- (ManagedInsulinType*) addInsulinTypeWithName:(NSString*)name
 {
-    if( ![self.insulinTypes containsObject:type] )
-    {
-	[InsulinType insertInsulinType:type intoDatabase:self.database];
-	[self.insulinTypes addObject:type];
-    }
-    [self clearInsulinTypeShortNameMaxWidth];
-}
-
-- (void) addInsulinTypeWithName:(NSString*)name
-{
-    InsulinType *const type = [InsulinType newInsulinTypeWithName:name
-							 database:self.database];
-    [self.insulinTypes addObject:type];
-    [self clearInsulinTypeShortNameMaxWidth];
+    ManagedInsulinType* insulinType = [NSEntityDescription insertNewObjectForEntityForName:@"InsulinType" inManagedObjectContext:self.managedObjectContext];
+    insulinType.shortName = name;
+    return insulinType;
 }
 
 // Clear the max width so it will be recomputed next time it's needed
@@ -236,14 +256,6 @@
     for( ManagedInsulinType* insulinType in self.insulinTypes )
 	insulinType.sequenceNumber = index;
     insulinTypeShortNameMaxWidth = NULL;
-}
-
-- (InsulinType*) insulinTypeForInsulinTypeID:(unsigned)typeID
-{
-    for( InsulinType* t in self.insulinTypes )
-	if( t.typeID == typeID )
-	    return t;
-    return NULL;
 }
 
 - (unsigned) insulinTypeShortNameMaxWidth
@@ -267,7 +279,7 @@
 
 - (void) moveInsulinTypeAtIndex:(unsigned)from toIndex:(unsigned)to
 {
-    InsulinType *const type = [self.insulinTypes objectAtIndex:from];
+    ManagedInsulinType *const type = [self.insulinTypes objectAtIndex:from];
 
     /* The previous line lazy-instantiated the insulin types array, so there's
 	no longer a need to use the accessor method. */
@@ -290,32 +302,10 @@
 						     error:&error];
 }
 
-// Purge an InsulinType record from the database and the insulinTypes array
-- (void) purgeInsulinType:(InsulinType*)type
+- (void) removeInsulinType:(ManagedInsulinType*)insulinType
 {
-    const unsigned typeID = [type typeID];
-    [LogEntry deleteDosesForInsulinTypeID:typeID fromDatabase:self.database];
-    [type deleteFromDatabase:self.database];
-    [self removeInsulinType:type];
-
-    // Remove all of the LogEntry doses with the deleted insulin type
-    for( LogDay* s in self.days )
-    {
-	for( LogEntry* e in s.entries )
-	{
-	    NSArray* doses = [NSArray arrayWithArray:e.insulin];
-	    for( InsulinDose* d in doses )
-		if( d.insulinType && (d.insulinType == type) )
-		    [e.insulin removeObjectIdenticalTo:d];
-	}
-    }
-    [self clearInsulinTypeShortNameMaxWidth];
-}
-
-- (void) removeInsulinType:(InsulinType*)type
-{
-    [self removeInsulinTypeForNewEntries:type];
-    [self.insulinTypes removeObject:type];
+    [self removeInsulinTypeForNewEntries:insulinType];
+    [self.insulinTypes removeObject:insulinType];
     [self clearInsulinTypeShortNameMaxWidth];
 }
 
@@ -347,7 +337,7 @@
 #pragma mark
 #pragma mark Insulin Types for New Entries
 
-- (void) addInsulinTypeForNewEntries:(InsulinType*)type
+- (void) addInsulinTypeForNewEntries:(ManagedInsulinType*)type
 {
     [self.insulinTypesForNewEntries addObject:type];
     [self flushInsulinTypesForNewEntries];
@@ -382,7 +372,7 @@ int orderInsulinTypesByIndex(id left, id right, void* insulinTypes)
 					      forKey:kDefaultInsulinTypes];
 }
 
-- (void) removeInsulinTypeForNewEntries:(InsulinType*)type
+- (void) removeInsulinTypeForNewEntries:(ManagedInsulinType*)type
 {
     if( [self.insulinTypesForNewEntries containsObject:type] )
     {
@@ -399,56 +389,45 @@ int orderInsulinTypesByIndex(id left, id right, void* insulinTypes)
 
 #pragma mark Log Days
 
-- (void) deleteLogDay:(LogDay*)day
+- (void) deleteLogDay:(ManagedLogDay*)managedLogDay
 {
-    // Delete all of the LogDay's entries from the database
-    [day deleteAllEntriesFromDatabase:self.database];
-
-    // Remove the LogDay itself
-    [days removeObjectIdenticalTo:day];
+    [self.managedObjectContext deleteObject:managedLogDay];
+    [_logDays removeObjectIdenticalTo:managedLogDay];
+    [self save];
 }
 
-- (LogDay*) logDayAtIndex:(unsigned)index
++ (ManagedLogDay*) insertManagedLogDayIntoContext:(NSManagedObjectContext*)managedObjectContext
 {
-    const unsigned count = [days count];
-    if( index < count )
-	return [days objectAtIndex:index];
-    if( index < numberOfLogDays )
-    {
-	/* At this point count <= index < numberOfLogDays, which implies that
-	    count < numberOfLogDays. Therefore, there is at least one more day
-	    that can be loaded.	*/
-	const unsigned num = [LogDay loadDays:days
-				 fromDatabase:self.database
-					limit:(index-count+1)
-				       offset:count];
-	if( index < (count+num) )
-	    return [days objectAtIndex:index];
-    }
-    return NULL;
+    return [NSEntityDescription insertNewObjectForEntityForName:@"LogDay"
+					 inManagedObjectContext:managedObjectContext];
+}
+
+- (ManagedLogDay*) insertManagedLogDay
+{
+    return [LogModel insertManagedLogDayIntoContext:self.managedObjectContext];
 }
 
 static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 						 NSMonthCalendarUnit |
 						 NSDayCalendarUnit);
 
-- (LogDay*) logDayForDate:(NSDate*)date
+- (ManagedLogDay*) logDayForDate:(NSDate*)date
 {
     NSCalendar *const calendar = [NSCalendar currentCalendar];
     NSDateComponents *const _date = [calendar components:DATE_COMPONENTS_FOR_DAY
 					        fromDate:date];
-    for( LogDay* s in self.days )
+    for( ManagedLogDay* logDay in self.logDays )
     {
 	NSDateComponents *const c = [calendar components:DATE_COMPONENTS_FOR_DAY
-						fromDate:s.date];
+						fromDate:logDay.date];
 	if( (_date.day == c.day) &&
 	    (_date.month == c.month) &&
 	    (_date.year == c.year) )
-	    return s;
+	    return logDay;
     }
 
-    LogDay* day = [[LogDay alloc] initWithDate:date];
-    day.name = [shortDateFormatter stringFromDate:date];
+    ManagedLogDay* managedLogDay = [LogModel insertManagedLogDayIntoContext:self.managedObjectContext];
+    managedLogDay.date = date;
 
     /* At this point it's already known that the given date doesn't match
     	anything in the array. So, only need to compare seconds; no need to
@@ -457,72 +436,106 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     // Find the index that the new LogDay should be inserted at
     unsigned i = 0;
     const double a = [date timeIntervalSince1970];
-    for( LogDay* s in self.days )
+    for( ManagedLogDay* logDay in self.logDays )
     {
-	if( a > [s.date timeIntervalSince1970] )
+	if( a > [logDay.date timeIntervalSince1970] )
 	    break;
 	++i;
     }
 
-    [self.days insertObject:day atIndex:i];
-    return day;
+    [_logDays insertObject:managedLogDay atIndex:i];
+    return managedLogDay;
 }
 
 #pragma mark Log Entries
 
-- (NSMutableArray*) logEntriesForDay:(LogDay*)day
+- (NSDate*) dateOfEarliestLogEntry
 {
-    if( day && day.count && ![day.entries count] )
-	[day hydrate:self];
-    return day.entries;
+    NSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"LogEntry"];
+    fetchRequest.sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:YES]];
+    fetchRequest.fetchLimit = 1;
+
+    NSError* error = nil;
+    NSArray* fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    if( fetchedObjects.count )
+	return [fetchedObjects objectAtIndex:0];
+    return nil;
 }
 
-- (LogEntry*) logEntryAtIndex:(unsigned)entry inDay:(LogDay*)day
+- (unsigned) numberOfLogEntriesFromDate:(NSDate*)startDate toDate:(NSDate*)endDate
 {
-    NSMutableArray* entries = [self logEntriesForDay:day];
-    return (entry >= [entries count]) ? nil : [entries objectAtIndex:entry];
+    NSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"LogEntry"];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"(timestamp >= %@) AND (timestamp <= %@)", startDate, endDate];
+
+    NSError* error = nil;
+    return [self.managedObjectContext countForFetchRequest:fetchRequest error:&error];
 }
 
-- (LogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day
+- (ManagedLogEntry*) logEntryAtIndex:(unsigned)index inDay:(ManagedLogDay*)logDay
 {
-    return [self logEntryAtIndex:entry inDay:[self logDayAtIndex:day]];
+    NSOrderedSet* entries = logDay.logEntries;
+    return (index >= [entries count]) ? nil : [entries objectAtIndex:index];
 }
 
-- (unsigned) numberOfEntriesForLogDayAtIndex:(unsigned)index
+- (ManagedLogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)dayIndex
 {
-    return [[self logDayAtIndex:index] count];
+    ManagedLogDay* logDay = [self.logDays objectAtIndex:dayIndex];
+    return [logDay.logEntries objectAtIndex:entry];
 }
 
-- (LogEntry*) createLogEntry
+- (ManagedLogEntry*) insertManagedLogEntry
 {
-    LogEntry* entry = [LogEntry createLogEntryInDatabase:self.database];
+    return [ManagedLogEntry insertManagedLogEntryInContext:self.managedObjectContext];
+}
 
-    /* Set defaults for the new LogEntry
-	Don't use the returned string directly because glucoseUnits is used
-	elsewhere in pointer comparisons (for performance reasons).
-	Consequently, it must be a pointer to one of the constants in
-	Constants.h.   */
-    if( [[defaults objectForKey:kDefaultGlucoseUnits] isEqualToString:kGlucoseUnits_mgdL] )
-	entry.glucoseUnits = kGlucoseUnits_mgdL;
-    else
-	entry.glucoseUnits = kGlucoseUnits_mmolL;
+- (ManagedLogEntry*) insertManagedLogEntryWithUndo
+{
+    self.managedObjectContext.undoManager = [[NSUndoManager alloc] init];
 
-    return entry;
+    ManagedLogEntry* managedLogEntry = [ManagedLogEntry insertManagedLogEntryInContext:self.managedObjectContext];
+    managedLogEntry.timestamp = [NSDate date];
+    managedLogEntry.glucoseUnits = [NSNumber numberWithInt:[self glucoseUnitsSetting]];
+
+    for( ManagedInsulinType* insulinType in self.insulinTypesForNewEntries )
+	[managedLogEntry addDoseWithType:insulinType];
+
+    return managedLogEntry;
+}
+
+- (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to
+{
+    NSMutableArray* logDaysToDelete = [[NSMutableArray alloc] init];
+    for( ManagedLogDay* logDay in self.logDays )
+    {
+	NSDate *const d = logDay.date;
+	NSComparisonResult b = [from compare:d];
+	NSComparisonResult c = [to compare:d];
+
+	if( ((b == NSOrderedAscending) || (b == NSOrderedSame)) &&
+	   ((c == NSOrderedDescending) || (c == NSOrderedSame)) )
+	    [logDaysToDelete addObject:logDay];
+    }
+
+    for( ManagedLogDay* logDay in logDaysToDelete )
+    {
+	logDay.logEntries = [NSOrderedSet orderedSet];
+	[self.managedObjectContext deleteObject:logDay];
+	[_logDays removeObjectIdenticalTo:logDay];
+    }
 }
 
 // Delete the given entry from the given LogDay. Remove the LogDay if it becomes empty.
-- (void) deleteLogEntry:(LogEntry*)entry inDay:(LogDay*)day
+- (void) deleteLogEntry:(ManagedLogEntry*)logEntry fromDay:(ManagedLogDay*)logDay
 {
-    [day deleteEntry:entry fromDatabase:self.database];
+    [self.managedObjectContext deleteObject:logEntry];
 
-    if( 0 == day.count )
-	[days removeObjectIdenticalTo:day];
+    if( 0 == logDay.logEntries.count )
+	[_logDays removeObjectIdenticalTo:logDay];
 }
 
-- (void) moveLogEntry:(LogEntry*)entry fromDay:(LogDay*)from toDay:(LogDay*)to
+- (void) moveLogEntry:(ManagedLogEntry*)logEntry toDay:(ManagedLogDay*)logDay
 {
-    [to insertEntry:entry];			// Add entry to new section
-    [self deleteLogEntry:entry inDay:from];	// Remove from old section
+    logEntry.logDay = logDay;
 }
 
 #pragma mark -
@@ -540,24 +553,13 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     return _categories;
 }
 
-- (sqlite3*) database
-{
-    if( !database )
-    {
-	database = [LogModel openDatabasePath:[LogModel writeableSqliteDBPath]];
-        numberOfLogDays = [LogDay numberOfDays:database];
-    }
-
-    return database;
-}
-
 - (NSArray*) insulinTypes
 {
     if( !_insulinTypes )
     {
 	NSError* error = nil;
 	_insulinTypes = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedInsulinTypesInContext:self.managedObjectContext]
-												  error:&error]];
+												error:&error]];
     }
 
     return _insulinTypes;
@@ -568,28 +570,27 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     if( !_insulinTypesForNewEntries )
     {
 	_insulinTypesForNewEntries = [NSMutableArray new];
-	for( NSNumber* typeID in [defaults objectForKey:kDefaultInsulinTypes] )
+	for( NSURL* insulinTypeURI in [defaults objectForKey:kDefaultInsulinTypes] )
 	{
-	    InsulinType *const t = [self insulinTypeForInsulinTypeID:[typeID intValue]];
-	    if( t )
-		[_insulinTypesForNewEntries addObject:t];
+	    NSManagedObjectID* managedObjectID = [self.managedObjectContext.persistentStoreCoordinator managedObjectIDForURIRepresentation:insulinTypeURI];
+	    if( managedObjectID )
+		[_insulinTypesForNewEntries addObject:[self.managedObjectContext objectWithID:managedObjectID]];
 	}
     }
 
     return _insulinTypesForNewEntries;
 }
 
-- (unsigned) numberOfLoadedLogDays
+- (NSArray*) logDays
 {
-    return [days count];
-}
-
-/* If the number of log days is requested before the database has been opened,
-    open it and count the days. Otherwise, return the available number.	*/
-- (unsigned) numberOfLogDays
-{
-    return numberOfLogDays;
-//    return numberOfLogDays ? numberOfLogDays : [LogDay numberOfDays:self.database];
+    if( !_logDays )
+    {
+	NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] init];
+	fetchRequest.entity = [NSEntityDescription entityForName:@"LogDay" inManagedObjectContext:self.managedObjectContext];
+	NSError* error = nil;
+	_logDays = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:fetchRequest error:&error]];
+    }
+    return _logDays;
 }
 
 #pragma mark Core Data
@@ -624,21 +625,11 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     }
 }
 
-- (NSURL*) applicationDocumentsDirectory
-{
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-}
-
-- (NSURL*) sqlitePersistentStoreURL
-{
-    return [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"GlucoseCoreData.sqlite"];
-}
-
 - (NSManagedObjectContext*) managedObjectContext
 {
     if( !_managedObjectContext )
     {
-	BOOL sqliteDatabaseAlreadyExisted = [[NSFileManager defaultManager] fileExistsAtPath:[[self sqlitePersistentStoreURL] path]];
+	BOOL sqliteDatabaseAlreadyExisted = [[NSFileManager defaultManager] fileExistsAtPath:[[LogModel sqlitePersistentStoreURL] path]];
 	NSPersistentStoreCoordinator* coordinator = [self persistentStoreCoordinator];
 	if( coordinator )
 	{
@@ -676,7 +667,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
         return _persistentStoreCoordinator;
 
     NSError* error = nil;
-    NSURL* storeURL = [self sqlitePersistentStoreURL];
+    NSURL* storeURL = [LogModel sqlitePersistentStoreURL];
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
     if( ![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
 						   configuration:nil
@@ -709,6 +700,13 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     return _persistentStoreCoordinator;
 }
 
+- (void) commitChanges
+{
+    [self save];
+    self.managedObjectContext.undoManager = nil;
+}
+
+
 - (void) save
 {
     if( _managedObjectContext )
@@ -717,6 +715,117 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 	if( ![_managedObjectContext save:&error] )
 	    NSLog(@"Couldn't save because: %@", [error localizedDescription]);
     }
+}
+
+- (void) undo
+{
+    [self.managedObjectContext rollback];
+    self.managedObjectContext.undoManager = nil;
+}
+
+#pragma mark - Settings
+
+- (GlucoseUnitsType) glucoseUnitsSetting
+{
+    NSNumber* glucoseSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kSettingsGlucoseUnitsKey];
+    if( [glucoseSetting isEqualToNumber:kSettingsGlucoseUnitsValue_mgdL] )
+	return kGlucoseUnits_mgdL;
+    else if( [glucoseSetting isEqualToNumber:kSettingsGlucoseUnitsValue_mmolL] )
+	return kGlucoseUnits_mmolL;
+    return kGlucoseUnitsUnknown;
+}
+
+- (void) setGlucoseUnitsSetting:(GlucoseUnitsType)units
+{
+    switch( units )
+    {
+	case kGlucoseUnits_mgdL:
+	    [[NSUserDefaults standardUserDefaults] setObject:kSettingsGlucoseUnitsValue_mgdL forKey:kSettingsGlucoseUnitsKey];
+	    break;
+	case kGlucoseUnits_mmolL:
+	    [[NSUserDefaults standardUserDefaults] setObject:kSettingsGlucoseUnitsValue_mmolL forKey:kSettingsGlucoseUnitsKey];
+	    break;
+	default:
+	    break;
+    }
+}
+
+- (NSString*) highGlucoseWarningThresholdKey
+{
+    return (kGlucoseUnits_mgdL == self.glucoseUnitsSetting) ? kSettingsHighGlucoseWarningThresholdKey_mgdL : kSettingsHighGlucoseWarningThresholdKey_mmolL;
+}
+
+- (NSString*) lowGlucoseWarningThresholdKey
+{
+    return (kGlucoseUnits_mgdL == self.glucoseUnitsSetting) ? kSettingsLowGlucoseWarningThresholdKey_mgdL : kSettingsLowGlucoseWarningThresholdKey_mmolL;
+}
+
+- (NSNumber*) defaultHighGlucoseWarningThreshold
+{
+    return (kGlucoseUnits_mgdL == self.glucoseUnitsSetting) ? kDefaultHighGlucoseWarningThreshold_mgdL : kDefaultHighGlucoseWarningThreshold_mmolL;
+}
+
+- (NSNumber*) defaultLowGlucoseWarningThreshold
+{
+    return kDefaultHighGlucoseWarningThreshold_mgdL ? kDefaultLowGlucoseWarningThreshold_mgdL : kDefaultLowGlucoseWarningThreshold_mmolL;
+}
+
+- (NSNumber*) glucoseThresholdForKey:(NSString*)key default:(NSNumber*)defaultValue
+{
+    NSNumber* thresholdSetting = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    if( !thresholdSetting )
+	thresholdSetting = defaultValue;
+    return thresholdSetting;
+}
+
+- (NSNumber*) highGlucoseWarningThresholdSetting
+{
+    return [self glucoseThresholdForKey:[self highGlucoseWarningThresholdKey]
+				default:[self defaultHighGlucoseWarningThreshold]];
+}
+
+- (NSNumber*) lowGlucoseWarningThresholdSetting
+{
+    return [self glucoseThresholdForKey:[self lowGlucoseWarningThresholdKey]
+				default:[self defaultLowGlucoseWarningThreshold]];
+}
+
+#pragma mark Glucose Thresholds
+
+- (float) highGlucoseWarningThreshold
+{
+    return [[self highGlucoseWarningThresholdSetting] floatValue];
+}
+
+- (float) lowGlucoseWarningThreshold
+{
+    return [[self lowGlucoseWarningThresholdSetting] floatValue];
+}
+
+- (void) setHighGlucoseWarningThreshold:(NSNumber*)threshold
+{
+    [[NSUserDefaults standardUserDefaults] setObject:threshold forKey:[self highGlucoseWarningThresholdKey]];
+}
+
+- (void) setLowGlucoseWarningThreshold:(NSNumber*)threshold
+{
+    [[NSUserDefaults standardUserDefaults] setObject:threshold forKey:[self lowGlucoseWarningThresholdKey]];
+}
+
+#pragma mark Glucose Threshold Strings
+
+- (NSString*) highGlucoseWarningThresholdString
+{
+    NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
+    formatter.numberStyle = NSNumberFormatterDecimalStyle;
+    return [formatter stringFromNumber:[self highGlucoseWarningThresholdSetting]];
+}
+
+- (NSString*) lowGlucoseWarningThresholdString
+{
+    NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
+    formatter.numberStyle = NSNumberFormatterDecimalStyle;
+    return [formatter stringFromNumber:[self lowGlucoseWarningThresholdSetting]];
 }
 
 @end

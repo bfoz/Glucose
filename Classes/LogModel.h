@@ -4,17 +4,25 @@
 @class Category;
 @class ManagedCategory;
 @class ManagedInsulinType;
-@class InsulinType;
+@class ManagedLogDay;
+@class ManagedLogEntry;
 @class LogDay;
 @class LogEntry;
 
+typedef enum
+{
+    kGlucoseUnitsUnknown,
+    kGlucoseUnits_mgdL,
+    kGlucoseUnits_mmolL,
+} GlucoseUnitsType;
+
+extern NSString* GlucoseUnitsTypeString_mgdL;
+extern NSString* GlucoseUnitsTypeString_mmolL;
+
 @interface LogModel : NSObject
 {
-    unsigned	    numberOfLogDays;	// Number of LogDays available in the database
-
 @private
     NSNumber*	    categoryNameMaxWidth;
-    NSMutableArray* days;
     NSUserDefaults* defaults;
     NSNumber*	    insulinTypeShortNameMaxWidth;
     NSDateFormatter* shortDateFormatter;
@@ -25,61 +33,68 @@
 @property (nonatomic, strong, readonly)	NSMutableArray*	insulinTypesForNewEntries;
 
 @property (nonatomic, readonly)	unsigned    categoryNameMaxWidth;
-@property (nonatomic, readonly)	sqlite3*    database;
-@property (nonatomic, readonly)	NSMutableArray*    days;
+@property (nonatomic, strong, readonly)	NSArray*    logDays;
 @property (nonatomic, readonly)	unsigned    insulinTypeShortNameMaxWidth;
-@property (nonatomic, readonly)	unsigned    numberOfLoadedLogDays;
-@property (nonatomic, readonly)	unsigned    numberOfLogDays;
 
-- (id) init;
+- (NSData*) csvDataFromDate:(NSDate*)startDate toDate:(NSDate*)endDate;
 - (NSString*) shortStringFromDate:(NSDate*)date;
 
-- (void) close;
-- (void) flush;
+#pragma mark Settings
+
+- (GlucoseUnitsType) glucoseUnitsSetting;
+- (void) setGlucoseUnitsSetting:(GlucoseUnitsType)units;
+
+- (float) highGlucoseWarningThreshold;
+- (float) lowGlucoseWarningThreshold;
+- (void) setHighGlucoseWarningThreshold:(NSNumber*)threshold;
+- (void) setLowGlucoseWarningThreshold:(NSNumber*)threshold;
+
+- (NSString*) highGlucoseWarningThresholdString;
+- (NSString*) lowGlucoseWarningThresholdString;
 
 #pragma mark Categories
-
-- (void) addCategory:(Category*)category;
-- (void) addCategoryWithName:(NSString*)name;
-- (Category*) categoryForCategoryID:(unsigned)categoryID;
+- (ManagedCategory*) addCategoryWithName:(NSString*)name;
 - (void) moveCategoryAtIndex:(unsigned)from toIndex:(unsigned)to;
-- (void) purgeCategory:(Category*)category;
 - (void) updateCategory:(ManagedCategory*)category;
+- (void) removeCategory:(ManagedCategory*)category;
 - (void) restoreBundledCategories;
 
 # pragma mark Insulin Types
-
-- (void) addInsulinType:(InsulinType*)type;
-- (void) addInsulinTypeWithName:(NSString*)name;
+- (ManagedInsulinType*) addInsulinTypeWithName:(NSString*)name;
 - (void) flushInsulinTypes;
-- (InsulinType*) insulinTypeForInsulinTypeID:(unsigned)typeID;
 - (void) moveInsulinTypeAtIndex:(unsigned)from toIndex:(unsigned)to;
 - (unsigned) numberOfLogEntriesForInsulinType:(ManagedInsulinType*)insulinType;
-- (void) purgeInsulinType:(InsulinType*)type;
-- (void) removeInsulinType:(InsulinType*)type;
-- (void) updateInsulinType:(InsulinType*)type;
+- (void) removeInsulinType:(ManagedInsulinType*)type;
+- (void) updateInsulinType:(ManagedInsulinType*)type;
 - (void) restoreBundledInsulinTypes;
 
 #pragma mark Insulin Types for New Entries
 
-- (void) addInsulinTypeForNewEntries:(InsulinType*)type;
+- (void) addInsulinTypeForNewEntries:(ManagedInsulinType*)type;
 - (void) flushInsulinTypesForNewEntries;
-- (void) removeInsulinTypeForNewEntries:(InsulinType*)type;
+- (void) removeInsulinTypeForNewEntries:(ManagedInsulinType*)type;
 - (void) removeInsulinTypeForNewEntriesAtIndex:(unsigned)index;
 
 #pragma mark Log Days
-- (void) deleteLogDay:(LogDay*)day;
-- (LogDay*) logDayAtIndex:(unsigned)index;
-- (LogDay*) logDayForDate:(NSDate*)d;
+- (void) deleteLogDay:(ManagedLogDay*)day;
+- (ManagedLogDay*) logDayForDate:(NSDate*)d;
 
 #pragma mark Log Entries
-- (NSMutableArray*) logEntriesForDay:(LogDay*)day;
-- (LogEntry*) logEntryAtIndex:(unsigned)entry inDay:(LogDay*)day;
-- (LogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day;
-- (unsigned) numberOfEntriesForLogDayAtIndex:(unsigned)index;
+- (NSDate*) dateOfEarliestLogEntry;
+- (unsigned) numberOfLogEntriesFromDate:(NSDate*)fromDate toDate:(NSDate*)toDate;
 
-- (LogEntry*) createLogEntry;
-- (void) deleteLogEntry:(LogEntry*)entry inDay:(LogDay*)day;
-- (void) moveLogEntry:(LogEntry*)entry fromDay:(LogDay*)from toDay:(LogDay*)to;
+- (ManagedLogEntry*) insertManagedLogEntry;
+- (ManagedLogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day;
+
++ (ManagedLogDay*) insertManagedLogDayIntoContext:(NSManagedObjectContext*)managedObjectContext;
+- (ManagedLogDay*) insertManagedLogDay;
+- (ManagedLogEntry*) insertManagedLogEntryWithUndo;
+
+- (void) commitChanges;
+- (void) save;
+- (void) undo;
+
+- (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to;
+- (void) deleteLogEntry:(ManagedLogEntry*)logEntry fromDay:(ManagedLogDay*)logDay;
 
 @end

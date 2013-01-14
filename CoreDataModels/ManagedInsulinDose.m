@@ -2,7 +2,7 @@
 //  ManagedInsulinDose.m
 //  Glucose
 //
-//  Created by Brandon Fosdick on 01/05/13.
+//  Created by Brandon Fosdick on 01/13/13.
 //
 //
 
