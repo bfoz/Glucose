@@ -10,10 +10,9 @@
 
 @implementation CategoryViewController
 {
-    id <CategoryViewControllerDelegate>	__unsafe_unretained delegate;
     ManagedCategory*	deleteCategory;
 }
-@synthesize delegate;
+
 @synthesize model;
 
 - (id) init
@@ -67,10 +66,10 @@
 
 - (void) appendNewCategory
 {
-    if( [delegate respondsToSelector:@selector(categoryViewControllerCreateCategory)] )
+    if( [self.delegate respondsToSelector:@selector(categoryViewControllerCreateCategory)] )
     {
 	const unsigned index = [model.categories count];
-	[delegate categoryViewControllerCreateCategory];
+	[self.delegate categoryViewControllerCreateCategory];
 	NSIndexPath *const path = [NSIndexPath indexPathForRow:index inSection:0];
 	[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:path]
 			      withRowAnimation:UITableViewRowAnimationFade];
@@ -82,7 +81,7 @@
 
 - (void) deleteCategory:(ManagedCategory*)category atIndex:(unsigned)index
 {
-    [delegate categoryViewControllerDidDeleteCategory:category];
+    [self.delegate categoryViewControllerDidDeleteCategory:category];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
 			  withRowAnimation:UITableViewRowAnimationFade];
 }
@@ -183,9 +182,9 @@
     if( self.editing )
     {
 	if( kRestoreDefaultsSectionNumber == indexPath.section )
-	    if( [delegate respondsToSelector:@selector(categoryViewControllerDidSelectRestoreDefaults)] )
+	    if( [self.delegate respondsToSelector:@selector(categoryViewControllerDidSelectRestoreDefaults)] )
 	    {
-		[delegate categoryViewControllerDidSelectRestoreDefaults];
+		[self.delegate categoryViewControllerDidSelectRestoreDefaults];
 		[self.tableView reloadData];
 	    }
     }
@@ -194,8 +193,8 @@
 	const unsigned row = indexPath.row;
 	// Row 0 is the "None" row
 	self.selectedCategory = row ? [model.categories objectAtIndex:row-1] : nil;
-	if( [delegate respondsToSelector:@selector(categoryViewControllerDidSelectCategory:)] )
-	    [delegate categoryViewControllerDidSelectCategory:self.selectedCategory];
+	if( [self.delegate respondsToSelector:@selector(categoryViewControllerDidSelectCategory:)] )
+	    [self.delegate categoryViewControllerDidSelectCategory:self.selectedCategory];
     }
 
     // HI guidlines say row should be selected and then deselected

@@ -13,6 +13,8 @@
 
 @interface LogDay ()
 
+@property (nonatomic, strong)	NSString*	units;
+
 - (id) initWithStatement:(sqlite3_stmt*)statement;
 
 - (void) loadUnitsFromDatabase:(sqlite3*)database;
@@ -26,7 +28,6 @@
 @synthesize	date;
 @synthesize	entries;
 @synthesize name;
-@synthesize units;
 
 static const char *sqlLoadDays = "SELECT timestamp, COUNT(timestamp), AVG(glucose) FROM localLogEntries GROUP BY date(timestamp,'unixepoch','localtime') ORDER BY timestamp DESC LIMIT ? OFFSET ?";
 static const char *sqlNumDays = "SELECT COUNT() FROM (SELECT DISTINCT date(timestamp,'unixepoch','localtime') FROM localLogEntries)";
@@ -86,7 +87,7 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 	averageGlucose = 0;
 		count = 0;
 		entries = [[NSMutableArray alloc] init];
-	units = NULL;
+	self.units = NULL;
 	}
 	return self;
 }
@@ -101,7 +102,7 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 	averageGlucose = sqlite3_column_double(statement, 2);
 
 	entries = [[NSMutableArray alloc] initWithCapacity:count];
-	units = NULL;
+	_units = NULL;
 	[self loadUnitsFromDatabase:sqlite3_db_handle(statement)];
     }
 
@@ -126,8 +127,8 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
     {
 	/* Use the units from the day's first entry and hope the user hasn't
 	 been switching units within a section    */
-	units = [LogEntry unitsStringForInteger:sqlite3_column_int(stmtGlucoseUnits, 0)];
-	if( units )
+	_units = [LogEntry unitsStringForInteger:sqlite3_column_int(stmtGlucoseUnits, 0)];
+	if( _units )
 	    break;
     }
     sqlite3_reset(stmtGlucoseUnits);	// Reset the statement for reuse
@@ -244,17 +245,17 @@ static sqlite3_stmt*	stmtGlucoseUnits = NULL;
 // Return the units string for the units used by the day's entries
 - (NSString*) units
 {
-    if( units )
-	return units;
+    if( _units )
+	return _units;
 
     /*	If the units aren't known, but there's at least one LogEntry available,
 	this is probably a new record that wasn't loaded from the database. So,
 	use the units from the day's first entry and hope the user hasn't been
 	switching units within a day.	*/
     if( [entries count] )
-	units = [[entries objectAtIndex:0] glucoseUnits];
+	_units = [[entries objectAtIndex:0] glucoseUnits];
 
-    return units;
+    return _units;
 }
 
 @end

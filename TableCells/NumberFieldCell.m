@@ -9,7 +9,6 @@
     UILabel*	label;
 }
 
-@synthesize delegate;
 @synthesize field;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier

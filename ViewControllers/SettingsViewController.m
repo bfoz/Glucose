@@ -86,8 +86,8 @@ enum AboutSectionRows
     [model flushInsulinTypesForNewEntries];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-    if( delegate && [delegate respondsToSelector:@selector(settingsViewControllerDidPressBack)] )
-	[delegate settingsViewControllerDidPressBack];
+    if( [self.delegate respondsToSelector:@selector(settingsViewControllerDidPressBack)] )
+	[self.delegate settingsViewControllerDidPressBack];
 }
 
 - (void) glucoseUnitsAction:(UISegmentedControl*)sender
@@ -109,8 +109,8 @@ enum AboutSectionRows
     lowGlucoseWarningField.text = [model lowGlucoseWarningThresholdString];
     
     // Inform the delegate of the change of units
-    if( delegate && [delegate respondsToSelector:@selector(settingsViewControllerDidChangeGlucoseUnits)] )
-	[delegate settingsViewControllerDidChangeGlucoseUnits];
+    if( [self.delegate respondsToSelector:@selector(settingsViewControllerDidChangeGlucoseUnits)] )
+	[self.delegate settingsViewControllerDidChangeGlucoseUnits];
 }
 
 - (void) fractionalInsulinAction:(UISwitch*)sender

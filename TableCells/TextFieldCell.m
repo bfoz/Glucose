@@ -16,7 +16,7 @@
 
 @implementation TextFieldCell
 
-@synthesize delegate, editedObject, view;
+@synthesize view;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

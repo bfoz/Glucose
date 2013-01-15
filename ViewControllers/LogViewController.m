@@ -20,7 +20,7 @@
 @interface LogViewController () <SettingsViewControllerDelegate>
 
 @property (nonatomic, strong)	NSDateFormatter*	dateFormatter;
-@property (nonatomic, unsafe_unretained) id<LogViewDelegate>   delegate;
+@property (nonatomic, weak) id<LogViewDelegate>   delegate;
 @property (nonatomic, strong) LogModel*	model;
 @property (nonatomic, strong) SettingsViewController* settingsViewController;
 

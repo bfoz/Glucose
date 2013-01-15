@@ -4,7 +4,6 @@
 
 @implementation DoseFieldCell
 
-@synthesize delegate;
 @synthesize doseField;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier

@@ -12,7 +12,7 @@
     unsigned	deleteRow;
 }
 
-@property (nonatomic, unsafe_unretained) id <CategoryViewControllerDelegate>   delegate;
+@property (nonatomic, weak) id <CategoryViewControllerDelegate>   delegate;
 @property (nonatomic, strong) LogModel*				    model;
 @property (nonatomic, strong) ManagedCategory* selectedCategory;
 

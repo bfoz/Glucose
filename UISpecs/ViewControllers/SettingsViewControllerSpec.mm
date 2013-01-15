@@ -14,10 +14,13 @@ SPEC_BEGIN(SettingsViewControllerSpec)
 
 describe(@"SettingsViewController", ^{
     __block SettingsViewController* controller;
+    __block UINavigationController* navigationController;
     __block id mockLogModel;
 
     beforeEach(^{
-	controller = [[SettingsViewController alloc] init];
+	controller = [[[SettingsViewController alloc] init] autorelease];
+	navigationController = [[[UINavigationController alloc] initWithRootViewController:controller] autorelease];
+	navigationController.topViewController should be_same_instance_as(controller);
 
 	mockLogModel = [OCMockObject mockForClass:[LogModel class]];
 	controller.model = mockLogModel;

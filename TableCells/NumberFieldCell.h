@@ -13,12 +13,10 @@
 
 @interface NumberFieldCell : UITableViewCell <UITextFieldDelegate>
 {
-    id <NumberFieldCellDelegate> __unsafe_unretained delegate;
-
     NumberField*    field;
 }
 
-@property (nonatomic, unsafe_unretained) id <NumberFieldCellDelegate> delegate;
+@property (nonatomic, weak) id <NumberFieldCellDelegate> delegate;
 
 @property (nonatomic, readonly)	UITextField*	field;
 @property (nonatomic, copy)	NSNumber*	number;

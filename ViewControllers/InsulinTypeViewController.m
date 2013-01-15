@@ -15,7 +15,7 @@
 {
     NSMutableSet*	selectedInsulinTypes;
 }
-@synthesize delegate;
+
 @synthesize model;
 @synthesize multiCheck;
 
@@ -90,8 +90,8 @@
 - (void) viewWillDisappear:(BOOL)animated
 {
     if( multiCheck )
-	if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidEndMultiSelect)] )
-	    [delegate insulinTypeViewControllerDidEndMultiSelect];
+	if( [self.delegate respondsToSelector:@selector(insulinTypeViewControllerDidEndMultiSelect)] )
+	    [self.delegate insulinTypeViewControllerDidEndMultiSelect];
     [super viewWillDisappear:animated];
 }
 
@@ -110,10 +110,10 @@
 
 - (void) appendNewInsulinType
 {
-    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerCreateInsulinType)] )
+    if( [self.delegate respondsToSelector:@selector(insulinTypeViewControllerCreateInsulinType)] )
     {
 	const unsigned index = [model.insulinTypes count];
-	[delegate insulinTypeViewControllerCreateInsulinType];
+	[self.delegate insulinTypeViewControllerCreateInsulinType];
 	NSIndexPath *const path = [NSIndexPath indexPathForRow:index inSection:0];
 	[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:path]
 			      withRowAnimation:UITableViewRowAnimationFade];
@@ -125,9 +125,9 @@
 
 - (void) deleteInsulinTypeAtIndex:(unsigned)index
 {
-    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidDeleteInsulinType:)] )
+    if( [self.delegate respondsToSelector:@selector(insulinTypeViewControllerDidDeleteInsulinType:)] )
     {
-	[delegate insulinTypeViewControllerDidDeleteInsulinType:[model.insulinTypes objectAtIndex:index]];
+	[self.delegate insulinTypeViewControllerDidDeleteInsulinType:[model.insulinTypes objectAtIndex:index]];
 	[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
 			      withRowAnimation:UITableViewRowAnimationFade];
     }
@@ -253,9 +253,9 @@
     // The Restore Defaults button is only displayed in edit mode
     if( kRestoreDefaultsSectionNumber == indexPath.section )
     {
-	if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidSelectRestoreDefaults)] )
+	if( [self.delegate respondsToSelector:@selector(insulinTypeViewControllerDidSelectRestoreDefaults)] )
 	{
-	    [delegate insulinTypeViewControllerDidSelectRestoreDefaults];
+	    [self.delegate insulinTypeViewControllerDidSelectRestoreDefaults];
 	    [self.tableView reloadData];
 	}
     }
@@ -268,8 +268,8 @@
 	//  The delegate can block the selection event by returning NO
 	if( UITableViewCellAccessoryNone == cell.accessoryType )
 	{
-	    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidSelectInsulinType:)] )
-		if( [delegate insulinTypeViewControllerDidSelectInsulinType:t] )
+	    if( [self.delegate respondsToSelector:@selector(insulinTypeViewControllerDidSelectInsulinType:)] )
+		if( [self.delegate insulinTypeViewControllerDidSelectInsulinType:t] )
 		{
 		    if( multiCheck )
 			cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -282,8 +282,8 @@
 	{
 	    cell.accessoryType = UITableViewCellAccessoryNone;
 	    [selectedInsulinTypes removeObject:t];
-	    if( [delegate respondsToSelector:@selector(insulinTypeViewControllerDidUnselectInsulinType:)] )
-		[delegate insulinTypeViewControllerDidUnselectInsulinType:t];
+	    if( [self.delegate respondsToSelector:@selector(insulinTypeViewControllerDidUnselectInsulinType:)] )
+		[self.delegate insulinTypeViewControllerDidUnselectInsulinType:t];
 	}
     }
 }

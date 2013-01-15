@@ -10,7 +10,6 @@
 
 @interface InsulinTypeViewController : UITableViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
-    id <InsulinTypeViewControllerDelegate>  __unsafe_unretained delegate;
     LogModel*				    model;
 
     BOOL			dirty;
@@ -23,7 +22,7 @@
     } alertReason;
 }
 
-@property (nonatomic, unsafe_unretained) id <InsulinTypeViewControllerDelegate>   delegate;
+@property (nonatomic, weak) id<InsulinTypeViewControllerDelegate>   delegate;
 @property (nonatomic, strong) LogModel*					model;
 @property (nonatomic, assign) BOOL	multiCheck;
 

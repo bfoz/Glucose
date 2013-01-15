@@ -9,7 +9,7 @@
     if( [self.customView isKindOfClass:[UIButton class]] )
         [(UIButton*)self.customView tap];
     else
-        [self.target performSelector:self.action];
+        [self.target performSelector:self.action withObject:self];
 }
 
 @end

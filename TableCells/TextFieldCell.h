@@ -14,14 +14,12 @@
 //@interface TextFieldCell : EditableTableViewCell <UITextFieldDelegate>
 @interface TextFieldCell : UITableViewCell <UITextFieldDelegate>
 {
-	id <TextFieldCellDelegate> __unsafe_unretained delegate;
-	id __unsafe_unretained editedObject;
     UITextField *view;
 }
 
 @property (nonatomic)	UITextFieldViewMode	clearButtonMode;
-@property (nonatomic, unsafe_unretained)	id	<TextFieldCellDelegate>	delegate;
-@property (nonatomic, unsafe_unretained)	id	editedObject;
+@property (nonatomic, weak) id	<TextFieldCellDelegate>	delegate;
+@property (nonatomic, weak) id	editedObject;
 @property (nonatomic, strong)	UIFont*	font;
 @property (nonatomic, copy)	NSString*	placeholder;
 @property (nonatomic, copy)	NSString*	text;

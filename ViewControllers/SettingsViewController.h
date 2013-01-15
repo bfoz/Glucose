@@ -11,14 +11,13 @@
 
 @interface SettingsViewController : UITableViewController
 {
-    id<SettingsViewControllerDelegate>    delegate;
     LogModel*		    model;
 
     NumberField*		highGlucoseWarningField;
     NumberField*		lowGlucoseWarningField;
 }
 
-@property (nonatomic, strong)	id<SettingsViewControllerDelegate>    delegate;
+@property (nonatomic, weak)	id<SettingsViewControllerDelegate>    delegate;
 @property (nonatomic, strong) LogModel*				    model;
 
 @end
