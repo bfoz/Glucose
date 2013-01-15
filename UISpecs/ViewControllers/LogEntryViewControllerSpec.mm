@@ -52,8 +52,8 @@ describe(@"LogEntryViewController", ^{
 	controller.tableView.delegate should equal(controller);
     });
 
-    it(@"should have 1 sections", ^{
-	[controller.tableView numberOfSections] should equal(1);
+    it(@"should have the correct number of sections", ^{
+	[controller.tableView numberOfSections] should equal(3);
     });
 
     it(@"should have 1 row in section 0", ^{

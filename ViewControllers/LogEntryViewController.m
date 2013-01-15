@@ -193,10 +193,7 @@ static NSUserDefaults* defaults = nil;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tv
 {
-    if( self.editing )
-	return NUM_SECTIONS;
-    else
-	return 1 + (self.logEntry.insulinDoses.count ? 1 : 0) + (self.logEntry.note && [self.logEntry.note length] ? 1 : 0);
+    return NUM_SECTIONS;
 }
 
 // Section 0 - Timestamp/Category/Glucose
@@ -213,14 +210,14 @@ static NSUserDefaults* defaults = nil;
 {
     switch( section )
     {
-	case 0:
+	case kSectionGlucose:
 	    if( self.editing )
 		return 3;
 	    else
 		return 1 + (self.logEntry.glucose ? 1 : 0) + (self.logEntry.category ? 1 : 0);
 	case kSectionInsulin:
 	    return self.logEntry.insulinDoses.count;
-	case 2:
+	case kSectionNote:
 	    if( self.editing )
 		return 1;
 	    else
