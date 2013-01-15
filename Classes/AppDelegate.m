@@ -69,12 +69,6 @@ NSDateFormatter* shortDateFormatter = nil;
     UINavigationController* aNavigationController = [[UINavigationController alloc] initWithRootViewController:logViewController];
     self.navController = aNavigationController;
 
-
-    // The application ships with a default database in its bundle. If anything in the application
-    // bundle is altered, the code sign will fail. We want the database to be editable by users, 
-    // so we need to create a copy of it in the application's Documents directory.     
-    [self createEditableCopyOfDatabaseIfNeeded];
-
     [window addSubview:[navController view]];
     [window makeKeyAndVisible];
 
@@ -94,31 +88,6 @@ NSDateFormatter* shortDateFormatter = nil;
     }
     // Add whatever other url handling code your app requires here
     return NO;
-}
-
-#pragma mark -
-#pragma mark <LogViewDelegate>
-
-#pragma mark -
-#pragma mark Database Initialization
-
-// Creates a writable copy of the bundled default database in the application Documents directory.
-- (void)createEditableCopyOfDatabaseIfNeeded
-{
-    // First, test for existence.
-    NSFileManager* fileManager = [NSFileManager defaultManager];
-    NSString *writableDBPath = [LogModel writeableSqliteDBPath];
-    if( [fileManager fileExistsAtPath:writableDBPath] )
-	return;
-
-    NSLog(@"Database did not exist\n");
-    // The writable database does not exist, so copy the default to the appropriate location.
-    NSError *error;
-    BOOL success = [fileManager copyItemAtPath:[LogModel bundledDatabasePath]
-					toPath:writableDBPath
-					 error:&error];
-    if( !success )
-        NSAssert1(0, @"Failed to create writable database file with message '%@'.", [error localizedDescription]);
 }
 
 #pragma mark -
