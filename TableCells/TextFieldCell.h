@@ -27,7 +27,7 @@
 @property (nonatomic)	UITextAlignment	textAlignment;
 @property (nonatomic, strong) UITextField *view;
 
-- (void) resignFirstResponder;
+- (BOOL) resignFirstResponder;
 
 @end
 

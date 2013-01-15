@@ -54,9 +54,9 @@
 	self.view.frame  = insetFrame;
 }
 
-- (void) resignFirstResponder
+- (BOOL) resignFirstResponder
 {
-	[view resignFirstResponder];
+    return [view resignFirstResponder];
 }
 
 #pragma mark UITextFieldDelegate

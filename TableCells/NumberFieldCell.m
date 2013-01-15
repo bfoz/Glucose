@@ -55,9 +55,9 @@
     return [field becomeFirstResponder];
 }
 
-- (void) resignFirstResponder
+- (BOOL) resignFirstResponder
 {
-    [field resignFirstResponder];
+    return [field resignFirstResponder];
 }
 
 

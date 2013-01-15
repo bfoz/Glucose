@@ -29,7 +29,7 @@
 @property (nonatomic)	UITextAlignment	textAlignment;
 
 - (BOOL) becomeFirstResponder;
-- (void) resignFirstResponder;
+- (BOOL) resignFirstResponder;
 
 @end
 
