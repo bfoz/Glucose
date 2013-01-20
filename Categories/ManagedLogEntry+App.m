@@ -40,12 +40,14 @@
     return [self is_mgdL] ? 0 : 1;
 }
 
-- (void) addDoseWithType:(ManagedInsulinType*)insulinType
+- (ManagedInsulinDose*) addDoseWithType:(ManagedInsulinType*)insulinType
 {
     ManagedInsulinDose* managedInsulinDose = [NSEntityDescription insertNewObjectForEntityForName:@"InsulinDose" inManagedObjectContext:self.managedObjectContext];
 
     managedInsulinDose.logEntry = self;
     managedInsulinDose.insulinType = insulinType;
+
+    return managedInsulinDose;
 }
 
 @end

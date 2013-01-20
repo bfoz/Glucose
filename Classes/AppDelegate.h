@@ -10,11 +10,9 @@
 {
     IBOutlet UIWindow *window;
     UINavigationController* navController;
-
-@private
-    LogModel*	model;
 }
 
+@property (nonatomic, strong) LogModel*	model;
 @property (nonatomic, strong)	UIWindow*	window;
 @property (nonatomic, strong)	UINavigationController* navController;
 

@@ -1,9 +1,11 @@
 #import "LogModel.h"
 
+@class ManagedCategory;
+
 @interface LogModel (SQLite)
 
-+ (NSMutableArray*) loadCategoriesFromDatabase:(sqlite3*)database;
-+ (NSMutableArray*) loadInsulinTypesFromDatabase:(sqlite3*)database;
++ (NSArray*) loadCategoriesFromDatabase:(sqlite3*)database;
++ (NSArray*) loadInsulinTypesFromDatabase:(sqlite3*)database;
 
 + (NSString*) bundledDatabasePath;
 + (NSString*) writeableSqliteDBPath;

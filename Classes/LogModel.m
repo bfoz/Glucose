@@ -4,6 +4,7 @@
 #import "LogModel.h"
 #import "LogModel+CoreData.h"
 #import "LogModel+SQLite.h"
+#import "LogModel+Migration.h"
 
 #import "ManagedCategory.h"
 #import "ManagedInsulinDose.h"
@@ -24,7 +25,9 @@ static NSString* kSettingsGlucoseUnitsKey	= @"DefaultGlucoseUnits";
 static NSString* kSettingsHighGlucoseWarningThresholdKey_mgdL	= @"HighGlucoseWarning0";
 static NSString* kSettingsHighGlucoseWarningThresholdKey_mmolL	= @"HighGlucoseWarning1";
 static NSString* kSettingsLowGlucoseWarningThresholdKey_mgdL	= @"LowGlucoseWarning0";
-static NSString* kSettingsLowGlucoseWarningThresholdKey_mmolL	= @"HighGlucoseWarning1";
+static NSString* kSettingsLowGlucoseWarningThresholdKey_mmolL	= @"LowGlucoseWarning1";
+
+static NSString* kSettingsNewEntryInsulinTypes	= @"SettingsNewEntryInsulinTypes";
 
 static NSNumber* kDefaultHighGlucoseWarningThreshold_mgdL;
 static NSNumber* kDefaultHighGlucoseWarningThreshold_mmolL;
@@ -55,6 +58,27 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 @synthesize categories = _categories;
 @synthesize insulinTypes = _insulinTypes;
 @synthesize insulinTypesForNewEntries = _insulinTypesForNewEntries;
+
++ (NSArray*) settingsNewEntryInsulinTypes
+{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:kSettingsNewEntryInsulinTypes];
+}
+
++ (void) flushInsulinTypesForNewEntries:(NSOrderedSet*)managedInsulinTypes
+{
+    NSMutableArray* insulinTypeURIs = [NSMutableArray array];
+    for( ManagedInsulinType* managedInsulinType in managedInsulinTypes )
+    {
+	NSURL* uri = [managedInsulinType.objectID URIRepresentation];
+	[insulinTypeURIs addObject:[uri absoluteString]];
+    }
+
+    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setObject:insulinTypeURIs forKey:kSettingsNewEntryInsulinTypes];
+    [userDefaults synchronize];
+}
+
+#pragma mark -
 
 - (id) init
 {
@@ -231,6 +255,8 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 	managedCategory.sequenceNumber = index;
 	++index;
     }
+
+    [self save];
 }
 
 #pragma mark
@@ -332,6 +358,8 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 	managedInsulinType.sequenceNumber = index;
 	++index;
     }
+
+    [self save];
 }
 
 #pragma mark
@@ -343,40 +371,26 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
     [self flushInsulinTypesForNewEntries];
 }
 
-int orderInsulinTypesByIndex(id left, id right, void* insulinTypes)
-{
-    unsigned a = [((__bridge NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:left];
-    unsigned b = [((__bridge NSMutableArray*)insulinTypes) indexOfObjectIdenticalTo:right];
-    if( a < b )
-	return NSOrderedAscending;
-    if( a == b )
-	return NSOrderedSame;
-    return NSOrderedDescending;
-}
-
 - (void) flushInsulinTypesForNewEntries
 {
-    const unsigned count = [self.insulinTypesForNewEntries count];
-    NSMutableArray *const a = [NSMutableArray arrayWithCapacity:count];
+    [_insulinTypesForNewEntries sortUsingComparator:^(id left, id right) {
+	unsigned a = [self.insulinTypes indexOfObjectIdenticalTo:left];
+	unsigned b = [self.insulinTypes indexOfObjectIdenticalTo:right];
+	if( a < b )
+	    return NSOrderedAscending;
+	if( a == b )
+	    return NSOrderedSame;
+	return NSOrderedDescending;
+    }];
 
-    for( InsulinType* type in self.insulinTypesForNewEntries )
-	[a addObject:[NSNumber numberWithInt:type.typeID]];
-
-    /* Sort the array before flushing it to keep it in the same order as the
-	insulinTypes array. The NewLogEntry view uses the array order when
-	displaying new dose rows.   */
-    [self.insulinTypesForNewEntries sortUsingFunction:orderInsulinTypesByIndex
-					      context:(__bridge void *)(self.insulinTypes)];
-
-    [[NSUserDefaults standardUserDefaults] setObject:a
-					      forKey:kDefaultInsulinTypes];
+    [LogModel flushInsulinTypesForNewEntries:_insulinTypesForNewEntries];
 }
 
 - (void) removeInsulinTypeForNewEntries:(ManagedInsulinType*)type
 {
     if( [self.insulinTypesForNewEntries containsObject:type] )
     {
-	[self.insulinTypesForNewEntries removeObjectIdenticalTo:type];
+	[self.insulinTypesForNewEntries removeObject:type];
 	[self flushInsulinTypesForNewEntries];
     }
 }
@@ -544,35 +558,27 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 - (NSArray*) categories
 {
     if( !_categories )
-    {
-	NSError* error = nil;
 	_categories = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedCategoriesInContext:self.managedObjectContext]
-											      error:&error]];
-    }
-
+											      error:nil]];
     return _categories;
 }
 
 - (NSArray*) insulinTypes
 {
     if( !_insulinTypes )
-    {
-	NSError* error = nil;
 	_insulinTypes = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedInsulinTypesInContext:self.managedObjectContext]
-												error:&error]];
-    }
-
+												error:nil]];
     return _insulinTypes;
 }
 
-- (NSArray*) insulinTypesForNewEntries
+- (NSOrderedSet*) insulinTypesForNewEntries
 {
     if( !_insulinTypesForNewEntries )
     {
-	_insulinTypesForNewEntries = [NSMutableArray new];
-	for( NSURL* insulinTypeURI in [defaults objectForKey:kDefaultInsulinTypes] )
+	_insulinTypesForNewEntries = [[NSMutableOrderedSet alloc] init];
+	for( NSString* insulinTypeURIString in [LogModel settingsNewEntryInsulinTypes] )
 	{
-	    NSManagedObjectID* managedObjectID = [self.managedObjectContext.persistentStoreCoordinator managedObjectIDForURIRepresentation:insulinTypeURI];
+	    NSManagedObjectID* managedObjectID = [self.managedObjectContext.persistentStoreCoordinator managedObjectIDForURIRepresentation:[NSURL URLWithString:insulinTypeURIString]];
 	    if( managedObjectID )
 		[_insulinTypesForNewEntries addObject:[self.managedObjectContext objectWithID:managedObjectID]];
 	}
@@ -585,71 +591,18 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 {
     if( !_logDays )
     {
-	NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] init];
-	fetchRequest.entity = [NSEntityDescription entityForName:@"LogDay" inManagedObjectContext:self.managedObjectContext];
-	NSError* error = nil;
-	_logDays = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:fetchRequest error:&error]];
+	NSFetchRequest* fetchRequest = [LogModel fetchRequestForOrderedLogDaysInContext:self.managedObjectContext];
+	_logDays = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:fetchRequest error:nil]];
     }
     return _logDays;
 }
 
 #pragma mark Core Data
 
-+ (void) importFromBundledDatabaseIntoContext:(NSManagedObjectContext*)managedObjectContext
-{
-    sqlite3* database = [LogModel openDatabasePath:[LogModel bundledDatabasePath]];
-    if( !database )
-	return;
-
-    NSArray* bundledCategories = [LogModel loadCategoriesFromDatabase:database];
-    NSArray* bundledInsulinTypes = [LogModel loadInsulinTypesFromDatabase:database];
-
-    [LogModel closeDatabase:database];
-
-    unsigned index = 0;
-    for( Category* category in bundledCategories )
-    {
-	ManagedCategory* managedCategory = [LogModel insertManagedCategoryIntoContext:managedObjectContext];
-	managedCategory.name = category.categoryName;
-	managedCategory.sequenceNumber = index;
-	++index;
-    }
-
-    index = 0;
-    for( InsulinType* insulinType in bundledInsulinTypes )
-    {
-	ManagedInsulinType* managedInsulinType = [LogModel insertManagedInsulinTypeIntoContext:managedObjectContext];
-	managedInsulinType.shortName = insulinType.shortName;
-	managedInsulinType.sequenceNumber = index;
-	++index;
-    }
-}
-
 - (NSManagedObjectContext*) managedObjectContext
 {
     if( !_managedObjectContext )
-    {
-	BOOL sqliteDatabaseAlreadyExisted = [[NSFileManager defaultManager] fileExistsAtPath:[[LogModel sqlitePersistentStoreURL] path]];
-	NSPersistentStoreCoordinator* coordinator = [self persistentStoreCoordinator];
-	if( coordinator )
-	{
-	    _managedObjectContext = [[NSManagedObjectContext alloc] init];
-	    _managedObjectContext.persistentStoreCoordinator = coordinator;
-
-	    if( !sqliteDatabaseAlreadyExisted )
-	    {
-		NSManagedObjectContext* importContext = [[NSManagedObjectContext alloc] init];
-		importContext.persistentStoreCoordinator = coordinator;
-		importContext.undoManager = nil;    // Disable the undo manager so it doesn't store history that we don't care about
-
-		[LogModel importFromBundledDatabaseIntoContext:importContext];
-
-		NSError* error;
-		if( ![importContext save:&error] )
-		    NSLog(@"Couldn't save after importing bundled database: %@", [error localizedDescription]);
-	    }
-	}
-    }
+	_managedObjectContext = [LogModel managedObjectContext];
 
     return _managedObjectContext;
 }
@@ -657,45 +610,14 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 - (NSManagedObjectModel*) managedObjectModel
 {
     if( !_managedObjectModel )
-	_managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"Glucose" withExtension:@"momd"]];
+	_managedObjectModel = [LogModel managedObjectModel];
     return _managedObjectModel;
 }
 
 - (NSPersistentStoreCoordinator*) persistentStoreCoordinator
 {
-    if( _persistentStoreCoordinator )
-        return _persistentStoreCoordinator;
-
-    NSError* error = nil;
-    NSURL* storeURL = [LogModel sqlitePersistentStoreURL];
-    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if( ![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
-						   configuration:nil
-							     URL:storeURL
-							 options:@{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
-							   error:&error] )
-    {
-        /*
-         Replace this implementation with code to handle the error appropriately.
-
-         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-
-         Typical reasons for an error here include:
-         * The persistent store is not accessible;
-         * The schema for the persistent store is incompatible with current managed object model.
-         Check the error message to determine what the actual problem was.
-
-
-         If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
-
-         If you encounter schema incompatibility errors during development, you can reduce their frequency by:
-         * Simply deleting the existing store:
-	 [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil];
-         */
-
-        NSLog(@"Unresolved error %@", error);
-        abort();
-    }
+    if( !_persistentStoreCoordinator )
+        _persistentStoreCoordinator = [LogModel persistentStoreCoordinator];
 
     return _persistentStoreCoordinator;
 }
@@ -710,11 +632,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 - (void) save
 {
     if( _managedObjectContext )
-    {
-	NSError *error;
-	if( ![_managedObjectContext save:&error] )
-	    NSLog(@"Couldn't save because: %@", [error localizedDescription]);
-    }
+	[LogModel saveManagedObjectContext:_managedObjectContext];
 }
 
 - (void) undo
@@ -732,10 +650,10 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 	return kGlucoseUnits_mgdL;
     else if( [glucoseSetting isEqualToNumber:kSettingsGlucoseUnitsValue_mmolL] )
 	return kGlucoseUnits_mmolL;
-    return kGlucoseUnitsUnknown;
+    return kGlucoseUnits_mgdL;
 }
 
-- (void) setGlucoseUnitsSetting:(GlucoseUnitsType)units
++ (void) setGlucoseUnitsSetting:(GlucoseUnitsType)units
 {
     switch( units )
     {

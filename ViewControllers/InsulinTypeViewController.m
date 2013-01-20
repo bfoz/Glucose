@@ -4,9 +4,7 @@
 
 #import "AppDelegate.h"
 #import "InsulinTypeViewController.h"
-#import "LogEntry.h"
 #import "LogModel.h"
-#import "ManagedInsulinType.h"
 
 #define	kInsulinTypesSectionNumber		0
 #define	kRestoreDefaultsSectionNumber		1
@@ -54,7 +52,7 @@
 #pragma mark -
 #pragma mark External Interface
 
-- (void) setSelectedInsulinType:(InsulinType*)type
+- (void) setSelectedInsulinType:(ManagedInsulinType*)type
 {
     if( selectedInsulinTypes )
     {
@@ -66,15 +64,12 @@
 	selectedInsulinTypes = [NSMutableSet setWithObject:type];
 }
 
-- (void) setSelectedInsulinTypesWithArray:(NSArray*)types
+- (void) setSelectedInsulinTypesWithArray:(NSOrderedSet*)types
 {
-    if( selectedInsulinTypes )
-    {
-	[selectedInsulinTypes removeAllObjects];
-	[selectedInsulinTypes addObjectsFromArray:types];
-    }
+    if( types.count )
+	selectedInsulinTypes = [NSMutableSet setWithArray:[types array]];
     else
-	selectedInsulinTypes = [NSMutableSet setWithArray:types];
+	selectedInsulinTypes = nil;
 }
 
 #pragma mark -
@@ -224,7 +219,7 @@
 		cell.accessibilityLabel = [type shortName];
 
 		// Highlight the row if its insulin type is on the list of types used for new entries
-		if( NSNotFound != [model.insulinTypesForNewEntries indexOfObjectIdenticalTo:type] )
+		if( NSNotFound != [model.insulinTypesForNewEntries indexOfObject:type] )
 		    ((TextFieldCell*)cell).textField.textColor = [UIColor blueColor];
 		else
 		    ((TextFieldCell*)cell).textField.textColor = [UIColor blackColor];
@@ -316,7 +311,7 @@
 	// If the row corresponds to a type that's used as a default insulin
 	//  type for new log entries, then ask the user for confirmation first
 	ManagedInsulinType *const type = [model.insulinTypes objectAtIndex:path.row];
-	if( NSNotFound != [model.insulinTypesForNewEntries indexOfObjectIdenticalTo:type] )
+	if( NSNotFound != [model.insulinTypesForNewEntries indexOfObject:type] )
 	{
 	    alertReason = ALERT_REASON_DEFAULT_NEW_ENTRY_TYPE;
 	    deleteRowNum = path.row;

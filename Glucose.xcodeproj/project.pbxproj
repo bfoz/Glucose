@@ -15,6 +15,7 @@
 		150829D70E500B0500FB556A /* InsulinType.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829D20E500B0500FB556A /* InsulinType.m */; };
 		150829D80E500B0500FB556A /* LogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829D40E500B0500FB556A /* LogEntry.m */; };
 		150829F20E500DCA00FB556A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 150829F10E500DCA00FB556A /* CoreGraphics.framework */; };
+		1512FA7E16A62592006EB310 /* LogModel+MigrationSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1512FA7D16A62592006EB310 /* LogModel+MigrationSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		1517983F1250156100E28662 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1517983E1250156100E28662 /* MessageUI.framework */; };
 		152DCCC216A28A0300EA9371 /* LogModel+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 152DCCC116A28A0300EA9371 /* LogModel+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 153F26A00E7F70C000F75D9F /* Security.framework */; };
@@ -78,6 +79,7 @@
 		15A322480ED35C9F00C16388 /* ContactListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A322470ED35C9F00C16388 /* ContactListViewController.m */; };
 		15A3225A0ED3E0D000C16388 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A322590ED3E0D000C16388 /* Contact.m */; };
 		15AF2FE20EC1799F00FC2403 /* LogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 15AF2FE10EC1799F00FC2403 /* LogDay.m */; };
+		15B7FE0B16ABA94700259A02 /* large.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 15B7FE0A16ABA94700259A02 /* large.sqlite */; };
 		15C2E7C5162D29D4002115FD /* DateField.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C2E7C4162D29D4002115FD /* DateField.m */; };
 		15C2E7C6162D29D4002115FD /* DateField.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C2E7C4162D29D4002115FD /* DateField.m */; };
 		15C30BB8161D476500976444 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BB7161D476500976444 /* Default-568h@2x.png */; };
@@ -91,6 +93,8 @@
 		15E59E601698CD410067BDC1 /* LogModel+SQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */; };
 		15E59E611698CD410067BDC1 /* LogModel+SQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */; };
 		15E59EC11698E6620067BDC1 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */; };
+		15E59F601698F4510067BDC1 /* LogModel+Migration.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59F5F1698F4510067BDC1 /* LogModel+Migration.m */; };
+		15E59F611698F4510067BDC1 /* LogModel+Migration.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59F5F1698F4510067BDC1 /* LogModel+Migration.m */; };
 		15E59FE5169918FA0067BDC1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E59FE4169918FA0067BDC1 /* CoreData.framework */; };
 		15E59FE6169919030067BDC1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15E59FE4169918FA0067BDC1 /* CoreData.framework */; };
 		15E59FE91699195E0067BDC1 /* Glucose.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 15E59FE71699195E0067BDC1 /* Glucose.xcdatamodeld */; };
@@ -222,6 +226,7 @@
 		150829D40E500B0500FB556A /* LogEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogEntry.m; sourceTree = "<group>"; };
 		150829D90E500B2400FB556A /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		150829F10E500DCA00FB556A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		1512FA7D16A62592006EB310 /* LogModel+MigrationSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "LogModel+MigrationSpec.mm"; sourceTree = "<group>"; };
 		1517983E1250156100E28662 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		152DCCC016A28A0300EA9371 /* LogModel+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+SpecHelper.h"; sourceTree = "<group>"; };
 		152DCCC116A28A0300EA9371 /* LogModel+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LogModel+SpecHelper.m"; sourceTree = "<group>"; };
@@ -294,6 +299,7 @@
 		15A322590ED3E0D000C16388 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
 		15AF2FE00EC1799F00FC2403 /* LogDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogDay.h; sourceTree = "<group>"; };
 		15AF2FE10EC1799F00FC2403 /* LogDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogDay.m; sourceTree = "<group>"; };
+		15B7FE0A16ABA94700259A02 /* large.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = large.sqlite; sourceTree = "<group>"; };
 		15C2E7C3162D29D3002115FD /* DateField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateField.h; sourceTree = "<group>"; };
 		15C2E7C4162D29D4002115FD /* DateField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DateField.m; sourceTree = "<group>"; };
 		15C30BB5161D474E00976444 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -309,6 +315,8 @@
 		15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SpecHelper.m"; sourceTree = "<group>"; };
 		15E59E5E1698CD410067BDC1 /* LogModel+SQLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+SQLite.h"; sourceTree = "<group>"; };
 		15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LogModel+SQLite.m"; sourceTree = "<group>"; };
+		15E59F5E1698F4510067BDC1 /* LogModel+Migration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+Migration.h"; sourceTree = "<group>"; };
+		15E59F5F1698F4510067BDC1 /* LogModel+Migration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LogModel+Migration.m"; sourceTree = "<group>"; };
 		15E59FE4169918FA0067BDC1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		15E59FE81699195E0067BDC1 /* Glucose.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Glucose.xcdatamodel; sourceTree = "<group>"; };
 		15E59FFA16991A830067BDC1 /* LogModel+CoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+CoreData.h"; sourceTree = "<group>"; };
@@ -377,20 +385,20 @@
 				150829CE0E500B0500FB556A /* Category.m */,
 				15A322580ED3E0D000C16388 /* Contact.h */,
 				15A322590ED3E0D000C16388 /* Contact.m */,
+				15C2E7C3162D29D3002115FD /* DateField.h */,
+				15C2E7C4162D29D4002115FD /* DateField.m */,
 				150829CF0E500B0500FB556A /* InsulinDose.h */,
 				150829D00E500B0500FB556A /* InsulinDose.m */,
 				150829D10E500B0500FB556A /* InsulinType.h */,
 				150829D20E500B0500FB556A /* InsulinType.m */,
-				150829D30E500B0500FB556A /* LogEntry.h */,
-				150829D40E500B0500FB556A /* LogEntry.m */,
 				15AF2FE00EC1799F00FC2403 /* LogDay.h */,
 				15AF2FE10EC1799F00FC2403 /* LogDay.m */,
-				155A26A70F2AF5810077FC20 /* NumberField.h */,
-				155A26A80F2AF5810077FC20 /* NumberField.m */,
+				150829D30E500B0500FB556A /* LogEntry.h */,
+				150829D40E500B0500FB556A /* LogEntry.m */,
 				15EC68CB13B1B74900016937 /* LogModel.h */,
 				15EC68CC13B1B74900016937 /* LogModel.m */,
-				15C2E7C3162D29D3002115FD /* DateField.h */,
-				15C2E7C4162D29D4002115FD /* DateField.m */,
+				155A26A70F2AF5810077FC20 /* NumberField.h */,
+				155A26A80F2AF5810077FC20 /* NumberField.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -443,6 +451,14 @@
 			path = ViewControllers;
 			sourceTree = "<group>";
 		};
+		1512FA7C16A6255A006EB310 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				1512FA7D16A62592006EB310 /* LogModel+MigrationSpec.mm */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
 		1581CDB9155F059300B069F2 /* Externals */ = {
 			isa = PBXGroup;
 			children = (
@@ -481,20 +497,22 @@
 			isa = PBXGroup;
 			children = (
 				1581CE26155F123500B069F2 /* Application */,
+				1512FA7C16A6255A006EB310 /* Categories */,
 				15922D6A162FBF8E00693C2C /* Classes */,
 				158F40EE162A4C760000DD52 /* Helpers */,
-				1581CE14155F0F9A00B069F2 /* Supporting Files */,
+				1581CE14155F0F9A00B069F2 /* Fixtures */,
 				1581CE2D155F2DF100B069F2 /* ViewControllers */,
 				158F41DB162B730C0000DD52 /* SpecsHelper.h */,
 			);
 			path = UISpecs;
 			sourceTree = "<group>";
 		};
-		1581CE14155F0F9A00B069F2 /* Supporting Files */ = {
+		1581CE14155F0F9A00B069F2 /* Fixtures */ = {
 			isa = PBXGroup;
 			children = (
+				15B7FE0A16ABA94700259A02 /* large.sqlite */,
 			);
-			name = "Supporting Files";
+			path = Fixtures;
 			sourceTree = "<group>";
 		};
 		1581CE26155F123500B069F2 /* Application */ = {
@@ -570,6 +588,8 @@
 			children = (
 				15E59FFA16991A830067BDC1 /* LogModel+CoreData.h */,
 				15E59FFB16991A830067BDC1 /* LogModel+CoreData.m */,
+				15E59F5E1698F4510067BDC1 /* LogModel+Migration.h */,
+				15E59F5F1698F4510067BDC1 /* LogModel+Migration.m */,
 				15E59E5E1698CD410067BDC1 /* LogModel+SQLite.h */,
 				15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */,
 				15836FDF169E89EE000D4FC2 /* ManagedLogDay+App.h */,
@@ -838,6 +858,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15B7FE0B16ABA94700259A02 /* large.sqlite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -943,6 +964,9 @@
 				1557428416A3E220002C53F2 /* ManagedLogEntry.m in Sources */,
 				1557428816A3E25B002C53F2 /* ManagedCategory.m in Sources */,
 				1557428C16A3E289002C53F2 /* ManagedInsulinType.m in Sources */,
+				15E59E611698CD410067BDC1 /* LogModel+SQLite.m in Sources */,
+				15E59F611698F4510067BDC1 /* LogModel+Migration.m in Sources */,
+				1512FA7E16A62592006EB310 /* LogModel+MigrationSpec.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -988,6 +1012,7 @@
 				1557428316A3E220002C53F2 /* ManagedLogEntry.m in Sources */,
 				1557428716A3E25B002C53F2 /* ManagedCategory.m in Sources */,
 				1557428B16A3E289002C53F2 /* ManagedInsulinType.m in Sources */,
+				15E59F601698F4510067BDC1 /* LogModel+Migration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1077,6 +1102,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					"FIXTURES_DIRECTORY=\"\\\"$SRCROOT/UISpecs/Fixtures\\\"\"",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;

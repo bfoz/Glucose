@@ -1,6 +1,6 @@
 #import "ManagedLogEntry.h"
 
-@class ManagedInsulinType;
+@class ManagedInsulinDose, ManagedInsulinType;
 
 @interface ManagedLogEntry (App)
 
@@ -10,6 +10,6 @@
 - (NSString*) glucoseString;
 - (NSString*) glucoseUnitsString;
 
-- (void) addDoseWithType:(ManagedInsulinType*)insulinType;
+- (ManagedInsulinDose*) addDoseWithType:(ManagedInsulinType*)insulinType;
 
 @end

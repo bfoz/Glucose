@@ -95,12 +95,12 @@ enum AboutSectionRows
     switch( sender.selectedSegmentIndex )
     {
 	case 0:
-	    model.glucoseUnitsSetting = kGlucoseUnits_mgdL;
+	    [LogModel setGlucoseUnitsSetting:kGlucoseUnits_mgdL];
 	    highGlucoseWarningField.precision = 0;
 	    lowGlucoseWarningField.precision = 0;
 	    break;
 	case 1:
-	    model.glucoseUnitsSetting = kGlucoseUnits_mmolL;
+	    [LogModel setGlucoseUnitsSetting:kGlucoseUnits_mmolL];
 	    highGlucoseWarningField.precision = 1;
 	    lowGlucoseWarningField.precision = 1;
 	    break;

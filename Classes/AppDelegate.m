@@ -8,6 +8,8 @@
 #import "InsulinType.h"
 #import "LogEntry.h"
 #import "LogDay.h"
+#import "LogModel+CoreData.h"
+#import "LogModel+Migration.h"
 #import "LogModel+SQLite.h"
 #import "LogViewController.h"
 
@@ -57,15 +59,9 @@ NSDateFormatter* shortDateFormatter = nil;
 						      root:kDBRootAppFolder];
     [DBSession setSharedSession:session];
 
-    // Create the Log Model object
-    model = [[LogModel alloc] init];
-    if( !model )
-    {
-	NSLog(@"Could not create a LogModel");
-	return NO;
-    }
+    [LogModel checkForMigration];
 
-    LogViewController* logViewController = [[LogViewController alloc] initWithModel:model delegate:self];
+    LogViewController* logViewController = [[LogViewController alloc] initWithModel:self.model delegate:self];
     UINavigationController* aNavigationController = [[UINavigationController alloc] initWithRootViewController:logViewController];
     self.navController = aNavigationController;
 
@@ -90,13 +86,13 @@ NSDateFormatter* shortDateFormatter = nil;
     return NO;
 }
 
-#pragma mark -
-#pragma mark Properties
+#pragma mark - Accessors
 
-// This is a dummy property to get KVO to work on the dummy entries key
-- (NSMutableArray*)entries
+- (LogModel*) model
 {
-	return nil;
+    if( !_model )
+	_model = [[LogModel alloc] init];
+    return _model;
 }
 
 @end

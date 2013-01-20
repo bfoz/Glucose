@@ -28,7 +28,7 @@
 
 - (void) setMultiCheck:(BOOL)e;
 - (void) setSelectedInsulinType:(ManagedInsulinType*)type;
-- (void) setSelectedInsulinTypesWithArray:(NSArray*)types;
+- (void) setSelectedInsulinTypesWithArray:(NSOrderedSet*)types;
 
 @end
 

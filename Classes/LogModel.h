@@ -30,11 +30,14 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 
 @property (nonatomic, strong, readonly)	NSMutableArray*	categories;
 @property (nonatomic, strong, readonly)	NSMutableArray*	insulinTypes;
-@property (nonatomic, strong, readonly)	NSMutableArray*	insulinTypesForNewEntries;
+@property (nonatomic, strong, readonly)	NSMutableOrderedSet*	insulinTypesForNewEntries;
 
 @property (nonatomic, readonly)	unsigned    categoryNameMaxWidth;
 @property (nonatomic, strong, readonly)	NSArray*    logDays;
 @property (nonatomic, readonly)	unsigned    insulinTypeShortNameMaxWidth;
+
++ (NSArray*) settingsNewEntryInsulinTypes;
++ (void) flushInsulinTypesForNewEntries:(NSOrderedSet*)managedInsulinTypes;
 
 - (NSData*) csvDataFromDate:(NSDate*)startDate toDate:(NSDate*)endDate;
 - (NSString*) shortStringFromDate:(NSDate*)date;
@@ -42,7 +45,7 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 #pragma mark Settings
 
 - (GlucoseUnitsType) glucoseUnitsSetting;
-- (void) setGlucoseUnitsSetting:(GlucoseUnitsType)units;
++ (void) setGlucoseUnitsSetting:(GlucoseUnitsType)units;
 
 - (float) highGlucoseWarningThreshold;
 - (float) lowGlucoseWarningThreshold;
