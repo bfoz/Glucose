@@ -90,7 +90,6 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 - (ManagedLogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day;
 
 + (ManagedLogDay*) insertManagedLogDayIntoContext:(NSManagedObjectContext*)managedObjectContext;
-- (ManagedLogDay*) insertManagedLogDay;
 - (ManagedLogEntry*) insertManagedLogEntryWithUndo;
 
 - (void) commitChanges;

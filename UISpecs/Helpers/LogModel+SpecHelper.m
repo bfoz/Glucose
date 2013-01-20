@@ -47,4 +47,11 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator = nil;
     return [LogModel insertManagedInsulinTypeIntoContext:self.managedObjectContext];
 }
 
+- (ManagedLogDay*) insertManagedLogDay
+{
+    ManagedLogDay* logDay = [LogModel insertManagedLogDayIntoContext:self.managedObjectContext];
+    [(NSMutableArray*)self.logDays addObject:logDay];
+    return logDay;
+}
+
 @end

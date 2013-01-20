@@ -416,11 +416,6 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 					 inManagedObjectContext:managedObjectContext];
 }
 
-- (ManagedLogDay*) insertManagedLogDay
-{
-    return [LogModel insertManagedLogDayIntoContext:self.managedObjectContext];
-}
-
 static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 						 NSMonthCalendarUnit |
 						 NSDayCalendarUnit);

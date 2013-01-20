@@ -72,6 +72,10 @@ describe(@"LogViewController", ^{
     });
 
     describe(@"when the model has no log entries", ^{
+	beforeEach(^{
+	    logModel.logDays.count should equal(0);
+	});
+
 	it(@"should have a single empty Today section", ^{
 	    controller.tableView.numberOfSections should equal(1);
 	    [controller.tableView numberOfRowsInSection:0] should equal(0);
@@ -82,7 +86,7 @@ describe(@"LogViewController", ^{
 	});
     });
 
-    xdescribe(@"when the model has log entries", ^{
+    describe(@"when the model has log entries", ^{
 	beforeEach(^{
 	    ManagedLogDay* logDay0 = [logModel insertManagedLogDay];
 
@@ -91,7 +95,11 @@ describe(@"LogViewController", ^{
 	    [logDay0 insertManagedLogEntry];
 
 	    ManagedLogDay* logDay1 = [logModel insertManagedLogDay];
-	    logDay1.date = [NSDate date];
+	    NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+	    dateFormatter.dateStyle = NSDateFormatterMediumStyle;
+	    dateFormatter.timeStyle = NSDateFormatterNoStyle;
+
+	    logDay1.date = [dateFormatter dateFromString:@"January 1, 2013"];
 	    [logDay1 insertManagedLogEntry];
 	    [logDay1 insertManagedLogEntry];
 	    [logDay1 insertManagedLogEntry];
