@@ -19,6 +19,10 @@
 #define	kDefaultGlucoseUnits	@"DefaultGlucoseUnits"
 #define	kDefaultInsulinTypes	@"DefaultInsulinTypes"
 
+static UIProgressView* __progressView = nil;
+static float progress = 0;
+static float totalProgress = 1;
+
 @interface LogModel ()
 - (NSManagedObjectContext*) managedObjectContext;
 @end
@@ -30,8 +34,18 @@
     return [[[LogModel writeableSqliteDBPath] stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"glucose_backup_of_migrated_original.sqlite"];
 }
 
-+ (void) migrateTheDatabase
+void progressTick()
 {
+    ++progress;
+    dispatch_async(dispatch_get_main_queue(), ^{
+	[__progressView setProgress:(progress/totalProgress) animated:YES];
+    });
+}
+
++ (void) migrateTheDatabaseWithProgressView:(UIProgressView*)progressView
+{
+    __progressView = progressView;
+
     // If the file exists, but can't be opened by Core Data, then it must need to be migrated
 
     sqlite3* originalDatabase = [LogModel openDatabasePath:[LogModel writeableSqliteDBPath]];
@@ -70,6 +84,46 @@
 
 #pragma mark -
 
+int countForQuery(sqlite3* database, const char* query)
+{
+    sqlite3_stmt* statement;
+    int count = 0;
+
+    if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
+    {
+	while( sqlite3_step(statement) == SQLITE_ROW )
+	    count = sqlite3_column_int(statement, 0);
+    }
+
+    sqlite3_finalize(statement);
+
+    return count;
+}
+
+int numberOfCategoriesInDatabase(sqlite3* database)
+{
+    const char *const query = "SELECT COUNT() FROM LogEntryCategories";
+    return countForQuery(database, query);
+}
+
+int numberOfInsulinTypesInDatabase(sqlite3* database)
+{
+    const char *const query = "SELECT COUNT() FROM InsulinTypes";
+    return countForQuery(database, query);
+}
+
+int numberOfLogDaysInDatabase(sqlite3* database)
+{
+    return countForQuery(database, "SELECT COUNT() FROM (SELECT DISTINCT date(timestamp,'unixepoch','localtime') FROM localLogEntries)");
+}
+
+int numerOfLogEntriesInDatabase(sqlite3* database)
+{
+    return countForQuery(database, "SELECT COUNT() from localLogEntries");
+}
+
+#pragma mark -
+
 + (NSArray*) migrateCategoriesFromDatabase:(sqlite3*)database toContext:(NSManagedObjectContext*)managedObjectContext
 {
     const char *const query = "SELECT categoryID, sequence, name FROM LogEntryCategories ORDER BY sequence";
@@ -94,6 +148,8 @@
 	    managedCategory.sequenceNumber = sqlite3_column_int(statement, 1);
 
 	[categories addObject:@{@"categoryID" : [NSNumber numberWithInt:categoryID], @"managedObject" : managedCategory}];
+
+	progressTick();
     }
     sqlite3_finalize(statement);
 
@@ -124,6 +180,8 @@
 	    managedInsulinType.sequenceNumber = sqlite3_column_int(statement, 1);
 
 	[insulinTypes addObject:@{@"insulinTypeID" : [NSNumber numberWithInt:typeID], @"managedObject" : managedInsulinType}];
+
+	progressTick();
     }
     sqlite3_finalize(statement);
 
@@ -148,6 +206,8 @@
 	ManagedLogDay* managedLogDay = [LogModel insertManagedLogDayIntoContext:managedObjectContext];
 	managedLogDay.date = date;
 	[logDays addObject:managedLogDay];
+
+	progressTick();
     }
     sqlite3_finalize(statement);
 
@@ -213,6 +273,8 @@ _var = _val;
 	    ManagedInsulinDose* insulinDose = [managedLogEntry addDoseWithType:[self managedInsulinTypeForInsulinTypeID:[NSNumber numberWithInt:sqlite3_column_int(statement, 8)] inInsulinTypes:insulinTypes]];
 	    insulinDose.dose = [NSNumber numberWithInt:sqlite3_column_int(statement, 6)];
 	}
+
+	progressTick();
     }
 
     sqlite3_clear_bindings(statement);
@@ -221,6 +283,8 @@ _var = _val;
 
 + (void) migrateDatabase:(sqlite3*)database toContext:(NSManagedObjectContext*)managedObjectContext
 {
+    totalProgress = numberOfCategoriesInDatabase(database) + numberOfInsulinTypesInDatabase(database) + numberOfLogDaysInDatabase(database) + numerOfLogEntriesInDatabase(database);
+
     NSArray* categories = [self migrateCategoriesFromDatabase:database toContext:managedObjectContext];
     NSArray* insulinTypes = [self migrateInsulinTypesFromDatabase:database toContext:managedObjectContext];
 
@@ -248,9 +312,16 @@ _var = _val;
     }
     [managedObjectContext obtainPermanentIDsForObjects:[managedInsulinTypes array] error:nil];
     [LogModel flushInsulinTypesForNewEntries:managedInsulinTypes];
+
+    // Migrate the glucose units setting
+    NSString* glucoseSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultGlucoseUnits];
+    if( [glucoseSetting isEqualToString:@" mg/dL"] )
+	[LogModel setGlucoseUnitsSetting:kGlucoseUnits_mgdL];
+    else
+	[LogModel setGlucoseUnitsSetting:kGlucoseUnits_mmolL];
 }
 
-#pragma mark -
+#pragma mark - Core Data
 
 + (ManagedCategory*) managedCategoryForCategoryID:(int)categoryID inCategories:(NSArray*)categories
 {

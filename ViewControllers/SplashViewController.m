@@ -5,12 +5,14 @@
 @interface SplashViewController ()
 @property (nonatomic, strong) UIActivityIndicatorView*	activityIndicator;
 @property (nonatomic, strong) UIImageView* backgroundImageView;
+@property (nonatomic, strong) UIProgressView*	progressView;
 @property (nonatomic, strong) UILabel*	textLabel;
 @end
 
 @implementation SplashViewController
 {
     BOOL needsMigration;
+    NSTimer*	twoSecondTimer;
 }
 
 - (id)init
@@ -21,9 +23,11 @@
 	self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
 	self.backgroundImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Default"]];
 	self.backgroundImageView.contentMode = UIViewContentModeCenter;
+	self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
 	self.textLabel = [[UILabel alloc] init];
 
 	needsMigration = [LogModel needsMigration];
+	twoSecondTimer = nil;
     }
     return self;
 }
@@ -36,6 +40,9 @@
 
     self.activityIndicator.frame = CGRectMake(0, CGRectGetMaxY(self.backgroundImageView.frame)-105, self.view.frame.size.width, 50);
 
+    self.progressView.frame = UIEdgeInsetsInsetRect(self.activityIndicator.frame, UIEdgeInsetsMake(20, 25, 10, 25));
+    self.progressView.alpha = 0;
+
     self.textLabel.frame = CGRectMake(0, CGRectGetMaxY(self.activityIndicator.frame), self.view.frame.size.width, 20);
     self.textLabel.backgroundColor = [UIColor clearColor];
     self.textLabel.textAlignment = UITextAlignmentCenter;
@@ -46,6 +53,7 @@
 
     [self.view addSubview:self.backgroundImageView];
     [self.view addSubview:self.activityIndicator];
+    [self.view addSubview:self.progressView];
     [self.view addSubview:self.textLabel];
 }
 
@@ -62,10 +70,11 @@
 	}];
 
 	[self.activityIndicator startAnimating];
+	twoSecondTimer = [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(twoSecondTimerFired) userInfo:nil repeats:NO];
 
 	__block SplashViewController* blockSelf = self;
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-	    [LogModel migrateTheDatabase];
+	    [LogModel migrateTheDatabaseWithProgressView:self.progressView];
 
 	    [application endBackgroundTask:background_Task];
 	    background_Task = UIBackgroundTaskInvalid;
@@ -79,8 +88,22 @@
 	[self didFinish];
 }
 
+- (void) twoSecondTimerFired
+{
+    [UIView animateWithDuration:1 animations:^{
+	self.activityIndicator.alpha = 0;
+	self.progressView.alpha = 1;
+    } completion:^(BOOL finished) {
+	self.activityIndicator.hidden = YES;
+	self.progressView.hidden = NO;
+    }];
+}
+
 - (void) didFinish
 {
+    [twoSecondTimer invalidate];
+    twoSecondTimer = nil;
+
     if( self.delegate )
 	[self.delegate splashViewControllerDidFinish];
 }

@@ -3,7 +3,7 @@
 @interface LogModel (Migration)
 
 + (NSString*) backupPath;
-+ (void) migrateTheDatabase;
++ (void) migrateTheDatabaseWithProgressView:(UIProgressView*)progressView;
 + (BOOL) needsMigration;
 
 @end
