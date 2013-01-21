@@ -35,7 +35,6 @@
     self.backgroundImageView.frame = UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, 0, 20, 0));
 
     self.activityIndicator.frame = CGRectMake(0, CGRectGetMaxY(self.backgroundImageView.frame)-105, self.view.frame.size.width, 50);
-    [self.activityIndicator startAnimating];
 
     self.textLabel.frame = CGRectMake(0, CGRectGetMaxY(self.activityIndicator.frame), self.view.frame.size.width, 20);
     self.textLabel.backgroundColor = [UIColor clearColor];
@@ -55,8 +54,33 @@
     [super viewDidAppear:animated];
 
     if( needsMigration )
-	[LogModel checkForMigration];
+    {
+	UIApplication* application = [UIApplication sharedApplication];
+	__block UIBackgroundTaskIdentifier background_Task = [application beginBackgroundTaskWithExpirationHandler:^{
+	    [application endBackgroundTask:background_Task];
+	    background_Task = UIBackgroundTaskInvalid;
+	}];
 
+	[self.activityIndicator startAnimating];
+
+	__block SplashViewController* blockSelf = self;
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	    [LogModel migrateTheDatabase];
+
+	    [application endBackgroundTask:background_Task];
+	    background_Task = UIBackgroundTaskInvalid;
+
+	    dispatch_async(dispatch_get_main_queue(), ^{
+		[blockSelf didFinish];
+	    });
+	});
+    }
+    else
+	[self didFinish];
+}
+
+- (void) didFinish
+{
     if( self.delegate )
 	[self.delegate splashViewControllerDidFinish];
 }

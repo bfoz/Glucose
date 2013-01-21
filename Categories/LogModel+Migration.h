@@ -3,7 +3,7 @@
 @interface LogModel (Migration)
 
 + (NSString*) backupPath;
-+ (void) checkForMigration;
++ (void) migrateTheDatabase;
 + (BOOL) needsMigration;
 
 @end

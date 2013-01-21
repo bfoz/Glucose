@@ -82,7 +82,7 @@ static NSString* bundledDatabaseFilename = @"glucose.sqlite";
 + (sqlite3*) openDatabasePath:(NSString*)path
 {
     sqlite3* database = NULL;
-    if( sqlite3_open([path UTF8String], &database) != SQLITE_OK )
+    if( sqlite3_open_v2([path UTF8String], &database, SQLITE_OPEN_READONLY, NULL) != SQLITE_OK )
     {
 	// sqlite3_open() doesn't always return a valid connection object on failure
 	if( database )

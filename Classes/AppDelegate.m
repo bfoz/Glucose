@@ -103,7 +103,7 @@ NSDateFormatter* shortDateFormatter = nil;
 		       options:UIViewAnimationOptionTransitionCurlUp
 		    completion:^(BOOL finished) {
 			self.navigationController = navigationController;
-			self.window.rootViewController = self.navigationController;
+			window.rootViewController = self.navigationController;
 		    }];
 }
 @end

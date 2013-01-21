@@ -30,28 +30,25 @@
     return [[[LogModel writeableSqliteDBPath] stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"glucose_backup_of_migrated_original.sqlite"];
 }
 
-+ (void) checkForMigration
++ (void) migrateTheDatabase
 {
-    if( ![self needsMigration] )
-	return;
-
     // If the file exists, but can't be opened by Core Data, then it must need to be migrated
+
+    sqlite3* originalDatabase = [LogModel openDatabasePath:[LogModel writeableSqliteDBPath]];
+
+    NSManagedObjectContext* importContext = [self managedObjectContext];
+
+    [LogModel migrateDatabase:originalDatabase toContext:importContext];
+
+    [LogModel saveManagedObjectContext:importContext];
+
+    [LogModel closeDatabase:originalDatabase];
 
     // Move the original database file to the backup location
     NSString* backupPath = [self backupPath];
     NSError* error = nil;
     [[NSFileManager defaultManager] moveItemAtPath:[LogModel writeableSqliteDBPath]
 					    toPath:backupPath error:&error];
-
-    sqlite3* backupDatabase = [LogModel openDatabasePath:backupPath];
-
-    NSManagedObjectContext* importContext = [self managedObjectContext];
-
-    [LogModel migrateDatabase:backupDatabase toContext:importContext];
-
-    [LogModel saveManagedObjectContext:importContext];
-
-    [LogModel closeDatabase:backupDatabase];
 }
 
 + (BOOL) needsMigration
