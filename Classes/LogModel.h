@@ -45,6 +45,7 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 #pragma mark Settings
 
 - (GlucoseUnitsType) glucoseUnitsSetting;
++ (NSString*) glucoseUnitsSettingString;
 + (void) setGlucoseUnitsSetting:(GlucoseUnitsType)units;
 
 - (float) highGlucoseWarningThreshold;
@@ -86,7 +87,6 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 - (NSDate*) dateOfEarliestLogEntry;
 - (unsigned) numberOfLogEntriesFromDate:(NSDate*)fromDate toDate:(NSDate*)toDate;
 
-- (ManagedLogEntry*) insertManagedLogEntry;
 - (ManagedLogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day;
 
 + (ManagedLogDay*) insertManagedLogDayIntoContext:(NSManagedObjectContext*)managedObjectContext;

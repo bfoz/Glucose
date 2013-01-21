@@ -2,7 +2,7 @@
 //  ManagedLogDay.h
 //  Glucose
 //
-//  Created by Brandon Fosdick on 01/13/13.
+//  Created by Brandon Fosdick on 01/20/13.
 //
 //
 
@@ -14,7 +14,6 @@
 @interface ManagedLogDay : NSManagedObject
 
 @property (nonatomic, retain) NSNumber * averageGlucose;
-@property (nonatomic, retain) NSString * averageGlucoseString;
 @property (nonatomic, retain) NSDate * date;
 @property (nonatomic, retain) NSOrderedSet *logEntries;
 @end

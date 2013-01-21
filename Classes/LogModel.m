@@ -9,7 +9,7 @@
 #import "ManagedCategory.h"
 #import "ManagedInsulinDose.h"
 #import "ManagedInsulinType.h"
-#import "ManagedLogDay.h"
+#import "ManagedLogDay+App.h"
 #import "ManagedLogEntry+App.h"
 
 #import "Constants.h"
@@ -492,11 +492,6 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     return [logDay.logEntries objectAtIndex:entry];
 }
 
-- (ManagedLogEntry*) insertManagedLogEntry
-{
-    return [ManagedLogEntry insertManagedLogEntryInContext:self.managedObjectContext];
-}
-
 - (ManagedLogEntry*) insertManagedLogEntryWithUndo
 {
     self.managedObjectContext.undoManager = [[NSUndoManager alloc] init];
@@ -540,11 +535,6 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
     if( 0 == logDay.logEntries.count )
 	[_logDays removeObjectIdenticalTo:logDay];
-}
-
-- (void) moveLogEntry:(ManagedLogEntry*)logEntry toDay:(ManagedLogDay*)logDay
-{
-    logEntry.logDay = logDay;
 }
 
 #pragma mark -
@@ -646,6 +636,16 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     else if( [glucoseSetting isEqualToNumber:kSettingsGlucoseUnitsValue_mmolL] )
 	return kGlucoseUnits_mmolL;
     return kGlucoseUnits_mgdL;
+}
+
++ (NSString*) glucoseUnitsSettingString
+{
+    NSNumber* glucoseSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kSettingsGlucoseUnitsKey];
+    if( [glucoseSetting isEqualToNumber:kSettingsGlucoseUnitsValue_mgdL] )
+	return GlucoseUnitsTypeString_mgdL;
+    else if( [glucoseSetting isEqualToNumber:kSettingsGlucoseUnitsValue_mmolL] )
+	return GlucoseUnitsTypeString_mmolL;
+    return nil;
 }
 
 + (void) setGlucoseUnitsSetting:(GlucoseUnitsType)units

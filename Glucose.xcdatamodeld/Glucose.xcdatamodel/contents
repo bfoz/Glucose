@@ -16,9 +16,8 @@
         <relationship name="insulinDoses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="InsulinDose" inverseName="insulinType" inverseEntity="InsulinDose" syncable="YES"/>
     </entity>
     <entity name="LogDay" representedClassName="ManagedLogDay" syncable="YES">
-        <attribute name="averageGlucose" optional="YES" transient="YES" attributeType="Float" syncable="YES"/>
-        <attribute name="averageGlucoseString" optional="YES" transient="YES" attributeType="String" syncable="YES"/>
-        <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="averageGlucose" optional="YES" attributeType="Float" syncable="YES"/>
+        <attribute name="date" attributeType="Date" syncable="YES"/>
         <relationship name="logEntries" optional="YES" toMany="YES" deletionRule="Deny" ordered="YES" destinationEntity="LogEntry" inverseName="logDay" inverseEntity="LogEntry" syncable="YES"/>
     </entity>
     <entity name="LogEntry" representedClassName="ManagedLogEntry" syncable="YES">
@@ -34,7 +33,7 @@
         <element name="Category" positionX="214" positionY="177" width="128" height="90"/>
         <element name="InsulinDose" positionX="216" positionY="279" width="128" height="90"/>
         <element name="InsulinType" positionX="403" positionY="279" width="128" height="90"/>
-        <element name="LogDay" positionX="-144" positionY="180" width="128" height="105"/>
+        <element name="LogDay" positionX="-144" positionY="180" width="128" height="90"/>
         <element name="LogEntry" positionX="27" positionY="180" width="128" height="150"/>
     </elements>
 </model>

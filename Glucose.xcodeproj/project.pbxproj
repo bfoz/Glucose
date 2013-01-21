@@ -17,12 +17,13 @@
 		150829F20E500DCA00FB556A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 150829F10E500DCA00FB556A /* CoreGraphics.framework */; };
 		1512FA7E16A62592006EB310 /* LogModel+MigrationSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1512FA7D16A62592006EB310 /* LogModel+MigrationSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		1517983F1250156100E28662 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1517983E1250156100E28662 /* MessageUI.framework */; };
+		1524475716ACC80800422F3E /* LogModel+SQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */; };
+		1524475A16ACD59700422F3E /* ManagedLogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 1524475916ACD59700422F3E /* ManagedLogDay.m */; };
+		1524475B16ACD59700422F3E /* ManagedLogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 1524475916ACD59700422F3E /* ManagedLogDay.m */; };
 		152DCCC216A28A0300EA9371 /* LogModel+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 152DCCC116A28A0300EA9371 /* LogModel+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 153F26A00E7F70C000F75D9F /* Security.framework */; };
 		1557427716A3E220002C53F2 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557427616A3E220002C53F2 /* ManagedInsulinDose.m */; };
 		1557427816A3E220002C53F2 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557427616A3E220002C53F2 /* ManagedInsulinDose.m */; };
-		1557427F16A3E220002C53F2 /* ManagedLogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557427E16A3E220002C53F2 /* ManagedLogDay.m */; };
-		1557428016A3E220002C53F2 /* ManagedLogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557427E16A3E220002C53F2 /* ManagedLogDay.m */; };
 		1557428316A3E220002C53F2 /* ManagedLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557428216A3E220002C53F2 /* ManagedLogEntry.m */; };
 		1557428416A3E220002C53F2 /* ManagedLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557428216A3E220002C53F2 /* ManagedLogEntry.m */; };
 		1557428716A3E25B002C53F2 /* ManagedCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557428616A3E25B002C53F2 /* ManagedCategory.m */; };
@@ -80,6 +81,7 @@
 		15A3225A0ED3E0D000C16388 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 15A322590ED3E0D000C16388 /* Contact.m */; };
 		15AF2FE20EC1799F00FC2403 /* LogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 15AF2FE10EC1799F00FC2403 /* LogDay.m */; };
 		15B7FE0B16ABA94700259A02 /* large.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 15B7FE0A16ABA94700259A02 /* large.sqlite */; };
+		15B7FE5E16ACBE9700259A02 /* ManagedLogDay+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15B7FE5D16ACBE9600259A02 /* ManagedLogDay+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15C2E7C5162D29D4002115FD /* DateField.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C2E7C4162D29D4002115FD /* DateField.m */; };
 		15C2E7C6162D29D4002115FD /* DateField.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C2E7C4162D29D4002115FD /* DateField.m */; };
 		15C30BB8161D476500976444 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BB7161D476500976444 /* Default-568h@2x.png */; };
@@ -91,7 +93,6 @@
 		15C6D5C716337EE100D6838D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15C6D5C616337EE000D6838D /* SystemConfiguration.framework */; };
 		15C8F66F1630E0DE00CA92D4 /* UIViewController+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15E59E601698CD410067BDC1 /* LogModel+SQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */; };
-		15E59E611698CD410067BDC1 /* LogModel+SQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */; };
 		15E59EC11698E6620067BDC1 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */; };
 		15E59F601698F4510067BDC1 /* LogModel+Migration.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59F5F1698F4510067BDC1 /* LogModel+Migration.m */; };
 		15E59F611698F4510067BDC1 /* LogModel+Migration.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59F5F1698F4510067BDC1 /* LogModel+Migration.m */; };
@@ -228,13 +229,13 @@
 		150829F10E500DCA00FB556A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		1512FA7D16A62592006EB310 /* LogModel+MigrationSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "LogModel+MigrationSpec.mm"; sourceTree = "<group>"; };
 		1517983E1250156100E28662 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		1524475816ACD59700422F3E /* ManagedLogDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedLogDay.h; sourceTree = "<group>"; };
+		1524475916ACD59700422F3E /* ManagedLogDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedLogDay.m; sourceTree = "<group>"; };
 		152DCCC016A28A0300EA9371 /* LogModel+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+SpecHelper.h"; sourceTree = "<group>"; };
 		152DCCC116A28A0300EA9371 /* LogModel+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LogModel+SpecHelper.m"; sourceTree = "<group>"; };
 		153F26A00E7F70C000F75D9F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		1557427516A3E220002C53F2 /* ManagedInsulinDose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedInsulinDose.h; sourceTree = "<group>"; };
 		1557427616A3E220002C53F2 /* ManagedInsulinDose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedInsulinDose.m; sourceTree = "<group>"; };
-		1557427D16A3E220002C53F2 /* ManagedLogDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedLogDay.h; sourceTree = "<group>"; };
-		1557427E16A3E220002C53F2 /* ManagedLogDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedLogDay.m; sourceTree = "<group>"; };
 		1557428116A3E220002C53F2 /* ManagedLogEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedLogEntry.h; sourceTree = "<group>"; };
 		1557428216A3E220002C53F2 /* ManagedLogEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedLogEntry.m; sourceTree = "<group>"; };
 		1557428516A3E25B002C53F2 /* ManagedCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedCategory.h; sourceTree = "<group>"; };
@@ -300,6 +301,8 @@
 		15AF2FE00EC1799F00FC2403 /* LogDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogDay.h; sourceTree = "<group>"; };
 		15AF2FE10EC1799F00FC2403 /* LogDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogDay.m; sourceTree = "<group>"; };
 		15B7FE0A16ABA94700259A02 /* large.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = large.sqlite; sourceTree = "<group>"; };
+		15B7FE5C16ACBE9600259A02 /* ManagedLogDay+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ManagedLogDay+SpecHelper.h"; sourceTree = "<group>"; };
+		15B7FE5D16ACBE9600259A02 /* ManagedLogDay+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ManagedLogDay+SpecHelper.m"; sourceTree = "<group>"; };
 		15C2E7C3162D29D3002115FD /* DateField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateField.h; sourceTree = "<group>"; };
 		15C2E7C4162D29D4002115FD /* DateField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DateField.m; sourceTree = "<group>"; };
 		15C30BB5161D474E00976444 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -539,6 +542,10 @@
 			isa = PBXGroup;
 			children = (
 				158F40EF162A4CCD0000DD52 /* DropboxSDK */,
+				152DCCC016A28A0300EA9371 /* LogModel+SpecHelper.h */,
+				152DCCC116A28A0300EA9371 /* LogModel+SpecHelper.m */,
+				15B7FE5C16ACBE9600259A02 /* ManagedLogDay+SpecHelper.h */,
+				15B7FE5D16ACBE9600259A02 /* ManagedLogDay+SpecHelper.m */,
 				15E5A00A169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.h */,
 				15E5A00B169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.m */,
 				158F41DC162B73760000DD52 /* UIControl+SpecHelper.h */,
@@ -547,8 +554,6 @@
 				15C6D50916327F7000D6838D /* UIView+SpecHelper.m */,
 				15C8F66C1630E00900CA92D4 /* UIViewController+SpecHelper.h */,
 				15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */,
-				152DCCC016A28A0300EA9371 /* LogModel+SpecHelper.h */,
-				152DCCC116A28A0300EA9371 /* LogModel+SpecHelper.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -609,8 +614,8 @@
 				1557427616A3E220002C53F2 /* ManagedInsulinDose.m */,
 				1557428916A3E289002C53F2 /* ManagedInsulinType.h */,
 				1557428A16A3E289002C53F2 /* ManagedInsulinType.m */,
-				1557427D16A3E220002C53F2 /* ManagedLogDay.h */,
-				1557427E16A3E220002C53F2 /* ManagedLogDay.m */,
+				1524475816ACD59700422F3E /* ManagedLogDay.h */,
+				1524475916ACD59700422F3E /* ManagedLogDay.m */,
 				1557428116A3E220002C53F2 /* ManagedLogEntry.h */,
 				1557428216A3E220002C53F2 /* ManagedLogEntry.m */,
 			);
@@ -950,23 +955,23 @@
 				15922D6C162FBF9D00693C2C /* DateFieldSpec.mm in Sources */,
 				15C8F66F1630E0DE00CA92D4 /* UIViewController+SpecHelper.m in Sources */,
 				15C6D50A16327F7000D6838D /* UIView+SpecHelper.m in Sources */,
-				15E59E611698CD410067BDC1 /* LogModel+SQLite.m in Sources */,
-				15E59FFD16991A830067BDC1 /* LogModel+CoreData.m in Sources */,
 				15E59FFF1699539C0067BDC1 /* SettingsViewControllerSpec.mm in Sources */,
 				15E5A009169A6A730067BDC1 /* CategoryViewControllerSpec.mm in Sources */,
 				15E5A00C169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.m in Sources */,
-				15836FE2169E89EE000D4FC2 /* ManagedLogDay+App.m in Sources */,
 				15836FE9169E9736000D4FC2 /* LogViewControllerSpec.mm in Sources */,
 				158370AC169F6E7F000D4FC2 /* ManagedLogEntry+App.m in Sources */,
-				152DCCC216A28A0300EA9371 /* LogModel+SpecHelper.m in Sources */,
 				1557427816A3E220002C53F2 /* ManagedInsulinDose.m in Sources */,
-				1557428016A3E220002C53F2 /* ManagedLogDay.m in Sources */,
 				1557428416A3E220002C53F2 /* ManagedLogEntry.m in Sources */,
 				1557428816A3E25B002C53F2 /* ManagedCategory.m in Sources */,
 				1557428C16A3E289002C53F2 /* ManagedInsulinType.m in Sources */,
-				15E59E611698CD410067BDC1 /* LogModel+SQLite.m in Sources */,
 				15E59F611698F4510067BDC1 /* LogModel+Migration.m in Sources */,
+				15E59FFD16991A830067BDC1 /* LogModel+CoreData.m in Sources */,
 				1512FA7E16A62592006EB310 /* LogModel+MigrationSpec.mm in Sources */,
+				152DCCC216A28A0300EA9371 /* LogModel+SpecHelper.m in Sources */,
+				1524475716ACC80800422F3E /* LogModel+SQLite.m in Sources */,
+				15836FE2169E89EE000D4FC2 /* ManagedLogDay+App.m in Sources */,
+				15B7FE5E16ACBE9700259A02 /* ManagedLogDay+SpecHelper.m in Sources */,
+				1524475B16ACD59700422F3E /* ManagedLogDay.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1008,11 +1013,11 @@
 				15836FE1169E89EE000D4FC2 /* ManagedLogDay+App.m in Sources */,
 				158370AB169F6E7F000D4FC2 /* ManagedLogEntry+App.m in Sources */,
 				1557427716A3E220002C53F2 /* ManagedInsulinDose.m in Sources */,
-				1557427F16A3E220002C53F2 /* ManagedLogDay.m in Sources */,
 				1557428316A3E220002C53F2 /* ManagedLogEntry.m in Sources */,
 				1557428716A3E25B002C53F2 /* ManagedCategory.m in Sources */,
 				1557428B16A3E289002C53F2 /* ManagedInsulinType.m in Sources */,
 				15E59F601698F4510067BDC1 /* LogModel+Migration.m in Sources */,
+				1524475A16ACD59700422F3E /* ManagedLogDay.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

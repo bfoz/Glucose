@@ -149,22 +149,7 @@
     if( 0 == _model.logDays.count )
 	return @"Today";
 
-    ManagedLogDay *const logDay = [_model.logDays objectAtIndex:section];
-
-    /* Display "Today" instead of the date string if the LogDay corresponds to
-	the current date. Only the first section could possibly be the "today"
-	section, so don't bother checking the others.	*/
-    if( 0 == section )
-    {
-	// Make sure it really is today
-	NSCalendar *const calendar = [NSCalendar currentCalendar];
-	static const unsigned components = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
-	NSDateComponents *const today = [calendar components:components fromDate:[NSDate date]];
-	NSDateComponents *const c = [calendar components:components fromDate:logDay.date];
-	if( (today.day == c.day) && (today.month == c.month) && (today.year == c.year) )
-	    return @"Today";
-    }
-
+    ManagedLogDay* logDay = [_model.logDays objectAtIndex:section];
     return logDay.titleForHeader;
 }
 
@@ -276,8 +261,12 @@
     {
 	ManagedLogDay *const newDay = [_model logDayForDate:logEntry.timestamp];
 	if( newDay != logEntry.logDay )
+	{
+	    ManagedLogDay* oldDay = logEntry.logDay;
 	    logEntry.logDay = newDay;
-	[newDay updateStatistics];
+	    [newDay updateStatistics];
+	    [oldDay updateStatistics];
+	}
 
 	[self.model commitChanges];
     }

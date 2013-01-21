@@ -1,8 +1,11 @@
 #import "SpecsHelper.h"
 #import "LogViewController.h"
 
+#import "LogModel.h"
+#import "LogModel+CoreData.h"
 #import "LogModel+SpecHelper.h"
 #import "ManagedLogDay+App.h"
+#import "ManagedLogDay+SpecHelper.h"
 #import "ManagedLogEntry+App.h"
 #import "SettingsViewController.h"
 
@@ -73,6 +76,7 @@ describe(@"LogViewController", ^{
 
     describe(@"when the model has no log entries", ^{
 	beforeEach(^{
+	    [[NSFileManager defaultManager] removeItemAtPath:[[LogModel sqlitePersistentStoreURL] path] error:nil];
 	    logModel.logDays.count should equal(0);
 	});
 
@@ -88,11 +92,13 @@ describe(@"LogViewController", ^{
 
     describe(@"when the model has log entries", ^{
 	beforeEach(^{
+	    [LogModel setGlucoseUnitsSetting:kGlucoseUnits_mgdL];
+
 	    ManagedLogDay* logDay0 = [logModel insertManagedLogDay];
 
 	    logDay0.date = [NSDate date];
-	    [logDay0 insertManagedLogEntry];
-	    [logDay0 insertManagedLogEntry];
+	    [logDay0 insertManagedLogEntry].glucose = @100;
+	    [logDay0 insertManagedLogEntry].glucose = @200;
 
 	    ManagedLogDay* logDay1 = [logModel insertManagedLogDay];
 	    NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
@@ -100,9 +106,12 @@ describe(@"LogViewController", ^{
 	    dateFormatter.timeStyle = NSDateFormatterNoStyle;
 
 	    logDay1.date = [dateFormatter dateFromString:@"January 1, 2013"];
-	    [logDay1 insertManagedLogEntry];
-	    [logDay1 insertManagedLogEntry];
-	    [logDay1 insertManagedLogEntry];
+	    [logDay1 insertManagedLogEntry].glucose = @100;
+	    [logDay1 insertManagedLogEntry].glucose = @200;
+	    [logDay1 insertManagedLogEntry].glucose = @300;
+
+	    [logDay0 updateStatistics];
+	    [logDay1 updateStatistics];
 	});
 
 	it(@"should have 1 section per day", ^{
@@ -112,6 +121,11 @@ describe(@"LogViewController", ^{
 	it(@"should have a row for each entry in a section", ^{
 	    [controller.tableView numberOfRowsInSection:0] should equal(2);
 	    [controller.tableView numberOfRowsInSection:1] should equal(3);
+	});
+
+	it(@"should have proper section titles", ^{
+	    [controller tableView:nil titleForHeaderInSection:0] should equal(@"Today (150 mg/dL)");
+	    [controller tableView:nil titleForHeaderInSection:1] should equal(@"1/1/13 (200 mg/dL)");
 	});
 
 	describe(@"when a row is tapped", ^{

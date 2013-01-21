@@ -3,6 +3,7 @@
 #import "DoseFieldCell.h"
 #import "LogEntryViewController.h"
 #import "LogModel+SpecHelper.h"
+#import "ManagedLogDay+App.h"
 #import "ManagedLogEntry+App.h"
 #import "NumberFieldCell.h"
 
@@ -28,7 +29,8 @@ describe(@"LogEntryViewController", ^{
 
     beforeEach(^{
 	LogModel* logModel = [[LogModel alloc] init];
-	logEntry = [logModel insertManagedLogEntry];
+	ManagedLogDay* logDay = [logModel insertManagedLogDay];
+	logEntry = [logDay insertManagedLogEntry];
 
 	controller = [[[LogEntryViewController alloc] initWithLogEntry:logEntry] autorelease];
 	controller.model = logModel;

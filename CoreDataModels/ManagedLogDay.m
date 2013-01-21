@@ -2,7 +2,7 @@
 //  ManagedLogDay.m
 //  Glucose
 //
-//  Created by Brandon Fosdick on 01/13/13.
+//  Created by Brandon Fosdick on 01/20/13.
 //
 //
 
@@ -13,7 +13,6 @@
 @implementation ManagedLogDay
 
 @dynamic averageGlucose;
-@dynamic averageGlucoseString;
 @dynamic date;
 @dynamic logEntries;
 
