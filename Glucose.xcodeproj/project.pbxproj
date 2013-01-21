@@ -20,6 +20,8 @@
 		1524475716ACC80800422F3E /* LogModel+SQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */; };
 		1524475A16ACD59700422F3E /* ManagedLogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 1524475916ACD59700422F3E /* ManagedLogDay.m */; };
 		1524475B16ACD59700422F3E /* ManagedLogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 1524475916ACD59700422F3E /* ManagedLogDay.m */; };
+		1524475E16ACF6D900422F3E /* SplashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1524475D16ACF6D900422F3E /* SplashViewController.m */; };
+		1524475F16ACF6D900422F3E /* SplashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1524475D16ACF6D900422F3E /* SplashViewController.m */; };
 		152DCCC216A28A0300EA9371 /* LogModel+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 152DCCC116A28A0300EA9371 /* LogModel+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 153F26A00E7F70C000F75D9F /* Security.framework */; };
 		1557427716A3E220002C53F2 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557427616A3E220002C53F2 /* ManagedInsulinDose.m */; };
@@ -231,6 +233,8 @@
 		1517983E1250156100E28662 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		1524475816ACD59700422F3E /* ManagedLogDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedLogDay.h; sourceTree = "<group>"; };
 		1524475916ACD59700422F3E /* ManagedLogDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedLogDay.m; sourceTree = "<group>"; };
+		1524475C16ACF6D900422F3E /* SplashViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashViewController.h; sourceTree = "<group>"; };
+		1524475D16ACF6D900422F3E /* SplashViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplashViewController.m; sourceTree = "<group>"; };
 		152DCCC016A28A0300EA9371 /* LogModel+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+SpecHelper.h"; sourceTree = "<group>"; };
 		152DCCC116A28A0300EA9371 /* LogModel+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LogModel+SpecHelper.m"; sourceTree = "<group>"; };
 		153F26A00E7F70C000F75D9F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -450,6 +454,8 @@
 				158F40A9162A3EFC0000DD52 /* SettingsViewController.m */,
 				158F40AA162A3EFC0000DD52 /* SlidingViewController.h */,
 				158F40AB162A3EFC0000DD52 /* SlidingViewController.m */,
+				1524475C16ACF6D900422F3E /* SplashViewController.h */,
+				1524475D16ACF6D900422F3E /* SplashViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -972,6 +978,7 @@
 				15836FE2169E89EE000D4FC2 /* ManagedLogDay+App.m in Sources */,
 				15B7FE5E16ACBE9700259A02 /* ManagedLogDay+SpecHelper.m in Sources */,
 				1524475B16ACD59700422F3E /* ManagedLogDay.m in Sources */,
+				1524475F16ACF6D900422F3E /* SplashViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1018,6 +1025,7 @@
 				1557428B16A3E289002C53F2 /* ManagedInsulinType.m in Sources */,
 				15E59F601698F4510067BDC1 /* LogModel+Migration.m in Sources */,
 				1524475A16ACD59700422F3E /* ManagedLogDay.m in Sources */,
+				1524475E16ACF6D900422F3E /* SplashViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,14 +7,9 @@
 @class LogModel;
 
 @interface AppDelegate : NSObject <UIApplicationDelegate>
-{
-    IBOutlet UIWindow *window;
-    UINavigationController* navController;
-}
 
 @property (nonatomic, strong) LogModel*	model;
-@property (nonatomic, strong)	UIWindow*	window;
-@property (nonatomic, strong)	UINavigationController* navController;
+@property (nonatomic, strong, readonly) UINavigationController*	navigationController;
 
 @end
 

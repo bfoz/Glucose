@@ -2,16 +2,9 @@
 
 #import <DropboxSDK/DropboxSDK.h>
 
-#import "Category.h"
-#import "Constants.h"
-#import "InsulinDose.h"
-#import "InsulinType.h"
-#import "LogEntry.h"
-#import "LogDay.h"
 #import "LogModel+CoreData.h"
-#import "LogModel+Migration.h"
-#import "LogModel+SQLite.h"
 #import "LogViewController.h"
+#import "SplashViewController.h"
 
 #ifdef APPSTORE
 #import "Flurry.h"
@@ -25,13 +18,14 @@ static NSString *const dropboxAppSecret = @"iw9oh6wtbg404s1";
 NSString* kDropboxSessionLinkedAccountNotification = @"DropboxSessionLinkedAccountNotification";
 NSString* kDropboxSessionUnlinkedAccountNotification = @"DropboxSessionUnlinkedAccountNotification";
 
-@interface AppDelegate () <LogViewDelegate>
+@interface AppDelegate () <LogViewDelegate, SplashViewControllerDelegate>
+@property (nonatomic, strong) UINavigationController*	navigationController;
 @end
 
 @implementation AppDelegate
-
-@synthesize window;
-@synthesize navController;
+{
+    UIWindow* window;
+}
 
 NSDateFormatter* shortDateFormatter = nil;
 
@@ -59,13 +53,14 @@ NSDateFormatter* shortDateFormatter = nil;
 						      root:kDBRootAppFolder];
     [DBSession setSharedSession:session];
 
-    [LogModel checkForMigration];
+    SplashViewController* splashViewController = [[SplashViewController alloc] init];
+    splashViewController.delegate = self;
 
-    LogViewController* logViewController = [[LogViewController alloc] initWithModel:self.model delegate:self];
-    UINavigationController* aNavigationController = [[UINavigationController alloc] initWithRootViewController:logViewController];
-    self.navController = aNavigationController;
+    UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:splashViewController];
+    navigationController.navigationBarHidden = YES;
+    self.navigationController = navigationController;
 
-    [window addSubview:[navController view]];
+    window.rootViewController = self.navigationController;
     [window makeKeyAndVisible];
 
     return YES;
@@ -95,4 +90,20 @@ NSDateFormatter* shortDateFormatter = nil;
     return _model;
 }
 
+#pragma mark - SplashViewControllerDelegate
+
+- (void) splashViewControllerDidFinish
+{
+    LogViewController* logViewController = [[LogViewController alloc] initWithModel:self.model delegate:self];
+    UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:logViewController];
+
+    [UIView transitionFromView:self.navigationController.view
+			toView:navigationController.view
+		      duration:1.0
+		       options:UIViewAnimationOptionTransitionCurlUp
+		    completion:^(BOOL finished) {
+			self.navigationController = navigationController;
+			self.window.rootViewController = self.navigationController;
+		    }];
+}
 @end
