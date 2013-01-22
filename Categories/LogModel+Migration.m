@@ -124,7 +124,7 @@ int numerOfLogEntriesInDatabase(sqlite3* database)
 
 #pragma mark -
 
-+ (NSArray*) migrateCategoriesFromDatabase:(sqlite3*)database toContext:(NSManagedObjectContext*)managedObjectContext
++ (NSDictionary*) migrateCategoriesFromDatabase:(sqlite3*)database toContext:(NSManagedObjectContext*)managedObjectContext
 {
     const char *const query = "SELECT categoryID, sequence, name FROM LogEntryCategories ORDER BY sequence";
     sqlite3_stmt* statement;
@@ -135,7 +135,7 @@ int numerOfLogEntriesInDatabase(sqlite3* database)
 	return nil;
     }
 
-    NSMutableArray* categories = [NSMutableArray array];
+    NSMutableDictionary* categories = [NSMutableDictionary dictionary];
     while( sqlite3_step(statement) == SQLITE_ROW )
     {
 	const unsigned int categoryID = sqlite3_column_int(statement, 0);
@@ -147,7 +147,7 @@ int numerOfLogEntriesInDatabase(sqlite3* database)
 	if( SQLITE_NULL != sqlite3_column_type(statement, 1) )
 	    managedCategory.sequenceNumber = sqlite3_column_int(statement, 1);
 
-	[categories addObject:@{@"categoryID" : [NSNumber numberWithInt:categoryID], @"managedObject" : managedCategory}];
+	[categories setObject:managedCategory forKey:[NSNumber numberWithInt:categoryID]];
 
 	progressTick();
     }
@@ -156,7 +156,7 @@ int numerOfLogEntriesInDatabase(sqlite3* database)
     return categories;
 }
 
-+ (NSArray*) migrateInsulinTypesFromDatabase:(sqlite3*)database toContext:(NSManagedObjectContext*)managedObjectContext
++ (NSDictionary*) migrateInsulinTypesFromDatabase:(sqlite3*)database toContext:(NSManagedObjectContext*)managedObjectContext
 {
     const char *const query = "SELECT typeID, sequence, shortName FROM InsulinTypes ORDER BY sequence";
     sqlite3_stmt* statement;
@@ -167,7 +167,7 @@ int numerOfLogEntriesInDatabase(sqlite3* database)
 	return nil;
     }
 
-    NSMutableArray* insulinTypes = [NSMutableArray array];
+    NSMutableDictionary* insulinTypes = [NSMutableDictionary dictionary];
     while( sqlite3_step(statement) == SQLITE_ROW )
     {
 	int typeID = sqlite3_column_int(statement, 0);
@@ -179,7 +179,7 @@ int numerOfLogEntriesInDatabase(sqlite3* database)
 	if( SQLITE_NULL != sqlite3_column_type(statement, 1) )
 	    managedInsulinType.sequenceNumber = sqlite3_column_int(statement, 1);
 
-	[insulinTypes addObject:@{@"insulinTypeID" : [NSNumber numberWithInt:typeID], @"managedObject" : managedInsulinType}];
+	[insulinTypes setObject:managedInsulinType forKey:[NSNumber numberWithInt:typeID]];
 
 	progressTick();
     }
@@ -215,25 +215,16 @@ int numerOfLogEntriesInDatabase(sqlite3* database)
 }
 
 #define	kAllColumns	    "ID,timestamp,glucose,glucoseUnits,categoryID,dose0,dose1,typeID0,typeID1,note"
-#define	kLocalLogEntryTable "localLogEntries"
+
+static const char *const sqlLoadLogDay = "SELECT " kAllColumns " FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') = date(?,'unixepoch','localtime') ORDER BY timestamp DESC";
+sqlite3_stmt* statement = nil;
 
 #define ASSIGN_NOT_NULL(_s, _c, _var, _val)		\
-if( SQLITE_NULL == sqlite3_column_type(_s, _c) )	\
-_var = nil;						\
-else							\
+if( SQLITE_NULL != sqlite3_column_type(_s, _c) )	\
 _var = _val;
 
-+ (void) migrateLogEntriesFromDatabase:(sqlite3*)database forLogDay:(ManagedLogDay*)logDay categories:(NSArray*)categories insulinTypes:(NSArray*)insulinTypes toContext:(NSManagedObjectContext*)managedObjectContext
++ (void) migrateLogEntriesFromDatabase:(sqlite3*)database forLogDay:(ManagedLogDay*)logDay categories:(NSDictionary*)categories insulinTypes:(NSDictionary*)insulinTypes toContext:(NSManagedObjectContext*)managedObjectContext
 {
-    static const char *const sqlLoadLogDay = "SELECT " kAllColumns " FROM " kLocalLogEntryTable " WHERE date(timestamp,'unixepoch','localtime') = date(?,'unixepoch','localtime') ORDER BY timestamp DESC";
-    sqlite3_stmt* statement;
-
-    if( sqlite3_prepare_v2(database, sqlLoadLogDay, -1, &statement, NULL) != SQLITE_OK )
-    {
-	NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
-	return;
-    }
-
     sqlite3_bind_int(statement, 1, [logDay.date timeIntervalSince1970]);
 
     while( sqlite3_step(statement) == SQLITE_ROW )
@@ -246,6 +237,8 @@ _var = _val;
 			[NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 1)]);
 	ASSIGN_NOT_NULL(statement, 2, managedLogEntry.glucose,
 			[NSNumber numberWithDouble:sqlite3_column_double(statement, 2)]);
+	ASSIGN_NOT_NULL(statement, 4, managedLogEntry.category,
+			[categories objectForKey:[NSNumber numberWithInt:sqlite3_column_int(statement, 4)]]);
 	ASSIGN_NOT_NULL(statement, 9, managedLogEntry.note,
 			[NSString stringWithUTF8String:(const char*)sqlite3_column_text(statement, 9)]);
 
@@ -258,19 +251,16 @@ _var = _val;
 		managedLogEntry.glucoseUnits = [NSNumber numberWithInt:kGlucoseUnits_mmolL];
 	}
 
-	if( SQLITE_NULL != sqlite3_column_type(statement, 4) )
-	    managedLogEntry.category = [self managedCategoryForCategoryID:sqlite3_column_int(statement, 4) inCategories:categories];
-
 	if( (SQLITE_NULL != sqlite3_column_type(statement, 5)) &&
 	    (SQLITE_NULL != sqlite3_column_type(statement, 7)) )
 	{
-	    ManagedInsulinDose* insulinDose = [managedLogEntry addDoseWithType:[self managedInsulinTypeForInsulinTypeID:[NSNumber numberWithInt:sqlite3_column_int(statement, 7)] inInsulinTypes:insulinTypes]];
+	    ManagedInsulinDose* insulinDose = [managedLogEntry addDoseWithType:[insulinTypes objectForKey:[NSNumber numberWithInt:sqlite3_column_int(statement, 7)]]];
 	    insulinDose.dose = [NSNumber numberWithInt:sqlite3_column_int(statement, 5)];
 	}
 	if( (SQLITE_NULL != sqlite3_column_type(statement, 6)) &&
 	    (SQLITE_NULL != sqlite3_column_type(statement, 8)) )
 	{
-	    ManagedInsulinDose* insulinDose = [managedLogEntry addDoseWithType:[self managedInsulinTypeForInsulinTypeID:[NSNumber numberWithInt:sqlite3_column_int(statement, 8)] inInsulinTypes:insulinTypes]];
+	    ManagedInsulinDose* insulinDose = [managedLogEntry addDoseWithType:[insulinTypes objectForKey:[NSNumber numberWithInt:sqlite3_column_int(statement, 8)]]];
 	    insulinDose.dose = [NSNumber numberWithInt:sqlite3_column_int(statement, 6)];
 	}
 
@@ -285,10 +275,16 @@ _var = _val;
 {
     totalProgress = numberOfCategoriesInDatabase(database) + numberOfInsulinTypesInDatabase(database) + numberOfLogDaysInDatabase(database) + numerOfLogEntriesInDatabase(database);
 
-    NSArray* categories = [self migrateCategoriesFromDatabase:database toContext:managedObjectContext];
-    NSArray* insulinTypes = [self migrateInsulinTypesFromDatabase:database toContext:managedObjectContext];
+    NSDictionary* categories = [self migrateCategoriesFromDatabase:database toContext:managedObjectContext];
+    NSDictionary* insulinTypes = [self migrateInsulinTypesFromDatabase:database toContext:managedObjectContext];
 
     NSArray* logDays = [self migrateLogDaysFromDatabase:database toContext:managedObjectContext];
+
+    if( sqlite3_prepare_v2(database, sqlLoadLogDay, -1, &statement, NULL) != SQLITE_OK )
+    {
+	NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+	return;
+    }
 
     for( ManagedLogDay* managedLogDay in logDays )
     {
@@ -306,7 +302,7 @@ _var = _val;
     NSMutableOrderedSet* managedInsulinTypes = [NSMutableOrderedSet orderedSet];
     for( NSNumber* insulinTypeID in insulinTypeIDs )
     {
-	ManagedInsulinType* insulinType = [self managedInsulinTypeForInsulinTypeID:insulinTypeID inInsulinTypes:insulinTypes];
+	ManagedInsulinType* insulinType = [insulinTypes objectForKey:insulinTypeID];
 	if( insulinType )
 	    [managedInsulinTypes addObject:insulinType];
     }
@@ -322,25 +318,6 @@ _var = _val;
 }
 
 #pragma mark - Core Data
-
-+ (ManagedCategory*) managedCategoryForCategoryID:(int)categoryID inCategories:(NSArray*)categories
-{
-    NSNumber* categoryIDNumber = [NSNumber numberWithInt:categoryID];
-    for( NSDictionary* category in categories )
-	if( [[category objectForKey:@"categoryID"] isEqualToNumber:categoryIDNumber] )
-	    return [category objectForKey:@"managedObject"];
-    return nil;
-}
-
-+ (ManagedInsulinType*) managedInsulinTypeForInsulinTypeID:(NSNumber*)insulinTypeID inInsulinTypes:(NSArray*)insulinTypes
-{
-    for( NSDictionary* insulinType in insulinTypes )
-	if( [[insulinType objectForKey:@"insulinTypeID"] isEqualToNumber:insulinTypeID] )
-	    return [insulinType objectForKey:@"managedObject"];
-    return nil;
-}
-
-#pragma mark -
 
 + (ManagedCategory*) insertManagedCategoryName:(NSString*)name inContext:(NSManagedObjectContext*)managedObjectContext
 {
