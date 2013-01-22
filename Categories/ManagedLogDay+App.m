@@ -18,6 +18,7 @@
 {
     NSNumberFormatter* numberFormatter = [[NSNumberFormatter alloc] init];
     numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+    numberFormatter.maximumFractionDigits = ([LogModel glucoseUnitsSetting] == kGlucoseUnits_mgdL) ? 0 : 1;
     return [NSString stringWithFormat:@"%@ %@", [numberFormatter stringFromNumber:self.averageGlucose], [LogModel glucoseUnitsSettingString]];
 }
 
