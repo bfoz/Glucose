@@ -1,5 +1,6 @@
 #import "SplashViewController.h"
 
+#import "Flurry.h"
 #import "LogModel+Migration.h"
 
 @interface SplashViewController ()
@@ -67,6 +68,7 @@
 	__block UIBackgroundTaskIdentifier background_Task = [application beginBackgroundTaskWithExpirationHandler:^{
 	    [application endBackgroundTask:background_Task];
 	    background_Task = UIBackgroundTaskInvalid;
+	    [Flurry endTimedEvent:@"migrateOriginalDatabaseToCoreData" withParameters:nil];
 	}];
 
 	[self.activityIndicator startAnimating];
@@ -74,7 +76,9 @@
 
 	__block SplashViewController* blockSelf = self;
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-	    [LogModel migrateTheDatabaseWithProgressView:self.progressView];
+	    [Flurry logEvent:@"migrateOriginalDatabaseToCoreData" timed:YES];
+	    NSDictionary* statistics = [LogModel migrateTheDatabaseWithProgressView:self.progressView];
+	    [Flurry endTimedEvent:@"migrateOriginalDatabaseToCoreData" withParameters:statistics];
 
 	    [application endBackgroundTask:background_Task];
 	    background_Task = UIBackgroundTaskInvalid;

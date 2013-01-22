@@ -42,13 +42,19 @@ void progressTick()
     });
 }
 
-+ (void) migrateTheDatabaseWithProgressView:(UIProgressView*)progressView
++ (NSDictionary*) migrateTheDatabaseWithProgressView:(UIProgressView*)progressView
 {
     __progressView = progressView;
 
     // If the file exists, but can't be opened by Core Data, then it must need to be migrated
 
     sqlite3* originalDatabase = [LogModel openDatabasePath:[LogModel writeableSqliteDBPath]];
+
+    int numberOfCategories = numberOfCategoriesInDatabase(originalDatabase);
+    int numberOfInsulinTypes = numberOfInsulinTypesInDatabase(originalDatabase);
+    int numberOfLogDays = numberOfLogDaysInDatabase(originalDatabase);
+    int numberOfLogEntries = numerOfLogEntriesInDatabase(originalDatabase);
+    totalProgress = numberOfCategories + numberOfInsulinTypes + numberOfLogDays + numberOfLogEntries;
 
     NSManagedObjectContext* importContext = [self managedObjectContext];
 
@@ -63,6 +69,12 @@ void progressTick()
     NSError* error = nil;
     [[NSFileManager defaultManager] moveItemAtPath:[LogModel writeableSqliteDBPath]
 					    toPath:backupPath error:&error];
+
+    return @{ @"numberOfCategories" : [NSNumber numberWithInt:numberOfCategories],
+	      @"numberOfInsulinTypes" : [NSNumber numberWithInt:numberOfInsulinTypes],
+	      @"numberOfLogDays" : [NSNumber numberWithInt:numberOfLogDays],
+	      @"numberOfLogEntries" : [NSNumber numberWithInt:numberOfLogEntries],
+	    };
 }
 
 + (BOOL) needsMigration
@@ -273,8 +285,6 @@ _var = _val;
 
 + (void) migrateDatabase:(sqlite3*)database toContext:(NSManagedObjectContext*)managedObjectContext
 {
-    totalProgress = numberOfCategoriesInDatabase(database) + numberOfInsulinTypesInDatabase(database) + numberOfLogDaysInDatabase(database) + numerOfLogEntriesInDatabase(database);
-
     NSDictionary* categories = [self migrateCategoriesFromDatabase:database toContext:managedObjectContext];
     NSDictionary* insulinTypes = [self migrateInsulinTypesFromDatabase:database toContext:managedObjectContext];
 
