@@ -21,7 +21,7 @@
 #define	kSettingsGlucoseUnitsValue_mgdL		@0
 #define	kSettingsGlucoseUnitsValue_mmolL	@1
 
-static NSString* kSettingsGlucoseUnitsKey	= @"DefaultGlucoseUnits";
+static NSString* kSettingsGlucoseUnitsKey	= @"SettingsGlucoseUnitsKey";
 static NSString* kSettingsHighGlucoseWarningThresholdKey_mgdL	= @"HighGlucoseWarning0";
 static NSString* kSettingsHighGlucoseWarningThresholdKey_mmolL	= @"HighGlucoseWarning1";
 static NSString* kSettingsLowGlucoseWarningThresholdKey_mgdL	= @"LowGlucoseWarning0";

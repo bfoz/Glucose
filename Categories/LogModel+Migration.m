@@ -311,10 +311,14 @@ _var = _val;
 
     // Migrate the glucose units setting
     NSString* glucoseSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultGlucoseUnits];
-    if( [glucoseSetting isEqualToString:@" mg/dL"] )
-	[LogModel setGlucoseUnitsSetting:kGlucoseUnits_mgdL];
-    else
-	[LogModel setGlucoseUnitsSetting:kGlucoseUnits_mmolL];
+    if( glucoseSetting )
+    {
+	[[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultGlucoseUnits];
+	if( [glucoseSetting isEqualToString:@" mg/dL"] )
+	    [LogModel setGlucoseUnitsSetting:kGlucoseUnits_mgdL];
+	else
+	    [LogModel setGlucoseUnitsSetting:kGlucoseUnits_mmolL];
+    }
 }
 
 #pragma mark - Core Data
