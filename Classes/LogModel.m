@@ -91,6 +91,11 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 	kDefaultHighGlucoseWarningThreshold_mmolL  = @6.6;
 	kDefaultLowGlucoseWarningThreshold_mmolL   = @4.4;
 
+	_averageGlucoseFormatter = [[NSNumberFormatter alloc] init];
+	_averageGlucoseFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+	_averageGlucoseFormatter.maximumFractionDigits = ([LogModel glucoseUnitsSetting] == kGlucoseUnits_mgdL) ? 0 : 1;
+	_averageGlucoseFormatter.positiveSuffix = [NSString stringWithFormat:@" %@", [LogModel glucoseUnitsSettingString]];
+
 	defaults = [NSUserDefaults standardUserDefaults];
 	insulinTypeShortNameMaxWidth = NULL;
 	shortDateFormatter = [[NSDateFormatter alloc] init];
@@ -105,6 +110,8 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
     _managedObjectContext = nil;
     _persistentStoreCoordinator = nil;
 }
+
+#pragma mark -
 
 - (NSString*) shortStringFromDate:(NSDate*)date
 {

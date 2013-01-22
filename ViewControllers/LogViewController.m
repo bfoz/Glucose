@@ -19,7 +19,6 @@
 
 @interface LogViewController () <SettingsViewControllerDelegate>
 
-@property (nonatomic, strong)	NSDateFormatter*	dateFormatter;
 @property (nonatomic, weak) id<LogViewDelegate>   delegate;
 @property (nonatomic, strong) LogModel*	model;
 @property (nonatomic, strong) SettingsViewController* settingsViewController;
@@ -27,8 +26,10 @@
 @end
 
 @implementation LogViewController
+{
+    NSDateFormatter*	shortDateFormatter;
+}
 
-@synthesize dateFormatter;
 @synthesize delegate = _delegate;
 @synthesize model = _model;
 @synthesize settingsViewController;
@@ -40,20 +41,21 @@
 	self.delegate = delegate;
 	self.model = model;
 
-		self.title = @"Glucose";
+	self.title = @"Glucose";
 
         UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
-		[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
-		self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:b];
+	[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
+	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:b];
 
 	UIBarButtonItem* back = [[UIBarButtonItem alloc] initWithTitle: @"Log" style:UIBarButtonItemStyleBordered target: nil action: nil];
 	self.navigationItem.backBarButtonItem = back;
 
-		// Create a date formatter to convert the date to a string format.
-		self.dateFormatter = [[NSDateFormatter alloc] init];
-		[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-	}
-	return self;
+	shortDateFormatter = [[NSDateFormatter alloc] init];
+	shortDateFormatter.dateStyle = NSDateFormatterShortStyle;
+	shortDateFormatter.timeStyle = NSDateFormatterNoStyle;
+	shortDateFormatter.doesRelativeDateFormatting = YES;
+    }
+    return self;
 }
 
 - (void)viewDidLoad
@@ -150,7 +152,12 @@
 	return @"Today";
 
     ManagedLogDay* logDay = [_model.logDays objectAtIndex:section];
-    return logDay.titleForHeader;
+    NSString* dateString = [shortDateFormatter stringFromDate:logDay.date];
+
+    // Don't display the average if it's zero
+    if( logDay.averageGlucose && ![logDay.averageGlucose isEqualToNumber:@0] )
+	return [NSString stringWithFormat:@"%@ (%@)", dateString, [_model.averageGlucoseFormatter stringFromNumber:logDay.averageGlucose]];
+    return dateString;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -171,7 +178,7 @@
     ManagedLogEntry* logEntry = [logDay.logEntries objectAtIndex:row];
 
     // Configure the cell
-    cell.labelTimestamp.text = [dateFormatter stringFromDate:logEntry.timestamp];
+    cell.labelTimestamp.text = [shortDateFormatter stringFromDate:logEntry.timestamp];
     cell.labelCategory.text = logEntry.category ? logEntry.category.name : @"";
     cell.labelGlucose.text = logEntry.glucoseString;
     cell.note = logEntry.note;
