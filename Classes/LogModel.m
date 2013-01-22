@@ -46,6 +46,13 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 
 @end
 
+void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter)
+{
+    averageGlucoseFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+    averageGlucoseFormatter.maximumFractionDigits = ([LogModel glucoseUnitsSetting] == kGlucoseUnits_mgdL) ? 0 : 1;
+    averageGlucoseFormatter.positiveSuffix = [NSString stringWithFormat:@" %@", [LogModel glucoseUnitsSettingString]];
+}
+
 @implementation LogModel
 {
     NSMutableArray* _logDays;
@@ -92,14 +99,14 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 	kDefaultLowGlucoseWarningThreshold_mmolL   = @4.4;
 
 	_averageGlucoseFormatter = [[NSNumberFormatter alloc] init];
-	_averageGlucoseFormatter.numberStyle = NSNumberFormatterDecimalStyle;
-	_averageGlucoseFormatter.maximumFractionDigits = ([LogModel glucoseUnitsSetting] == kGlucoseUnits_mgdL) ? 0 : 1;
-	_averageGlucoseFormatter.positiveSuffix = [NSString stringWithFormat:@" %@", [LogModel glucoseUnitsSettingString]];
+	configureAverageGlucoseFormatter(_averageGlucoseFormatter);
 
 	defaults = [NSUserDefaults standardUserDefaults];
 	insulinTypeShortNameMaxWidth = NULL;
 	shortDateFormatter = [[NSDateFormatter alloc] init];
 	[shortDateFormatter setDateStyle:NSDateFormatterShortStyle];
+
+	[defaults addObserver:self forKeyPath:kSettingsGlucoseUnitsKey options:0 context:nil];
     }
 
     return self;
@@ -107,8 +114,18 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 
 - (void) dealloc
 {
+    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:kSettingsGlucoseUnitsKey];
+
     _managedObjectContext = nil;
     _persistentStoreCoordinator = nil;
+}
+
+#pragma mark - Key Value Observing
+
+- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if( [keyPath isEqualToString:kSettingsGlucoseUnitsKey] )
+	configureAverageGlucoseFormatter(_averageGlucoseFormatter);
 }
 
 #pragma mark -
