@@ -498,7 +498,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
     ManagedLogEntry* managedLogEntry = [ManagedLogEntry insertManagedLogEntryInContext:self.managedObjectContext];
     managedLogEntry.timestamp = [NSDate date];
-    managedLogEntry.glucoseUnits = [NSNumber numberWithInt:[self glucoseUnitsSetting]];
+    managedLogEntry.glucoseUnits = [NSNumber numberWithInt:[LogModel glucoseUnitsSetting]];
 
     for( ManagedInsulinType* insulinType in self.insulinTypesForNewEntries )
 	[managedLogEntry addDoseWithType:insulinType];
@@ -628,7 +628,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
 #pragma mark - Settings
 
-- (GlucoseUnitsType) glucoseUnitsSetting
++ (GlucoseUnitsType) glucoseUnitsSetting
 {
     NSNumber* glucoseSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kSettingsGlucoseUnitsKey];
     if( [glucoseSetting isEqualToNumber:kSettingsGlucoseUnitsValue_mgdL] )
@@ -640,12 +640,10 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
 + (NSString*) glucoseUnitsSettingString
 {
-    NSNumber* glucoseSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kSettingsGlucoseUnitsKey];
-    if( [glucoseSetting isEqualToNumber:kSettingsGlucoseUnitsValue_mgdL] )
+    if( kGlucoseUnits_mgdL == [self glucoseUnitsSetting] )
 	return GlucoseUnitsTypeString_mgdL;
-    else if( [glucoseSetting isEqualToNumber:kSettingsGlucoseUnitsValue_mmolL] )
+    else
 	return GlucoseUnitsTypeString_mmolL;
-    return nil;
 }
 
 + (void) setGlucoseUnitsSetting:(GlucoseUnitsType)units
@@ -665,17 +663,17 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
 - (NSString*) highGlucoseWarningThresholdKey
 {
-    return (kGlucoseUnits_mgdL == self.glucoseUnitsSetting) ? kSettingsHighGlucoseWarningThresholdKey_mgdL : kSettingsHighGlucoseWarningThresholdKey_mmolL;
+    return (kGlucoseUnits_mgdL == [LogModel glucoseUnitsSetting]) ? kSettingsHighGlucoseWarningThresholdKey_mgdL : kSettingsHighGlucoseWarningThresholdKey_mmolL;
 }
 
 - (NSString*) lowGlucoseWarningThresholdKey
 {
-    return (kGlucoseUnits_mgdL == self.glucoseUnitsSetting) ? kSettingsLowGlucoseWarningThresholdKey_mgdL : kSettingsLowGlucoseWarningThresholdKey_mmolL;
+    return (kGlucoseUnits_mgdL == [LogModel glucoseUnitsSetting]) ? kSettingsLowGlucoseWarningThresholdKey_mgdL : kSettingsLowGlucoseWarningThresholdKey_mmolL;
 }
 
 - (NSNumber*) defaultHighGlucoseWarningThreshold
 {
-    return (kGlucoseUnits_mgdL == self.glucoseUnitsSetting) ? kDefaultHighGlucoseWarningThreshold_mgdL : kDefaultHighGlucoseWarningThreshold_mmolL;
+    return (kGlucoseUnits_mgdL == [LogModel glucoseUnitsSetting]) ? kDefaultHighGlucoseWarningThreshold_mgdL : kDefaultHighGlucoseWarningThreshold_mmolL;
 }
 
 - (NSNumber*) defaultLowGlucoseWarningThreshold

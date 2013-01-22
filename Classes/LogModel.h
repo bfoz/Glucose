@@ -44,7 +44,7 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 
 #pragma mark Settings
 
-- (GlucoseUnitsType) glucoseUnitsSetting;
++ (GlucoseUnitsType) glucoseUnitsSetting;
 + (NSString*) glucoseUnitsSettingString;
 + (void) setGlucoseUnitsSetting:(GlucoseUnitsType)units;
 

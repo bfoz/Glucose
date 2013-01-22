@@ -228,7 +228,7 @@ enum AboutSectionRows
 	    {
 		f = [[NumberField alloc] initWithDelegate:self];
 		f.frame = CGRectMake(0, kCellTopOffset*2, 50, 20);
-		f.precision = (kGlucoseUnits_mgdL == model.glucoseUnitsSetting) ? 0 : 1;
+		f.precision = (kGlucoseUnits_mgdL == [LogModel glucoseUnitsSetting]) ? 0 : 1;
 		f.textAlignment = UITextAlignmentRight;
 		cell.accessoryView = f;
 	    }
@@ -253,7 +253,7 @@ enum AboutSectionRows
 		    UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:@[GlucoseUnitsTypeString_mgdL,GlucoseUnitsTypeString_mmolL]];
 		    s.segmentedControlStyle = UISegmentedControlStyleBar;
 		    [s addTarget:self action:@selector(glucoseUnitsAction:) forControlEvents:UIControlEventValueChanged];
-		    s.selectedSegmentIndex = (kGlucoseUnits_mgdL == model.glucoseUnitsSetting) ? 0 : 1;
+		    s.selectedSegmentIndex = (kGlucoseUnits_mgdL == [LogModel glucoseUnitsSetting]) ? 0 : 1;
 		    cell.accessoryView = s;
 		    break;
 	    }
