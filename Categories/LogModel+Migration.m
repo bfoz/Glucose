@@ -230,24 +230,20 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 						 NSMonthCalendarUnit |
 						 NSDayCalendarUnit);
 
-+ (ManagedLogDay*) logDayForDate:(NSDate*)date logDays:(NSArray*)logDays
+ManagedLogDay* logDayForDate(NSDate* date, NSArray* logDays, NSArray* logDayDateComponents, NSCalendar* calendar)
 {
-    NSCalendar *const calendar = [NSCalendar currentCalendar];
     NSDateComponents *const _date = [calendar components:DATE_COMPONENTS_FOR_DAY
 					        fromDate:date];
-    for( ManagedLogDay* logDay in logDays )
+
+    unsigned i = 0;
+    for( NSDateComponents* dateComponents in logDayDateComponents )
     {
-	NSDateComponents *const c = [calendar components:DATE_COMPONENTS_FOR_DAY
-						fromDate:logDay.date];
-	if( (_date.day == c.day) &&
-	   (_date.month == c.month) &&
-	   (_date.year == c.year) )
-	    return logDay;
+	if( (_date.day == dateComponents.day) && (_date.month == dateComponents.month) && (_date.year == dateComponents.year) )
+	    return [logDays objectAtIndex:i];
+	++i;
     }
 
-    ManagedLogDay* managedLogDay = [LogModel insertManagedLogDayIntoContext:self.managedObjectContext];
-    managedLogDay.date = date;
-    return managedLogDay;
+    return nil;
 }
 
 #define	kAllColumns	    "ID,timestamp,glucose,glucoseUnits,categoryID,dose0,dose1,typeID0,typeID1,note"
@@ -266,6 +262,12 @@ _var = _val;
 	NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
 	return;
     }
+
+    NSCalendar *const calendar = [NSCalendar currentCalendar];
+
+    NSMutableArray* logDayDateComponents = [NSMutableArray array];
+    for( ManagedLogDay* logDay in logDays )
+	[logDayDateComponents addObject:[calendar components:DATE_COMPONENTS_FOR_DAY fromDate:logDay.date]];
 
     while( sqlite3_step(statement) == SQLITE_ROW )
     {
@@ -302,7 +304,13 @@ _var = _val;
 	    insulinDose.dose = [NSNumber numberWithInt:sqlite3_column_int(statement, 6)];
 	}
 
-	managedLogEntry.logDay = [LogModel logDayForDate:managedLogEntry.timestamp logDays:logDays];
+	ManagedLogDay* managedLogDay = logDayForDate(managedLogEntry.timestamp, logDays, logDayDateComponents, calendar);
+	if( !managedLogDay )
+	{
+	    managedLogDay = [LogModel insertManagedLogDayIntoContext:managedObjectContext];
+	    managedLogDay.date = managedLogEntry.timestamp;
+	}
+	managedLogEntry.logDay = managedLogDay;
 
 	progressTick();
     }
