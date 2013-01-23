@@ -38,7 +38,7 @@ void progressTick()
 {
     ++progress;
     dispatch_async(dispatch_get_main_queue(), ^{
-	[__progressView setProgress:(progress/totalProgress) animated:YES];
+	[__progressView setProgress:(progress/totalProgress) animated:NO];
     });
 }
 
@@ -226,25 +226,51 @@ int numerOfLogEntriesInDatabase(sqlite3* database)
     return logDays;
 }
 
-#define	kAllColumns	    "ID,timestamp,glucose,glucoseUnits,categoryID,dose0,dose1,typeID0,typeID1,note"
+static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
+						 NSMonthCalendarUnit |
+						 NSDayCalendarUnit);
 
-static const char *const sqlLoadLogDay = "SELECT " kAllColumns " FROM localLogEntries WHERE date(timestamp,'unixepoch','localtime') = date(?,'unixepoch','localtime') ORDER BY timestamp DESC";
-sqlite3_stmt* statement = nil;
++ (ManagedLogDay*) logDayForDate:(NSDate*)date logDays:(NSArray*)logDays
+{
+    NSCalendar *const calendar = [NSCalendar currentCalendar];
+    NSDateComponents *const _date = [calendar components:DATE_COMPONENTS_FOR_DAY
+					        fromDate:date];
+    for( ManagedLogDay* logDay in logDays )
+    {
+	NSDateComponents *const c = [calendar components:DATE_COMPONENTS_FOR_DAY
+						fromDate:logDay.date];
+	if( (_date.day == c.day) &&
+	   (_date.month == c.month) &&
+	   (_date.year == c.year) )
+	    return logDay;
+    }
+
+    ManagedLogDay* managedLogDay = [LogModel insertManagedLogDayIntoContext:self.managedObjectContext];
+    managedLogDay.date = date;
+    return managedLogDay;
+}
+
+#define	kAllColumns	    "ID,timestamp,glucose,glucoseUnits,categoryID,dose0,dose1,typeID0,typeID1,note"
 
 #define ASSIGN_NOT_NULL(_s, _c, _var, _val)		\
 if( SQLITE_NULL != sqlite3_column_type(_s, _c) )	\
 _var = _val;
 
-+ (void) migrateLogEntriesFromDatabase:(sqlite3*)database forLogDay:(ManagedLogDay*)logDay categories:(NSDictionary*)categories insulinTypes:(NSDictionary*)insulinTypes toContext:(NSManagedObjectContext*)managedObjectContext
++ (void) migrateLogEntriesFromDatabase:(sqlite3*)database logDays:(NSArray*)logDays categories:(NSDictionary*)categories insulinTypes:(NSDictionary*)insulinTypes toContext:(NSManagedObjectContext*)managedObjectContext
 {
-    sqlite3_bind_int(statement, 1, [logDay.date timeIntervalSince1970]);
+    const char* sqlLoadLogDay = "SELECT " kAllColumns " FROM localLogEntries ORDER BY timestamp DESC";
+    sqlite3_stmt* statement = nil;
+
+    if( sqlite3_prepare_v2(database, sqlLoadLogDay, -1, &statement, NULL) != SQLITE_OK )
+    {
+	NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
+	return;
+    }
 
     while( sqlite3_step(statement) == SQLITE_ROW )
     {
 	ManagedLogEntry* managedLogEntry = [NSEntityDescription insertNewObjectForEntityForName:@"LogEntry"
 									 inManagedObjectContext:managedObjectContext];
-	managedLogEntry.logDay = logDay;
-
 	ASSIGN_NOT_NULL(statement, 1, managedLogEntry.timestamp,
 			[NSDate dateWithTimeIntervalSince1970:sqlite3_column_int(statement, 1)]);
 	ASSIGN_NOT_NULL(statement, 2, managedLogEntry.glucose,
@@ -276,6 +302,8 @@ _var = _val;
 	    insulinDose.dose = [NSNumber numberWithInt:sqlite3_column_int(statement, 6)];
 	}
 
+	managedLogEntry.logDay = [LogModel logDayForDate:managedLogEntry.timestamp logDays:logDays];
+
 	progressTick();
     }
 
@@ -290,21 +318,14 @@ _var = _val;
 
     NSArray* logDays = [self migrateLogDaysFromDatabase:database toContext:managedObjectContext];
 
-    if( sqlite3_prepare_v2(database, sqlLoadLogDay, -1, &statement, NULL) != SQLITE_OK )
-    {
-	NSLog(@"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(database));
-	return;
-    }
+    [self migrateLogEntriesFromDatabase:database
+				logDays:logDays
+			     categories:categories
+			   insulinTypes:insulinTypes
+			      toContext:managedObjectContext];
 
     for( ManagedLogDay* managedLogDay in logDays )
-    {
-	[self migrateLogEntriesFromDatabase:database
-				  forLogDay:managedLogDay
-				 categories:categories
-			       insulinTypes:insulinTypes
-				  toContext:managedObjectContext];
 	[managedLogDay updateStatistics];
-    }
 
     // Insulins for new entries
     NSArray* insulinTypeIDs = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultInsulinTypes];
