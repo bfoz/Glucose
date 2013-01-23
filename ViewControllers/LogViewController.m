@@ -28,6 +28,7 @@
 @implementation LogViewController
 {
     NSDateFormatter*	shortDateFormatter;
+    NSDateFormatter*	shortTimeFormatter;
 }
 
 @synthesize delegate = _delegate;
@@ -54,6 +55,9 @@
 	shortDateFormatter.dateStyle = NSDateFormatterShortStyle;
 	shortDateFormatter.timeStyle = NSDateFormatterNoStyle;
 	shortDateFormatter.doesRelativeDateFormatting = YES;
+
+	shortTimeFormatter = [[NSDateFormatter alloc] init];
+	[shortTimeFormatter setTimeStyle:NSDateFormatterShortStyle];
     }
     return self;
 }
@@ -178,7 +182,7 @@
     ManagedLogEntry* logEntry = [logDay.logEntries objectAtIndex:row];
 
     // Configure the cell
-    cell.labelTimestamp.text = [shortDateFormatter stringFromDate:logEntry.timestamp];
+    cell.labelTimestamp.text = [shortTimeFormatter stringFromDate:logEntry.timestamp];
     cell.labelCategory.text = logEntry.category ? logEntry.category.name : @"";
     cell.labelGlucose.text = logEntry.glucoseString;
     cell.note = logEntry.note;
