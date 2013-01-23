@@ -444,7 +444,7 @@ static NSUserDefaults* defaults = nil;
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    if( 2 == section )
+    if( (2 == section) && self.logEntry.note )
 	return @"Note";
     return nil;
 }

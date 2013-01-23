@@ -66,8 +66,37 @@ describe(@"LogEntryViewController", ^{
 	[controller.tableView numberOfRowsInSection:1] should equal(0);
     });
 
-    xit(@"should have X rows in section 2", ^{
-	[controller.tableView numberOfRowsInSection:2] should equal(1);
+    describe(@"when the log entry has a note", ^{
+	beforeEach(^{
+	    logEntry.note = @"This is a note";
+	});
+
+	it(@"should display a header for the Note section", ^{
+	    [controller tableView:nil titleForHeaderInSection:kSectionNote] should equal(@"Note");
+	});
+
+	it(@"should have 1 row in the Note section", ^{
+	    [controller.tableView numberOfRowsInSection:kSectionNote] should equal(1);
+	});
+
+	it(@"should have the correct text", ^{
+	    UITableViewCell* cell = [controller tableView:controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionNote]];
+	    cell.textLabel.text should equal(@"This is a note");
+	});
+    });
+
+    describe(@"when the log entry does not have a note", ^{
+	beforeEach(^{
+	    logEntry.note = nil;
+	});
+
+	it(@"should not display a header for the Note section", ^{
+	    [controller tableView:nil titleForHeaderInSection:kSectionNote] should be_nil;
+	});
+
+	it(@"should not have any rows in the Note section", ^{
+	    [controller.tableView numberOfRowsInSection:kSectionNote] should equal(0);
+	});
     });
 
     describe(@"when the Edit button is tapped", ^{
