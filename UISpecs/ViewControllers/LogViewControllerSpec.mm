@@ -72,6 +72,16 @@ describe(@"LogViewController", ^{
 	    LogEntryViewController* logEntryViewController = (LogEntryViewController*)controller.navigationController.topViewController;
 	    logEntryViewController.editingNewEntry should be_truthy;
 	});
+
+	describe(@"when the user saves the new entry", ^{
+	    beforeEach(^{
+		[controller logEntryView:nil didEndEditingEntry:nil];
+	    });
+
+	    it(@"should pop the log entry view controller", ^{
+		controller.navigationController.topViewController should_not be_instance_of([LogEntryViewController class]);
+	    });
+	});
     });
 
     describe(@"when the model has no log entries", ^{

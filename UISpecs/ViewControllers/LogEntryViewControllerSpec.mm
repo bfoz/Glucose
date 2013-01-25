@@ -253,13 +253,7 @@ describe(@"LogEntryViewController", ^{
 	});
 
 	describe(@"when the Save button is tapped", ^{
-	    __block id mockDelegate;
-
 	    beforeEach(^{
-		mockDelegate = [OCMockObject mockForProtocol:@protocol(LogEntryViewDelegate)];
-		controller.delegate = mockDelegate;
-		[[mockDelegate expect] logEntryView:controller didEndEditingEntry:OCMOCK_ANY];
-
 		[controller.navigationItem.rightBarButtonItem tap];
 	    });
 
@@ -271,8 +265,8 @@ describe(@"LogEntryViewController", ^{
 		controller.title should equal(@"Details");
 	    });
 
-	    it(@"should inform the delegate", ^{
-		[mockDelegate verify];
+	    it(@"should update the model", ^{
+		[controller.logEntry hasChanges] should_not be_truthy;
 	    });
 	});
     });

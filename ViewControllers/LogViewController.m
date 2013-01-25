@@ -268,6 +268,7 @@
 
 - (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(ManagedLogEntry*)logEntry
 {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark <SettingsViewControllerDelegate>

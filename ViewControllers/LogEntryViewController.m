@@ -134,10 +134,7 @@ static NSUserDefaults* defaults = nil;
 	if( self.editingNewEntry )
 	    [self finishEditingNewLogEntry];
 	else
-	{
 	    [self finishEditingLogEntry];
-	    [delegate logEntryView:self didEndEditingEntry:self.logEntry];
-	}
     }
 
     [self updateTitle];
@@ -591,6 +588,7 @@ static NSUserDefaults* defaults = nil;
 {
     currentEditingField = cell.field;
     self.navigationItem.rightBarButtonItem.enabled = NO;
+    [self.logEntry.managedObjectContext.undoManager beginUndoGrouping];
 }
 
 - (void)numberFieldCellDidEndEditing:(NumberFieldCell*)cell
