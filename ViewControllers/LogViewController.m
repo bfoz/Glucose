@@ -110,7 +110,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	[self.tableView reloadData];
+
+    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 
     // Update the LogEntryCell class width trackers
     [LogEntryCell setInsulinTypeShortNameWidth:_model.insulinTypeShortNameMaxWidth];
@@ -216,11 +217,8 @@
 
 #pragma mark <UITableViewDelegate>
 
-- (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)path
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)path
 {
-    // HI guidlines say row should be selected and then deselected
-    [tv deselectRowAtIndexPath:path animated:YES];
-
     ManagedLogDay *const logDay = [_model.logDays objectAtIndex:path.section];
     [self inspectLogEntry:[logDay.logEntries objectAtIndex:path.row]];
 }
@@ -265,11 +263,13 @@
 - (void) logEntryViewControllerDidCancelEditing
 {
     [self.model undo];
+    [self.tableView reloadData];
 }
 
 - (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(ManagedLogEntry*)logEntry
 {
     [self.navigationController popViewControllerAnimated:YES];
+    [self.tableView reloadData];
 }
 
 #pragma mark <SettingsViewControllerDelegate>

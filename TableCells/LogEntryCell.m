@@ -31,8 +31,6 @@ unsigned insulinTypeShortNameWidth = 0;
 {
     if( self = [super initWithStyle:style reuseIdentifier:reuseIdentifier] )
 	{
-		self.selectionStyle = UITableViewCellSelectionStyleNone;
-		
 		labelCategory = [[UILabel alloc] initWithFrame:CGRectZero];
 		[self.contentView addSubview:labelCategory];
 		labelCategory.textAlignment = UITextAlignmentLeft;
