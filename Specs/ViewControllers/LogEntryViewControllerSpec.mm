@@ -206,10 +206,6 @@ describe(@"LogEntryViewController", ^{
 	    [controller.tableView numberOfRowsInSection:1] should equal(0);
 	});
 
-	it(@"should have 1 row in section 2", ^{
-	    [controller.tableView numberOfRowsInSection:2] should equal(1);
-	});
-
 	describe(@"Section 0", ^{
 	    it(@"should have 3 rows", ^{
 		[controller.tableView numberOfRowsInSection:0] should equal(3);
@@ -301,6 +297,16 @@ describe(@"LogEntryViewController", ^{
 			});
 		    });
 		});
+	    });
+	});
+
+	describe(@"Section 2 - Note", ^{
+	    it(@"should have 1 row", ^{
+		[controller.tableView numberOfRowsInSection:kSectionNote] should equal(1);
+	    });
+
+	    it(@"should have a section header", ^{
+		[controller tableView:nil titleForHeaderInSection:kSectionNote] should equal(@"Note");
 	    });
 	});
 
@@ -401,6 +407,10 @@ describe(@"LogEntryViewController", ^{
 	    it(@"should not show a disclosure indicator", ^{
 		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:2]];
 		cell.accessoryType should equal(UITableViewCellAccessoryNone);
+	    });
+
+	    it(@"should have the correct section title", ^{
+		[controller tableView:nil titleForHeaderInSection:kSectionNote] should equal(@"Note");
 	    });
 	});
 

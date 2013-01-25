@@ -258,7 +258,7 @@ static NSUserDefaults* defaults = nil;
 	    if( self.editing )
 		return 1;
 	    else
-		return self.logEntry.note && [self.logEntry.note length] ? 1 : 0;
+		return (self.logEntry.note && [self.logEntry.note length]) ? 1 : 0;
     }
     return 0;
 }
@@ -481,8 +481,9 @@ static NSUserDefaults* defaults = nil;
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    if( (2 == section) && self.logEntry.note )
-	return @"Note";
+    if( kSectionNote == section )
+	if( self.editing || self.logEntry.note )
+	    return @"Note";
     return nil;
 }
 
