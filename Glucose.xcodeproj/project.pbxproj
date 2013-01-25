@@ -49,6 +49,8 @@
 		158370AB169F6E7F000D4FC2 /* ManagedLogEntry+App.m in Sources */ = {isa = PBXBuildFile; fileRef = 158370AA169F6E7F000D4FC2 /* ManagedLogEntry+App.m */; };
 		158370AC169F6E7F000D4FC2 /* ManagedLogEntry+App.m in Sources */ = {isa = PBXBuildFile; fileRef = 158370AA169F6E7F000D4FC2 /* ManagedLogEntry+App.m */; };
 		1585DEC10E6A217200FB9C39 /* glucose.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1585DEC00E6A217200FB9C39 /* glucose.sqlite */; };
+		158BB71416B3458900D5C03C /* FlurryLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 158BB71316B3458900D5C03C /* FlurryLogger.m */; };
+		158BB71516B3458900D5C03C /* FlurryLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 158BB71316B3458900D5C03C /* FlurryLogger.m */; };
 		158F4094162A11AA0000DD52 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158F4093162A11AA0000DD52 /* DropboxSDK.framework */; };
 		158F4096162A11E10000DD52 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 158F4095162A11E10000DD52 /* QuartzCore.framework */; };
 		158F409C162A3E7A0000DD52 /* DropboxExportViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F409B162A3E7A0000DD52 /* DropboxExportViewController.m */; };
@@ -263,6 +265,8 @@
 		158370A9169F6E7F000D4FC2 /* ManagedLogEntry+App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ManagedLogEntry+App.h"; sourceTree = "<group>"; };
 		158370AA169F6E7F000D4FC2 /* ManagedLogEntry+App.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ManagedLogEntry+App.m"; sourceTree = "<group>"; };
 		1585DEC00E6A217200FB9C39 /* glucose.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = glucose.sqlite; sourceTree = "<group>"; };
+		158BB71216B3458900D5C03C /* FlurryLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryLogger.h; sourceTree = "<group>"; };
+		158BB71316B3458900D5C03C /* FlurryLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlurryLogger.m; sourceTree = "<group>"; };
 		158F4093162A11AA0000DD52 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropboxSDK.framework; path = Frameworks/DropboxSDK.framework; sourceTree = "<group>"; };
 		158F4095162A11E10000DD52 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		158F409A162A3E7A0000DD52 /* DropboxExportViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxExportViewController.h; sourceTree = "<group>"; };
@@ -394,6 +398,8 @@
 				15A322590ED3E0D000C16388 /* Contact.m */,
 				15C2E7C3162D29D3002115FD /* DateField.h */,
 				15C2E7C4162D29D4002115FD /* DateField.m */,
+				158BB71216B3458900D5C03C /* FlurryLogger.h */,
+				158BB71316B3458900D5C03C /* FlurryLogger.m */,
 				150829CF0E500B0500FB556A /* InsulinDose.h */,
 				150829D00E500B0500FB556A /* InsulinDose.m */,
 				150829D10E500B0500FB556A /* InsulinType.h */,
@@ -979,6 +985,7 @@
 				15B7FE5E16ACBE9700259A02 /* ManagedLogDay+SpecHelper.m in Sources */,
 				1524475B16ACD59700422F3E /* ManagedLogDay.m in Sources */,
 				1524475F16ACF6D900422F3E /* SplashViewController.m in Sources */,
+				158BB71516B3458900D5C03C /* FlurryLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1026,6 +1033,7 @@
 				15E59F601698F4510067BDC1 /* LogModel+Migration.m in Sources */,
 				1524475A16ACD59700422F3E /* ManagedLogDay.m in Sources */,
 				1524475E16ACF6D900422F3E /* SplashViewController.m in Sources */,
+				158BB71416B3458900D5C03C /* FlurryLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

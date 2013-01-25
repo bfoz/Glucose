@@ -5,6 +5,7 @@
 #import "DateField.h"
 #import "DoseFieldCell.h"
 #import "DualTableViewCell.h"
+#import "FlurryLogger.h"
 #import "InsulinTypeViewController.h"
 #import "LabelCell.h"
 #import "LogEntryViewController.h"
@@ -613,19 +614,24 @@ static NSUserDefaults* defaults = nil;
 
 - (void) textFieldDidBeginEditing:(DateField*)dateField
 {
+    [[FlurryLogger currentFlurryLogger] logEventWithName:kFlurryEventNewLogEntryDidTapTimestamp];
     dateField.date = self.logEntry.timestamp;
 }
 
 - (void) textFieldDidEndEditing:(DateField *)dateField
 {
     if( timestampField )
+    {
 	self.logEntry.timestamp = dateField.date;
+	[[FlurryLogger currentFlurryLogger] logEventWithName:kFlurryEventNewLogEntryDidChangeTimestamp];
+    }
     timestampField = dateField;
     timestampLabel.text = [dateFormatter stringFromDate:self.logEntry.timestamp];
 }
 
 - (void) dateFieldWillCancelEditing:(DateField *)dateField
 {
+    [[FlurryLogger currentFlurryLogger] logEventWithName:kFlurryEventNewLogEntryDidCancelTimestamp];
     timestampField = nil;
 }
 
