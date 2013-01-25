@@ -3,6 +3,7 @@
 #import "LogModel+CoreData.h"
 #import "LogModel+SpecHelper.h"
 
+#import "ManagedInsulinType.h"
 #import "ManagedLogEntry+App.h"
 
 NSPersistentStoreCoordinator* _persistentStoreCoordinator = nil;
@@ -22,6 +23,13 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator = nil;
 	[_persistentStoreCoordinator removePersistentStore:store error:nil];
 
     _persistentStoreCoordinator = nil;
+
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    NSString* domain = [[NSBundle mainBundle] bundleIdentifier];
+    [defaults removePersistentDomainForName:domain];
+    for( NSString* key in [defaults persistentDomainForName:domain] )
+	[defaults removeObjectForKey:key];
+    [NSUserDefaults resetStandardUserDefaults];
 }
 
 - (NSPersistentStoreCoordinator*) persistentStoreCoordinator
@@ -45,6 +53,14 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator = nil;
 - (ManagedInsulinType*) insertManagedInsulinType
 {
     return [LogModel insertManagedInsulinTypeIntoContext:self.managedObjectContext];
+}
+
+- (ManagedInsulinType*) insertManagedInsulinTypeShortName:(NSString*)name
+{
+    ManagedInsulinType* managedInsulinType =  [self insertManagedInsulinType];
+    managedInsulinType.shortName = name;
+
+    return managedInsulinType;
 }
 
 - (ManagedLogDay*) insertManagedLogDay

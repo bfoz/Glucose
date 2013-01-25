@@ -7,6 +7,7 @@
 - (NSPersistentStoreCoordinator*) persistentStoreCoordinator;
 
 - (ManagedInsulinType*) insertManagedInsulinType;
+- (ManagedInsulinType*) insertManagedInsulinTypeShortName:(NSString*)name;
 - (ManagedLogDay*) insertManagedLogDay;
 
 @end

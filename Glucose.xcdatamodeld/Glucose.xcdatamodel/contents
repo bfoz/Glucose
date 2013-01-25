@@ -6,7 +6,7 @@
         <relationship name="logEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogEntry" inverseName="category" inverseEntity="LogEntry" syncable="YES"/>
     </entity>
     <entity name="InsulinDose" representedClassName="ManagedInsulinDose" syncable="YES">
-        <attribute name="dose" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="dose" attributeType="Float" syncable="YES"/>
         <relationship name="insulinType" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InsulinType" inverseName="insulinDoses" inverseEntity="InsulinType" syncable="YES"/>
         <relationship name="logEntry" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="LogEntry" inverseName="insulinDoses" inverseEntity="LogEntry" syncable="YES"/>
     </entity>

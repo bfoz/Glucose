@@ -11,6 +11,7 @@
 #import "LogDay.h"
 #import "LogModel.h"
 #import "ManagedCategory.h"
+#import "ManagedLogDay+App.h"
 #import "ManagedLogEntry+App.h"
 #import "ManagedInsulinDose.h"
 #import "ManagedInsulinType.h"
@@ -32,7 +33,6 @@ enum Sections
     CategoryViewController*	categoryViewController;
     InsulinTypeViewController*	insulinTypeViewController;
 
-    BOOL	didSelectRow;
     BOOL	didUndo;
     unsigned	editedIndex;
 }
@@ -102,7 +102,6 @@ static NSUserDefaults* defaults = nil;
 {
     [super viewWillAppear:animated];
 
-    didSelectRow = NO;		    // Remove any existing selection
     [self updateTitle];		    // Update the navigation item title
     [self.tableView reloadData];    // Redisplay the data
 }
@@ -118,34 +117,75 @@ static NSUserDefaults* defaults = nil;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    if( !didSelectRow && self.editing )
-	[self.delegate logEntryViewControllerDidCancelEditing];
-
     [super viewWillDisappear:animated];
+
+    if( [self isMovingFromParentViewController] && self.editing )
+	[self cancelEditingLogEntry];
 }
 
 - (void)setEditing:(BOOL)e animated:(BOOL)animated
 {
-    /* If ending edit mode...
-	Do this check before calling the super so that self.editing still
-	reflects the previous edit state.
-    */
-    if( self.editing && !e )
-	[delegate logEntryView:self didEndEditingEntry:self.logEntry];
+    BOOL previousEditing = self.editing;
 
-    // Not editing, so not editing a new entry
-    if( !e )
-	self.editingNewEntry = NO;
-
-    // Finally pass the call to the super
     [super setEditing:e animated:animated];
 
-    /* Update the navigation item title
-	!!! Must be after calling the super so that self.editing is updated */
+    if( previousEditing && !e )
+    {
+	if( self.editingNewEntry )
+	    [self finishEditingNewLogEntry];
+	else
+	{
+	    [self finishEditingLogEntry];
+	    [delegate logEntryView:self didEndEditingEntry:self.logEntry];
+	}
+    }
+
     [self updateTitle];
 
     // Reload the table to update the view to reflect the new edit state
     [self.tableView reloadData];
+}
+
+#pragma mark -
+
+- (void) cancelEditingLogEntry
+{
+    if( self.delegate )
+	[self.delegate logEntryViewControllerDidCancelEditing];
+}
+
+- (void) finishEditingLogEntry
+{
+    if( self.logEntry.hasChanges )
+    {
+	NSMutableArray* deletables = [NSMutableArray array];
+	for( ManagedInsulinDose* insulinDose in self.logEntry.insulinDoses )
+	    if( ![insulinDose validateForInsert:nil] )
+		[deletables addObject:insulinDose];
+	for( ManagedInsulinDose* insulinDose in deletables )
+	{
+	    insulinDose.logEntry = nil;
+	    [self.logEntry.managedObjectContext deleteObject:insulinDose];
+	}
+
+	ManagedLogDay *const newDay = [self.model logDayForDate:self.logEntry.timestamp];
+	if( newDay != self.logEntry.logDay )
+	{
+	    ManagedLogDay* oldDay = self.logEntry.logDay;
+	    self.logEntry.logDay = newDay;
+	    [newDay updateStatistics];
+	    [oldDay updateStatistics];
+	}
+
+	[self.model commitChanges];
+    }
+}
+
+- (void) finishEditingNewLogEntry
+{
+    [self finishEditingLogEntry];
+    self.editingNewEntry = NO;
+    [delegate logEntryView:self didEndEditingEntry:self.logEntry];
 }
 
 - (void) updateTitle
@@ -471,7 +511,6 @@ static NSUserDefaults* defaults = nil;
 
     if( 0 == section )
     {
-	didSelectRow = YES; // The next viewWillDisapper is from a push, not a pop
 	switch( path.row )
 	{
 	    case 0: 
@@ -495,7 +534,6 @@ static NSUserDefaults* defaults = nil;
     }
     else if( kSectionInsulin == section )
     {
-	didSelectRow = YES; // The next viewWillDisapper is from a push, not a pop
 	if( !insulinTypeViewController )
 	{
 	    insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain];

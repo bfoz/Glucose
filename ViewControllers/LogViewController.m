@@ -268,19 +268,6 @@
 
 - (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(ManagedLogEntry*)logEntry
 {
-    if( logEntry.hasChanges )
-    {
-	ManagedLogDay *const newDay = [_model logDayForDate:logEntry.timestamp];
-	if( newDay != logEntry.logDay )
-	{
-	    ManagedLogDay* oldDay = logEntry.logDay;
-	    logEntry.logDay = newDay;
-	    [newDay updateStatistics];
-	    [oldDay updateStatistics];
-	}
-
-	[self.model commitChanges];
-    }
 }
 
 #pragma mark <SettingsViewControllerDelegate>

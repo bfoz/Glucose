@@ -26,81 +26,95 @@ SPEC_BEGIN(LogEntryViewControllerSpec)
 describe(@"LogEntryViewController", ^{
     __block LogEntryViewController* controller;
     __block ManagedLogEntry*	logEntry;
+    __block LogModel*	logModel;
 
     beforeEach(^{
-	LogModel* logModel = [[LogModel alloc] init];
-	ManagedLogDay* logDay = [logModel insertManagedLogDay];
-	logEntry = [logDay insertManagedLogEntry];
-
-	controller = [[[LogEntryViewController alloc] initWithLogEntry:logEntry] autorelease];
-	controller.model = logModel;
-
-	UINavigationController* navigation = [[UINavigationController alloc] initWithRootViewController:controller];
-	navigation.topViewController.view should_not be_nil;
+	logModel = [[LogModel alloc] init];
     });
 
-    it(@"should not be editing", ^{
-	controller.editing should_not be_truthy;
-	controller.editingNewEntry should_not be_truthy;
-    });
-
-    it(@"should have a right bar button item for editing", ^{
-	controller.navigationItem.rightBarButtonItem should_not be_nil;
-	controller.navigationItem.rightBarButtonItem should be_same_instance_as(controller.editButtonItem);
-    });
-
-    it(@"should have a proper table delegate and dataSource", ^{
-	controller.tableView.dataSource should equal(controller);
-	controller.tableView.delegate should equal(controller);
-    });
-
-    it(@"should have the correct number of sections", ^{
-	[controller.tableView numberOfSections] should equal(3);
-    });
-
-    it(@"should have 1 row in section 0", ^{
-	[controller.tableView numberOfRowsInSection:0] should equal(1);
-    });
-
-    xit(@"should have 0 rows in section 1", ^{
-	[controller.tableView numberOfRowsInSection:1] should equal(0);
-    });
-
-    describe(@"when the log entry has a note", ^{
+    describe(@"when displaying an existing log entry", ^{
 	beforeEach(^{
-	    logEntry.note = @"This is a note";
+	    logEntry = [logModel insertManagedLogEntry];
+
+	    controller = [[[LogEntryViewController alloc] initWithLogEntry:logEntry] autorelease];
+	    controller.model = logModel;
+
+	    UINavigationController* navigation = [[UINavigationController alloc] initWithRootViewController:[[UIViewController alloc] init]];
+	    [navigation pushViewController:controller animated:NO];
+	    navigation.topViewController.view should_not be_nil;
 	});
 
-	it(@"should display a header for the Note section", ^{
-	    [controller tableView:nil titleForHeaderInSection:kSectionNote] should equal(@"Note");
+	it(@"should not be editing", ^{
+	    controller.editing should_not be_truthy;
+	    controller.editingNewEntry should_not be_truthy;
 	});
 
-	it(@"should have 1 row in the Note section", ^{
-	    [controller.tableView numberOfRowsInSection:kSectionNote] should equal(1);
+	it(@"should have a right bar button item for editing", ^{
+	    controller.navigationItem.rightBarButtonItem should_not be_nil;
+	    controller.navigationItem.rightBarButtonItem should be_same_instance_as(controller.editButtonItem);
 	});
 
-	it(@"should have the correct text", ^{
-	    UITableViewCell* cell = [controller tableView:controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionNote]];
-	    cell.textLabel.text should equal(@"This is a note");
-	});
-    });
-
-    describe(@"when the log entry does not have a note", ^{
-	beforeEach(^{
-	    logEntry.note = nil;
+	it(@"should have a proper table delegate and dataSource", ^{
+	    controller.tableView.dataSource should equal(controller);
+	    controller.tableView.delegate should equal(controller);
 	});
 
-	it(@"should not display a header for the Note section", ^{
-	    [controller tableView:nil titleForHeaderInSection:kSectionNote] should be_nil;
+	it(@"should have the correct number of sections", ^{
+	    [controller.tableView numberOfSections] should equal(3);
 	});
 
-	it(@"should not have any rows in the Note section", ^{
-	    [controller.tableView numberOfRowsInSection:kSectionNote] should equal(0);
+	it(@"should have 1 row in section 0", ^{
+	    [controller.tableView numberOfRowsInSection:0] should equal(1);
+	});
+
+	xit(@"should have 0 rows in section 1", ^{
+	    [controller.tableView numberOfRowsInSection:1] should equal(0);
+	});
+
+	describe(@"when the log entry has a note", ^{
+	    beforeEach(^{
+		logEntry.note = @"This is a note";
+	    });
+
+	    it(@"should display a header for the Note section", ^{
+		[controller tableView:nil titleForHeaderInSection:kSectionNote] should equal(@"Note");
+	    });
+
+	    it(@"should have 1 row in the Note section", ^{
+		[controller.tableView numberOfRowsInSection:kSectionNote] should equal(1);
+	    });
+
+	    it(@"should have the correct text", ^{
+		UITableViewCell* cell = [controller tableView:controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionNote]];
+		cell.textLabel.text should equal(@"This is a note");
+	    });
+	});
+
+	describe(@"when the log entry does not have a note", ^{
+	    beforeEach(^{
+		logEntry.note = nil;
+	    });
+
+	    it(@"should not display a header for the Note section", ^{
+		[controller tableView:nil titleForHeaderInSection:kSectionNote] should be_nil;
+	    });
+
+	    it(@"should not have any rows in the Note section", ^{
+		[controller.tableView numberOfRowsInSection:kSectionNote] should equal(0);
+	    });
 	});
     });
 
     describe(@"when the Edit button is tapped", ^{
 	beforeEach(^{
+	    logEntry = [logModel insertManagedLogEntryWithUndo];
+
+	    controller = [[[LogEntryViewController alloc] initWithLogEntry:logEntry] autorelease];
+	    controller.model = logModel;
+
+	    UINavigationController* navigation = [[UINavigationController alloc] initWithRootViewController:controller];
+	    navigation.topViewController.view should_not be_nil;
+
 	    [controller.navigationItem.rightBarButtonItem tap];
 
 	    controller.tableView.visibleCells should_not be_nil;
@@ -265,17 +279,30 @@ describe(@"LogEntryViewController", ^{
 
     describe(@"when initialized with a new entry", ^{
 	beforeEach(^{
-	    ManagedInsulinType* insulinType0 = [controller.model insertManagedInsulinType];
-	    ManagedInsulinType* insulinType1 = [controller.model insertManagedInsulinType];
+	    logEntry = [logModel insertManagedLogEntryWithUndo];
+
+	    UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:[[UIViewController alloc] init]];
+
+	    controller = [[[LogEntryViewController alloc] initWithLogEntry:logEntry] autorelease];
+	    controller.model = logModel;
+
+	    ManagedInsulinType* insulinType0 = [controller.model insertManagedInsulinTypeShortName:@"InsulinType0"];
+	    ManagedInsulinType* insulinType1 = [controller.model insertManagedInsulinTypeShortName:@"InsulinType1"];
 	    [controller.model.insulinTypesForNewEntries addObject:insulinType0];
 	    [controller.model.insulinTypesForNewEntries addObject:insulinType1];
 
-	    controller.model.insulinTypesForNewEntries.count should_not equal(0);
+	    controller.model.insulinTypesForNewEntries.count should equal(2);
 
 	    controller.logEntry = [controller.model insertManagedLogEntryWithUndo];
 
 	    controller.editingNewEntry = YES;
 	    [controller setEditing:YES animated:NO];
+
+	    [navigationController pushViewController:controller animated:NO];
+
+	    UIWindow* window = [[UIWindow alloc] init];
+	    window.rootViewController = navigationController;
+	    [window makeKeyAndVisible];
 	});
 
 	it(@"should be in edit mode", ^{
@@ -350,7 +377,7 @@ describe(@"LogEntryViewController", ^{
 		    controller.modalViewController should be_nil;
 		});
 
-		xit(@"should make the Glucose row the first responder", ^{
+		it(@"should make the Glucose row the first responder", ^{
 		    NumberFieldCell* cell = (NumberFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:kSectionGlucose]];
 		    cell.field.isFirstResponder should be_truthy;
 		});
@@ -372,11 +399,11 @@ describe(@"LogEntryViewController", ^{
 
 	    beforeEach(^{
 		cell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
-		[cell.doseField becomeFirstResponder];
+		[cell.doseField becomeFirstResponder] should be_truthy;
 	    });
 
-	    xit(@"should show the keyboard", ^{
-		cell.doseField.isFirstResponder should be_truthy;
+	    it(@"should show the keyboard", ^{
+		[cell.doseField isFirstResponder] should be_truthy;
 	    });
 
 	    it(@"should have a toolbar above the keyboard", ^{
@@ -384,12 +411,12 @@ describe(@"LogEntryViewController", ^{
 	    });
 
 	    describe(@"when the dose is changed", ^{
-		__block NSNumber* originalDose;
 		__block NSString* originalText;
 
 		beforeEach(^{
 		    ManagedInsulinDose* insulinDose = [controller.logEntry.insulinDoses objectAtIndex:0];
-		    originalDose = insulinDose.dose;
+		    insulinDose should_not be_nil;
+		    insulinDose.dose should be_nil;
 
 		    originalText = cell.doseField.text;
 
@@ -410,20 +437,31 @@ describe(@"LogEntryViewController", ^{
 
 		    it(@"should not update the LogEntry", ^{
 			ManagedInsulinDose* insulinDose = [controller.logEntry.insulinDoses objectAtIndex:0];
-			[insulinDose.dose isEqualToNumber:originalDose] should be_truthy;
-			insulinDose.dose should equal(originalDose);
+			insulinDose should_not be_nil;
+			insulinDose.dose should be_nil;
 		    });
 		});
 
 		describe(@"when the accessory toolbar Done button is tapped", ^{
-		    xit(@"should resign first responder", ^{
+		    beforeEach(^{
+
+			UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
+			UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
+			[doneButton tap];
+		    });
+
+		    it(@"should resign first responder", ^{
 			cell.doseField.isFirstResponder should_not be_truthy;
 		    });
 
-		    xit(@"should update the LogEntry", ^{
+		    it(@"should update the LogEntry", ^{
+			ManagedInsulinDose* insulinDose = [controller.logEntry.insulinDoses objectAtIndex:0];
+			insulinDose should_not be_nil;
+			insulinDose.dose should_not be_nil;
+			insulinDose.dose should equal(1);
 		    });
 
-		    xit(@"should cause the next row to become first responder", ^{
+		    it(@"should cause the next row to become first responder", ^{
 			DoseFieldCell* nextCell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionInsulin]];
 			nextCell.doseField.isFirstResponder should be_truthy;
 		    });
@@ -443,7 +481,8 @@ describe(@"LogEntryViewController", ^{
 
 		[[mockDelegate expect] logEntryViewControllerDidCancelEditing];
 
-//		[controller.navigationItem.leftBarButtonItem tap];
+		id mockViewController = [OCMockObject partialMockForObject:controller];
+		[[[mockViewController stub] andReturnValue:@YES] isMovingFromParentViewController];
 		[controller viewWillDisappear:NO];
 	    });
 
@@ -459,20 +498,57 @@ describe(@"LogEntryViewController", ^{
 		mockDelegate = [OCMockObject mockForProtocol:@protocol(LogEntryViewDelegate)];
 		controller.delegate = mockDelegate;
 		[[mockDelegate expect] logEntryView:controller didEndEditingEntry:OCMOCK_ANY];
-
-		[controller.navigationItem.rightBarButtonItem tap];
 	    });
 
-	    it(@"should cancel Edit mode", ^{
-		controller.editing should_not be_truthy;
+	    describe(@"in general", ^{
+		beforeEach(^{
+		    [controller.navigationItem.rightBarButtonItem tap];
+		});
+
+		it(@"should cancel Edit mode", ^{
+		    controller.editing should_not be_truthy;
+		});
+
+		it(@"should update the title", ^{
+		    controller.title should equal(@"Details");
+		});
+
+		it(@"should inform the delegate", ^{
+		    [mockDelegate verify];
+		});
 	    });
 
-	    it(@"should update the title", ^{
-		controller.title should equal(@"Details");
+	    describe(@"when the user did not enter any insulin doses", ^{
+		beforeEach(^{
+		    [controller.navigationItem.rightBarButtonItem tap];
+		});
+
+		it(@"should remove invalid insulin doses", ^{
+		    controller.logEntry.insulinDoses.count should equal(0);
+		});
+
+		it(@"should not show any rows in the insulin section", ^{
+		    [controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(0);
+		});
 	    });
 
-	    it(@"should inform the delegate", ^{
-		[mockDelegate verify];
+	    describe(@"when the user entered an insulin dose", ^{
+		beforeEach(^{
+		    ManagedInsulinDose* dose = [controller.logEntry.insulinDoses objectAtIndex:0];
+		    dose should_not be_nil;
+		    dose.insulinType should_not be_nil;
+		    dose.dose = @1;
+
+		    [controller.navigationItem.rightBarButtonItem tap];
+		});
+
+		it(@"should remove invalid insulin doses", ^{
+		    controller.logEntry.insulinDoses.count should equal(1);
+		});
+
+		it(@"should have rows in the insulin section", ^{
+		    [controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(1);
+		});
 	    });
 	});
     });

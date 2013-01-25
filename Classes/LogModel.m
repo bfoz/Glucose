@@ -114,7 +114,7 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 
 - (void) dealloc
 {
-    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:kSettingsGlucoseUnitsKey];
+    [defaults removeObserver:self forKeyPath:kSettingsGlucoseUnitsKey];
 
     _managedObjectContext = nil;
     _persistentStoreCoordinator = nil;
@@ -516,10 +516,8 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     return [logDay.logEntries objectAtIndex:entry];
 }
 
-- (ManagedLogEntry*) insertManagedLogEntryWithUndo
+- (ManagedLogEntry*) insertManagedLogEntry
 {
-    self.managedObjectContext.undoManager = [[NSUndoManager alloc] init];
-
     ManagedLogEntry* managedLogEntry = [ManagedLogEntry insertManagedLogEntryInContext:self.managedObjectContext];
     managedLogEntry.timestamp = [NSDate date];
     managedLogEntry.glucoseUnits = [NSNumber numberWithInt:[LogModel glucoseUnitsSetting]];
@@ -528,6 +526,13 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 	[managedLogEntry addDoseWithType:insulinType];
 
     return managedLogEntry;
+}
+
+- (ManagedLogEntry*) insertManagedLogEntryWithUndo
+{
+    self.managedObjectContext.undoManager = [[NSUndoManager alloc] init];
+
+    return [self insertManagedLogEntry];
 }
 
 - (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to
