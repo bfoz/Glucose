@@ -502,7 +502,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		1581CE13155F0F9A00B069F2 /* UISpecs */ = {
+		1581CE13155F0F9A00B069F2 /* Specs */ = {
 			isa = PBXGroup;
 			children = (
 				1581CE26155F123500B069F2 /* Application */,
@@ -513,7 +513,7 @@
 				1581CE2D155F2DF100B069F2 /* ViewControllers */,
 				158F41DB162B730C0000DD52 /* SpecsHelper.h */,
 			);
-			path = UISpecs;
+			path = Specs;
 			sourceTree = "<group>";
 		};
 		1581CE14155F0F9A00B069F2 /* Fixtures */ = {
@@ -654,7 +654,7 @@
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				1581CDB9155F059300B069F2 /* Externals */,
-				1581CE13155F0F9A00B069F2 /* UISpecs */,
+				1581CE13155F0F9A00B069F2 /* Specs */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				15A321910ED28A7E00C16388 /* AddressBook.framework */,
@@ -1111,11 +1111,11 @@
 				);
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "UISpecs/UISpecs-Prefix.pch";
+				GCC_PREFIX_HEADER = "Specs/UISpecs-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					"FIXTURES_DIRECTORY=\"\\\"$SRCROOT/UISpecs/Fixtures\\\"\"",
+					"FIXTURES_DIRECTORY=\"\\\"$SRCROOT/Specs/Fixtures\\\"\"",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -1125,7 +1125,7 @@
 					"$(SRCROOT)/Externals/Cedar/Source/**",
 					"$(SRCROOT)/Externals/OCMock/Source/**",
 				);
-				INFOPLIST_FILE = "UISpecs/UISpecs-Info.plist";
+				INFOPLIST_FILE = "Specs/UISpecs-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1154,7 +1154,7 @@
 					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "UISpecs/UISpecs-Prefix.pch";
+				GCC_PREFIX_HEADER = "Specs/UISpecs-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -1164,7 +1164,7 @@
 					"$(SRCROOT)/Externals/Cedar/Source/**",
 					"$(SRCROOT)/Externals/OCMock/Source/**",
 				);
-				INFOPLIST_FILE = "UISpecs/UISpecs-Info.plist";
+				INFOPLIST_FILE = "Specs/UISpecs-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1193,7 +1193,7 @@
 					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "UISpecs/UISpecs-Prefix.pch";
+				GCC_PREFIX_HEADER = "Specs/UISpecs-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -1203,7 +1203,7 @@
 					"$(SRCROOT)/Externals/Cedar/Source/**",
 					"$(SRCROOT)/Externals/OCMock/Source/**",
 				);
-				INFOPLIST_FILE = "UISpecs/UISpecs-Info.plist";
+				INFOPLIST_FILE = "Specs/UISpecs-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
