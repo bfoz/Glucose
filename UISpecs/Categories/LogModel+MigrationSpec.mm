@@ -104,7 +104,7 @@ describe(@"LogModel+Migration", ^{
 	    [fileManager fileExistsAtPath:[LogModel writeableSqliteDBPath]] should be_truthy;
 
 	    [LogModel needsMigration] should be_truthy;
-	    [LogModel checkForMigration];
+	    [LogModel migrateTheDatabaseWithProgressView:nil];
 	});
 
 	afterEach(^{
