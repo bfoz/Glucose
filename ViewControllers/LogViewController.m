@@ -44,9 +44,10 @@
 
 	self.title = @"Glucose";
 
-        UIButton* b = [UIButton buttonWithType:UIButtonTypeInfoLight];
-	[b addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
-	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:b];
+        UIButton* settingsButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+	[settingsButton addTarget:self action:@selector(showSettings:) forControlEvents:UIControlEventTouchUpInside];
+	settingsButton.accessibilityLabel = @"Settings";
+	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:settingsButton];
 
 	UIBarButtonItem* back = [[UIBarButtonItem alloc] initWithTitle: @"Log" style:UIBarButtonItemStyleBordered target: nil action: nil];
 	self.navigationItem.backBarButtonItem = back;
