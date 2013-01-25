@@ -67,8 +67,57 @@ describe(@"LogEntryViewController", ^{
 	    [controller.tableView numberOfRowsInSection:0] should equal(1);
 	});
 
-	xit(@"should have 0 rows in section 1", ^{
-	    [controller.tableView numberOfRowsInSection:1] should equal(0);
+	it(@"should have 0 rows in section 1", ^{
+	    [controller.tableView numberOfRowsInSection:1] should equal([logModel.insulinTypesForNewEntries count]);
+	});
+
+	describe(@"when the log entry has no insulin doses", ^{
+	    beforeEach(^{
+		logEntry.insulinDoses.count should equal(0);
+	    });
+
+	    it(@"should not show any insulin dose rows", ^{
+		[controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(0);
+	    });
+
+	    it(@"should not have a section header", ^{
+		[controller tableView:nil titleForHeaderInSection:kSectionInsulin] should be_nil;
+	    });
+	});
+
+	describe(@"when the log entry has 1 insulin dose", ^{
+	    beforeEach(^{
+		ManagedInsulinType* insulinType0 = [controller.model insertManagedInsulinTypeShortName:@"InsulinType0"];
+		ManagedInsulinDose* insulinDose = [logEntry addDoseWithType:insulinType0];
+		insulinDose.dose = @1;
+	    });
+
+	    it(@"should show a single dose row", ^{
+		[controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(1);
+	    });
+
+	    it(@"should not have a section header", ^{
+		[controller tableView:nil titleForHeaderInSection:kSectionInsulin] should be_nil;
+	    });
+	});
+
+	describe(@"when the log entry has 2 insulin doses", ^{
+	    beforeEach(^{
+		ManagedInsulinType* insulinType0 = [controller.model insertManagedInsulinTypeShortName:@"InsulinType0"];
+		ManagedInsulinType* insulinType1 = [controller.model insertManagedInsulinTypeShortName:@"InsulinType1"];
+		ManagedInsulinDose* insulinDose = [logEntry addDoseWithType:insulinType0];
+		insulinDose.dose = @1;
+		insulinDose = [logEntry addDoseWithType:insulinType1];
+		insulinDose.dose = @2;
+	    });
+
+	    it(@"should show two dose rows", ^{
+		[controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(2);
+	    });
+
+	    it(@"should not have a section header", ^{
+		[controller tableView:nil titleForHeaderInSection:kSectionInsulin] should be_nil;
+	    });
 	});
 
 	describe(@"when the log entry has a note", ^{
@@ -107,17 +156,28 @@ describe(@"LogEntryViewController", ^{
 
     describe(@"when the Edit button is tapped", ^{
 	beforeEach(^{
-	    logEntry = [logModel insertManagedLogEntryWithUndo];
+	    logEntry = [logModel insertManagedLogEntry];
+	    logEntry.glucose = @1;
+	    [logModel save];
 
 	    controller = [[[LogEntryViewController alloc] initWithLogEntry:logEntry] autorelease];
 	    controller.model = logModel;
 
-	    UINavigationController* navigation = [[UINavigationController alloc] initWithRootViewController:controller];
-	    navigation.topViewController.view should_not be_nil;
+	    UIViewController* rootViewController = [[[UIViewController alloc] init] autorelease];
+	    rootViewController.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Log" style:UIBarButtonItemStylePlain target:nil action:nil];
 
-	    [controller.navigationItem.rightBarButtonItem tap];
+	    UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
+	    [navigationController pushViewController:controller animated:NO];
+	    controller.view should_not be_nil;
+	    navigationController.topViewController should be_same_instance_as(controller);
 
 	    controller.tableView.visibleCells should_not be_nil;
+
+	    UIWindow* window = [[UIWindow alloc] init];
+	    window.rootViewController = navigationController;
+	    [window makeKeyAndVisible];
+
+	    [controller.navigationItem.rightBarButtonItem tap];
 	});
 
 	it(@"should be in edit mode", ^{
@@ -137,9 +197,9 @@ describe(@"LogEntryViewController", ^{
 	    controller.navigationItem.leftBarButtonItem.title should equal(@"Log");
 	});
 
-	xit(@"should have a Save button", ^{
+	it(@"should have a Save button", ^{
 	    controller.navigationItem.rightBarButtonItem should_not be_nil;
-	    controller.navigationItem.rightBarButtonItem.title should equal(@"Save");
+	    controller.navigationItem.rightBarButtonItem.title should equal(@"Done");
 	});
 
 	it(@"should have 0 rows in section 1", ^{
@@ -148,17 +208,6 @@ describe(@"LogEntryViewController", ^{
 
 	it(@"should have 1 row in section 2", ^{
 	    [controller.tableView numberOfRowsInSection:2] should equal(1);
-	});
-
-	it(@"should have a Timestamp label", ^{
-	    controller.timestampLabel should_not be_nil;
-	    controller.timestampLabel should be_instance_of([UILabel class]);
-	});
-
-	it(@"should have a Category label", ^{
-	    controller.categoryLabel should_not be_nil;
-	    controller.categoryLabel should be_instance_of([UILabel class]);
-	    controller.categoryLabel.backgroundColor should equal([UIColor clearColor]);
 	});
 
 	describe(@"Section 0", ^{
@@ -189,11 +238,11 @@ describe(@"LogEntryViewController", ^{
 		    [controller tableView:controller.tableView didSelectRowAtIndexPath:indexPath];
 		});
 
-		xit(@"should display the keyboard", ^{
+		it(@"should display the keyboard", ^{
 		    glucoseCell.field.isFirstResponder should be_truthy;
 		});
 
-		xit(@"should disable the right nav bar button", ^{
+		it(@"should disable the right nav bar button", ^{
 		    controller.navigationItem.rightBarButtonItem.enabled should_not be_truthy;
 		});
 
@@ -204,49 +253,52 @@ describe(@"LogEntryViewController", ^{
 		    toolbar.items.count should equal(3);
 		});
 
-		describe(@"when the Cancel button is tapped", ^{
-		    __block UIBarButtonItem* cancelButton;
-
+		describe(@"when the Glucose value is changed", ^{
 		    beforeEach(^{
-			UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
-			cancelButton = [toolbar.items objectAtIndex:0];
-			[cancelButton tap];
+			glucoseCell.number = @42;
 		    });
 
-		    it(@"should resign first responder", ^{
-			glucoseCell.field.isFirstResponder should_not be_truthy;
+		    describe(@"when the Cancel button is tapped", ^{
+			__block UIBarButtonItem* cancelButton;
+
+			beforeEach(^{
+			    UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
+			    cancelButton = [toolbar.items objectAtIndex:0];
+			    [cancelButton tap];
+			});
+
+			it(@"should resign first responder", ^{
+			    glucoseCell.field.isFirstResponder should_not be_truthy;
+			});
+
+			it(@"should not update the LogEntry", ^{
+			    controller.logEntry.glucose should_not equal(@42);
+			    [controller.logEntry hasChanges] should_not be_truthy;
+			});
+
+			it(@"should enable the right nav bar button", ^{
+			    controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+			});
 		    });
 
-		    it(@"should not update the LogEntry", ^{
-		    });
+		    describe(@"when the Done button is tapped", ^{
+			beforeEach(^{
+			    UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
+			    UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
+			    [doneButton tap];
+			});
 
-		    it(@"should enable the right nav bar button", ^{
-			controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
-		    });
+			it(@"should resign first responder", ^{
+			    glucoseCell.field.isFirstResponder should_not be_truthy;
+			});
 
-		    it(@"should reset the cell label", ^{
-		    });
-		});
+			it(@"should update the LogEntry", ^{
+			    controller.logEntry.glucose should equal(@42);
+			});
 
-		describe(@"when the Done button is tapped", ^{
-		    __block UIBarButtonItem* doneButton;
-
-		    beforeEach(^{
-
-			UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
-			doneButton = [toolbar.items objectAtIndex:2];
-			[doneButton tap];
-		    });
-
-		    it(@"should resign first responder", ^{
-			glucoseCell.field.isFirstResponder should_not be_truthy;
-		    });
-
-		    xit(@"should update the LogEntry", ^{
-		    });
-
-		    it(@"should enable the right nav bar button", ^{
-			controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+			it(@"should enable the right nav bar button", ^{
+			    controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+			});
 		    });
 		});
 	    });
