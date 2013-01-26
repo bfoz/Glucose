@@ -170,7 +170,11 @@ static NSUserDefaults* defaults = nil;
 	if( newDay != self.logEntry.logDay )
 	{
 	    ManagedLogDay* oldDay = self.logEntry.logDay;
-	    self.logEntry.logDay = newDay;
+
+	    NSMutableOrderedSet* entries = [NSMutableOrderedSet orderedSetWithOrderedSet:newDay.logEntries];
+	    [entries insertObject:self.logEntry atIndex:0];
+	    newDay.logEntries = entries;
+
 	    [newDay updateStatistics];
 	    [oldDay updateStatistics];
 	}
