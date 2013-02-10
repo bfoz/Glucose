@@ -1,5 +1,7 @@
 #import "SplashViewController.h"
 
+#import "UIView+App.h"
+
 #import "Flurry.h"
 #import "LogModel+Migration.h"
 
@@ -16,7 +18,13 @@
     NSTimer*	twoSecondTimer;
 }
 
-- (id)init
+- (id) init
+{
+    [self doesNotRecognizeSelector:_cmd];
+    return nil;
+}
+
+- (id)initForMigration:(BOOL)migrate
 {
     self = [super initWithNibName:nil bundle:nil];
     if( self )
@@ -27,7 +35,7 @@
 	self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
 	self.textLabel = [[UILabel alloc] init];
 
-	needsMigration = [LogModel needsMigration];
+	needsMigration = migrate;
 	twoSecondTimer = nil;
     }
     return self;
@@ -74,6 +82,7 @@
 	[self.activityIndicator startAnimating];
 	twoSecondTimer = [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(twoSecondTimerFired) userInfo:nil repeats:NO];
 
+#ifndef SPECS
 	__block SplashViewController* blockSelf = self;
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 	    [Flurry logEvent:@"migrateOriginalDatabaseToCoreData" timed:YES];
@@ -84,26 +93,28 @@
 	    background_Task = UIBackgroundTaskInvalid;
 
 	    dispatch_async(dispatch_get_main_queue(), ^{
-		[blockSelf didFinish];
+		[blockSelf didFinishMigration];
 	    });
 	});
+#endif
     }
     else
-	[self didFinish];
+	[self didFinishMigration];
 }
 
 - (void) twoSecondTimerFired
 {
-    [UIView animateWithDuration:1 animations:^{
-	self.activityIndicator.alpha = 0;
-	self.progressView.alpha = 1;
-    } completion:^(BOOL finished) {
-	self.activityIndicator.hidden = YES;
-	self.progressView.hidden = NO;
-    }];
+    [self.view animateWithDuration:1
+			animations:^{
+			    self.activityIndicator.alpha = 0;
+			    self.progressView.alpha = 1;
+			} completion:^(BOOL finished) {
+			    self.activityIndicator.hidden = YES;
+			    self.progressView.hidden = NO;
+			}];
 }
 
-- (void) didFinish
+- (void) didFinishMigration
 {
     [twoSecondTimer invalidate];
     twoSecondTimer = nil;

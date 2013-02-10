@@ -3,6 +3,7 @@
 #import <DropboxSDK/DropboxSDK.h>
 
 #import "LogModel+CoreData.h"
+#import "LogModel+Migration.h"
 #import "LogViewController.h"
 #import "SplashViewController.h"
 
@@ -53,7 +54,7 @@ NSDateFormatter* shortDateFormatter = nil;
 						      root:kDBRootAppFolder];
     [DBSession setSharedSession:session];
 
-    SplashViewController* splashViewController = [[SplashViewController alloc] init];
+    SplashViewController* splashViewController = [[SplashViewController alloc] initForMigration:[LogModel needsMigration]];
     splashViewController.delegate = self;
 
     UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:splashViewController];
