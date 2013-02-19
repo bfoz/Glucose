@@ -1,9 +1,29 @@
 #import "TextViewCell.h"
 #import "Constants.h"
 
+#import "ManagedLogEntry+App.h"
+
 @implementation TextViewCell
 
 @synthesize delegate, dirty, font, placeholder, text;
+
++ (TextViewCell*) cellForLogEntry:(ManagedLogEntry*)logEntry delegate:(id<TextViewCellDelegate>)delegate inputAccessoryView:(UIView*)inputAccessoryView tableView:(UITableView*)tableView
+{
+    TextViewCell* cell = (TextViewCell*)[tableView dequeueReusableCellWithIdentifier:NSStringFromClass(self)];
+    if( !cell )
+    {
+	cell = [[TextViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:NSStringFromClass(self)];
+	cell.accessoryType = UITableViewCellAccessoryNone;
+	cell.delegate = delegate;
+	cell.placeholder = @"Add a Note";
+	cell.textView.inputAccessoryView = inputAccessoryView;
+    }
+
+    cell.textLabel.text = logEntry.note;
+    cell.text = logEntry.note;
+
+    return cell;
+}
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

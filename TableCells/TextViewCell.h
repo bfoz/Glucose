@@ -1,5 +1,7 @@
 #import <UIKit/UIKit.h>
 
+@class ManagedLogEntry;
+
 @protocol TextViewCellDelegate;
 
 @interface TextViewCell : UITableViewCell <UITextViewDelegate>
@@ -10,6 +12,8 @@
 @property (nonatomic, copy) NSString*	    placeholder;
 @property (nonatomic, copy) NSString*	    text;
 @property (nonatomic, readonly) UITextView* textView;
+
++ (TextViewCell*) cellForLogEntry:(ManagedLogEntry*)logEntry delegate:(id<TextViewCellDelegate>)delegate inputAccessoryView:(UIView*)inputAccessoryView tableView:(UITableView*)tableView;
 
 @end
 

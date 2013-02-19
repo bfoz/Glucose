@@ -288,7 +288,6 @@ static NSUserDefaults* defaults = nil;
 		    case kRowCategory:	return @"Category";
 		}
 		break;
-	    case kSectionNote:	    return @"NoteCellID";
 	}
     }
     else
@@ -326,24 +325,7 @@ static NSUserDefaults* defaults = nil;
 	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	    cell.accessoryType = self.editing ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
 	}
-	else if( self.editing )
-	{
-	    switch( section )
-	    {
-		case kSectionNote:
-		{
-		    TextViewCell* textViewCell = [[TextViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
-		    textViewCell.placeholder = @"Add a Note";
-		    textViewCell.delegate = self;
-		    textViewCell.textView.inputAccessoryView = self.inputToolbar;
-
-		    cell = textViewCell;
-		    cell.accessoryType = UITableViewCellAccessoryNone;
-		    break;
-		}
-	    }
-	}
-	else
+	else if( !self.editing )
 	{
 	    switch( section )
 	    {
@@ -459,11 +441,13 @@ static NSUserDefaults* defaults = nil;
     }
     else if( kSectionNote == section )
     {
-	cell.textLabel.text = self.logEntry.note;
-
-	// In editing mode, the cell is actually a TextViewCell that sets it's text differently
 	if( self.editing )
-	    ((TextViewCell *)cell).text = self.logEntry.note;
+	    cell = [TextViewCell cellForLogEntry:self.logEntry
+					delegate:self
+			      inputAccessoryView:self.inputToolbar
+				       tableView:tv];
+	else
+	    cell.textLabel.text = self.logEntry.note;
     }
 
     return cell;
