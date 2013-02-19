@@ -286,7 +286,6 @@ static NSUserDefaults* defaults = nil;
 		{
 		    case kRowTimestamp: return @"Timestamp";
 		    case kRowCategory:	return @"Category";
-		    case kRowGlucose:	return @"eGlucose";
 		}
 		break;
 	    case kSectionNote:	    return @"NoteCellID";
@@ -331,21 +330,6 @@ static NSUserDefaults* defaults = nil;
 	{
 	    switch( section )
 	    {
-		case kSectionGlucose:
-		    switch( row )
-		    {
-			case kRowGlucose:
-			    glucoseCell = [[NumberFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
-			    glucoseCell.clearButtonMode = UITextFieldViewModeWhileEditing;
-			    glucoseCell.delegate = self;
-			    glucoseCell.field.inputAccessoryView = self.inputToolbar;
-			    glucoseCell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
-			    glucoseCell.placeholder = @"Glucose";
-			    cell = glucoseCell;
-			    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-			    break;
-		    }
-		    break;
 		case kSectionNote:
 		{
 		    TextViewCell* textViewCell = [[TextViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
@@ -419,10 +403,11 @@ static NSUserDefaults* defaults = nil;
 	    case 2:	// Glucose
 		if( self.editing )
 		{
-		    // precision must be set before number so the display text is formatted correctly
-		    glucoseCell.precision = self.logEntry.glucosePrecision;
-		    glucoseCell.number = self.logEntry.glucose;
-		    glucoseCell.labelText = self.logEntry.glucoseUnitsString;
+		    glucoseCell = [NumberFieldCell cellForLogEntry:self.logEntry
+						     accessoryView:self.inputToolbar
+							  delegate:self
+							 tableView:tv];
+		    cell = glucoseCell;
 		}
 		else
 		{

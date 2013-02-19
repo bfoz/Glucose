@@ -1,6 +1,8 @@
 #import "Constants.h"
 #import "NumberFieldCell.h"
 
+#import "ManagedLogEntry+App.h"
+
 @interface NumberFieldCell () <NumberFieldDelegate>
 @end
 
@@ -11,6 +13,27 @@
 
 @synthesize field;
 
++ (NumberFieldCell*) cellForLogEntry:(ManagedLogEntry*)logEntry accessoryView:(UIView*)accessoryView delegate:(id<NumberFieldCellDelegate>)delegate tableView:(UITableView*)tableView
+{
+    NumberFieldCell* cell = (NumberFieldCell*)[tableView dequeueReusableCellWithIdentifier:NSStringFromClass(self)];
+    if( !cell )
+    {
+	cell = [[NumberFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:NSStringFromClass(self)];
+	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	cell.clearButtonMode = UITextFieldViewModeWhileEditing;
+	cell.delegate = delegate;
+	cell.field.inputAccessoryView = accessoryView;
+	cell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
+	cell.placeholder = @"Glucose";
+    }
+
+    // precision must be set before number so the display text is formatted correctly
+    cell.precision = logEntry.glucosePrecision;
+    cell.number = logEntry.glucose;
+    cell.labelText = logEntry.glucoseUnitsString;
+
+    return cell;
+}
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     if( self = [super initWithStyle:style reuseIdentifier:reuseIdentifier] )

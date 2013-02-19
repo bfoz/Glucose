@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "NumberField.h"
 
+@class ManagedLogEntry;
+
 @protocol NumberFieldCellDelegate;
 
 @interface NumberFieldCell : UITableViewCell <UITextFieldDelegate>
@@ -27,6 +29,8 @@
 @property (nonatomic, copy)	NSString*	placeholder;
 @property (nonatomic, assign)	int	precision;
 @property (nonatomic)	UITextAlignment	textAlignment;
+
++ (NumberFieldCell*) cellForLogEntry:(ManagedLogEntry*)logEntry accessoryView:(UIView*)accessoryView delegate:(id<NumberFieldCellDelegate>)delegate tableView:(UITableView*)tableView;
 
 - (BOOL) becomeFirstResponder;
 - (BOOL) resignFirstResponder;
