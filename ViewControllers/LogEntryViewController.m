@@ -317,18 +317,26 @@ static NSUserDefaults* defaults = nil;
 
     UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];	// Get the appropriate cell
 
-    if( !cell )	// Create a new cell if needed
+    if( !cell )
     {
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
-	if( (kSectionGlucose == section) && (0 == row) )
+	if( kSectionGlucose == section && ((kRowTimestamp == row) || (kRowCategory == row)) )	// Standard UITableView cell for Timestamp and Category
 	{
 	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	    cell.accessoryType = self.editing ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
+	    cell.textLabel.backgroundColor = [UIColor clearColor];
+	    cell.textLabel.textAlignment = UITextAlignmentCenter;
+	    if( kRowCategory == row )
+		self.categoryLabel = cell.textLabel;
 	}
 	else if( !self.editing )
 	{
 	    switch( section )
 	    {
+		case kSectionGlucose:
+		    if( kRowGlucose == row )
+			cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+		    break;
 		case kSectionInsulin:
 		    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1
 						  reuseIdentifier:cellID];
@@ -341,16 +349,6 @@ static NSUserDefaults* defaults = nil;
 		    cell = [[LabelCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 		    break;
 	    }
-	}
-
-	if( !cell )	// Standard UITableView cell for Timestamp and Category
-	{
-	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
-	    cell.accessoryType = self.editing ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
-	    cell.textLabel.backgroundColor = [UIColor clearColor];
-	    cell.textLabel.textAlignment = UITextAlignmentCenter;
-	    if( (kSectionGlucose == section) && (kRowCategory == row) )
-		self.categoryLabel = cell.textLabel;
 	}
     }
 
