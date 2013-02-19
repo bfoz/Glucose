@@ -6,6 +6,27 @@
 
 @synthesize doseField;
 
++ (DoseFieldCell*) cellForInsulinDose:(ManagedInsulinDose*)insulinDose
+			accessoryView:(UIView*)accessoryView
+			     delegate:(id<DoseFieldCellDelegate>)delegate
+			    precision:(unsigned)precision
+			    tableView:(UITableView*)tableView
+{
+    DoseFieldCell* cell = (DoseFieldCell*)[tableView dequeueReusableCellWithIdentifier:NSStringFromClass(self)];
+    if( !cell )
+    {
+	cell = [[DoseFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:NSStringFromClass(self)];
+	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	cell.delegate = delegate;
+	cell.doseField.inputAccessoryView = accessoryView;
+    }
+
+    cell.dose = insulinDose;
+    cell.precision = precision;
+
+    return cell;
+}
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     if( self = [super initWithStyle:style reuseIdentifier:reuseIdentifier] )

@@ -289,7 +289,6 @@ static NSUserDefaults* defaults = nil;
 		    case kRowGlucose:	return @"eGlucose";
 		}
 		break;
-	    case kSectionInsulin:   return @"eDualCellID";
 	    case kSectionNote:	    return @"NoteCellID";
 	}
     }
@@ -347,15 +346,6 @@ static NSUserDefaults* defaults = nil;
 			    break;
 		    }
 		    break;
-		case kSectionInsulin:
-		{
-		    DoseFieldCell* doseFieldCell = [[DoseFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
-		    doseFieldCell.delegate = self;
-		    doseFieldCell.doseField.inputAccessoryView = self.inputToolbar;
-		    cell = doseFieldCell;
-		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-		    break;
-		}
 		case kSectionNote:
 		{
 		    TextViewCell* textViewCell = [[TextViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
@@ -460,9 +450,11 @@ static NSUserDefaults* defaults = nil;
 
 	if( self.editing )
 	{
-	    DoseFieldCell *const dcell = (DoseFieldCell*)cell;
-	    dcell.dose = dose;
-	    dcell.precision = InsulinPrecision;
+	    cell = [DoseFieldCell cellForInsulinDose:dose
+				       accessoryView:self.inputToolbar
+					    delegate:self
+					   precision:InsulinPrecision
+					   tableView:tv];
 	}
 	else
 	{

@@ -111,6 +111,7 @@
 		15E59FFF1699539C0067BDC1 /* SettingsViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15E59FFE1699539C0067BDC1 /* SettingsViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15E5A009169A6A730067BDC1 /* CategoryViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15E5A008169A6A730067BDC1 /* CategoryViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15E5A00C169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E5A00B169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		15E627DD16D359CA00D8DAA3 /* DoseFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829BA0E5009B400FB556A /* DoseFieldCell.m */; };
 		15EC68CD13B1B74900016937 /* LogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EC68CC13B1B74900016937 /* LogModel.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -997,6 +998,7 @@
 				1524475F16ACF6D900422F3E /* SplashViewController.m in Sources */,
 				158BB71516B3458900D5C03C /* FlurryLogger.m in Sources */,
 				1545EB5716C73370001C0EDE /* SplashViewControllerSpec.mm in Sources */,
+				15E627DD16D359CA00D8DAA3 /* DoseFieldCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

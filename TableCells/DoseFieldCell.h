@@ -15,6 +15,12 @@
 @property (nonatomic, readonly) NumberField* doseField;
 @property (nonatomic, assign) int   precision;
 
++ (DoseFieldCell*) cellForInsulinDose:(ManagedInsulinDose*)insulinDose
+			accessoryView:(UIView*)accessoryView
+			     delegate:(id<DoseFieldCellDelegate>)delegate
+			    precision:(unsigned)precision
+			    tableView:(UITableView*)tableView;
+
 @end
 
 @protocol DoseFieldCellDelegate <NSObject>
