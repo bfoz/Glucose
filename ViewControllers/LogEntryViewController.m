@@ -29,6 +29,13 @@ enum Sections
     NUM_SECTIONS
 };
 
+enum GlucoseSectionRows
+{
+    kRowTimestamp = 0,
+    kRowCategory,
+    kRowGlucose,
+};
+
 @interface LogEntryViewController () <CategoryViewControllerDelegate, DateFieldDelegate, DoseFieldCellDelegate, InsulinTypeViewControllerDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
 {
     CategoryViewController*	categoryViewController;
@@ -274,28 +281,28 @@ static NSUserDefaults* defaults = nil;
     {
 	switch( section )
 	{
-	    case 0:
+	    case kSectionGlucose:
 		switch( row )
 		{
-		    case 0: return @"Timestamp";
-		    case 1: return @"Category";
-		    case 2: return @"eGlucose";
+		    case kRowTimestamp: return @"Timestamp";
+		    case kRowCategory:	return @"Category";
+		    case kRowGlucose:	return @"eGlucose";
 		}
 		break;
-	    case 1: return @"eDualCellID";
-	    case 2: return @"NoteCellID";
+	    case kSectionInsulin:   return @"eDualCellID";
+	    case kSectionNote:	    return @"NoteCellID";
 	}
     }
     else
     {
 	switch( section )
 	{
-	    case 0:
-		if( 2 == row )
+	    case kSectionGlucose:
+		if( kRowGlucose == row )
 		    return @"Glucose";
 		break;
-	    case 1: return kInsulinCellID;
-	    case 2: return @"NoteID";
+	    case kSectionInsulin:   return kInsulinCellID;
+	    case kSectionNote:	    return @"NoteID";
 	}
     }
     return @"CellID";
@@ -321,57 +328,72 @@ static NSUserDefaults* defaults = nil;
 	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	    cell.accessoryType = self.editing ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
 	}
-	else if( kInsulinCellID == cellID )
+	else if( self.editing )
 	{
-	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1
-					   reuseIdentifier:cellID];
-	    // Use the same font size for both labels
-	    cell.detailTextLabel.font = cell.textLabel.font;
-	    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
-	    cell.textLabel.backgroundColor = [UIColor clearColor];
-	}
-	else if( @"eDualCellID" == cellID )
-	{
-	    DoseFieldCell* doseFieldCell = [[DoseFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
-	    doseFieldCell.delegate = self;
-	    doseFieldCell.doseField.inputAccessoryView = self.inputToolbar;
-	    cell = doseFieldCell;
-	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	}
-	else if( @"eGlucose" == cellID )
-	{
-	    glucoseCell = [[NumberFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
-	    glucoseCell.clearButtonMode = UITextFieldViewModeWhileEditing;
-	    glucoseCell.delegate = self;
-	    glucoseCell.field.inputAccessoryView = self.inputToolbar;
-	    glucoseCell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
-	    glucoseCell.placeholder = @"Glucose";
-	    cell = glucoseCell;
-	    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	}
-	else if( @"NoteCellID" == cellID )
-	{
-	    TextViewCell* textViewCell = [[TextViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
-	    textViewCell.placeholder = @"Add a Note";
-	    textViewCell.delegate = self;
-	    textViewCell.textView.inputAccessoryView = self.inputToolbar;
+	    switch( section )
+	    {
+		case kSectionGlucose:
+		    switch( row )
+		    {
+			case kRowGlucose:
+			    glucoseCell = [[NumberFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+			    glucoseCell.clearButtonMode = UITextFieldViewModeWhileEditing;
+			    glucoseCell.delegate = self;
+			    glucoseCell.field.inputAccessoryView = self.inputToolbar;
+			    glucoseCell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
+			    glucoseCell.placeholder = @"Glucose";
+			    cell = glucoseCell;
+			    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+			    break;
+		    }
+		    break;
+		case kSectionInsulin:
+		{
+		    DoseFieldCell* doseFieldCell = [[DoseFieldCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+		    doseFieldCell.delegate = self;
+		    doseFieldCell.doseField.inputAccessoryView = self.inputToolbar;
+		    cell = doseFieldCell;
+		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		    break;
+		}
+		case kSectionNote:
+		{
+		    TextViewCell* textViewCell = [[TextViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+		    textViewCell.placeholder = @"Add a Note";
+		    textViewCell.delegate = self;
+		    textViewCell.textView.inputAccessoryView = self.inputToolbar;
 
-	    cell = textViewCell;
-	    cell.accessoryType = UITableViewCellAccessoryNone;
+		    cell = textViewCell;
+		    cell.accessoryType = UITableViewCellAccessoryNone;
+		    break;
+		}
+	    }
 	}
-	else if( @"NoteID" == cellID )
+	else
 	{
-	    cell = [[LabelCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+	    switch( section )
+	    {
+		case kSectionInsulin:
+		    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1
+						  reuseIdentifier:cellID];
+		    // Use the same font size for both labels
+		    cell.detailTextLabel.font = cell.textLabel.font;
+		    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+		    cell.textLabel.backgroundColor = [UIColor clearColor];
+		    break;
+		case kSectionNote:
+		    cell = [[LabelCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+		    break;
+	    }
 	}
-	else	// Standard UITableView cell for Timestamp and Category
+
+	if( !cell )	// Standard UITableView cell for Timestamp and Category
 	{
 	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	    cell.accessoryType = self.editing ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
 	    cell.textLabel.backgroundColor = [UIColor clearColor];
 	    cell.textLabel.textAlignment = UITextAlignmentCenter;
-	    if( (0 == section) && (0 == row) )	// Save a pointer to the timestamp cell
-	    {}
-	    else
+	    if( (kSectionGlucose == section) && (kRowCategory == row) )
 		self.categoryLabel = cell.textLabel;
 	}
     }
@@ -436,7 +458,13 @@ static NSUserDefaults* defaults = nil;
 	// Otherwise, use a dual column cell.
 	ManagedInsulinDose* dose = [self.logEntry.insulinDoses objectAtIndex:row];
 
-	if( kInsulinCellID == cellID )
+	if( self.editing )
+	{
+	    DoseFieldCell *const dcell = (DoseFieldCell*)cell;
+	    dcell.dose = dose;
+	    dcell.precision = InsulinPrecision;
+	}
+	else
 	{
 	    while( !(dose && dose.dose && dose.insulinType) )
 		dose = [self.logEntry.insulinDoses objectAtIndex:++row];
@@ -445,17 +473,11 @@ static NSUserDefaults* defaults = nil;
 		if( dose.dose )	// If the record has a valid value...
 		{
 		    cell.detailTextLabel.text = [dose.dose stringValue];    // Value
-		    cell.textLabel.text = dose.insulinType.shortName;		    // Name
+		    cell.textLabel.text = dose.insulinType.shortName;	    // Name
 		}
 		else if(dose.insulinType)
 		    cell.textLabel.text = dose.insulinType.shortName;
 	    }
-	}
-	else if( @"eDualCellID" == cellID )
-	{
-	    DoseFieldCell *const dcell = (DoseFieldCell*)cell;
-	    dcell.dose = dose;
-	    dcell.precision = InsulinPrecision;
 	}
     }
     else if( kSectionNote == section )
