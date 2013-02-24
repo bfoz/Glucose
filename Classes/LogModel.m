@@ -522,17 +522,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     managedLogEntry.timestamp = [NSDate date];
     managedLogEntry.glucoseUnits = [NSNumber numberWithInt:[LogModel glucoseUnitsSetting]];
 
-    for( ManagedInsulinType* insulinType in self.insulinTypesForNewEntries )
-	[managedLogEntry addDoseWithType:insulinType];
-
     return managedLogEntry;
-}
-
-- (ManagedLogEntry*) insertManagedLogEntryWithUndo
-{
-    self.managedObjectContext.undoManager = [[NSUndoManager alloc] init];
-
-    return [self insertManagedLogEntry];
 }
 
 - (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to
@@ -688,6 +678,11 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 	default:
 	    break;
     }
+}
+
+- (unsigned) glucosePrecisionForNewEntries
+{
+    return ([LogModel glucoseUnitsSetting] == kGlucoseUnits_mgdL) ? 0 : 1;
 }
 
 - (NSString*) highGlucoseWarningThresholdKey

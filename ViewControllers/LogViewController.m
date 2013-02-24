@@ -68,26 +68,20 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addNewEntry:)];
 }
 
-- (void) inspectNewLogEntry:(ManagedLogEntry*)entry
-{
-    [self inspectLogEntry:entry setEditing:YES isNew:YES];
-}
-
 - (void) inspectLogEntry:(ManagedLogEntry*)entry
 {
-    [self inspectLogEntry:entry setEditing:NO isNew:NO];
-}
+    LogEntryViewController* logEntryViewController;
+    if( entry )
+    {
+	logEntryViewController = [[LogEntryViewController alloc] initWithLogEntry:entry];
+	logEntryViewController.model = _model;
+    }
+    else
+	logEntryViewController = [[LogEntryViewController alloc] initWithLogModel:_model];
 
-- (void) inspectLogEntry:(ManagedLogEntry*)entry setEditing:(BOOL)e isNew:(BOOL)n
-{
-    LogEntryViewController* logEntryViewController = [[LogEntryViewController alloc] initWithLogEntry:entry];
     logEntryViewController.delegate = self;
-    logEntryViewController.model = _model;
 
-    // Push the detail view on to the navigation controller's stack.
     [self.navigationController pushViewController:logEntryViewController animated:YES];
-    logEntryViewController.editingNewEntry = n;
-    [logEntryViewController setEditing:e animated:NO];
 }
 
 - (void) showSettings:(id)sender
@@ -133,8 +127,7 @@
 
 - (void) addNewEntry:(id)sender
 {
-    ManagedLogEntry *const entry = [_model insertManagedLogEntryWithUndo];
-    [self inspectNewLogEntry:entry];
+    [self inspectLogEntry:nil];
 }
 
 #pragma mark <UITableViewDataSource>

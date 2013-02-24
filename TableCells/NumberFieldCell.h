@@ -31,6 +31,7 @@
 @property (nonatomic)	UITextAlignment	textAlignment;
 
 + (NumberFieldCell*) cellForLogEntry:(ManagedLogEntry*)logEntry accessoryView:(UIView*)accessoryView delegate:(id<NumberFieldCellDelegate>)delegate tableView:(UITableView*)tableView;
++ (NumberFieldCell*) cellForNumber:(NSNumber*)number precision:(int)precision unitsString:(NSString*)unitsString inputAccessoryView:(UIView*)inputAccessoryView delegate:(id<NumberFieldCellDelegate>)delegate tableView:(UITableView*)tableView;
 
 - (BOOL) becomeFirstResponder;
 - (BOOL) resignFirstResponder;

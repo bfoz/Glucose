@@ -40,31 +40,30 @@ enum GlucoseSectionRows
 {
     CategoryViewController*	categoryViewController;
     InsulinTypeViewController*	insulinTypeViewController;
-
-    BOOL	didUndo;
-    unsigned	editedIndex;
 }
 
 @property (nonatomic, strong) NSDateFormatter*	dateFormatter;
 
-@property (nonatomic, strong) UILabel*	categoryLabel;
-@property (nonatomic, strong) UILabel*	timestampLabel;
+@property (nonatomic, strong) UILabel*	    categoryLabel;
+@property (nonatomic, strong) DateField*    timestampField;
+@property (nonatomic, strong) UILabel*	    timestampLabel;
 
 @end
 
 @implementation LogEntryViewController
 {
     NumberFieldCell*	glucoseCell;
-    DateField*	    timestampField;
+    TextViewCell*	noteCell;
     UIToolbar*	    inputToolbar;
     UITextField*    currentEditingField;
+
+    ManagedCategory*	selectedCategory;
+    NSIndexPath*	selectedIndexPath;
 }
 
-@synthesize categoryLabel, timestampLabel;
 @synthesize dateFormatter;
 @synthesize delegate;
 @synthesize editingNewEntry;
-@synthesize logEntry = _logEntry;
 @synthesize model;
 
 static unsigned InsulinPrecision;
@@ -81,9 +80,10 @@ static NSUserDefaults* defaults = nil;
     self = [super initWithStyle:UITableViewStyleGrouped];
     if( self )
     {
-	editingNewEntry = NO;
+	editingNewEntry = !logEntry;
 	
 	self.logEntry = logEntry;
+	selectedCategory = logEntry.category;
 
 	// Create a date formatter to convert the date to a string format.
 	dateFormatter = [[NSDateFormatter alloc] init];
@@ -95,6 +95,18 @@ static NSUserDefaults* defaults = nil;
 	NSNumber* p = [defaults objectForKey:kDefaultInsulinPrecision];
 	InsulinPrecision = p ? [p intValue] : 0;
     }
+    return self;
+}
+
+- (id) initWithLogModel:(LogModel*)logModel
+{
+    self = [self initWithLogEntry:nil];
+    if( self )
+    {
+	self.model = logModel;
+	[self setEditing:YES animated:NO];
+    }
+
     return self;
 }
 
@@ -111,7 +123,6 @@ static NSUserDefaults* defaults = nil;
     [super viewWillAppear:animated];
 
     [self updateTitle];		    // Update the navigation item title
-    [self.tableView reloadData];    // Redisplay the data
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -155,46 +166,82 @@ static NSUserDefaults* defaults = nil;
 
 - (void) cancelEditingLogEntry
 {
-    if( self.delegate )
-	[self.delegate logEntryViewControllerDidCancelEditing];
+    [self.delegate logEntryViewControllerDidCancelEditing];
 }
 
 - (void) finishEditingLogEntry
 {
-    if( self.logEntry.hasChanges )
+    self.logEntry.category = selectedCategory;
+    self.logEntry.glucose = glucoseCell.number;
+    self.logEntry.note = noteCell.text;
+    self.logEntry.timestamp = self.timestampField.date;
+
+    unsigned i = 0;
+    DoseFieldCell* cell = nil;
+    NSMutableArray* insulinDoses = [NSMutableArray array];
+    while( (cell = (DoseFieldCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForItem:i inSection:kSectionInsulin]]) )
     {
-	NSMutableArray* deletables = [NSMutableArray array];
-	for( ManagedInsulinDose* insulinDose in self.logEntry.insulinDoses )
-	    if( ![insulinDose validateForInsert:nil] )
-		[deletables addObject:insulinDose];
-	for( ManagedInsulinDose* insulinDose in deletables )
+	if( cell.doseField.number && cell.insulinType )
 	{
-	    insulinDose.logEntry = nil;
-	    [self.logEntry.managedObjectContext deleteObject:insulinDose];
+	    if( cell.dose )
+	    {
+		cell.dose.dose = cell.doseField.number;
+		cell.dose.insulinType = cell.insulinType;
+		[insulinDoses addObject:cell.dose];
+	    }
+	    else
+		[insulinDoses addObject:[self.logEntry addInsulinDose:cell.doseField.number withInsulinType:cell.insulinType]];
 	}
-
-	ManagedLogDay *const newDay = [self.model logDayForDate:self.logEntry.timestamp];
-	if( newDay != self.logEntry.logDay )
-	{
-	    ManagedLogDay* oldDay = self.logEntry.logDay;
-
-	    NSMutableOrderedSet* entries = [NSMutableOrderedSet orderedSetWithOrderedSet:newDay.logEntries];
-	    [entries insertObject:self.logEntry atIndex:0];
-	    newDay.logEntries = entries;
-
-	    [newDay updateStatistics];
-	    [oldDay updateStatistics];
-	}
-
-	[self.model commitChanges];
+	++i;
     }
+    self.logEntry.insulinDoses = [NSOrderedSet orderedSetWithArray:insulinDoses];
+
+    ManagedLogDay *const newDay = [self.model logDayForDate:self.logEntry.timestamp];
+    if( newDay != self.logEntry.logDay )
+    {
+	ManagedLogDay* oldDay = self.logEntry.logDay;
+
+	NSMutableOrderedSet* entries = [NSMutableOrderedSet orderedSetWithOrderedSet:newDay.logEntries];
+	[entries insertObject:self.logEntry atIndex:0];
+	newDay.logEntries = entries;
+
+	[newDay updateStatistics];
+	[oldDay updateStatistics];
+    }
+
+    [self.model commitChanges];
 }
 
 - (void) finishEditingNewLogEntry
 {
+    self.logEntry = [model insertManagedLogEntry];
     [self finishEditingLogEntry];
     self.editingNewEntry = NO;
     [delegate logEntryView:self didEndEditingEntry:self.logEntry];
+}
+
+- (void) disableSaveButton
+{
+    self.navigationItem.rightBarButtonItem.enabled = NO;
+}
+
+- (void) enableSaveButton
+{
+    self.navigationItem.rightBarButtonItem.enabled = YES;
+}
+
+- (void) updateCategoryLabel
+{
+    if( selectedCategory )
+    {
+	self.categoryLabel.text = selectedCategory.name;
+	self.categoryLabel.textColor = [UIColor darkTextColor];
+    }
+    else
+    {
+	self.categoryLabel.text = @"Category";
+	self.categoryLabel.textColor = [UIColor lightGrayColor];
+    }
 }
 
 - (void) updateTitle
@@ -227,9 +274,8 @@ static NSUserDefaults* defaults = nil;
 
 - (void) didTapCancelButton
 {
-    UITextField* tmp = currentEditingField;
-    currentEditingField = nil;
-    [tmp resignFirstResponder];
+    [currentEditingField.undoManager undo];
+    [currentEditingField resignFirstResponder];
 }
 
 - (void) didTapDoneButton
@@ -250,7 +296,7 @@ static NSUserDefaults* defaults = nil;
 //	Row 2 (Glucose) => Row 1 if not editing and there is a glucose reading, but no category
 - (unsigned) translateRow:(unsigned)row inSection:(unsigned)section
 {
-    if( !self.editing && (0 == section) && (1==row) && !self.logEntry.category && self.logEntry.glucose )
+    if( !self.editing && (0 == section) && (1==row) && !selectedCategory && self.logEntry.glucose )
 	return 2;
     return row;
 }
@@ -263,9 +309,9 @@ static NSUserDefaults* defaults = nil;
 	    if( self.editing )
 		return 3;
 	    else
-		return 1 + (self.logEntry.glucose ? 1 : 0) + (self.logEntry.category ? 1 : 0);
+		return 1 + (self.logEntry.glucose ? 1 : 0) + (selectedCategory ? 1 : 0);
 	case kSectionInsulin:
-	    return self.logEntry.insulinDoses.count;
+	    return self.logEntry ? self.logEntry.insulinDoses.count : [model insulinTypesForNewEntries].count;
 	case kSectionNote:
 	    if( self.editing )
 		return 1;
@@ -307,9 +353,6 @@ static NSUserDefaults* defaults = nil;
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if( self.logEntry == nil )
-	return nil;
-
     const unsigned section = indexPath.section;
     unsigned row = [self translateRow:indexPath.row inSection:section];
 
@@ -358,40 +401,40 @@ static NSUserDefaults* defaults = nil;
 	{
 	    case 0:	// Timestamp
 	    {
-		cell.textLabel.text = [dateFormatter stringFromDate:self.logEntry.timestamp];
+		cell.textLabel.text = [dateFormatter stringFromDate:(self.logEntry ? self.logEntry.timestamp : [NSDate date])];
 		cell.textLabel.textAlignment = UITextAlignmentCenter;
-		timestampField = [[DateField alloc] initWithFrame:cell.textLabel.frame];
-		timestampField.delegate = self;
-		timestampField.hidden = YES;
-		[cell addSubview:timestampField];
+		_timestampField = [[DateField alloc] initWithFrame:cell.textLabel.frame];
+		_timestampField.delegate = self;
+		_timestampField.hidden = YES;
+		[cell addSubview:_timestampField];
 		self.timestampLabel = cell.textLabel;
 		cell.selectionStyle = UITableViewCellSelectionStyleBlue;
 		break;
 	    }
 	    case 1:	// Category
-		if( self.logEntry.category )
-		{
-		    cell.textLabel.text = self.logEntry.category.name;
-		    cell.textLabel.textColor = [UIColor darkTextColor];
-		}
-		else
-		{
-		    cell.textLabel.text = @"Category";
-		    cell.textLabel.textColor = [UIColor lightGrayColor];
-		}
+		[self updateCategoryLabel];
 		break;
 	    case 2:	// Glucose
 		if( self.editing )
 		{
-		    glucoseCell = [NumberFieldCell cellForLogEntry:self.logEntry
-						     accessoryView:self.inputToolbar
-							  delegate:self
-							 tableView:tv];
+		    if( self.logEntry )
+			glucoseCell = [NumberFieldCell cellForLogEntry:self.logEntry
+							 accessoryView:self.inputToolbar
+							      delegate:self
+							     tableView:tv];
+		    else
+			glucoseCell = [NumberFieldCell cellForNumber:nil
+							   precision:[model glucosePrecisionForNewEntries]
+							 unitsString:[LogModel glucoseUnitsSettingString]
+						  inputAccessoryView:self.inputToolbar
+							    delegate:self
+							   tableView:tv];
 		    cell = glucoseCell;
 		}
 		else
 		{
 		    cell.textLabel.text = [self.logEntry glucoseString];
+		    cell.textLabel.textAlignment = UITextAlignmentCenter;
 
 		    // Color the glucose values accordingly
 		    const float glucose = [self.logEntry.glucose floatValue];
@@ -415,35 +458,41 @@ static NSUserDefaults* defaults = nil;
 
 	if( self.editing )
 	{
-	    cell = [DoseFieldCell cellForInsulinDose:dose
-				       accessoryView:self.inputToolbar
-					    delegate:self
-					   precision:InsulinPrecision
-					   tableView:tv];
-	}
-	else
-	{
-	    while( !(dose && dose.dose && dose.insulinType) )
-		dose = [self.logEntry.insulinDoses objectAtIndex:++row];
 	    if( dose )
 	    {
-		if( dose.dose )	// If the record has a valid value...
-		{
-		    cell.detailTextLabel.text = [dose.dose stringValue];    // Value
-		    cell.textLabel.text = dose.insulinType.shortName;	    // Name
-		}
-		else if(dose.insulinType)
-		    cell.textLabel.text = dose.insulinType.shortName;
+		cell = [DoseFieldCell cellForInsulinDose:dose
+					   accessoryView:self.inputToolbar
+						delegate:self
+					       precision:InsulinPrecision
+					       tableView:tv];
 	    }
+	    else
+	    {
+		cell = [DoseFieldCell cellForInsulinType:[[model insulinTypesForNewEntries] objectAtIndex:row]
+					   accessoryView:self.inputToolbar
+						delegate:self
+					       precision:InsulinPrecision
+					       tableView:tv];
+	    }
+	}
+	else if( dose )
+	{
+	    if( dose.dose )
+		cell.detailTextLabel.text = [dose.dose stringValue];
+	    if( dose.insulinType )
+		cell.textLabel.text = dose.insulinType.shortName;
 	}
     }
     else if( kSectionNote == section )
     {
 	if( self.editing )
-	    cell = [TextViewCell cellForLogEntry:self.logEntry
-					delegate:self
-			      inputAccessoryView:self.inputToolbar
-				       tableView:tv];
+	{
+	    noteCell = [TextViewCell cellForLogEntry:self.logEntry
+					    delegate:self
+				  inputAccessoryView:self.inputToolbar
+					   tableView:tv];
+	    cell = noteCell;
+	}
 	else
 	    cell.textLabel.text = self.logEntry.note;
     }
@@ -490,7 +539,6 @@ static NSUserDefaults* defaults = nil;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)path
 {
-    const unsigned row = path.row;
     const unsigned section = path.section;
 
     if( 0 == section )
@@ -498,7 +546,7 @@ static NSUserDefaults* defaults = nil;
 	switch( path.row )
 	{
 	    case 0: 
-		[timestampField becomeFirstResponder];
+		[_timestampField becomeFirstResponder];
 		[self.tableView deselectRowAtIndexPath:path animated:YES];
 		break;
 	    case 1: 
@@ -508,7 +556,7 @@ static NSUserDefaults* defaults = nil;
 		    categoryViewController.delegate = self;
 		    categoryViewController.model = model;
 		}
-		categoryViewController.selectedCategory = self.logEntry.category;
+		categoryViewController.selectedCategory = selectedCategory;
 		[self presentModalViewController:categoryViewController animated:YES];
 		break;
 	    case 2: // Go into edit mode if the user taps anywhere on the row
@@ -524,8 +572,9 @@ static NSUserDefaults* defaults = nil;
 	    insulinTypeViewController.delegate = self;
 	    insulinTypeViewController.model = model;
 	}
-	editedIndex = row;
-	[insulinTypeViewController setSelectedInsulinType:[[self.logEntry.insulinDoses objectAtIndex:row] insulinType]];
+	selectedIndexPath = path;
+	DoseFieldCell* cell = (DoseFieldCell*)[self.tableView cellForRowAtIndexPath:path];
+	[insulinTypeViewController setSelectedInsulinType:cell.insulinType];
 	[self presentModalViewController:insulinTypeViewController animated:YES];
     }
     else if( 2 == section )
@@ -556,7 +605,7 @@ static NSUserDefaults* defaults = nil;
     {
 	const BOOL e = self.editing;
 	// If editing and there's no text, return a standard size
-	if( e && !self.logEntry.note )
+	if( e && !noteCell.textView.text )
 	    return 44*2;
 	// Otherwise, resize for the text
 	CGSize s = [self.logEntry.note sizeWithFont:[UIFont boldSystemFontOfSize:[UIFont labelFontSize]]
@@ -573,51 +622,44 @@ static NSUserDefaults* defaults = nil;
 
 - (void)numberFieldCellDidBeginEditing:(NumberFieldCell*)cell
 {
+    [cell.field.undoManager registerUndoWithTarget:cell selector:@selector(setNumber:) object:cell.number];
     currentEditingField = cell.field;
-    self.navigationItem.rightBarButtonItem.enabled = NO;
-    [self.logEntry.managedObjectContext.undoManager beginUndoGrouping];
+    [self disableSaveButton];
 }
 
 - (void)numberFieldCellDidEndEditing:(NumberFieldCell*)cell
 {
-    if( currentEditingField )
-    {
-	if( cell == glucoseCell )
-	    self.logEntry.glucose = ((NumberFieldCell*)currentEditingField).number;
-    }
-    glucoseCell.number = self.logEntry.glucose;
     currentEditingField = nil;
-    self.navigationItem.rightBarButtonItem.enabled = YES;
+    [self enableSaveButton];
 }
 
 #pragma mark UITextFieldDelegate
 
 - (void) dateFieldDidChangeValue:(DateField *)dateField
 {
-    timestampLabel.text = [dateFormatter stringFromDate:dateField.date];
+    _timestampLabel.text = [dateFormatter stringFromDate:dateField.date];
 }
 
 - (void) textFieldDidBeginEditing:(DateField*)dateField
 {
     [[FlurryLogger currentFlurryLogger] logEventWithName:kFlurryEventNewLogEntryDidTapTimestamp];
-    dateField.date = self.logEntry.timestamp;
+    dateField.date = self.logEntry ? self.logEntry.timestamp : [NSDate date];
+    [dateField.undoManager registerUndoWithTarget:dateField selector:@selector(setDate:) object:dateField.date];
+    [self disableSaveButton];
 }
 
 - (void) textFieldDidEndEditing:(DateField *)dateField
 {
-    if( timestampField )
-    {
-	self.logEntry.timestamp = dateField.date;
-	[[FlurryLogger currentFlurryLogger] logEventWithName:kFlurryEventNewLogEntryDidChangeTimestamp];
-    }
-    timestampField = dateField;
-    timestampLabel.text = [dateFormatter stringFromDate:self.logEntry.timestamp];
+    [[FlurryLogger currentFlurryLogger] logEventWithName:kFlurryEventNewLogEntryDidChangeTimestamp];
+    _timestampLabel.text = [dateFormatter stringFromDate:dateField.date];
+    [self enableSaveButton];
 }
 
 - (void) dateFieldWillCancelEditing:(DateField *)dateField
 {
     [[FlurryLogger currentFlurryLogger] logEventWithName:kFlurryEventNewLogEntryDidCancelTimestamp];
-    timestampField = nil;
+    [dateField.undoManager undo];
+    _timestampLabel.text = [dateFormatter stringFromDate:dateField.date];
 }
 
 #pragma mark CategoryViewControllerDelegate
@@ -625,57 +667,54 @@ static NSUserDefaults* defaults = nil;
 - (void) categoryViewControllerDidSelectCategory:(ManagedCategory *)category
 {
     [self dismissModalViewControllerAnimated:YES];
-    self.logEntry.category = category;
+    selectedCategory = category;
+    [self updateCategoryLabel];
 }
 
 #pragma mark DoseFieldCellDelegate
 
 - (void)doseDidBeginEditing:(DoseFieldCell*)cell
 {
+    [cell.doseField.undoManager registerUndoWithTarget:cell.doseField selector:@selector(setNumber:) object:cell.doseField.number];
     currentEditingField = cell.doseField;
-    self.navigationItem.rightBarButtonItem.enabled = NO;
+    [self disableSaveButton];
 }
 
 - (void)doseDidEndEditing:(DoseFieldCell *)cell
 {
-    if( currentEditingField )
+    cell.dose.dose = [cell.doseField number];
+    if( editingNewEntry )
     {
-	cell.dose.dose = [cell.doseField number];
-	if( editingNewEntry )
+	NSIndexPath* path = [self.tableView indexPathForCell:cell];
+	NSIndexPath* next = [NSIndexPath indexPathForRow:path.row+1 inSection:kSectionInsulin];
+	DoseFieldCell* cell = (DoseFieldCell*)[self.tableView cellForRowAtIndexPath:next];
+	if( cell )	// Found a next insulin row
 	{
-	    NSIndexPath* path = [self.tableView indexPathForCell:cell];
-	    NSIndexPath* next = [NSIndexPath indexPathForRow:path.row+1 inSection:kSectionInsulin];
-	    DoseFieldCell* cell = (DoseFieldCell*)[self.tableView cellForRowAtIndexPath:next];
-	    if( cell )	// Found a next insulin row
-	    {
-		[cell.doseField becomeFirstResponder];
-		return;
-	    }
+	    [cell.doseField becomeFirstResponder];
+	    return;
 	}
     }
+
     cell.dose = cell.dose;
 
     currentEditingField = nil;
-    self.navigationItem.rightBarButtonItem.enabled = YES;
+    [self enableSaveButton];
 }
 
 #pragma mark -
 #pragma mark <InsulinTypeViewControllerDelegate>
 
-- (BOOL) insulinTypeViewControllerDidSelectInsulinType:(ManagedInsulinType*)type
+- (BOOL) insulinTypeViewControllerDidSelectInsulinType:(ManagedInsulinType*)insulinType
 {
     [self dismissModalViewControllerAnimated:YES];
 
-    // Update the insulin type for the entry's dose. If the entry doesn't have
-    //	a dose at the specified index, append a new dose object with the
-    //	selected type.
-    if( editedIndex < self.logEntry.insulinDoses.count )
+    if( selectedIndexPath )
     {
-	ManagedInsulinDose* insulinDose = [self.logEntry.insulinDoses objectAtIndex:editedIndex];
-	insulinDose.insulinType = type;
+	DoseFieldCell* cell = (DoseFieldCell*)[self.tableView cellForRowAtIndexPath:selectedIndexPath];
+	cell.insulinType = insulinType;
+	selectedIndexPath = nil;
     }
-    else
-	[self.logEntry addDoseWithType:type];
+
     return YES;
 }
 
@@ -684,16 +723,13 @@ static NSUserDefaults* defaults = nil;
 - (void) textViewCellDidBeginEditing:(TextViewCell*)cell
 {
     currentEditingField = (UITextField*)cell.textView;
-    self.navigationItem.rightBarButtonItem.enabled = NO;
+    [self disableSaveButton];
 }
 
 - (void) textViewCellDidEndEditing:(TextViewCell*)cell
 {
-    if( currentEditingField )
-	self.logEntry.note = cell.text;
-    cell.text = self.logEntry.note;
-
-    self.navigationItem.rightBarButtonItem.enabled = YES;
+    currentEditingField = nil;
+    [self enableSaveButton];
 }
 
 @end

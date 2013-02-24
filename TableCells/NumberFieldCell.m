@@ -15,6 +15,16 @@
 
 + (NumberFieldCell*) cellForLogEntry:(ManagedLogEntry*)logEntry accessoryView:(UIView*)accessoryView delegate:(id<NumberFieldCellDelegate>)delegate tableView:(UITableView*)tableView
 {
+    return [self cellForNumber:logEntry.glucose
+		     precision:logEntry.glucosePrecision
+		   unitsString:logEntry.glucoseUnitsString
+	    inputAccessoryView:accessoryView
+		      delegate:delegate
+		     tableView:tableView];
+}
+
++ (NumberFieldCell*) cellForNumber:(NSNumber*)number precision:(int)precision unitsString:(NSString*)unitsString inputAccessoryView:(UIView*)inputAccessoryView delegate:(id<NumberFieldCellDelegate>)delegate tableView:(UITableView*)tableView
+{
     NumberFieldCell* cell = (NumberFieldCell*)[tableView dequeueReusableCellWithIdentifier:NSStringFromClass(self)];
     if( !cell )
     {
@@ -22,18 +32,19 @@
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	cell.clearButtonMode = UITextFieldViewModeWhileEditing;
 	cell.delegate = delegate;
-	cell.field.inputAccessoryView = accessoryView;
+	cell.field.inputAccessoryView = inputAccessoryView;
 	cell.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
 	cell.placeholder = @"Glucose";
     }
 
     // precision must be set before number so the display text is formatted correctly
-    cell.precision = logEntry.glucosePrecision;
-    cell.number = logEntry.glucose;
-    cell.labelText = logEntry.glucoseUnitsString;
+    cell.precision = precision;
+    cell.number = number;
+    cell.labelText = unitsString;
 
     return cell;
 }
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     if( self = [super initWithStyle:style reuseIdentifier:reuseIdentifier] )

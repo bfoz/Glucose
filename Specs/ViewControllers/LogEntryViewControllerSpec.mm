@@ -1,11 +1,16 @@
 #import "SpecsHelper.h"
 
-#import "DoseFieldCell.h"
-#import "LogEntryViewController.h"
-#import "LogModel+SpecHelper.h"
+#import "ManagedCategory.h"
 #import "ManagedLogDay+App.h"
 #import "ManagedLogEntry+App.h"
+
+#import "DateField.h"
+#import "DoseFieldCell.h"
+#import "InsulinTypeViewController.h"
+#import "LogEntryViewController.h"
+#import "LogModel+SpecHelper.h"
 #import "NumberFieldCell.h"
+#import "TextViewCell.h"
 
 using namespace Cedar::Matchers;
 
@@ -18,6 +23,10 @@ enum Sections
 };
 
 @interface LogEntryViewController (UISpecs)
+@property (nonatomic, strong) UILabel*	    categoryLabel;
+@property (nonatomic, strong) DateField*    timestampField;
+@property (nonatomic, strong) UILabel*	    timestampLabel;
+
 - (void) categoryViewControllerDidSelectCategory:(id)category;
 @end
 
@@ -29,7 +38,7 @@ describe(@"LogEntryViewController", ^{
     __block LogModel*	logModel;
 
     beforeEach(^{
-	logModel = [[LogModel alloc] init];
+	logModel = [[[LogModel alloc] init] autorelease];
     });
 
     describe(@"when displaying an existing log entry", ^{
@@ -267,9 +276,8 @@ describe(@"LogEntryViewController", ^{
 			    glucoseCell.field.isFirstResponder should_not be_truthy;
 			});
 
-			it(@"should not update the LogEntry", ^{
-			    controller.logEntry.glucose should_not equal(@42);
-			    [controller.logEntry hasChanges] should_not be_truthy;
+			it(@"should restore the previous value", ^{
+			    glucoseCell.number should_not equal(@42);
 			});
 
 			it(@"should enable the right nav bar button", ^{
@@ -288,8 +296,8 @@ describe(@"LogEntryViewController", ^{
 			    glucoseCell.field.isFirstResponder should_not be_truthy;
 			});
 
-			it(@"should update the LogEntry", ^{
-			    controller.logEntry.glucose should equal(@42);
+			it(@"should accept the new value", ^{
+			    glucoseCell.number should equal(@42);
 			});
 
 			it(@"should enable the right nav bar button", ^{
@@ -329,26 +337,18 @@ describe(@"LogEntryViewController", ^{
 	});
     });
 
-    describe(@"when initialized with a new entry", ^{
+    describe(@"when initialized for a new entry", ^{
 	beforeEach(^{
-	    logEntry = [logModel insertManagedLogEntryWithUndo];
+	    ManagedInsulinType* insulinType0 = [logModel insertManagedInsulinTypeShortName:@"InsulinType0"];
+	    ManagedInsulinType* insulinType1 = [logModel insertManagedInsulinTypeShortName:@"InsulinType1"];
+	    [logModel.insulinTypesForNewEntries addObject:insulinType0];
+	    [logModel.insulinTypesForNewEntries addObject:insulinType1];
+
+	    logModel.insulinTypesForNewEntries.count should equal(2);
 
 	    UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:[[UIViewController alloc] init]];
 
-	    controller = [[[LogEntryViewController alloc] initWithLogEntry:logEntry] autorelease];
-	    controller.model = logModel;
-
-	    ManagedInsulinType* insulinType0 = [controller.model insertManagedInsulinTypeShortName:@"InsulinType0"];
-	    ManagedInsulinType* insulinType1 = [controller.model insertManagedInsulinTypeShortName:@"InsulinType1"];
-	    [controller.model.insulinTypesForNewEntries addObject:insulinType0];
-	    [controller.model.insulinTypesForNewEntries addObject:insulinType1];
-
-	    controller.model.insulinTypesForNewEntries.count should equal(2);
-
-	    controller.logEntry = [controller.model insertManagedLogEntryWithUndo];
-
-	    controller.editingNewEntry = YES;
-	    [controller setEditing:YES animated:NO];
+	    controller = [[[LogEntryViewController alloc] initWithLogModel:logModel] autorelease];
 
 	    [navigationController pushViewController:controller animated:NO];
 
@@ -376,6 +376,12 @@ describe(@"LogEntryViewController", ^{
 	describe(@"Section 0 - Glucose", ^{
 	    it(@"should have 3 rows", ^{
 		[controller.tableView numberOfRowsInSection:0] should equal(3);
+	    });
+
+	    it(@"should show the correct placeholder category text", ^{
+		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+		cell.textLabel.text = @"Category";
+		cell.textLabel.textColor = [UIColor lightGrayColor];
 	    });
 
 	    it(@"should show a disclosure indicator on row 0", ^{
@@ -414,6 +420,73 @@ describe(@"LogEntryViewController", ^{
 	    });
 	});
 
+	describe(@"when the timestamp row is tapped", ^{
+	    beforeEach(^{
+		[controller tableView:nil didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionGlucose]];
+	    });
+
+	    it(@"should become first responder", ^{
+		[controller.timestampField isFirstResponder] should be_truthy;
+	    });
+
+	    it(@"should disable the right nav bar button", ^{
+		controller.navigationItem.rightBarButtonItem.enabled should_not be_truthy;
+	    });
+
+	    describe(@"when the date is changed", ^{
+		__block NSDate* newDate;
+		__block NSDate* originalDate;
+
+		beforeEach(^{
+		    newDate = [NSDate dateWithTimeIntervalSince1970:1000];
+		    originalDate = controller.timestampField.date;
+
+		    controller.timestampField.date = newDate;
+		});
+
+		describe(@"when the date picker Cancel button is tapped", ^{
+		    beforeEach(^{
+			UIToolbar* toolbar = controller.timestampField.toolbar;
+			UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:0];
+			[doneButton tap];
+		    });
+
+		    it(@"should resign first responder", ^{
+			[controller.timestampField isFirstResponder] should_not be_truthy;
+		    });
+
+		    it(@"should enable the right nav bar button", ^{
+			controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+		    });
+
+		    it(@"should restore the original date", ^{
+			controller.timestampField.date = originalDate;
+		    });
+		});
+
+		describe(@"when the date picker Done button is tapped", ^{
+		    beforeEach(^{
+			UIToolbar* toolbar = controller.timestampField.toolbar;
+			UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
+			[doneButton tap];
+		    });
+
+		    it(@"should resign first responder", ^{
+			[controller.timestampField isFirstResponder] should_not be_truthy;
+		    });
+
+		    it(@"should enable the right nav bar button", ^{
+			controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+		    });
+
+		    it(@"should accept the new date", ^{
+			controller.timestampField.date should equal(newDate);
+			controller.timestampLabel.text should_not be_nil;
+		    });
+		});
+	    });
+	});
+
 	describe(@"when the Category row is tapped", ^{
 	    beforeEach(^{
 		[controller tableView:controller.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionGlucose]];
@@ -424,13 +497,22 @@ describe(@"LogEntryViewController", ^{
 	    });
 
 	    describe(@"when a Category is picked", ^{
+		__block ManagedCategory* category;
+
 		beforeEach(^{
-		    [controller categoryViewControllerDidSelectCategory:nil];
+		    category = [[logModel categories] lastObject];
+		    category should_not be_nil;
+		    [controller categoryViewControllerDidSelectCategory:category];
 		    [controller viewDidAppear:NO];
 		});
 
 		it(@"should dismiss the picker", ^{
 		    controller.modalViewController should be_nil;
+		});
+
+		it(@"should update the Category label", ^{
+		    controller.categoryLabel.text should equal(category.name);
+		    controller.categoryLabel.textColor should_not equal([UIColor lightGrayColor]);
 		});
 
 		it(@"should make the Glucose row the first responder", ^{
@@ -442,11 +524,18 @@ describe(@"LogEntryViewController", ^{
 
 	describe(@"when the first Dose row is tapped", ^{
 	    beforeEach(^{
+		logModel.insulinTypesForNewEntries.count should_not equal(0);
+
 		[controller tableView:controller.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
 	    });
 
 	    it(@"should present an insulin type picker", ^{
 		controller.modalViewController should_not be_nil;
+	    });
+
+	    it(@"should be set to the correct insulin type", ^{
+		InsulinTypeViewController* insulinController = (InsulinTypeViewController*)controller.modalViewController;
+		[insulinController insulinTypeIsSelected:[logModel.insulinTypesForNewEntries objectAtIndex:0]];
 	    });
 	});
 
@@ -470,10 +559,6 @@ describe(@"LogEntryViewController", ^{
 		__block NSString* originalText;
 
 		beforeEach(^{
-		    ManagedInsulinDose* insulinDose = [controller.logEntry.insulinDoses objectAtIndex:0];
-		    insulinDose should_not be_nil;
-		    insulinDose.dose should be_nil;
-
 		    originalText = cell.doseField.text;
 
 		    cell.doseField.text = @"1";
@@ -481,7 +566,6 @@ describe(@"LogEntryViewController", ^{
 
 		describe(@"when the accessory toolbar Cancel button is tapped", ^{
 		    beforeEach(^{
-
 			UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
 			UIBarButtonItem* cancelButton = [toolbar.items objectAtIndex:0];
 			[cancelButton tap];
@@ -491,16 +575,13 @@ describe(@"LogEntryViewController", ^{
 			cell.doseField.isFirstResponder should_not be_truthy;
 		    });
 
-		    it(@"should not update the LogEntry", ^{
-			ManagedInsulinDose* insulinDose = [controller.logEntry.insulinDoses objectAtIndex:0];
-			insulinDose should_not be_nil;
-			insulinDose.dose should be_nil;
+		    it(@"should restore the previous value", ^{
+			cell.doseField.text should equal(originalText);
 		    });
 		});
 
 		describe(@"when the accessory toolbar Done button is tapped", ^{
 		    beforeEach(^{
-
 			UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
 			UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
 			[doneButton tap];
@@ -510,11 +591,8 @@ describe(@"LogEntryViewController", ^{
 			cell.doseField.isFirstResponder should_not be_truthy;
 		    });
 
-		    it(@"should update the LogEntry", ^{
-			ManagedInsulinDose* insulinDose = [controller.logEntry.insulinDoses objectAtIndex:0];
-			insulinDose should_not be_nil;
-			insulinDose.dose should_not be_nil;
-			insulinDose.dose should equal(1);
+		    it(@"should keep the new value", ^{
+			cell.doseField.text should equal(@"1");
 		    });
 
 		    it(@"should cause the next row to become first responder", ^{
@@ -525,6 +603,61 @@ describe(@"LogEntryViewController", ^{
 	    });
 
 	    describe(@"when the dose is not changed", ^{
+	    });
+	});
+
+	describe(@"when the note row is tapped", ^{
+	    __block TextViewCell* cell;
+	    __block NSString* originalText;
+
+	    beforeEach(^{
+		originalText = @"The Original Text";
+		cell = (TextViewCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionNote]];
+		cell.text = originalText;
+		[cell.textView becomeFirstResponder] should be_truthy;
+	    });
+
+	    it(@"should become first responder", ^{
+		[cell.textView isFirstResponder] should be_truthy;
+	    });
+
+	    describe(@"when the text is changed", ^{
+		beforeEach(^{
+		    originalText = cell.text;
+		    [cell.textView replaceRange:[cell.textView textRangeFromPosition:cell.textView.beginningOfDocument toPosition:cell.textView.endOfDocument] withText:@"New Text"];
+		});
+
+		describe(@"when the input accessory Cancel button is tapped", ^{
+		    beforeEach(^{
+			UIToolbar* toolbar = (UIToolbar*)cell.textView.inputAccessoryView;
+			UIBarButtonItem* cancelButton = [toolbar.items objectAtIndex:0];
+			[cancelButton tap];
+		    });
+
+		    it(@"should resign first responder", ^{
+			cell.textView.isFirstResponder should_not be_truthy;
+		    });
+
+		    it(@"should revert to the original text", ^{
+			cell.text should equal(originalText);
+		    });
+		});
+
+		describe(@"when the input accessory Done button is tapped", ^{
+		    beforeEach(^{
+			UIToolbar* toolbar = (UIToolbar*)cell.textView.inputAccessoryView;
+			UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
+			[doneButton tap];
+		    });
+
+		    it(@"should resign first responder", ^{
+			cell.textView.isFirstResponder should_not be_truthy;
+		    });
+
+		    it(@"should keep the new text", ^{
+			cell.text should equal(@"New Text");
+		    });
+		});
 	    });
 	});
 
@@ -561,6 +694,10 @@ describe(@"LogEntryViewController", ^{
 		    [controller.navigationItem.rightBarButtonItem tap];
 		});
 
+		it(@"should create a new log entry", ^{
+		    controller.logEntry should_not be_nil;
+		});
+
 		it(@"should cancel Edit mode", ^{
 		    controller.editing should_not be_truthy;
 		});
@@ -589,11 +726,12 @@ describe(@"LogEntryViewController", ^{
 	    });
 
 	    describe(@"when the user entered an insulin dose", ^{
+		__block DoseFieldCell* cell;
+
 		beforeEach(^{
-		    ManagedInsulinDose* dose = [controller.logEntry.insulinDoses objectAtIndex:0];
-		    dose should_not be_nil;
-		    dose.insulinType should_not be_nil;
-		    dose.dose = @1;
+		    cell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
+		    cell.doseField.text = @"1";
+		    cell.insulinType should_not be_nil;
 
 		    [controller.navigationItem.rightBarButtonItem tap];
 		});

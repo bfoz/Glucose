@@ -4,9 +4,24 @@
 
 @implementation DoseFieldCell
 
-@synthesize doseField;
-
 + (DoseFieldCell*) cellForInsulinDose:(ManagedInsulinDose*)insulinDose
+			accessoryView:(UIView*)accessoryView
+			     delegate:(id<DoseFieldCellDelegate>)delegate
+			    precision:(unsigned)precision
+			    tableView:(UITableView*)tableView
+{
+    DoseFieldCell* cell = [self cellForInsulinType:insulinDose.insulinType
+				     accessoryView:accessoryView
+					  delegate:delegate
+					 precision:precision
+					 tableView:tableView];
+
+    cell.dose = insulinDose;
+
+    return cell;
+}
+
++ (DoseFieldCell*) cellForInsulinType:(ManagedInsulinType*)insulinType
 			accessoryView:(UIView*)accessoryView
 			     delegate:(id<DoseFieldCellDelegate>)delegate
 			    precision:(unsigned)precision
@@ -21,7 +36,7 @@
 	cell.doseField.inputAccessoryView = accessoryView;
     }
 
-    cell.dose = insulinDose;
+    cell.insulinType = insulinType;
     cell.precision = precision;
 
     return cell;
@@ -33,26 +48,27 @@
     {
 	self.selectionStyle = UITableViewCellSelectionStyleNone;
 
-	doseField = [[NumberField alloc] initWithDelegate:self];
-	doseField.backgroundColor = [UIColor clearColor];
-	doseField.textAlignment = UITextAlignmentRight;
-	doseField.textColor = [UIColor blueColor];
-	doseField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-	doseField.font = [UIFont systemFontOfSize:[UIFont labelFontSize]];
-	doseField.clearButtonMode = UITextFieldViewModeWhileEditing;
-	doseField.placeholder = @"Insulin";
+	_doseField = [[NumberField alloc] initWithDelegate:self];
+	_doseField.backgroundColor = [UIColor clearColor];
+	_doseField.textAlignment = UITextAlignmentRight;
+	_doseField.textColor = [UIColor blueColor];
+	_doseField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+	_doseField.font = [UIFont systemFontOfSize:[UIFont labelFontSize]];
+	_doseField.clearButtonMode = UITextFieldViewModeWhileEditing;
+	_doseField.placeholder = @"Insulin";
 
-	typeField = [[UILabel alloc] initWithFrame:CGRectZero];
-	typeField.backgroundColor = [UIColor clearColor];
-	typeField.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
+	_typeField = [[UILabel alloc] initWithFrame:CGRectZero];
+	_typeField.backgroundColor = [UIColor clearColor];
+	_typeField.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
 
 	self.textLabel.backgroundColor = [UIColor clearColor];
 	self.textLabel.text = @"New Insulin Dose";
 	self.textLabel.textColor = [UIColor lightGrayColor];
 	self.textLabel.textAlignment = UITextAlignmentCenter;
 
-	[self.contentView addSubview:doseField];
-	[self.contentView addSubview:typeField];
+	[self.contentView addSubview:_doseField];
+	[self.contentView addSubview:_typeField];
+	[self updateHidden];
 	[self layoutSubviews];
     }
     return self;
@@ -65,24 +81,20 @@
     CGRect insetRect = CGRectInset([self.contentView bounds], kCellLeftOffset, 0);
     const unsigned w = insetRect.size.width/2;
     insetRect.size.width = w;
-    typeField.frame  = insetRect;
+    _typeField.frame  = insetRect;
     insetRect.origin.x += w;
-    doseField.frame  = insetRect;
-
-    // Display the normal text field as a placeholder if no dose or type has been set
-    if( self.dose && self.dose.insulinType )
-    {
-	doseField.hidden  = NO;
-	typeField.hidden = NO;
-	[[[self.contentView subviews] objectAtIndex:0] setHidden:YES];
-    }
-    else
-    {
-	doseField.hidden  = YES;
-	typeField.hidden = YES;
-	[[[self.contentView subviews] objectAtIndex:0] setHidden:NO];
-    }
+    _doseField.frame  = insetRect;
 }
+
+- (void) updateHidden
+{
+    self.textLabel.hidden = !(!_doseField.number && !self.insulinType);
+    [[[self.contentView subviews] objectAtIndex:0] setHidden:self.textLabel.hidden];
+    _doseField.hidden = !self.textLabel.hidden;
+    _typeField.hidden = !self.textLabel.hidden;
+}
+
+#pragma mark - Accessors
 
 - (void)setDose:(ManagedInsulinDose*)d
 {
@@ -95,18 +107,26 @@
     if( !_dose )
 	return;
 
-    doseField.number = d.dose;
+    _doseField.number = d.dose;
+    [self updateHidden];
+}
+
+- (void) setInsulinType:(ManagedInsulinType *)insulinType
+{
+    _insulinType = insulinType;
+
     // Fake a placeholder type display for the UILabel when no insulin type is set for the row
-    if( d && d.insulinType && d.insulinType.shortName && [d.insulinType.shortName length] )
+    if( _insulinType )
     {
-	typeField.text = d.insulinType.shortName;
-	typeField.textColor = [UIColor darkTextColor];		
+	_typeField.text = _insulinType.shortName;
+	_typeField.textColor = [UIColor darkTextColor];
     }
     else
     {
-	typeField.text = @"Type";
-	typeField.textColor = [UIColor lightGrayColor];
+	_typeField.text = @"Type";
+	_typeField.textColor = [UIColor lightGrayColor];
     }
+    [self updateHidden];
 }
 
 #pragma mark UITextFieldDelegate
@@ -139,7 +159,7 @@
  */
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [doseField resignFirstResponder];
+    [_doseField resignFirstResponder];
     return YES;
 }
 
@@ -147,12 +167,12 @@
 
 - (int) precision
 {
-    return doseField.precision;
+    return _doseField.precision;
 }
 
 - (void) setPrecision:(int)p
 {
-    doseField.precision = p;
+    _doseField.precision = p;
 }
 
 @end

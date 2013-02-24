@@ -52,6 +52,11 @@
 #pragma mark -
 #pragma mark External Interface
 
+- (BOOL) insulinTypeIsSelected:(ManagedInsulinType*)insulinType
+{
+    return [selectedInsulinTypes containsObject:insulinType];
+}
+
 - (void) setSelectedInsulinType:(ManagedInsulinType*)type
 {
     if( selectedInsulinTypes )

@@ -12,4 +12,6 @@
 @property (nonatomic, strong) NSDate*	date;
 @property (nonatomic, unsafe_unretained) id<DateFieldDelegate> delegate;
 
+- (UIToolbar*) toolbar;
+
 @end

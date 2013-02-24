@@ -49,6 +49,8 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 + (NSString*) glucoseUnitsSettingString;
 + (void) setGlucoseUnitsSetting:(GlucoseUnitsType)units;
 
+- (unsigned) glucosePrecisionForNewEntries;
+
 - (float) highGlucoseWarningThreshold;
 - (float) lowGlucoseWarningThreshold;
 - (void) setHighGlucoseWarningThreshold:(NSNumber*)threshold;
@@ -92,7 +94,6 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 
 + (ManagedLogDay*) insertManagedLogDayIntoContext:(NSManagedObjectContext*)managedObjectContext;
 - (ManagedLogEntry*) insertManagedLogEntry;
-- (ManagedLogEntry*) insertManagedLogEntryWithUndo;
 
 - (void) commitChanges;
 - (void) save;

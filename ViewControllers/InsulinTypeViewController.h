@@ -26,6 +26,8 @@
 @property (nonatomic, strong) LogModel*					model;
 @property (nonatomic, assign) BOOL	multiCheck;
 
+- (BOOL) insulinTypeIsSelected:(ManagedInsulinType*)insulinType;
+
 - (void) setMultiCheck:(BOOL)e;
 - (void) setSelectedInsulinType:(ManagedInsulinType*)type;
 - (void) setSelectedInsulinTypesWithArray:(NSOrderedSet*)types;

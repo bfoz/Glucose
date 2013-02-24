@@ -46,6 +46,7 @@
 		1581CE24155F116600B069F2 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1581CDC8155F071E00B069F2 /* libOCMock.a */; };
 		1581CE28155F126900B069F2 /* AppDelegateSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1581CE27155F126900B069F2 /* AppDelegateSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		1581CE2F155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1581CE2E155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		158272BF16D9888F004CAC92 /* DoseFieldCellSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 158272BE16D9888F004CAC92 /* DoseFieldCellSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15836FE1169E89EE000D4FC2 /* ManagedLogDay+App.m in Sources */ = {isa = PBXBuildFile; fileRef = 15836FE0169E89EE000D4FC2 /* ManagedLogDay+App.m */; };
 		15836FE2169E89EE000D4FC2 /* ManagedLogDay+App.m in Sources */ = {isa = PBXBuildFile; fileRef = 15836FE0169E89EE000D4FC2 /* ManagedLogDay+App.m */; };
 		15836FE9169E9736000D4FC2 /* LogViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15836FE7169E9736000D4FC2 /* LogViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -266,6 +267,7 @@
 		1581CE0F155F0F9A00B069F2 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		1581CE27155F126900B069F2 /* AppDelegateSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegateSpec.mm; sourceTree = "<group>"; };
 		1581CE2E155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LogEntryViewControllerSpec.mm; sourceTree = "<group>"; };
+		158272BE16D9888F004CAC92 /* DoseFieldCellSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DoseFieldCellSpec.mm; sourceTree = "<group>"; };
 		15836FDF169E89EE000D4FC2 /* ManagedLogDay+App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ManagedLogDay+App.h"; sourceTree = "<group>"; };
 		15836FE0169E89EE000D4FC2 /* ManagedLogDay+App.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ManagedLogDay+App.m"; sourceTree = "<group>"; };
 		15836FE7169E9736000D4FC2 /* LogViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LogViewControllerSpec.mm; sourceTree = "<group>"; };
@@ -521,10 +523,11 @@
 				1581CE26155F123500B069F2 /* Application */,
 				1512FA7C16A6255A006EB310 /* Categories */,
 				15922D6A162FBF8E00693C2C /* Classes */,
-				158F40EE162A4C760000DD52 /* Helpers */,
 				1581CE14155F0F9A00B069F2 /* Fixtures */,
-				1581CE2D155F2DF100B069F2 /* ViewControllers */,
+				158F40EE162A4C760000DD52 /* Helpers */,
 				158F41DB162B730C0000DD52 /* SpecsHelper.h */,
+				158272BD16D9888F004CAC92 /* TableViewCells */,
+				1581CE2D155F2DF100B069F2 /* ViewControllers */,
 			);
 			path = Specs;
 			sourceTree = "<group>";
@@ -556,6 +559,14 @@
 				1545EB5616C73370001C0EDE /* SplashViewControllerSpec.mm */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		158272BD16D9888F004CAC92 /* TableViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				158272BE16D9888F004CAC92 /* DoseFieldCellSpec.mm */,
+			);
+			path = TableViewCells;
 			sourceTree = "<group>";
 		};
 		158F40EE162A4C760000DD52 /* Helpers */ = {
@@ -999,6 +1010,7 @@
 				158BB71516B3458900D5C03C /* FlurryLogger.m in Sources */,
 				1545EB5716C73370001C0EDE /* SplashViewControllerSpec.mm in Sources */,
 				15E627DD16D359CA00D8DAA3 /* DoseFieldCell.m in Sources */,
+				158272BF16D9888F004CAC92 /* DoseFieldCellSpec.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
