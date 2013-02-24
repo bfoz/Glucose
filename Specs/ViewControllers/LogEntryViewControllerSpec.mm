@@ -193,17 +193,17 @@ describe(@"LogEntryViewController", ^{
 	    controller.editing should be_truthy;
 	});
 
+	it(@"should have a Cancel button", ^{
+	    controller.navigationItem.leftBarButtonItem should_not be_nil;
+	    controller.navigationItem.leftBarButtonItem should be_instance_of([[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:nil action:nil] class]);
+	});
+
 	it(@"should update the title", ^{
 	    controller.title should equal(@"Edit Entry");
 	});
 
 	it(@"should have 3 sections", ^{
 	    [controller.tableView numberOfSections] should equal(3);
-	});
-
-	xit(@"should have a Back button that says Log", ^{
-	    controller.navigationItem.leftBarButtonItem should_not be_nil;
-	    controller.navigationItem.leftBarButtonItem.title should equal(@"Log");
 	});
 
 	it(@"should have a Save button", ^{
@@ -325,6 +325,10 @@ describe(@"LogEntryViewController", ^{
 
 	    it(@"should cancel Edit mode", ^{
 		controller.editing should_not be_truthy;
+	    });
+
+	    it(@"should update the left bar button item", ^{
+		controller.navigationItem.leftBarButtonItem.title should_not equal(@"Cancel");
 	    });
 
 	    it(@"should update the title", ^{

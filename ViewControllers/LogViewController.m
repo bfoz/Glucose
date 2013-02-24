@@ -49,8 +49,7 @@
 	settingsButton.accessibilityLabel = @"Settings";
 	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:settingsButton];
 
-	UIBarButtonItem* back = [[UIBarButtonItem alloc] initWithTitle: @"Log" style:UIBarButtonItemStyleBordered target: nil action: nil];
-	self.navigationItem.backBarButtonItem = back;
+	self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Log" style:UIBarButtonItemStyleBordered target: nil action: nil];
 
 	shortDateFormatter = [[NSDateFormatter alloc] init];
 	shortDateFormatter.dateStyle = NSDateFormatterShortStyle;
@@ -73,11 +72,16 @@
     LogEntryViewController* logEntryViewController;
     if( entry )
     {
+	self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Log" style:UIBarButtonItemStyleBordered target: nil action: nil];
+
 	logEntryViewController = [[LogEntryViewController alloc] initWithLogEntry:entry];
 	logEntryViewController.model = _model;
     }
     else
+    {
+	self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target: nil action: nil];
 	logEntryViewController = [[LogEntryViewController alloc] initWithLogModel:_model];
+    }
 
     logEntryViewController.delegate = self;
 

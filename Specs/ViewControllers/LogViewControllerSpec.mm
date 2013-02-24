@@ -73,6 +73,10 @@ describe(@"LogViewController", ^{
 	    logEntryViewController.editingNewEntry should be_truthy;
 	});
 
+	it(@"should change the Back button title to Cancel", ^{
+	    controller.navigationItem.backBarButtonItem.title should equal(@"Cancel");
+	});
+
 	describe(@"when the user saves the new entry", ^{
 	    beforeEach(^{
 		[controller logEntryView:nil didEndEditingEntry:nil];

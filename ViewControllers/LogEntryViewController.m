@@ -249,9 +249,15 @@ static NSUserDefaults* defaults = nil;
     if( self.editingNewEntry )
 	self.title = @"New Entry";
     else if( self.editing )
+    {
+	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(didTapCancelButton)];
 	self.title = @"Edit Entry";
+    }
     else
+    {
+	self.navigationItem.leftBarButtonItem = nil;
 	self.title = @"Details";
+    }
 }
 
 #pragma mark Accessory Toolbar
@@ -261,7 +267,7 @@ static NSUserDefaults* defaults = nil;
     if( !inputToolbar )
     {
 	inputToolbar = [[UIToolbar alloc] init];
-	UIBarButtonItem* cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(didTapCancelButton)];
+	UIBarButtonItem* cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(didTapToolbarCancelButton)];
 	UIBarButtonItem* flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 	UIBarButtonItem* barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didTapDoneButton)];
 	[inputToolbar setItems:[NSArray arrayWithObjects:cancelButton, flexibleSpace, barButton, nil] animated:NO];
@@ -273,6 +279,11 @@ static NSUserDefaults* defaults = nil;
 #pragma mark Actions
 
 - (void) didTapCancelButton
+{
+    [self setEditing:NO animated:YES];
+}
+
+- (void) didTapToolbarCancelButton
 {
     [currentEditingField.undoManager undo];
     [currentEditingField resignFirstResponder];
