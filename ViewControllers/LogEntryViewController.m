@@ -463,8 +463,6 @@ static NSUserDefaults* defaults = nil;
     }
     else if( kSectionInsulin == section )
     {
-	// If the entry doesn't have a valid number for an insulin type use a regular cell and display the short name. 
-	// Otherwise, use a dual column cell.
 	ManagedInsulinDose* dose = [self.logEntry.insulinDoses objectAtIndex:row];
 
 	if( self.editing )
@@ -488,10 +486,9 @@ static NSUserDefaults* defaults = nil;
 	}
 	else if( dose )
 	{
-	    if( dose.dose )
-		cell.detailTextLabel.text = [dose.dose stringValue];
-	    if( dose.insulinType )
-		cell.textLabel.text = dose.insulinType.shortName;
+	    ManagedInsulinDose* dose = [self.logEntry.insulinDoses objectAtIndex:row];
+	    cell.detailTextLabel.text = [dose.dose stringValue];
+	    cell.textLabel.text = dose.insulinType.shortName;
 	}
     }
     else if( kSectionNote == section )
@@ -514,10 +511,7 @@ static NSUserDefaults* defaults = nil;
 - (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)path
 {
     if( UITableViewCellEditingStyleDelete == editingStyle )
-    {
-	[self.logEntry removeObjectFromInsulinDosesAtIndex:path.row];
-	[tv deleteRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
-    }
+	[tv deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationFade];
     else if( UITableViewCellEditingStyleInsert == editingStyle )
     {
 	// Fake a row selection to display the insulin picker
@@ -596,18 +590,10 @@ static NSUserDefaults* defaults = nil;
 // The editing style for a row is the kind of button displayed to the left of the cell when in editing mode.
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tv editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // No editing style if not editing or the index path is nil.
-    if( !self.editing || !indexPath )
+    if( !self.editing || !indexPath || (indexPath.section != kSectionInsulin) )
 	return UITableViewCellEditingStyleNone;
 
-    // Only section 1 can be edited (insulin doses)
-    if( indexPath.section != 1 )
-	return UITableViewCellEditingStyleNone;
-
-    if( indexPath.row >= self.logEntry.insulinDoses.count )
-	return UITableViewCellEditingStyleInsert;
-    else
-	return UITableViewCellEditingStyleDelete;
+    return UITableViewCellEditingStyleDelete;
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath*)path

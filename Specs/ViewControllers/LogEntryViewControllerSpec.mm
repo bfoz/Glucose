@@ -211,10 +211,6 @@ describe(@"LogEntryViewController", ^{
 	    controller.navigationItem.rightBarButtonItem.title should equal(@"Done");
 	});
 
-	it(@"should have 0 rows in section 1", ^{
-	    [controller.tableView numberOfRowsInSection:1] should equal(0);
-	});
-
 	describe(@"Section 0", ^{
 	    it(@"should have 3 rows", ^{
 		[controller.tableView numberOfRowsInSection:0] should equal(3);
@@ -308,6 +304,10 @@ describe(@"LogEntryViewController", ^{
 	    });
 	});
 
+	it(@"should have the proper number of insulin rows", ^{
+	    [controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(logEntry.insulinDoses.count);
+	});
+
 	describe(@"Section 2 - Note", ^{
 	    it(@"should have 1 row", ^{
 		[controller.tableView numberOfRowsInSection:kSectionNote] should equal(1);
@@ -343,13 +343,6 @@ describe(@"LogEntryViewController", ^{
 
     describe(@"when initialized for a new entry", ^{
 	beforeEach(^{
-	    ManagedInsulinType* insulinType0 = [logModel insertManagedInsulinTypeShortName:@"InsulinType0"];
-	    ManagedInsulinType* insulinType1 = [logModel insertManagedInsulinTypeShortName:@"InsulinType1"];
-	    [logModel.insulinTypesForNewEntries addObject:insulinType0];
-	    [logModel.insulinTypesForNewEntries addObject:insulinType1];
-
-	    logModel.insulinTypesForNewEntries.count should equal(2);
-
 	    UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:[[UIViewController alloc] init]];
 
 	    controller = [[[LogEntryViewController alloc] initWithLogModel:logModel] autorelease];
@@ -403,10 +396,6 @@ describe(@"LogEntryViewController", ^{
 		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:0]];
 		cell.accessoryType should equal(UITableViewCellAccessoryDisclosureIndicator);
 	    });
-	});
-
-	it(@"should have the proper number of rows in section 1", ^{
-	    [controller.tableView numberOfRowsInSection:1] should equal(controller.model.insulinTypesForNewEntries.count);
 	});
 
 	describe(@"Section 2 - Note", ^{
@@ -523,90 +512,6 @@ describe(@"LogEntryViewController", ^{
 		    NumberFieldCell* cell = (NumberFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:kSectionGlucose]];
 		    cell.field.isFirstResponder should be_truthy;
 		});
-	    });
-	});
-
-	describe(@"when the first Dose row is tapped", ^{
-	    beforeEach(^{
-		logModel.insulinTypesForNewEntries.count should_not equal(0);
-
-		[controller tableView:controller.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
-	    });
-
-	    it(@"should present an insulin type picker", ^{
-		controller.modalViewController should_not be_nil;
-	    });
-
-	    it(@"should be set to the correct insulin type", ^{
-		InsulinTypeViewController* insulinController = (InsulinTypeViewController*)controller.modalViewController;
-		[insulinController insulinTypeIsSelected:[logModel.insulinTypesForNewEntries objectAtIndex:0]];
-	    });
-	});
-
-	describe(@"when the dose field of the first dose row is tapped", ^{
-	    __block DoseFieldCell* cell;
-
-	    beforeEach(^{
-		cell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
-		[cell.doseField becomeFirstResponder] should be_truthy;
-	    });
-
-	    it(@"should show the keyboard", ^{
-		[cell.doseField isFirstResponder] should be_truthy;
-	    });
-
-	    it(@"should have a toolbar above the keyboard", ^{
-		cell.doseField.inputAccessoryView should_not be_nil;
-	    });
-
-	    describe(@"when the dose is changed", ^{
-		__block NSString* originalText;
-
-		beforeEach(^{
-		    originalText = cell.doseField.text;
-
-		    cell.doseField.text = @"1";
-		});
-
-		describe(@"when the accessory toolbar Cancel button is tapped", ^{
-		    beforeEach(^{
-			UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
-			UIBarButtonItem* cancelButton = [toolbar.items objectAtIndex:0];
-			[cancelButton tap];
-		    });
-
-		    it(@"should resign first responder", ^{
-			cell.doseField.isFirstResponder should_not be_truthy;
-		    });
-
-		    it(@"should restore the previous value", ^{
-			cell.doseField.text should equal(originalText);
-		    });
-		});
-
-		describe(@"when the accessory toolbar Done button is tapped", ^{
-		    beforeEach(^{
-			UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
-			UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
-			[doneButton tap];
-		    });
-
-		    it(@"should resign first responder", ^{
-			cell.doseField.isFirstResponder should_not be_truthy;
-		    });
-
-		    it(@"should keep the new value", ^{
-			cell.doseField.text should equal(@"1");
-		    });
-
-		    it(@"should cause the next row to become first responder", ^{
-			DoseFieldCell* nextCell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionInsulin]];
-			nextCell.doseField.isFirstResponder should be_truthy;
-		    });
-		});
-	    });
-
-	    describe(@"when the dose is not changed", ^{
 	    });
 	});
 
@@ -728,24 +633,152 @@ describe(@"LogEntryViewController", ^{
 		    [controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(0);
 		});
 	    });
+	});
 
-	    describe(@"when the user entered an insulin dose", ^{
+	describe(@"when there are no insulins for new entries", ^{
+	    beforeEach(^{
+		logModel.insulinTypesForNewEntries.count should equal(0);
+	    });
+
+	    it(@"should have the proper number of insulin rows", ^{
+		[controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(logModel.insulinTypesForNewEntries.count);
+	    });
+	});
+
+	describe(@"when there are insulins for new entries", ^{
+	    beforeEach(^{
+		ManagedInsulinType* insulinType0 = [logModel insertManagedInsulinTypeShortName:@"InsulinType0"];
+		ManagedInsulinType* insulinType1 = [logModel insertManagedInsulinTypeShortName:@"InsulinType1"];
+		[logModel.insulinTypesForNewEntries addObject:insulinType0];
+		[logModel.insulinTypesForNewEntries addObject:insulinType1];
+
+		logModel.insulinTypesForNewEntries.count should equal(2);
+
+		UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:[[UIViewController alloc] init]];
+
+		controller = [[[LogEntryViewController alloc] initWithLogModel:logModel] autorelease];
+
+		[navigationController pushViewController:controller animated:NO];
+
+		UIWindow* window = [[UIWindow alloc] init];
+		window.rootViewController = navigationController;
+		[window makeKeyAndVisible];
+
+		[controller.tableView reloadData];
+	    });
+
+	    it(@"should have the proper number of insulin rows", ^{
+		[controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(logModel.insulinTypesForNewEntries.count);
+	    });
+
+	    it(@"should set the editing style for insulin rows", ^{
+		DoseFieldCell* cell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
+		cell.editingStyle should equal(UITableViewCellEditingStyleDelete);
+	    });
+
+	    describe(@"when the first Dose row is tapped", ^{
+		beforeEach(^{
+		    logModel.insulinTypesForNewEntries.count should_not equal(0);
+
+		    [controller tableView:controller.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
+		});
+
+		it(@"should present an insulin type picker", ^{
+		    controller.modalViewController should_not be_nil;
+		});
+
+		it(@"should be set to the correct insulin type", ^{
+		    InsulinTypeViewController* insulinController = (InsulinTypeViewController*)controller.modalViewController;
+		    [insulinController insulinTypeIsSelected:[logModel.insulinTypesForNewEntries objectAtIndex:0]];
+		});
+	    });
+
+	    describe(@"when the dose field of the first dose row is tapped", ^{
 		__block DoseFieldCell* cell;
 
 		beforeEach(^{
 		    cell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
-		    cell.doseField.text = @"1";
-		    cell.insulinType should_not be_nil;
-
-		    [controller.navigationItem.rightBarButtonItem tap];
+		    [cell.doseField becomeFirstResponder] should be_truthy;
 		});
 
-		it(@"should remove invalid insulin doses", ^{
-		    controller.logEntry.insulinDoses.count should equal(1);
+		it(@"should show the keyboard", ^{
+		    [cell.doseField isFirstResponder] should be_truthy;
 		});
 
-		it(@"should have rows in the insulin section", ^{
-		    [controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(1);
+		it(@"should have a toolbar above the keyboard", ^{
+		    cell.doseField.inputAccessoryView should_not be_nil;
+		});
+
+		describe(@"when the dose is changed", ^{
+		    __block NSString* originalText;
+
+		    beforeEach(^{
+			originalText = cell.doseField.text;
+
+			cell.doseField.text = @"1";
+		    });
+
+		    describe(@"when the accessory toolbar Cancel button is tapped", ^{
+			beforeEach(^{
+			    UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
+			    UIBarButtonItem* cancelButton = [toolbar.items objectAtIndex:0];
+			    [cancelButton tap];
+			});
+
+			it(@"should resign first responder", ^{
+			    cell.doseField.isFirstResponder should_not be_truthy;
+			});
+
+			it(@"should restore the previous value", ^{
+			    cell.doseField.text should equal(originalText);
+			});
+		    });
+
+		    describe(@"when the accessory toolbar Done button is tapped", ^{
+			beforeEach(^{
+			    UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
+			    UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
+			    [doneButton tap];
+			});
+
+			it(@"should resign first responder", ^{
+			    cell.doseField.isFirstResponder should_not be_truthy;
+			});
+
+			it(@"should keep the new value", ^{
+			    cell.doseField.text should equal(@"1");
+			});
+
+			it(@"should cause the next row to become first responder", ^{
+			    DoseFieldCell* nextCell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionInsulin]];
+			    nextCell.doseField.isFirstResponder should be_truthy;
+			});
+		    });
+		});
+
+		describe(@"when the dose is not changed", ^{
+		});
+	    });
+
+	    describe(@"when the Done button is tapped", ^{
+		describe(@"when the user entered an insulin dose", ^{
+		    __block DoseFieldCell* cell;
+
+		    beforeEach(^{
+			cell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
+			cell.doseField.text = @"1";
+			cell.insulinType should_not be_nil;
+
+			[controller.navigationItem.rightBarButtonItem tap];
+		    });
+
+		    it(@"should remove invalid insulin doses", ^{
+			controller.logEntry.insulinDoses.count should equal(1);
+		    });
+
+		    it(@"should have rows in the insulin section", ^{
+			[controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(1);
+		    });
 		});
 	    });
 	});
