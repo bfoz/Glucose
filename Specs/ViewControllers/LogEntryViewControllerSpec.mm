@@ -6,6 +6,7 @@
 
 #import "DateField.h"
 #import "DoseFieldCell.h"
+#import "EditTextViewController.h"
 #import "InsulinTypeViewController.h"
 #import "LogEntryViewController.h"
 #import "LogModel+SpecHelper.h"
@@ -22,7 +23,7 @@ enum Sections
     NUM_SECTIONS
 };
 
-@interface LogEntryViewController (UISpecs)
+@interface LogEntryViewController (UISpecs) <EditTextViewControllerDelegate>
 @property (nonatomic, strong) UILabel*	    categoryLabel;
 @property (nonatomic, strong) DateField*    timestampField;
 @property (nonatomic, strong) UILabel*	    timestampLabel;
@@ -42,15 +43,18 @@ describe(@"LogEntryViewController", ^{
     });
 
     describe(@"when displaying an existing log entry", ^{
+	__block UINavigationController* navigationController;
+
 	beforeEach(^{
 	    logEntry = [logModel insertManagedLogEntry];
 
 	    controller = [[[LogEntryViewController alloc] initWithLogEntry:logEntry] autorelease];
 	    controller.model = logModel;
 
-	    UINavigationController* navigation = [[UINavigationController alloc] initWithRootViewController:[[UIViewController alloc] init]];
-	    [navigation pushViewController:controller animated:NO];
-	    navigation.topViewController.view should_not be_nil;
+	    UIViewController* rootViewController = [[[UIViewController alloc] init] autorelease];
+	    navigationController = [[[UINavigationController alloc] initWithRootViewController:rootViewController] autorelease];
+	    [navigationController pushViewController:controller animated:NO];
+	    navigationController.topViewController.view should_not be_nil;
 	});
 
 	it(@"should not be editing", ^{
@@ -130,8 +134,16 @@ describe(@"LogEntryViewController", ^{
 	});
 
 	describe(@"when the log entry has a note", ^{
+	    __block NSIndexPath*    noteRowIndexPath;
+	    __block NSString* noteText;
+
 	    beforeEach(^{
-		logEntry.note = @"This is a note";
+		noteRowIndexPath = [NSIndexPath indexPathForRow:0 inSection:kSectionNote];
+		noteText = @"This is a note that is supposed to span multiple lines. I have no idea if it really does, but we shall see.";
+		logEntry.note = noteText;
+		controller.logEntry = logEntry;
+
+		[controller.tableView reloadData];
 	    });
 
 	    it(@"should display a header for the Note section", ^{
@@ -143,13 +155,35 @@ describe(@"LogEntryViewController", ^{
 	    });
 
 	    it(@"should have the correct text", ^{
-		UITableViewCell* cell = [controller tableView:controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionNote]];
-		cell.textLabel.text should equal(@"This is a note");
+		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+		cell.textLabel.text should equal(noteText);
+	    });
+
+	    it(@"should left justify the text", ^{
+		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+		cell.textLabel.textAlignment should equal(NSTextAlignmentLeft);
+	    });
+
+	    it(@"should resize the cell to accommodate the note", ^{
+		[controller tableView:nil heightForRowAtIndexPath:noteRowIndexPath] should_not equal(44);
+	    });
+
+	    it(@"should not do anything when the row is tapped", ^{
+		[controller tableView:nil didSelectRowAtIndexPath:noteRowIndexPath];
+		controller.navigationController.topViewController should be_instance_of([LogEntryViewController class]);
+	    });
+
+	    it(@"should not have a disclosure indicator", ^{
+		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+		cell.accessoryType should equal(UITableViewCellAccessoryNone);
 	    });
 	});
 
 	describe(@"when the log entry does not have a note", ^{
+	    __block NSIndexPath*    noteRowIndexPath;
+
 	    beforeEach(^{
+		noteRowIndexPath = [NSIndexPath indexPathForRow:0 inSection:kSectionNote];
 		logEntry.note = nil;
 	    });
 
@@ -160,183 +194,343 @@ describe(@"LogEntryViewController", ^{
 	    it(@"should not have any rows in the Note section", ^{
 		[controller.tableView numberOfRowsInSection:kSectionNote] should equal(0);
 	    });
-	});
-    });
 
-    describe(@"when the Edit button is tapped", ^{
-	beforeEach(^{
-	    logEntry = [logModel insertManagedLogEntry];
-	    logEntry.glucose = @1;
-	    [logModel save];
-
-	    controller = [[[LogEntryViewController alloc] initWithLogEntry:logEntry] autorelease];
-	    controller.model = logModel;
-
-	    UIViewController* rootViewController = [[[UIViewController alloc] init] autorelease];
-	    rootViewController.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Log" style:UIBarButtonItemStylePlain target:nil action:nil];
-
-	    UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
-	    [navigationController pushViewController:controller animated:NO];
-	    controller.view should_not be_nil;
-	    navigationController.topViewController should be_same_instance_as(controller);
-
-	    controller.tableView.visibleCells should_not be_nil;
-
-	    UIWindow* window = [[UIWindow alloc] init];
-	    window.rootViewController = navigationController;
-	    [window makeKeyAndVisible];
-
-	    [controller.navigationItem.rightBarButtonItem tap];
-	});
-
-	it(@"should be in edit mode", ^{
-	    controller.editing should be_truthy;
-	});
-
-	it(@"should have a Cancel button", ^{
-	    controller.navigationItem.leftBarButtonItem should_not be_nil;
-	    controller.navigationItem.leftBarButtonItem should be_instance_of([[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:nil action:nil] class]);
-	});
-
-	it(@"should update the title", ^{
-	    controller.title should equal(@"Edit Entry");
-	});
-
-	it(@"should have 3 sections", ^{
-	    [controller.tableView numberOfSections] should equal(3);
-	});
-
-	it(@"should have a Save button", ^{
-	    controller.navigationItem.rightBarButtonItem should_not be_nil;
-	    controller.navigationItem.rightBarButtonItem.title should equal(@"Done");
-	});
-
-	describe(@"Section 0", ^{
-	    it(@"should have 3 rows", ^{
-		[controller.tableView numberOfRowsInSection:0] should equal(3);
+	    it(@"should set the cell height to the standard value", ^{
+		[controller tableView:nil heightForRowAtIndexPath:noteRowIndexPath] should equal(44);
 	    });
 
-	    describe(@"row 0", ^{
-		it(@"should be a normal cell", ^{
-		    UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-		    cell should_not be_nil;
-		    cell should be_instance_of([UITableViewCell class]);
-		});
-	    });
-
-	    it(@"should have a NumberFieldCell for row 2", ^{
-		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:0]];
-		cell should_not be_nil;
-		cell should be_instance_of([NumberFieldCell class]);
-	    });
-
-	    describe(@"when the Glucose cell is tapped", ^{
-		__block NumberFieldCell* glucoseCell;
-
-		beforeEach(^{
-		    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:2 inSection:0];
-		    glucoseCell = (NumberFieldCell*)[controller.tableView cellForRowAtIndexPath:indexPath];
-		    [controller tableView:controller.tableView didSelectRowAtIndexPath:indexPath];
-		});
-
-		it(@"should display the keyboard", ^{
-		    glucoseCell.field.isFirstResponder should be_truthy;
-		});
-
-		it(@"should disable the right nav bar button", ^{
-		    controller.navigationItem.rightBarButtonItem.enabled should_not be_truthy;
-		});
-
-		it(@"should have Cancel and Done buttons above the keyboard", ^{
-		    UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
-		    toolbar should_not be_nil;
-		    toolbar should be_instance_of([UIToolbar class]);
-		    toolbar.items.count should equal(3);
-		});
-
-		describe(@"when the Glucose value is changed", ^{
-		    beforeEach(^{
-			glucoseCell.number = @42;
-		    });
-
-		    describe(@"when the Cancel button is tapped", ^{
-			__block UIBarButtonItem* cancelButton;
-
-			beforeEach(^{
-			    UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
-			    cancelButton = [toolbar.items objectAtIndex:0];
-			    [cancelButton tap];
-			});
-
-			it(@"should resign first responder", ^{
-			    glucoseCell.field.isFirstResponder should_not be_truthy;
-			});
-
-			it(@"should restore the previous value", ^{
-			    glucoseCell.number should_not equal(@42);
-			});
-
-			it(@"should enable the right nav bar button", ^{
-			    controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
-			});
-		    });
-
-		    describe(@"when the Done button is tapped", ^{
-			beforeEach(^{
-			    UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
-			    UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
-			    [doneButton tap];
-			});
-
-			it(@"should resign first responder", ^{
-			    glucoseCell.field.isFirstResponder should_not be_truthy;
-			});
-
-			it(@"should accept the new value", ^{
-			    glucoseCell.number should equal(@42);
-			});
-
-			it(@"should enable the right nav bar button", ^{
-			    controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
-			});
-		    });
-		});
+	    it(@"should not do anything when the row is tapped", ^{
+		[controller tableView:nil didSelectRowAtIndexPath:noteRowIndexPath];
+		controller.navigationController.topViewController should be_instance_of([LogEntryViewController class]);
 	    });
 	});
 
-	it(@"should have the proper number of insulin rows", ^{
-	    [controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(logEntry.insulinDoses.count);
-	});
-
-	describe(@"Section 2 - Note", ^{
-	    it(@"should have 1 row", ^{
-		[controller.tableView numberOfRowsInSection:kSectionNote] should equal(1);
-	    });
-
-	    it(@"should have a section header", ^{
-		[controller tableView:nil titleForHeaderInSection:kSectionNote] should equal(@"Note");
-	    });
-	});
-
-	describe(@"when the Save button is tapped", ^{
+	describe(@"when the Edit button is tapped", ^{
 	    beforeEach(^{
+		UIWindow* window = [[UIWindow alloc] init];
+		window.rootViewController = navigationController;
+		[window makeKeyAndVisible];
+
 		[controller.navigationItem.rightBarButtonItem tap];
 	    });
 
-	    it(@"should cancel Edit mode", ^{
-		controller.editing should_not be_truthy;
+	    it(@"should be in edit mode", ^{
+		controller.editing should be_truthy;
 	    });
 
-	    it(@"should update the left bar button item", ^{
-		controller.navigationItem.leftBarButtonItem.title should_not equal(@"Cancel");
+	    it(@"should have a Cancel button", ^{
+		controller.navigationItem.leftBarButtonItem should_not be_nil;
+		controller.navigationItem.leftBarButtonItem should be_instance_of([[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:nil action:nil] class]);
 	    });
 
 	    it(@"should update the title", ^{
-		controller.title should equal(@"Details");
+		controller.title should equal(@"Edit Entry");
 	    });
 
-	    it(@"should update the model", ^{
-		[controller.logEntry hasChanges] should_not be_truthy;
+	    it(@"should have 3 sections", ^{
+		[controller.tableView numberOfSections] should equal(3);
+	    });
+
+	    it(@"should have a Save button", ^{
+		controller.navigationItem.rightBarButtonItem should_not be_nil;
+		controller.navigationItem.rightBarButtonItem.title should equal(@"Done");
+	    });
+
+	    describe(@"Section 0", ^{
+		it(@"should have 3 rows", ^{
+		    [controller.tableView numberOfRowsInSection:0] should equal(3);
+		});
+
+		describe(@"row 0", ^{
+		    it(@"should be a normal cell", ^{
+			UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+			cell should_not be_nil;
+			cell should be_instance_of([UITableViewCell class]);
+		    });
+		});
+
+		it(@"should have a NumberFieldCell for row 2", ^{
+		    UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:0]];
+		    cell should_not be_nil;
+		    cell should be_instance_of([NumberFieldCell class]);
+		});
+
+		describe(@"when the Glucose cell is tapped", ^{
+		    __block NumberFieldCell* glucoseCell;
+
+		    beforeEach(^{
+			NSIndexPath* indexPath = [NSIndexPath indexPathForRow:2 inSection:0];
+			glucoseCell = (NumberFieldCell*)[controller.tableView cellForRowAtIndexPath:indexPath];
+			[controller tableView:controller.tableView didSelectRowAtIndexPath:indexPath];
+		    });
+
+		    it(@"should display the keyboard", ^{
+			glucoseCell.field.isFirstResponder should be_truthy;
+		    });
+
+		    it(@"should disable the right nav bar button", ^{
+			controller.navigationItem.rightBarButtonItem.enabled should_not be_truthy;
+		    });
+
+		    it(@"should have Cancel and Done buttons above the keyboard", ^{
+			UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
+			toolbar should_not be_nil;
+			toolbar should be_instance_of([UIToolbar class]);
+			toolbar.items.count should equal(3);
+		    });
+
+		    describe(@"when the Glucose value is changed", ^{
+			beforeEach(^{
+			    glucoseCell.number = @42;
+			});
+
+			describe(@"when the Cancel button is tapped", ^{
+			    __block UIBarButtonItem* cancelButton;
+
+			    beforeEach(^{
+				UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
+				cancelButton = [toolbar.items objectAtIndex:0];
+				[cancelButton tap];
+			    });
+
+			    it(@"should resign first responder", ^{
+				glucoseCell.field.isFirstResponder should_not be_truthy;
+			    });
+
+			    it(@"should restore the previous value", ^{
+				glucoseCell.number should_not equal(@42);
+			    });
+
+			    it(@"should enable the right nav bar button", ^{
+				controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+			    });
+			});
+
+			describe(@"when the Done button is tapped", ^{
+			    beforeEach(^{
+				UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
+				UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
+				[doneButton tap];
+			    });
+
+			    it(@"should resign first responder", ^{
+				glucoseCell.field.isFirstResponder should_not be_truthy;
+			    });
+
+			    it(@"should accept the new value", ^{
+				glucoseCell.number should equal(@42);
+			    });
+
+			    it(@"should enable the right nav bar button", ^{
+				controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+			    });
+			});
+		    });
+		});
+	    });
+
+	    it(@"should have the proper number of insulin rows", ^{
+		[controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(logEntry.insulinDoses.count);
+	    });
+
+	    describe(@"Section 2 - Note", ^{
+		__block UITableViewCell* cell;
+		__block NSIndexPath*    noteRowIndexPath;
+
+		beforeEach(^{
+		    noteRowIndexPath = [NSIndexPath indexPathForRow:0 inSection:kSectionNote];
+		});
+
+		it(@"should have 1 row", ^{
+		    [controller.tableView numberOfRowsInSection:kSectionNote] should equal(1);
+		});
+
+		it(@"should have a disclosure indicator", ^{
+		    UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+		    cell.accessoryType should equal(UITableViewCellAccessoryDisclosureIndicator);
+		});
+
+		describe(@"when the log entry already had a note", ^{
+		    __block NSString* noteText;
+
+		    beforeEach(^{
+			noteText = @"This is some note text";
+			logEntry.note = noteText;
+			controller.logEntry = logEntry;
+
+			cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+		    });
+
+		    it(@"should show the note text in the cell", ^{
+			cell.textLabel.text should equal(noteText);
+		    });
+
+		    it(@"should left justify the text", ^{
+			UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+			cell.textLabel.textAlignment should equal(NSTextAlignmentLeft);
+		    });
+
+		    it(@"should display a header for the Note section", ^{
+			[controller tableView:nil titleForHeaderInSection:kSectionNote] should equal(@"Note");
+		    });
+
+		    describe(@"when the row is tapped", ^{
+			beforeEach(^{
+			    [controller tableView:nil didSelectRowAtIndexPath:noteRowIndexPath];
+			});
+
+			it(@"should display the edit text view", ^{
+			    controller.navigationController.topViewController should be_instance_of([EditTextViewController class]);
+			});
+
+			it(@"should set the initial text for the edit text view", ^{
+			    EditTextViewController* editController = (EditTextViewController*)controller.navigationController.topViewController;
+			    editController.text should equal(noteText);
+			});
+
+			describe(@"when the edit controller returns with text", ^{
+			    __block NSString* newNoteText;
+
+			    beforeEach(^{
+				newNoteText = @"This is new text that the user has entered. Although it could be the orignal text too.";
+				[controller editTextViewControllerDidFinishWithText:newNoteText];
+			    });
+
+			    it(@"should update the cell text", ^{
+				UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+				cell.textLabel.text should equal(newNoteText);
+			    });
+
+			    it(@"should update the cell height", ^{
+				[controller tableView:nil heightForRowAtIndexPath:noteRowIndexPath] should_not equal(44);
+			    });
+			});
+
+			describe(@"when the edit controller returns with no text", ^{
+			    beforeEach(^{
+				[controller editTextViewControllerDidFinishWithText:nil];
+			    });
+
+			    it(@"should set the cell to Add a Note", ^{
+				UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+				cell.textLabel.text should equal(@"Add a Note");
+			    });
+
+			    it(@"should return the cell height to the standard value", ^{
+				[controller tableView:nil heightForRowAtIndexPath:noteRowIndexPath] should equal(44);
+			    });
+			});
+		    });
+		});
+
+		describe(@"when the log entry did not have a note", ^{
+		    beforeEach(^{
+			logEntry.note = nil;
+			controller.logEntry = logEntry;
+
+			cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+		    });
+
+		    it(@"should not display a header for the Note section", ^{
+			[controller tableView:nil titleForHeaderInSection:kSectionNote] should be_nil;
+		    });
+
+		    it(@"should set the cell text to Add a Note", ^{
+			cell.textLabel.text should equal(@"Add a Note");
+		    });
+
+		    it(@"should center justify the text", ^{
+			UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+			cell.textLabel.textAlignment should equal(NSTextAlignmentCenter);
+		    });
+
+		    it(@"should set the cell height to the standard value", ^{
+			[controller tableView:nil heightForRowAtIndexPath:noteRowIndexPath] should equal(44);
+		    });
+
+		    describe(@"when the row is tapped", ^{
+			beforeEach(^{
+			    [controller tableView:nil didSelectRowAtIndexPath:noteRowIndexPath];
+			});
+
+			it(@"should display the edit text view", ^{
+			    controller.navigationController.topViewController should be_instance_of([EditTextViewController class]);
+			});
+
+			it(@"should set the initial text for the edit text view", ^{
+			    EditTextViewController* editController = (EditTextViewController*)controller.navigationController.topViewController;
+			    editController.text.length should equal(0);
+			});
+
+			describe(@"when the edit controller returns with text", ^{
+			    __block UITableViewCell* cell;
+			    __block NSString* newNoteText;
+
+			    beforeEach(^{
+				newNoteText = @"This is new text that the user has entered. Although it could be the orignal text too.";
+				[controller editTextViewControllerDidFinishWithText:newNoteText];
+				cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+			    });
+
+			    it(@"should update the cell text", ^{
+				cell.textLabel.text should equal(newNoteText);
+			    });
+
+			    it(@"should left justify the text", ^{
+				cell.textLabel.textAlignment should equal(NSTextAlignmentLeft);
+			    });
+
+			    it(@"should update the cell height", ^{
+				[controller tableView:nil heightForRowAtIndexPath:noteRowIndexPath] should_not equal(44);
+			    });
+			});
+
+			describe(@"when the edit controller returns with no text", ^{
+			    __block UITableViewCell* cell;
+
+			    beforeEach(^{
+				[controller editTextViewControllerDidFinishWithText:nil];
+				cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+			    });
+
+			    it(@"should keep the Add a Note a cell", ^{
+				UITableViewCell* cell = [controller tableView:controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+				cell.textLabel.text should equal(@"Add a Note");
+			    });
+
+			    it(@"should center justify the text", ^{
+				UITableViewCell* cell = [controller tableView:controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+				cell.textLabel.textAlignment should equal(NSTextAlignmentCenter);
+			    });
+
+			    it(@"should keep the standard cell height", ^{
+				[controller tableView:nil heightForRowAtIndexPath:noteRowIndexPath] should equal(44);
+			    });
+			});
+		    });
+		});
+	    });
+
+	    describe(@"when the Save button is tapped", ^{
+		beforeEach(^{
+		    [controller.navigationItem.rightBarButtonItem tap];
+		});
+
+		it(@"should cancel Edit mode", ^{
+		    controller.editing should_not be_truthy;
+		});
+
+		it(@"should update the left bar button item", ^{
+		    controller.navigationItem.leftBarButtonItem.title should_not equal(@"Cancel");
+		});
+
+		it(@"should update the title", ^{
+		    controller.title should equal(@"Details");
+		});
+
+		it(@"should update the model", ^{
+		    [controller.logEntry hasChanges] should_not be_truthy;
+		});
 	    });
 	});
     });
@@ -347,7 +541,7 @@ describe(@"LogEntryViewController", ^{
 
 	    controller = [[[LogEntryViewController alloc] initWithLogModel:logModel] autorelease];
 
-	    [navigationController pushViewController:controller animated:NO];
+	    [navigationController pushViewController:controller animated:YES];
 
 	    UIWindow* window = [[UIWindow alloc] init];
 	    window.rootViewController = navigationController;
@@ -399,17 +593,29 @@ describe(@"LogEntryViewController", ^{
 	});
 
 	describe(@"Section 2 - Note", ^{
+	    __block NSIndexPath*    noteRowIndexPath;
+
+	    beforeEach(^{
+		noteRowIndexPath = [NSIndexPath indexPathForRow:0 inSection:kSectionNote];
+	    });
+
 	    it(@"should have 1 row", ^{
 		[controller.tableView numberOfRowsInSection:2] should equal(1);
 	    });
 
-	    it(@"should not show a disclosure indicator", ^{
-		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:2]];
-		cell.accessoryType should equal(UITableViewCellAccessoryNone);
+	    it(@"should show a disclosure indicator", ^{
+		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+		cell.accessoryType should equal(UITableViewCellAccessoryDisclosureIndicator);
 	    });
 
-	    it(@"should have the correct section title", ^{
-		[controller tableView:nil titleForHeaderInSection:kSectionNote] should equal(@"Note");
+	    it(@"should have an Add a Note row", ^{
+		UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+		cell.textLabel.text should equal(@"Add a Note");
+	    });
+
+	    it(@"should center justify the text", ^{
+		UITableViewCell* cell = [controller tableView:controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+		cell.textLabel.textAlignment should equal(NSTextAlignmentCenter);
 	    });
 	});
 
@@ -516,55 +722,63 @@ describe(@"LogEntryViewController", ^{
 	});
 
 	describe(@"when the note row is tapped", ^{
-	    __block TextViewCell* cell;
-	    __block NSString* originalText;
+	    __block UITableViewCell* cell;
+	    __block NSIndexPath*    noteRowIndexPath;
 
 	    beforeEach(^{
-		originalText = @"The Original Text";
-		cell = (TextViewCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionNote]];
-		cell.text = originalText;
-		[cell.textView becomeFirstResponder] should be_truthy;
+		noteRowIndexPath = [NSIndexPath indexPathForRow:0 inSection:kSectionNote];
+		cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionNote]];
+
+		[controller tableView:nil didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionNote]];
 	    });
 
-	    it(@"should become first responder", ^{
-		[cell.textView isFirstResponder] should be_truthy;
+	    it(@"should display an edit text view controller", ^{
+		controller.navigationController.topViewController should be_instance_of([EditTextViewController class]);
 	    });
 
-	    describe(@"when the text is changed", ^{
-		beforeEach(^{
-		    originalText = cell.text;
-		    [cell.textView replaceRange:[cell.textView textRangeFromPosition:cell.textView.beginningOfDocument toPosition:cell.textView.endOfDocument] withText:@"New Text"];
+	    describe(@"when the edit text view returns", ^{
+		__block NSString* noteText;
+
+		describe(@"with text", ^{
+		    beforeEach(^{
+			noteText = @"This is some very fine note text. Some might even call it noteworthy.";
+			[controller editTextViewControllerDidFinishWithText:noteText];
+		    });
+
+		    it(@"should update the button with the text", ^{
+			cell.textLabel.text should equal(noteText);
+		    });
+
+		    it(@"should left justify the text", ^{
+			UITableViewCell* cell = [controller tableView:controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+			cell.textLabel.textAlignment should equal(NSTextAlignmentLeft);
+		    });
+
+		    it(@"should put a disclosure arrow on the cell", ^{
+			cell.accessoryType should equal(UITableViewCellAccessoryDisclosureIndicator);
+		    });
+
+		    it(@"should have the correct section title", ^{
+			[controller tableView:nil titleForHeaderInSection:kSectionNote] should equal(@"Note");
+		    });
 		});
 
-		describe(@"when the input accessory Cancel button is tapped", ^{
-		    beforeEach(^{
-			UIToolbar* toolbar = (UIToolbar*)cell.textView.inputAccessoryView;
-			UIBarButtonItem* cancelButton = [toolbar.items objectAtIndex:0];
-			[cancelButton tap];
+		describe(@"without text", ^{
+		    it(@"should change the button to say Add a Note", ^{
+			cell.textLabel.text should equal(@"Add a Note");
 		    });
 
-		    it(@"should resign first responder", ^{
-			cell.textView.isFirstResponder should_not be_truthy;
+		    it(@"should center justify the text", ^{
+			UITableViewCell* cell = [controller tableView:controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+			cell.textLabel.textAlignment should equal(NSTextAlignmentCenter);
 		    });
 
-		    it(@"should revert to the original text", ^{
-			cell.text should equal(originalText);
-		    });
-		});
-
-		describe(@"when the input accessory Done button is tapped", ^{
-		    beforeEach(^{
-			UIToolbar* toolbar = (UIToolbar*)cell.textView.inputAccessoryView;
-			UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
-			[doneButton tap];
+		    it(@"should show the disclosure indicator", ^{
+			cell.accessoryType should equal(UITableViewCellAccessoryDisclosureIndicator);
 		    });
 
-		    it(@"should resign first responder", ^{
-			cell.textView.isFirstResponder should_not be_truthy;
-		    });
-
-		    it(@"should keep the new text", ^{
-			cell.text should equal(@"New Text");
+		    it(@"should not have a section title", ^{
+			[controller tableView:nil titleForHeaderInSection:kSectionNote] should be_nil;
 		    });
 		});
 	    });

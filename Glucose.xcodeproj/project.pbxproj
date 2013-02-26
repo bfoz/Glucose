@@ -39,6 +39,8 @@
 		155A26970F29B04B0077FC20 /* TextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829B70E50097100FB556A /* TextViewCell.m */; };
 		155A26990F29B0610077FC20 /* TextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829AC0E5008B100FB556A /* TextFieldCell.m */; };
 		155A26A90F2AF5810077FC20 /* NumberField.m in Sources */ = {isa = PBXBuildFile; fileRef = 155A26A80F2AF5810077FC20 /* NumberField.m */; };
+		155B3F5616DB064C0045C773 /* EditTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 155B3F5516DB064C0045C773 /* EditTextViewController.m */; };
+		155B3F5716DB064C0045C773 /* EditTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 155B3F5516DB064C0045C773 /* EditTextViewController.m */; };
 		1576A8B60E6667F7004EBBC0 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1576A8B50E6667F7004EBBC0 /* Icon.png */; };
 		1581CE11155F0F9A00B069F2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1581CE12155F0F9A00B069F2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -260,6 +262,8 @@
 		155A24650F2971160077FC20 /* NumberFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NumberFieldCell.m; path = TableCells/NumberFieldCell.m; sourceTree = "<group>"; };
 		155A26A70F2AF5810077FC20 /* NumberField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberField.h; sourceTree = "<group>"; };
 		155A26A80F2AF5810077FC20 /* NumberField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NumberField.m; sourceTree = "<group>"; };
+		155B3F5416DB064C0045C773 /* EditTextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditTextViewController.h; sourceTree = "<group>"; };
+		155B3F5516DB064C0045C773 /* EditTextViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditTextViewController.m; sourceTree = "<group>"; };
 		1576A8B50E6667F7004EBBC0 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		1581CDBA155F071D00B069F2 /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = Externals/OCMock/Source/OCMock.xcodeproj; sourceTree = "<group>"; };
 		1581CDCA155F091C00B069F2 /* Cedar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Cedar.xcodeproj; path = Externals/cedar/Cedar.xcodeproj; sourceTree = "<group>"; };
@@ -455,6 +459,8 @@
 				15A322470ED35C9F00C16388 /* ContactListViewController.m */,
 				158F409A162A3E7A0000DD52 /* DropboxExportViewController.h */,
 				158F409B162A3E7A0000DD52 /* DropboxExportViewController.m */,
+				155B3F5416DB064C0045C773 /* EditTextViewController.h */,
+				155B3F5516DB064C0045C773 /* EditTextViewController.m */,
 				158F409E162A3EFC0000DD52 /* ExportViewController.h */,
 				158F409F162A3EFC0000DD52 /* ExportViewController.m */,
 				158F40A0162A3EFC0000DD52 /* InsulinTypeViewController.h */,
@@ -1011,6 +1017,7 @@
 				1545EB5716C73370001C0EDE /* SplashViewControllerSpec.mm in Sources */,
 				15E627DD16D359CA00D8DAA3 /* DoseFieldCell.m in Sources */,
 				158272BF16D9888F004CAC92 /* DoseFieldCellSpec.mm in Sources */,
+				155B3F5716DB064C0045C773 /* EditTextViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1060,6 +1067,7 @@
 				1524475E16ACF6D900422F3E /* SplashViewController.m in Sources */,
 				158BB71416B3458900D5C03C /* FlurryLogger.m in Sources */,
 				1545EB6216C73E59001C0EDE /* UIView+App.m in Sources */,
+				155B3F5616DB064C0045C773 /* EditTextViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

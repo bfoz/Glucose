@@ -7,7 +7,6 @@
 #import "DualTableViewCell.h"
 #import "FlurryLogger.h"
 #import "InsulinTypeViewController.h"
-#import "LabelCell.h"
 #import "LogEntryViewController.h"
 #import "LogDay.h"
 #import "LogModel.h"
@@ -17,7 +16,8 @@
 #import "ManagedInsulinDose.h"
 #import "ManagedInsulinType.h"
 #import "NumberFieldCell.h"
-#import "TextViewCell.h"
+
+#import "EditTextViewController.h"
 
 #define	kInsulinCellID			@"InsulinCellID"
 
@@ -36,7 +36,7 @@ enum GlucoseSectionRows
     kRowGlucose,
 };
 
-@interface LogEntryViewController () <CategoryViewControllerDelegate, DateFieldDelegate, DoseFieldCellDelegate, InsulinTypeViewControllerDelegate, NumberFieldCellDelegate, TextViewCellDelegate>
+@interface LogEntryViewController () <CategoryViewControllerDelegate, DateFieldDelegate, DoseFieldCellDelegate, EditTextViewControllerDelegate, InsulinTypeViewControllerDelegate, NumberFieldCellDelegate>
 {
     CategoryViewController*	categoryViewController;
     InsulinTypeViewController*	insulinTypeViewController;
@@ -53,10 +53,11 @@ enum GlucoseSectionRows
 @implementation LogEntryViewController
 {
     NumberFieldCell*	glucoseCell;
-    TextViewCell*	noteCell;
+    UITableViewCell*	noteCell;
     UIToolbar*	    inputToolbar;
     UITextField*    currentEditingField;
 
+    NSString*		noteText;
     ManagedCategory*	selectedCategory;
     NSIndexPath*	selectedIndexPath;
 }
@@ -83,7 +84,6 @@ static NSUserDefaults* defaults = nil;
 	editingNewEntry = !logEntry;
 	
 	self.logEntry = logEntry;
-	selectedCategory = logEntry.category;
 
 	// Create a date formatter to convert the date to a string format.
 	dateFormatter = [[NSDateFormatter alloc] init];
@@ -173,7 +173,7 @@ static NSUserDefaults* defaults = nil;
 {
     self.logEntry.category = selectedCategory;
     self.logEntry.glucose = glucoseCell.number;
-    self.logEntry.note = noteCell.text;
+    self.logEntry.note = noteText;
     self.logEntry.timestamp = self.timestampField.date;
 
     unsigned i = 0;
@@ -214,7 +214,7 @@ static NSUserDefaults* defaults = nil;
 
 - (void) finishEditingNewLogEntry
 {
-    self.logEntry = [model insertManagedLogEntry];
+    _logEntry = [model insertManagedLogEntry];
     [self finishEditingLogEntry];
     self.editingNewEntry = NO;
     [delegate logEntryView:self didEndEditingEntry:self.logEntry];
@@ -244,6 +244,24 @@ static NSUserDefaults* defaults = nil;
     }
 }
 
+- (void) updateNoteCell
+{
+    if( self.editing )
+    {
+	noteCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	noteCell.textLabel.numberOfLines = noteText ? 0 : 1;
+	noteCell.textLabel.text = noteText ? noteText : @"Add a Note";
+	noteCell.textLabel.textAlignment = noteText ? UITextAlignmentLeft : UITextAlignmentCenter;
+    }
+    else
+    {
+	noteCell.accessoryType = UITableViewCellAccessoryNone;
+	noteCell.textLabel.numberOfLines = 0;
+	noteCell.textLabel.text = noteText;
+	noteCell.textLabel.textAlignment = UITextAlignmentLeft;
+    }
+}
+
 - (void) updateTitle
 {
     if( self.editingNewEntry )
@@ -258,6 +276,15 @@ static NSUserDefaults* defaults = nil;
 	self.navigationItem.leftBarButtonItem = nil;
 	self.title = @"Details";
     }
+}
+
+#pragma mark Accessors
+
+- (void) setLogEntry:(ManagedLogEntry *)logEntry
+{
+    _logEntry = logEntry;
+    noteText = logEntry.note;
+    selectedCategory = logEntry.category;
 }
 
 #pragma mark Accessory Toolbar
@@ -327,7 +354,7 @@ static NSUserDefaults* defaults = nil;
 	    if( self.editing )
 		return 1;
 	    else
-		return (self.logEntry.note && [self.logEntry.note length]) ? 1 : 0;
+		return (noteText && noteText.length) ? 1 : 0;
     }
     return 0;
 }
@@ -383,6 +410,12 @@ static NSUserDefaults* defaults = nil;
 	    if( kRowCategory == row )
 		self.categoryLabel = cell.textLabel;
 	}
+	else if( kSectionNote == section )
+	{
+	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+	    cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
+	    noteCell = cell;
+	}
 	else if( !self.editing )
 	{
 	    switch( section )
@@ -398,9 +431,6 @@ static NSUserDefaults* defaults = nil;
 		    cell.detailTextLabel.font = cell.textLabel.font;
 		    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
 		    cell.textLabel.backgroundColor = [UIColor clearColor];
-		    break;
-		case kSectionNote:
-		    cell = [[LabelCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 		    break;
 	    }
 	}
@@ -492,18 +522,7 @@ static NSUserDefaults* defaults = nil;
 	}
     }
     else if( kSectionNote == section )
-    {
-	if( self.editing )
-	{
-	    noteCell = [TextViewCell cellForLogEntry:self.logEntry
-					    delegate:self
-				  inputAccessoryView:self.inputToolbar
-					   tableView:tv];
-	    cell = noteCell;
-	}
-	else
-	    cell.textLabel.text = self.logEntry.note;
-    }
+	[self updateNoteCell];
 
     return cell;
 }
@@ -522,7 +541,7 @@ static NSUserDefaults* defaults = nil;
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     if( kSectionNote == section )
-	if( self.editing || self.logEntry.note )
+	if( noteText )
 	    return @"Note";
     return nil;
 }
@@ -582,8 +601,12 @@ static NSUserDefaults* defaults = nil;
 	[insulinTypeViewController setSelectedInsulinType:cell.insulinType];
 	[self presentModalViewController:insulinTypeViewController animated:YES];
     }
-    else if( 2 == section )
+    else if( (kSectionNote == section) && self.editing )
     {
+	EditTextViewController* viewController = [[EditTextViewController alloc] initWithText:noteText];
+	viewController.delegate = self;
+	self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:nil action:nil];
+	[self.navigationController pushViewController:viewController animated:YES];
     }
 }
 
@@ -598,20 +621,10 @@ static NSUserDefaults* defaults = nil;
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath*)path
 {
-    if( kSectionNote == path.section )
-    {
-	const BOOL e = self.editing;
-	// If editing and there's no text, return a standard size
-	if( e && !noteCell.textView.text )
-	    return 44*2;
-	// Otherwise, resize for the text
-	CGSize s = [self.logEntry.note sizeWithFont:[UIFont boldSystemFontOfSize:[UIFont labelFontSize]]
-			  constrainedToSize:CGSizeMake(284, 2000) lineBreakMode:UILineBreakModeWordWrap];
-	CGFloat h = s.height+2*kCellTopOffset;
-	// If editing and the row started off with text, don't return smaller than two rows
-	// Otherwise, never return smaller than one row
-	return MAX(h, (e ? 44*2 : 44));
-    }
+    if( (kSectionNote == path.section) && noteText )
+	return 15 + [noteText sizeWithFont:[UIFont boldSystemFontOfSize:[UIFont labelFontSize]]
+			 constrainedToSize:CGSizeMake(280, 1000)
+			     lineBreakMode:NSLineBreakByWordWrapping].height;
     return 44;
 }
 
@@ -715,18 +728,15 @@ static NSUserDefaults* defaults = nil;
     return YES;
 }
 
-#pragma mark TextViewCellDelegate
+#pragma mark EditTextViewControllerDelegate
 
-- (void) textViewCellDidBeginEditing:(TextViewCell*)cell
+- (void) editTextViewControllerDidFinishWithText:(NSString*)text
 {
-    currentEditingField = (UITextField*)cell.textView;
-    [self disableSaveButton];
-}
+    noteText = text;
+    noteCell.textLabel.text = text;
 
-- (void) textViewCellDidEndEditing:(TextViewCell*)cell
-{
-    currentEditingField = nil;
-    [self enableSaveButton];
+    self.navigationItem.backBarButtonItem = nil;
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kSectionNote] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 @end
