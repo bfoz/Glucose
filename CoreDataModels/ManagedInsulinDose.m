@@ -2,7 +2,7 @@
 //  ManagedInsulinDose.m
 //  Glucose
 //
-//  Created by Brandon Fosdick on 01/13/13.
+//  Created by Brandon Fosdick on 02/26/13.
 //
 //
 
@@ -13,7 +13,7 @@
 
 @implementation ManagedInsulinDose
 
-@dynamic dose;
+@dynamic quantity;
 @dynamic insulinType;
 @dynamic logEntry;
 

@@ -199,14 +199,14 @@
     if( logEntry.insulinDoses.count )
     {
 	ManagedInsulinDose* insulinDose = [logEntry.insulinDoses objectAtIndex:0];
-	cell.labelDose0.text = [insulinDose.dose stringValue];
+	cell.labelDose0.text = [insulinDose.quantity stringValue];
 	cell.labelType0.text = insulinDose.insulinType.shortName;
     }
 
     if( logEntry.insulinDoses.count > 1 )
     {
 	ManagedInsulinDose* insulinDose = [logEntry.insulinDoses objectAtIndex:1];
-	cell.labelDose1.text = [insulinDose.dose stringValue];
+	cell.labelDose1.text = [insulinDose.quantity stringValue];
 	cell.labelType1.text = insulinDose.insulinType.shortName;
     }
     return cell;

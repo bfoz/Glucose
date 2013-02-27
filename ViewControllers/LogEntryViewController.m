@@ -176,7 +176,7 @@ static NSUserDefaults* defaults = nil;
 	{
 	    if( cell.dose )
 	    {
-		cell.dose.dose = cell.doseField.number;
+		cell.dose.quantity = cell.doseField.number;
 		cell.dose.insulinType = cell.insulinType;
 		[insulinDoses addObject:cell.dose];
 	    }
@@ -508,7 +508,7 @@ static NSUserDefaults* defaults = nil;
 	else if( dose )
 	{
 	    ManagedInsulinDose* dose = [self.logEntry.insulinDoses objectAtIndex:row];
-	    cell.detailTextLabel.text = [dose.dose stringValue];
+	    cell.detailTextLabel.text = [dose.quantity stringValue];
 	    cell.textLabel.text = dose.insulinType.shortName;
 	}
     }
@@ -689,7 +689,7 @@ static NSUserDefaults* defaults = nil;
 
 - (void)doseDidEndEditing:(DoseFieldCell *)cell
 {
-    cell.dose.dose = [cell.doseField number];
+    cell.dose.quantity = [cell.doseField number];
     if( editingNewEntry )
     {
 	NSIndexPath* path = [self.tableView indexPathForCell:cell];

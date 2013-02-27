@@ -107,7 +107,7 @@
     if( !_dose )
 	return;
 
-    _doseField.number = d.dose;
+    _doseField.number = d.quantity;
     [self updateHidden];
 }
 

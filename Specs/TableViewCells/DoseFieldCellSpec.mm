@@ -31,7 +31,7 @@ describe(@"DoseFieldCell", ^{
 	beforeEach(^{
 	    ManagedLogEntry* managedLogEntry = [logModel insertManagedLogEntry];
 	    ManagedInsulinDose* insulinDose = [managedLogEntry addDoseWithType:insulinType];
-	    insulinDose.dose = @2;
+	    insulinDose.quantity = @2;
 
 	    cell = [DoseFieldCell cellForInsulinDose:insulinDose
 				       accessoryView:nil

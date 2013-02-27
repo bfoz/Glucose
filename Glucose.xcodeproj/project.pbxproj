@@ -27,8 +27,6 @@
 		1545EB5716C73370001C0EDE /* SplashViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1545EB5616C73370001C0EDE /* SplashViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		1545EB6216C73E59001C0EDE /* UIView+App.m in Sources */ = {isa = PBXBuildFile; fileRef = 1545EB6116C73E59001C0EDE /* UIView+App.m */; };
 		1545EB6316C73E59001C0EDE /* UIView+App.m in Sources */ = {isa = PBXBuildFile; fileRef = 1545EB6116C73E59001C0EDE /* UIView+App.m */; };
-		1557427716A3E220002C53F2 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557427616A3E220002C53F2 /* ManagedInsulinDose.m */; };
-		1557427816A3E220002C53F2 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557427616A3E220002C53F2 /* ManagedInsulinDose.m */; };
 		1557428316A3E220002C53F2 /* ManagedLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557428216A3E220002C53F2 /* ManagedLogEntry.m */; };
 		1557428416A3E220002C53F2 /* ManagedLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557428216A3E220002C53F2 /* ManagedLogEntry.m */; };
 		1557428716A3E25B002C53F2 /* ManagedCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 1557428616A3E25B002C53F2 /* ManagedCategory.m */; };
@@ -102,6 +100,8 @@
 		15C6D5C516337D5300D6838D /* libFlurry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15C6D5C416337D5300D6838D /* libFlurry.a */; };
 		15C6D5C716337EE100D6838D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15C6D5C616337EE000D6838D /* SystemConfiguration.framework */; };
 		15C8F66F1630E0DE00CA92D4 /* UIViewController+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		15DE033116DDD14900632530 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DE033016DDD14900632530 /* ManagedInsulinDose.m */; };
+		15DE033216DDD14900632530 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DE033016DDD14900632530 /* ManagedInsulinDose.m */; };
 		15E59E601698CD410067BDC1 /* LogModel+SQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */; };
 		15E59EC11698E6620067BDC1 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */; };
 		15E59F601698F4510067BDC1 /* LogModel+Migration.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59F5F1698F4510067BDC1 /* LogModel+Migration.m */; };
@@ -250,8 +250,6 @@
 		1545EB5616C73370001C0EDE /* SplashViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SplashViewControllerSpec.mm; sourceTree = "<group>"; };
 		1545EB6016C73E59001C0EDE /* UIView+App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+App.h"; sourceTree = "<group>"; };
 		1545EB6116C73E59001C0EDE /* UIView+App.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+App.m"; sourceTree = "<group>"; };
-		1557427516A3E220002C53F2 /* ManagedInsulinDose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedInsulinDose.h; sourceTree = "<group>"; };
-		1557427616A3E220002C53F2 /* ManagedInsulinDose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedInsulinDose.m; sourceTree = "<group>"; };
 		1557428116A3E220002C53F2 /* ManagedLogEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedLogEntry.h; sourceTree = "<group>"; };
 		1557428216A3E220002C53F2 /* ManagedLogEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedLogEntry.m; sourceTree = "<group>"; };
 		1557428516A3E25B002C53F2 /* ManagedCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedCategory.h; sourceTree = "<group>"; };
@@ -337,6 +335,8 @@
 		15C6D5C616337EE000D6838D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		15C8F66C1630E00900CA92D4 /* UIViewController+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SpecHelper.h"; sourceTree = "<group>"; };
 		15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SpecHelper.m"; sourceTree = "<group>"; };
+		15DE032F16DDD14900632530 /* ManagedInsulinDose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedInsulinDose.h; sourceTree = "<group>"; };
+		15DE033016DDD14900632530 /* ManagedInsulinDose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedInsulinDose.m; sourceTree = "<group>"; };
 		15E59E5E1698CD410067BDC1 /* LogModel+SQLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+SQLite.h"; sourceTree = "<group>"; };
 		15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LogModel+SQLite.m"; sourceTree = "<group>"; };
 		15E59F5E1698F4510067BDC1 /* LogModel+Migration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+Migration.h"; sourceTree = "<group>"; };
@@ -649,8 +649,8 @@
 			children = (
 				1557428516A3E25B002C53F2 /* ManagedCategory.h */,
 				1557428616A3E25B002C53F2 /* ManagedCategory.m */,
-				1557427516A3E220002C53F2 /* ManagedInsulinDose.h */,
-				1557427616A3E220002C53F2 /* ManagedInsulinDose.m */,
+				15DE032F16DDD14900632530 /* ManagedInsulinDose.h */,
+				15DE033016DDD14900632530 /* ManagedInsulinDose.m */,
 				1557428916A3E289002C53F2 /* ManagedInsulinType.h */,
 				1557428A16A3E289002C53F2 /* ManagedInsulinType.m */,
 				1524475816ACD59700422F3E /* ManagedLogDay.h */,
@@ -1000,7 +1000,6 @@
 				15E5A00C169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.m in Sources */,
 				15836FE9169E9736000D4FC2 /* LogViewControllerSpec.mm in Sources */,
 				158370AC169F6E7F000D4FC2 /* ManagedLogEntry+App.m in Sources */,
-				1557427816A3E220002C53F2 /* ManagedInsulinDose.m in Sources */,
 				1557428416A3E220002C53F2 /* ManagedLogEntry.m in Sources */,
 				1557428816A3E25B002C53F2 /* ManagedCategory.m in Sources */,
 				1557428C16A3E289002C53F2 /* ManagedInsulinType.m in Sources */,
@@ -1018,6 +1017,7 @@
 				15E627DD16D359CA00D8DAA3 /* DoseFieldCell.m in Sources */,
 				158272BF16D9888F004CAC92 /* DoseFieldCellSpec.mm in Sources */,
 				155B3F5716DB064C0045C773 /* EditTextViewController.m in Sources */,
+				15DE033216DDD14900632530 /* ManagedInsulinDose.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1058,7 +1058,6 @@
 				15E59FFC16991A830067BDC1 /* LogModel+CoreData.m in Sources */,
 				15836FE1169E89EE000D4FC2 /* ManagedLogDay+App.m in Sources */,
 				158370AB169F6E7F000D4FC2 /* ManagedLogEntry+App.m in Sources */,
-				1557427716A3E220002C53F2 /* ManagedInsulinDose.m in Sources */,
 				1557428316A3E220002C53F2 /* ManagedLogEntry.m in Sources */,
 				1557428716A3E25B002C53F2 /* ManagedCategory.m in Sources */,
 				1557428B16A3E289002C53F2 /* ManagedInsulinType.m in Sources */,
@@ -1068,6 +1067,7 @@
 				158BB71416B3458900D5C03C /* FlurryLogger.m in Sources */,
 				1545EB6216C73E59001C0EDE /* UIView+App.m in Sources */,
 				155B3F5616DB064C0045C773 /* EditTextViewController.m in Sources */,
+				15DE033116DDD14900632530 /* ManagedInsulinDose.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

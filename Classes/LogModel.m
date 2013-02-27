@@ -177,7 +177,7 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 
 	for( ManagedInsulinDose* insulinDose in logEntry.insulinDoses )
 	{
-	    [columns addObject:[numberFormatter stringFromNumber:insulinDose.dose]];
+	    [columns addObject:[numberFormatter stringFromNumber:insulinDose.quantity]];
 	    [columns addObject:insulinDose.insulinType.shortName];
 	}
 

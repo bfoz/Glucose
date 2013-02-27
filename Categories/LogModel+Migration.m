@@ -295,13 +295,13 @@ _var = _val;
 	    (SQLITE_NULL != sqlite3_column_type(statement, 7)) )
 	{
 	    ManagedInsulinDose* insulinDose = [managedLogEntry addDoseWithType:[insulinTypes objectForKey:[NSNumber numberWithInt:sqlite3_column_int(statement, 7)]]];
-	    insulinDose.dose = [NSNumber numberWithInt:sqlite3_column_int(statement, 5)];
+	    insulinDose.quantity = [NSNumber numberWithInt:sqlite3_column_int(statement, 5)];
 	}
 	if( (SQLITE_NULL != sqlite3_column_type(statement, 6)) &&
 	    (SQLITE_NULL != sqlite3_column_type(statement, 8)) )
 	{
 	    ManagedInsulinDose* insulinDose = [managedLogEntry addDoseWithType:[insulinTypes objectForKey:[NSNumber numberWithInt:sqlite3_column_int(statement, 8)]]];
-	    insulinDose.dose = [NSNumber numberWithInt:sqlite3_column_int(statement, 6)];
+	    insulinDose.quantity = [NSNumber numberWithInt:sqlite3_column_int(statement, 6)];
 	}
 
 	ManagedLogDay* managedLogDay = logDayForDate(managedLogEntry.timestamp, logDays, logDayDateComponents, calendar);

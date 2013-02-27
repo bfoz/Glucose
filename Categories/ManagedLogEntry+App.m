@@ -43,7 +43,7 @@
 - (ManagedInsulinDose*) addInsulinDose:(NSNumber*)quantity withInsulinType:(ManagedInsulinType*)insulinType
 {
     ManagedInsulinDose* insulinDose = [self addDoseWithType:insulinType];
-    insulinDose.dose = quantity;
+    insulinDose.quantity = quantity;
     return insulinDose;
 }
 

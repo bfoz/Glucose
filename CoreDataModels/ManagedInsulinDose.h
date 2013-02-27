@@ -2,7 +2,7 @@
 //  ManagedInsulinDose.h
 //  Glucose
 //
-//  Created by Brandon Fosdick on 01/13/13.
+//  Created by Brandon Fosdick on 02/26/13.
 //
 //
 
@@ -13,7 +13,7 @@
 
 @interface ManagedInsulinDose : NSManagedObject
 
-@property (nonatomic, retain) NSNumber * dose;
+@property (nonatomic, retain) NSNumber * quantity;
 @property (nonatomic, retain) ManagedInsulinType *insulinType;
 @property (nonatomic, retain) ManagedLogEntry *logEntry;
 

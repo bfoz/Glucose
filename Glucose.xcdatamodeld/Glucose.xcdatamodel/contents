@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1811" systemVersion="12C60" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2057" systemVersion="12C60" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Category" representedClassName="ManagedCategory" syncable="YES">
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="sequenceNumber" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <relationship name="logEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogEntry" inverseName="category" inverseEntity="LogEntry" syncable="YES"/>
     </entity>
     <entity name="InsulinDose" representedClassName="ManagedInsulinDose" syncable="YES">
-        <attribute name="dose" attributeType="Float" syncable="YES"/>
+        <attribute name="quantity" attributeType="Float" syncable="YES"/>
         <relationship name="insulinType" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InsulinType" inverseName="insulinDoses" inverseEntity="InsulinType" syncable="YES"/>
         <relationship name="logEntry" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="LogEntry" inverseName="insulinDoses" inverseEntity="LogEntry" syncable="YES"/>
     </entity>

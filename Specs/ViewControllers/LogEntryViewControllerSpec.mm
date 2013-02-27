@@ -102,7 +102,7 @@ describe(@"LogEntryViewController", ^{
 	    beforeEach(^{
 		ManagedInsulinType* insulinType0 = [controller.model insertManagedInsulinTypeShortName:@"InsulinType0"];
 		ManagedInsulinDose* insulinDose = [logEntry addDoseWithType:insulinType0];
-		insulinDose.dose = @1;
+		insulinDose.quantity = @1;
 	    });
 
 	    it(@"should show a single dose row", ^{
@@ -119,9 +119,9 @@ describe(@"LogEntryViewController", ^{
 		ManagedInsulinType* insulinType0 = [controller.model insertManagedInsulinTypeShortName:@"InsulinType0"];
 		ManagedInsulinType* insulinType1 = [controller.model insertManagedInsulinTypeShortName:@"InsulinType1"];
 		ManagedInsulinDose* insulinDose = [logEntry addDoseWithType:insulinType0];
-		insulinDose.dose = @1;
+		insulinDose.quantity = @1;
 		insulinDose = [logEntry addDoseWithType:insulinType1];
-		insulinDose.dose = @2;
+		insulinDose.quantity = @2;
 	    });
 
 	    it(@"should show two dose rows", ^{
