@@ -530,12 +530,14 @@ static NSUserDefaults* defaults = nil;
 - (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)path
 {
     if( UITableViewCellEditingStyleDelete == editingStyle )
-	[tv deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationFade];
-    else if( UITableViewCellEditingStyleInsert == editingStyle )
     {
-	// Fake a row selection to display the insulin picker
-	[self tableView:tv didSelectRowAtIndexPath:path];
+	if( kSectionNote == path.section )
+	    [self editTextViewControllerDidFinishWithText:nil];
+	else
+	    [tv deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationFade];
     }
+    else if( UITableViewCellEditingStyleInsert == editingStyle )
+	[self tableView:tv didSelectRowAtIndexPath:path];   // Fake a row selection to do The Right Thing
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -551,7 +553,7 @@ static NSUserDefaults* defaults = nil;
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)path
 {
-    if( 1 == path.section )
+    if( (kSectionInsulin == path.section) || ((kSectionNote == path.section) && noteText) )
 	return YES;
     return NO;
 }
@@ -613,10 +615,11 @@ static NSUserDefaults* defaults = nil;
 // The editing style for a row is the kind of button displayed to the left of the cell when in editing mode.
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tv editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if( !self.editing || !indexPath || (indexPath.section != kSectionInsulin) )
-	return UITableViewCellEditingStyleNone;
+    if( self.editing )
+	if( (kSectionInsulin == indexPath.section) || ((kSectionNote == indexPath.section) && noteText) )
+	    return UITableViewCellEditingStyleDelete;
 
-    return UITableViewCellEditingStyleDelete;
+    return UITableViewCellEditingStyleNone;
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath*)path
