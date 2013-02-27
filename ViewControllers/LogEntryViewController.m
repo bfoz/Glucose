@@ -125,15 +125,6 @@ static NSUserDefaults* defaults = nil;
     [self updateTitle];		    // Update the navigation item title
 }
 
-- (void) viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-
-    if( ![self isMovingToParentViewController] )
-	if( editingNewEntry )
-	    [glucoseCell becomeFirstResponder];
-}
-
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
@@ -682,6 +673,9 @@ static NSUserDefaults* defaults = nil;
     [self dismissModalViewControllerAnimated:YES];
     selectedCategory = category;
     [self updateCategoryLabel];
+
+    if( editingNewEntry )
+	[glucoseCell becomeFirstResponder];
 }
 
 #pragma mark DoseFieldCellDelegate
