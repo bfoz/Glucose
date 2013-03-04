@@ -22,6 +22,5 @@
 @protocol LogEntryViewDelegate <NSObject>
 
 - (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(ManagedLogEntry*)entry;
-- (void) logEntryViewControllerDidCancelEditing;
 
 @end

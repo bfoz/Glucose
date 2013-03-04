@@ -784,25 +784,6 @@ describe(@"LogEntryViewController", ^{
 	    });
 	});
 
-	describe(@"when the Back button is tapped", ^{
-	    __block id mockDelegate;
-
-	    beforeEach(^{
-		mockDelegate = [OCMockObject mockForProtocol:@protocol(LogEntryViewDelegate)];
-		controller.delegate = mockDelegate;
-
-		[[mockDelegate expect] logEntryViewControllerDidCancelEditing];
-
-		id mockViewController = [OCMockObject partialMockForObject:controller];
-		[[[mockViewController stub] andReturnValue:@YES] isMovingFromParentViewController];
-		[controller viewWillDisappear:NO];
-	    });
-
-	    it(@"should inform the delegate", ^{
-		[mockDelegate verify];
-	    });
-	});
-
 	describe(@"when the Done button is tapped", ^{
 	    __block id mockDelegate;
 

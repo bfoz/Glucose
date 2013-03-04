@@ -300,11 +300,6 @@
 
 #pragma mark - <LogEntryViewDelegate>
 
-- (void) logEntryViewControllerDidCancelEditing
-{
-    [self.model undo];
-}
-
 - (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(ManagedLogEntry*)logEntry
 {
     [self.navigationController popViewControllerAnimated:YES];

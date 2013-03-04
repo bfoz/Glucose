@@ -125,14 +125,6 @@ static NSUserDefaults* defaults = nil;
     [self updateTitle];		    // Update the navigation item title
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-
-    if( [self isMovingFromParentViewController] && self.editing )
-	[self cancelEditingLogEntry];
-}
-
 - (void)setEditing:(BOOL)e animated:(BOOL)animated
 {
     BOOL previousEditing = self.editing;
@@ -154,11 +146,6 @@ static NSUserDefaults* defaults = nil;
 }
 
 #pragma mark -
-
-- (void) cancelEditingLogEntry
-{
-    [self.delegate logEntryViewControllerDidCancelEditing];
-}
 
 - (void) finishEditingLogEntry
 {
