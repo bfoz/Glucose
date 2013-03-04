@@ -80,10 +80,6 @@ describe(@"LogEntryViewController", ^{
 	    [controller.tableView numberOfRowsInSection:0] should equal(1);
 	});
 
-	it(@"should have 0 rows in section 1", ^{
-	    [controller.tableView numberOfRowsInSection:1] should equal([logModel.insulinTypesForNewEntries count]);
-	});
-
 	describe(@"when the log entry has no insulin doses", ^{
 	    beforeEach(^{
 		logEntry.insulinDoses.count should equal(0);
