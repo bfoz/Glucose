@@ -68,7 +68,8 @@ void progressTick()
     NSString* backupPath = [self backupPath];
     NSError* error = nil;
     [[NSFileManager defaultManager] moveItemAtPath:[LogModel writeableSqliteDBPath]
-					    toPath:backupPath error:&error];
+					    toPath:backupPath
+					     error:&error];
 
     return @{ @"numberOfCategories" : [NSNumber numberWithInt:numberOfCategories],
 	      @"numberOfInsulinTypes" : [NSNumber numberWithInt:numberOfInsulinTypes],

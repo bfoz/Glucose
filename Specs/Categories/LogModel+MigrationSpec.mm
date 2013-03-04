@@ -28,6 +28,10 @@ NSString* pathForFixtureDatabase(NSString* fixtureName)
     @throw [NSException exceptionWithName:@"FileNotFound" reason:message userInfo:nil];
 }
 
+@interface LogModel (Specs)
++ (void) migrateDatabase:(sqlite3*)database toContext:(NSManagedObjectContext*)managedObjectContext;
+@end
+
 SPEC_BEGIN(LogModel_MigrationSpec)
 
 describe(@"LogModel+Migration", ^{
@@ -92,6 +96,8 @@ describe(@"LogModel+Migration", ^{
     });
 
     describe(@"when migrating", ^{
+	__block NSManagedObjectContext* managedObjectContext;
+
 	beforeEach(^{
 	    NSArray* oldInsulinTypesForNewEntries = @[@1, @2];
 	    [[NSUserDefaults standardUserDefaults] setObject:oldInsulinTypesForNewEntries forKey:kDefaultInsulinTypes];
@@ -104,7 +110,11 @@ describe(@"LogModel+Migration", ^{
 	    [fileManager fileExistsAtPath:[LogModel writeableSqliteDBPath]] should be_truthy;
 
 	    [LogModel needsMigration] should be_truthy;
-	    [LogModel migrateTheDatabaseWithProgressView:nil];
+
+	    managedObjectContext = [LogModel managedObjectContext];
+	    sqlite3* originalDatabase = [LogModel openDatabasePath:[LogModel writeableSqliteDBPath]];
+	    [LogModel migrateDatabase:originalDatabase toContext:managedObjectContext];
+	    [LogModel closeDatabase:originalDatabase];
 	});
 
 	afterEach(^{
@@ -114,38 +124,30 @@ describe(@"LogModel+Migration", ^{
 	    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:[[NSBundle mainBundle] bundleIdentifier]];
 	});
 
-	it(@"should move the old file to the backup location", ^{
+	xit(@"should move the old file to the backup location", ^{
 	    [[NSFileManager defaultManager] fileExistsAtPath:[LogModel backupPath]] should be_truthy;
 	});
 
-	it(@"should create a CoreData database", ^{
-	    [[NSFileManager defaultManager] fileExistsAtPath:[[LogModel sqlitePersistentStoreURL] path]] should be_truthy;
-	});
-
 	it(@"should migrate the categories", ^{
-	    NSManagedObjectContext* managedObjectContext = [LogModel managedObjectContext];
 	    NSFetchRequest* fetchRequest = [LogModel fetchRequestForOrderedCategoriesInContext:managedObjectContext];
 	    NSArray* fetchedObjects = [managedObjectContext executeFetchRequest:fetchRequest error:nil];
 	    fetchedObjects.count should equal(9);
 	});
 
 	it(@"should migrate insulin types", ^{
-	    NSManagedObjectContext* managedObjectContext = [LogModel managedObjectContext];
 	    NSFetchRequest* fetchRequest = [LogModel fetchRequestForOrderedInsulinTypesInContext:managedObjectContext];
 	    NSArray* fetchedObjects = [managedObjectContext executeFetchRequest:fetchRequest error:nil];
 	    fetchedObjects.count should equal(11);
 	});
 
 	it(@"should migrate the log days", ^{
-	    NSManagedObjectContext* managedObjectContext = [LogModel managedObjectContext];
-	    NSFetchRequest* fetchRequest = [LogModel fetchRequestForLogDaysInContext:managedObjectContext];
+	    NSFetchRequest* fetchRequest = [LogModel fetchRequestForLogDays];
 	    NSArray* fetchedObjects = [managedObjectContext executeFetchRequest:fetchRequest error:nil];
 	    fetchedObjects.count should equal(966);
 	    [[[fetchedObjects objectAtIndex:0] logEntries] count] should_not equal(0);
 	});
 
 	it(@"should migrate the log entries", ^{
-	    NSManagedObjectContext* managedObjectContext = [LogModel managedObjectContext];
 	    NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] init];
 	    fetchRequest.entity = [NSEntityDescription entityForName:@"LogEntry" inManagedObjectContext:managedObjectContext];
 	    NSArray* fetchedObjects = [managedObjectContext executeFetchRequest:fetchRequest error:nil];

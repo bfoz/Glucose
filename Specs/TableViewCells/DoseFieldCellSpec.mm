@@ -17,6 +17,8 @@ describe(@"DoseFieldCell", ^{
     beforeEach(^{
 	logModel = [[[LogModel alloc] init] autorelease];
 
+	[logModel.insulinTypesForNewEntries removeAllObjects];
+
 	ManagedInsulinType* insulinType0 = [logModel insertManagedInsulinTypeShortName:@"InsulinType0"];
 	ManagedInsulinType* insulinType1 = [logModel insertManagedInsulinTypeShortName:@"InsulinType1"];
 	[logModel.insulinTypesForNewEntries addObject:insulinType0];

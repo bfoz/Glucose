@@ -56,8 +56,6 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     NSMutableArray* _logDays;
 
     NSManagedObjectContext*	    _managedObjectContext;
-    NSManagedObjectModel*	    _managedObjectModel;
-    NSPersistentStoreCoordinator*   _persistentStoreCoordinator;
 }
 
 @synthesize categories = _categories;
@@ -115,7 +113,6 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     [defaults removeObserver:self forKeyPath:kSettingsGlucoseUnitsKey];
 
     _managedObjectContext = nil;
-    _persistentStoreCoordinator = nil;
 }
 
 #pragma mark - Key Value Observing
@@ -584,7 +581,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 {
     if( !_logDays )
     {
-	NSFetchRequest* fetchRequest = [LogModel fetchRequestForOrderedLogDaysInContext:self.managedObjectContext];
+	NSFetchRequest* fetchRequest = [LogModel fetchRequestForOrderedLogDays];
 	_logDays = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:fetchRequest error:nil]];
     }
     return _logDays;
@@ -606,21 +603,6 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 	_managedObjectContext = [LogModel managedObjectContext];
 
     return _managedObjectContext;
-}
-
-- (NSManagedObjectModel*) managedObjectModel
-{
-    if( !_managedObjectModel )
-	_managedObjectModel = [LogModel managedObjectModel];
-    return _managedObjectModel;
-}
-
-- (NSPersistentStoreCoordinator*) persistentStoreCoordinator
-{
-    if( !_persistentStoreCoordinator )
-        _persistentStoreCoordinator = [LogModel persistentStoreCoordinator];
-
-    return _persistentStoreCoordinator;
 }
 
 - (void) commitChanges

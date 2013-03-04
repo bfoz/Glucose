@@ -89,16 +89,32 @@
     return [[NSManagedObjectModel alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"Glucose" withExtension:@"momd"]];
 }
 
++ (NSPersistentStore*) addPersistentStoreURL:(NSURL*)storeURL toCoordinator:(NSPersistentStoreCoordinator*)coordinator options:(NSDictionary*)options error:(NSError**)error
+{
+#ifdef SPECS
+    return [coordinator addPersistentStoreWithType:NSInMemoryStoreType
+				     configuration:nil
+					       URL:nil
+					   options:nil
+					     error:error];
+#else
+    return [coordinator addPersistentStoreWithType:NSSQLiteStoreType
+				     configuration:nil
+					       URL:storeURL
+					   options:options
+					     error:error];
+#endif
+}
+
 + (NSPersistentStoreCoordinator*) persistentStoreCoordinator
 {
     NSError* error = nil;
     NSURL* storeURL = [LogModel sqlitePersistentStoreURL];
     NSPersistentStoreCoordinator* _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if( ![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
-						   configuration:nil
-							     URL:storeURL
-							 options:@{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
-							   error:&error] )
+    if( ![LogModel addPersistentStoreURL:storeURL
+			   toCoordinator:_persistentStoreCoordinator
+				 options:@{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
+				   error:&error] )
     {
         /*
          Replace this implementation with code to handle the error appropriately.
@@ -144,17 +160,14 @@
 
 #pragma mark -
 
-+ (NSFetchRequest*) fetchRequestForLogDaysInContext:(NSManagedObjectContext*)managedObjectContext
++ (NSFetchRequest*) fetchRequestForLogDays
 {
-    NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] init];
-    fetchRequest.entity = [NSEntityDescription entityForName:@"LogDay" inManagedObjectContext:self.managedObjectContext];
-
-    return fetchRequest;
+    return [NSFetchRequest fetchRequestWithEntityName:@"LogDay"];
 }
 
-+ (NSFetchRequest*) fetchRequestForOrderedLogDaysInContext:(NSManagedObjectContext*)managedObjectContext
++ (NSFetchRequest*) fetchRequestForOrderedLogDays
 {
-    NSFetchRequest* fetchRequest = [self fetchRequestForLogDaysInContext:managedObjectContext];
+    NSFetchRequest* fetchRequest = [self fetchRequestForLogDays];
     fetchRequest.sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:@"date" ascending:NO]];
 
     return fetchRequest;

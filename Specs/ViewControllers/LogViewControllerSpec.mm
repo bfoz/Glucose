@@ -90,7 +90,6 @@ describe(@"LogViewController", ^{
 
     describe(@"when the model has no log entries", ^{
 	beforeEach(^{
-	    [[NSFileManager defaultManager] removeItemAtPath:[[LogModel sqlitePersistentStoreURL] path] error:nil];
 	    logModel.logDays.count should equal(0);
 	});
 

@@ -12,8 +12,8 @@
 + (NSPersistentStoreCoordinator*) persistentStoreCoordinator;
 + (void) saveManagedObjectContext:(NSManagedObjectContext*)managedObjectContext;
 
-+ (NSFetchRequest*) fetchRequestForLogDaysInContext:(NSManagedObjectContext*)managedObjectContext;
-+ (NSFetchRequest*) fetchRequestForOrderedLogDaysInContext:(NSManagedObjectContext*)managedObjectContext;
++ (NSFetchRequest*) fetchRequestForLogDays;
++ (NSFetchRequest*) fetchRequestForOrderedLogDays;
 + (NSFetchRequest*) fetchRequestForOrderedCategoriesInContext:(NSManagedObjectContext*)managedObjectContext;
 + (NSFetchRequest*) fetchRequestForOrderedInsulinTypesInContext:(NSManagedObjectContext*)managedObjectContext;
 
