@@ -40,9 +40,7 @@
 
 - (ManagedLogDay*) insertManagedLogDay
 {
-    ManagedLogDay* logDay = [LogModel insertManagedLogDayIntoContext:self.managedObjectContext];
-    [(NSMutableArray*)self.logDays addObject:logDay];
-    return logDay;
+    return [LogModel insertManagedLogDayIntoContext:self.managedObjectContext];
 }
 
 - (ManagedLogEntry*) insertManagedLogEntryIntoManagedLogDay:(ManagedLogDay*)logDay

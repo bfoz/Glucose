@@ -53,8 +53,6 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 
 @implementation LogModel
 {
-    NSMutableArray* _logDays;
-
     NSManagedObjectContext*	    _managedObjectContext;
 }
 
@@ -422,13 +420,6 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 
 #pragma mark Log Days
 
-- (void) deleteLogDay:(ManagedLogDay*)managedLogDay
-{
-    [self.managedObjectContext deleteObject:managedLogDay];
-    [_logDays removeObjectIdenticalTo:managedLogDay];
-    [self save];
-}
-
 + (ManagedLogDay*) insertManagedLogDayIntoContext:(NSManagedObjectContext*)managedObjectContext
 {
     return [NSEntityDescription insertNewObjectForEntityForName:@"LogDay"
@@ -441,38 +432,33 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
 - (ManagedLogDay*) logDayForDate:(NSDate*)date
 {
-    NSCalendar *const calendar = [NSCalendar currentCalendar];
-    NSDateComponents *const _date = [calendar components:DATE_COMPONENTS_FOR_DAY
-					        fromDate:date];
-    for( ManagedLogDay* logDay in self.logDays )
-    {
-	NSDateComponents *const c = [calendar components:DATE_COMPONENTS_FOR_DAY
-						fromDate:logDay.date];
-	if( (_date.day == c.day) &&
-	    (_date.month == c.month) &&
-	    (_date.year == c.year) )
-	    return logDay;
-    }
+    NSCalendar* calendar = [NSCalendar currentCalendar];
+
+    NSDateComponents* startDateComponents = [calendar components:DATE_COMPONENTS_FOR_DAY fromDate:date];
+    NSDate* startDate = [calendar dateFromComponents:startDateComponents];
+
+    NSDateComponents* offsetComponents = [[NSDateComponents alloc] init];
+    offsetComponents.day = 1;
+    NSDate* endDate = [calendar dateByAddingComponents:offsetComponents toDate:startDate options:0];
+
+    NSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"LogDay"];
+    fetchRequest.fetchLimit = 1;
+    fetchRequest.predicate = [NSPredicate predicateWithFormat: @"(date >= %@) && (date < %@)", startDate, endDate];
+
+    NSError* error = nil;
+    NSArray* fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    if( fetchedObjects.count )
+	return [fetchedObjects objectAtIndex:0];
 
     ManagedLogDay* managedLogDay = [LogModel insertManagedLogDayIntoContext:self.managedObjectContext];
-    managedLogDay.date = date;
+    managedLogDay.date = startDate;
 
-    /* At this point it's already known that the given date doesn't match
-    	anything in the array. So, only need to compare seconds; no need to
-    	create calendar components. */
-
-    // Find the index that the new LogDay should be inserted at
-    unsigned i = 0;
-    const double a = [date timeIntervalSince1970];
-    for( ManagedLogDay* logDay in self.logDays )
-    {
-	if( a > [logDay.date timeIntervalSince1970] )
-	    break;
-	++i;
-    }
-
-    [_logDays insertObject:managedLogDay atIndex:i];
     return managedLogDay;
+}
+
+- (unsigned) numberOfLogDays
+{
+    return [self.managedObjectContext countForFetchRequest:[LogModel fetchRequestForOrderedLogDays] error:nil];
 }
 
 #pragma mark Log Entries
@@ -483,8 +469,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     fetchRequest.sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:YES]];
     fetchRequest.fetchLimit = 1;
 
-    NSError* error = nil;
-    NSArray* fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    NSArray* fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:nil];
     if( fetchedObjects.count )
 	return [fetchedObjects objectAtIndex:0];
     return nil;
@@ -495,8 +480,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     NSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"LogEntry"];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"(timestamp >= %@) AND (timestamp <= %@)", startDate, endDate];
 
-    NSError* error = nil;
-    return [self.managedObjectContext countForFetchRequest:fetchRequest error:&error];
+    return [self.managedObjectContext countForFetchRequest:fetchRequest error:nil];
 }
 
 - (ManagedLogEntry*) insertManagedLogEntry
@@ -510,36 +494,22 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
 - (void) deleteLogEntriesFrom:(NSDate*)from to:(NSDate*)to
 {
-    NSMutableArray* logDaysToDelete = [[NSMutableArray alloc] init];
-    for( ManagedLogDay* logDay in self.logDays )
-    {
-	NSDate *const d = logDay.date;
-	NSComparisonResult b = [from compare:d];
-	NSComparisonResult c = [to compare:d];
+    NSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"LogDay"];
+    fetchRequest.fetchLimit = 1;
+    fetchRequest.predicate = [NSPredicate predicateWithFormat: @"(date >= %@) && (date <= %@)", from, to];
 
-	if( ((b == NSOrderedAscending) || (b == NSOrderedSame)) &&
-	   ((c == NSOrderedDescending) || (c == NSOrderedSame)) )
-	    [logDaysToDelete addObject:logDay];
-    }
-
-    for( ManagedLogDay* logDay in logDaysToDelete )
-    {
-	logDay.logEntries = [NSOrderedSet orderedSet];
+    NSError* error = nil;
+    NSArray* fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    for( ManagedLogDay* logDay in fetchedObjects )
 	[self.managedObjectContext deleteObject:logDay];
-	[_logDays removeObjectIdenticalTo:logDay];
-    }
 }
 
-// Delete the given entry from the given LogDay. Remove the LogDay if it becomes empty.
 - (void) deleteLogEntry:(ManagedLogEntry*)logEntry fromDay:(ManagedLogDay*)logDay
 {
     if( 1 == logDay.logEntries.count )	// If the section is about to be empty, delete it
-	[self deleteLogDay:logDay];
+	[self.managedObjectContext deleteObject:logDay];
     else
-    {
 	[self.managedObjectContext deleteObject:logEntry];
-	[self save];
-    }
 }
 
 #pragma mark -
@@ -575,16 +545,6 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     }
 
     return _insulinTypesForNewEntries;
-}
-
-- (NSArray*) logDays
-{
-    if( !_logDays )
-    {
-	NSFetchRequest* fetchRequest = [LogModel fetchRequestForOrderedLogDays];
-	_logDays = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:fetchRequest error:nil]];
-    }
-    return _logDays;
 }
 
 #pragma mark Core Data

@@ -225,6 +225,7 @@ enum Sections
 	return;
 
     [logModel deleteLogEntriesFrom:startDate to:endDate];
+    [logModel commitChanges];
 
     NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:startDate forKey:kLastPurgeFromDate];

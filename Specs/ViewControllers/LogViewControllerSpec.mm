@@ -90,7 +90,7 @@ describe(@"LogViewController", ^{
 
     describe(@"when the model has no log entries", ^{
 	beforeEach(^{
-	    logModel.logDays.count should equal(0);
+	    logModel.numberOfLogDays should equal(0);
 	});
 
 	it(@"should have a single empty Today section", ^{

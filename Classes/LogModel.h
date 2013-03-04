@@ -36,7 +36,6 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 @property (nonatomic, strong, readonly)	NSMutableOrderedSet*	insulinTypesForNewEntries;
 
 @property (nonatomic, readonly)	unsigned    categoryNameMaxWidth;
-@property (nonatomic, strong, readonly)	NSArray*    logDays;
 @property (nonatomic, readonly)	unsigned    insulinTypeShortNameMaxWidth;
 
 @property (nonatomic, strong, readonly)	NSManagedObjectContext* managedObjectContext;
@@ -87,8 +86,8 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 - (void) removeInsulinTypeForNewEntriesAtIndex:(unsigned)index;
 
 #pragma mark Log Days
-- (void) deleteLogDay:(ManagedLogDay*)day;
-- (ManagedLogDay*) logDayForDate:(NSDate*)d;
+- (ManagedLogDay*) logDayForDate:(NSDate*)date;
+- (unsigned) numberOfLogDays;
 
 #pragma mark Log Entries
 - (NSFetchRequest*) fetchRequestForOrderedLogEntries;

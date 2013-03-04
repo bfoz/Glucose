@@ -295,6 +295,7 @@
 	ManagedLogEntry* logEntry = [fetchedResultsController objectAtIndexPath:indexPath];
 	[_model deleteLogEntry:logEntry
 		       fromDay:logEntry.logDay];
+	[_model commitChanges];
     }
 }
 
