@@ -42,8 +42,6 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 - (void) clearCategoryNameMaxWidth;
 - (void) clearInsulinTypeShortNameMaxWidth;
 
-- (NSManagedObjectContext*) managedObjectContext;
-
 @end
 
 void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter)
@@ -504,18 +502,6 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     return [self.managedObjectContext countForFetchRequest:fetchRequest error:&error];
 }
 
-- (ManagedLogEntry*) logEntryAtIndex:(unsigned)index inDay:(ManagedLogDay*)logDay
-{
-    NSOrderedSet* entries = logDay.logEntries;
-    return (index >= [entries count]) ? nil : [entries objectAtIndex:index];
-}
-
-- (ManagedLogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)dayIndex
-{
-    ManagedLogDay* logDay = [self.logDays objectAtIndex:dayIndex];
-    return [logDay.logEntries objectAtIndex:entry];
-}
-
 - (ManagedLogEntry*) insertManagedLogEntry
 {
     ManagedLogEntry* managedLogEntry = [ManagedLogEntry insertManagedLogEntryInContext:self.managedObjectContext];
@@ -550,10 +536,13 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 // Delete the given entry from the given LogDay. Remove the LogDay if it becomes empty.
 - (void) deleteLogEntry:(ManagedLogEntry*)logEntry fromDay:(ManagedLogDay*)logDay
 {
-    [self.managedObjectContext deleteObject:logEntry];
-
-    if( 0 == logDay.logEntries.count )
-	[_logDays removeObjectIdenticalTo:logDay];
+    if( 1 == logDay.logEntries.count )	// If the section is about to be empty, delete it
+	[self deleteLogDay:logDay];
+    else
+    {
+	[self.managedObjectContext deleteObject:logEntry];
+	[self save];
+    }
 }
 
 #pragma mark -
@@ -602,6 +591,14 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 }
 
 #pragma mark Core Data
+
+- (NSFetchRequest*) fetchRequestForOrderedLogEntries
+{
+    NSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"LogEntry"];
+    fetchRequest.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"logDay.date" ascending:NO], [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:NO]];
+
+    return fetchRequest;
+}
 
 - (NSManagedObjectContext*) managedObjectContext
 {

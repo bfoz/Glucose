@@ -8,6 +8,9 @@ extern NSString* kFlurryEventNewLogEntryDidTapTimestamp;
 
 + (FlurryLogger*) currentFlurryLogger;
 
++ (void) logError:(NSString*)title message:(NSString*)message error:(NSError*)error;
+
+- (void) logError:(NSString*)title message:(NSString*)message error:(NSError*)error;
 - (void) logEventWithName:(NSString *)eventName;
 
 @end

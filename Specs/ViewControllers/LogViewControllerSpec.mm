@@ -111,8 +111,8 @@ describe(@"LogViewController", ^{
 	    ManagedLogDay* logDay0 = [logModel insertManagedLogDay];
 
 	    logDay0.date = [NSDate date];
-	    [logDay0 insertManagedLogEntry].glucose = @100;
-	    [logDay0 insertManagedLogEntry].glucose = @200;
+	    [logModel insertManagedLogEntryIntoManagedLogDay:logDay0].glucose = @100;
+	    [logModel insertManagedLogEntryIntoManagedLogDay:logDay0].glucose = @200;
 
 	    ManagedLogDay* logDay1 = [logModel insertManagedLogDay];
 	    NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
@@ -120,12 +120,14 @@ describe(@"LogViewController", ^{
 	    dateFormatter.timeStyle = NSDateFormatterNoStyle;
 
 	    logDay1.date = [dateFormatter dateFromString:@"January 1, 2013"];
-	    [logDay1 insertManagedLogEntry].glucose = @100;
-	    [logDay1 insertManagedLogEntry].glucose = @200;
-	    [logDay1 insertManagedLogEntry].glucose = @300;
+	    [logModel insertManagedLogEntryIntoManagedLogDay:logDay1].glucose = @100;
+	    [logModel insertManagedLogEntryIntoManagedLogDay:logDay1].glucose = @200;
+	    [logModel insertManagedLogEntryIntoManagedLogDay:logDay1].glucose = @300;
 
 	    [logDay0 updateStatistics];
 	    [logDay1 updateStatistics];
+
+	    [logModel save];
 	});
 
 	it(@"should have 1 section per day", ^{

@@ -19,6 +19,8 @@ typedef enum
 extern NSString* GlucoseUnitsTypeString_mgdL;
 extern NSString* GlucoseUnitsTypeString_mmolL;
 
+@class NSFetchRequest;
+
 @interface LogModel : NSObject
 {
 @private
@@ -36,6 +38,8 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 @property (nonatomic, readonly)	unsigned    categoryNameMaxWidth;
 @property (nonatomic, strong, readonly)	NSArray*    logDays;
 @property (nonatomic, readonly)	unsigned    insulinTypeShortNameMaxWidth;
+
+@property (nonatomic, strong, readonly)	NSManagedObjectContext* managedObjectContext;
 
 + (NSArray*) settingsNewEntryInsulinTypes;
 + (void) flushInsulinTypesForNewEntries:(NSOrderedSet*)managedInsulinTypes;
@@ -87,10 +91,9 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 - (ManagedLogDay*) logDayForDate:(NSDate*)d;
 
 #pragma mark Log Entries
+- (NSFetchRequest*) fetchRequestForOrderedLogEntries;
 - (NSDate*) dateOfEarliestLogEntry;
 - (unsigned) numberOfLogEntriesFromDate:(NSDate*)fromDate toDate:(NSDate*)toDate;
-
-- (ManagedLogEntry*) logEntryAtIndex:(unsigned)entry inDayIndex:(unsigned)day;
 
 + (ManagedLogDay*) insertManagedLogDayIntoContext:(NSManagedObjectContext*)managedObjectContext;
 - (ManagedLogEntry*) insertManagedLogEntry;

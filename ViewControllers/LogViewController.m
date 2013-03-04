@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 #import "Constants.h"
+#import "FlurryLogger.h"
 
 #import "Category.h"
 #import "InsulinType.h"
@@ -17,7 +18,7 @@
 
 #define	ANIMATION_DURATION	    0.5	    // seconds
 
-@interface LogViewController () <SettingsViewControllerDelegate>
+@interface LogViewController () <NSFetchedResultsControllerDelegate, SettingsViewControllerDelegate>
 
 @property (nonatomic, weak) id<LogViewDelegate>   delegate;
 @property (nonatomic, strong) LogModel*	model;
@@ -27,6 +28,7 @@
 
 @implementation LogViewController
 {
+    NSFetchedResultsController*	fetchedResultsController;
     NSDateFormatter*	shortDateFormatter;
     NSDateFormatter*	shortTimeFormatter;
 }
@@ -58,6 +60,17 @@
 
 	shortTimeFormatter = [[NSDateFormatter alloc] init];
 	[shortTimeFormatter setTimeStyle:NSDateFormatterShortStyle];
+
+	fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:[model fetchRequestForOrderedLogEntries]
+								       managedObjectContext:model.managedObjectContext
+									 sectionNameKeyPath:@"logDay.date"
+										  cacheName:nil];
+	fetchedResultsController.delegate = self;
+
+	NSError* error = nil;
+	[fetchedResultsController performFetch:&error];
+	if( error )
+	    [FlurryLogger logError:@"Unresolved Error" message:[error localizedDescription] error:error];
     }
     return self;
 }
@@ -134,27 +147,82 @@
     [self inspectLogEntry:nil];
 }
 
+#pragma mark NSFetchedResultsControllerDelegate
+
+- (void) controllerWillChangeContent:(NSFetchedResultsController *)controller
+{
+    [self.tableView beginUpdates];
+}
+
+- (void) controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath
+{
+    switch( type )
+    {
+	case NSFetchedResultsChangeDelete:
+	    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+	    break;
+	case NSFetchedResultsChangeInsert:
+	    [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+	    break;
+	case NSFetchedResultsChangeMove:
+	    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+	    [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+	    break;
+	case NSFetchedResultsChangeUpdate:
+	{
+	    LogEntryCell* cell = (LogEntryCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+	    ManagedLogEntry* logEntry = [fetchedResultsController objectAtIndexPath:indexPath];
+	    [self configureCell:cell forLogEntry:logEntry];
+	}
+	default:
+	    break;
+    }
+}
+
+- (void) controller:(NSFetchedResultsController *)controller didChangeSection:(id<NSFetchedResultsSectionInfo>)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type
+{
+    NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:sectionIndex];
+    switch( type )
+    {
+	case NSFetchedResultsChangeDelete:
+	    [self.tableView deleteSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
+	    break;
+	case NSFetchedResultsChangeInsert:
+	    [self.tableView insertSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
+	    break;
+    }
+}
+
+- (void) controllerDidChangeContent:(NSFetchedResultsController *)controller
+{
+    [self.tableView endUpdates];
+}
+
 #pragma mark <UITableViewDataSource>
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return MAX(1, _model.logDays.count);
+    return MAX(1, fetchedResultsController.sections.count);
 }
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if( 0 == _model.logDays.count )
+    NSArray* sections = fetchedResultsController.sections;
+    if( 0 == sections.count )
 	return 0;
-    ManagedLogDay* logDay = [_model.logDays objectAtIndex:section];
-    return logDay.logEntries.count;
+    id<NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
+    return [sectionInfo numberOfObjects];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    if( 0 == _model.logDays.count )
+    NSArray* sections = [fetchedResultsController sections];
+    if( 0 == sections.count )
 	return @"Today";
 
-    ManagedLogDay* logDay = [_model.logDays objectAtIndex:section];
+    id<NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
+    ManagedLogEntry* logEntry = [[sectionInfo objects] lastObject];
+    ManagedLogDay* logDay = logEntry.logDay;
     NSString* dateString = [shortDateFormatter stringFromDate:logDay.date];
 
     // Don't display the average if it's zero
@@ -163,23 +231,8 @@
     return dateString;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (void) configureCell:(LogEntryCell*)cell forLogEntry:(ManagedLogEntry*)logEntry
 {
-    NSString *cellID = @"CellID";
-    const unsigned section = indexPath.section;
-    const unsigned row = indexPath.row;
-
-    LogEntryCell *cell = (LogEntryCell*)[tableView dequeueReusableCellWithIdentifier:cellID];
-    if( nil == cell )
-    {
-	cell = [[LogEntryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
-	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    }
-
-    // Get the LogEntry for the cell
-    ManagedLogDay* logDay = [_model.logDays objectAtIndex:section];
-    ManagedLogEntry* logEntry = [logDay.logEntries objectAtIndex:row];
-
     // Configure the cell
     cell.labelTimestamp.text = [shortTimeFormatter stringFromDate:logEntry.timestamp];
     cell.labelCategory.text = logEntry.category ? logEntry.category.name : @"";
@@ -209,6 +262,21 @@
 	cell.labelDose1.text = [insulinDose.quantity stringValue];
 	cell.labelType1.text = insulinDose.insulinType.shortName;
     }
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    LogEntryCell* cell = (LogEntryCell*)[tableView dequeueReusableCellWithIdentifier:NSStringFromClass([LogEntryCell class])];
+    if( !cell )
+    {
+	cell = [[LogEntryCell alloc] initWithStyle:UITableViewCellStyleDefault
+				   reuseIdentifier:NSStringFromClass([LogEntryCell class])];
+	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
+
+    [self configureCell:cell
+	    forLogEntry:[fetchedResultsController objectAtIndexPath:indexPath]];
+
     return cell;
 }
 
@@ -216,19 +284,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)path
 {
-    ManagedLogDay *const logDay = [_model.logDays objectAtIndex:path.section];
-    [self inspectLogEntry:[logDay.logEntries objectAtIndex:path.row]];
-}
-
-- (void)tableView:(UITableView *)tv willDisplayCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath*)path
-{
-    // If the requested row is in the last loaded section, schedule a task to load the next section
-    const unsigned numberOfSections = [tv numberOfSections];
-    if( (numberOfSections == (path.section + 1)) && (path.row == 0) )
-    {
-	if( numberOfSections < _model.logDays.count )
-	    [self performSelectorOnMainThread:@selector(loadNextSection) withObject:nil waitUntilDone:NO];
-    }
+    [self inspectLogEntry:[fetchedResultsController objectAtIndexPath:path]];
 }
 
 - (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -236,22 +292,9 @@
     // If the row was deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	ManagedLogDay *const logDay = [_model.logDays objectAtIndex:indexPath.section];
-	if( 1 == logDay.logEntries.count )	// If the section is about to be empty, delete it
-	{
-	    [_model deleteLogDay:logDay];
-
-	    // This must be called after deleting the section, otherwise UITableView will throw an exception
-	    [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationFade];
-	}
-	else
-	{
-	    [_model deleteLogEntry:[logDay.logEntries objectAtIndex:indexPath.row]
-			   fromDay:logDay];
-
-	    // This must be called after deleting the row, otherwise UITableView will throw an exception
-	    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-	}
+	ManagedLogEntry* logEntry = [fetchedResultsController objectAtIndexPath:indexPath];
+	[_model deleteLogEntry:logEntry
+		       fromDay:logEntry.logDay];
     }
 }
 
@@ -260,13 +303,11 @@
 - (void) logEntryViewControllerDidCancelEditing
 {
     [self.model undo];
-    [self.tableView reloadData];
 }
 
 - (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(ManagedLogEntry*)logEntry
 {
     [self.navigationController popViewControllerAnimated:YES];
-    [self.tableView reloadData];
 }
 
 #pragma mark <SettingsViewControllerDelegate>

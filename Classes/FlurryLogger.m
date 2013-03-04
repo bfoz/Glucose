@@ -17,6 +17,19 @@ static FlurryLogger*	__currentFLurryLogger = nil;
     return __currentFLurryLogger;
 }
 
++ (void) logError:(NSString*)title message:(NSString*)message error:(NSError*)error
+{
+    [[self currentFlurryLogger] logError:title message:message error:error];
+}
+
+- (void) logError:(NSString*)title message:(NSString*)message error:(NSError*)error
+{
+#ifndef SPECS
+    NSLog(@"=======> Logging Flurry error:'%@' => '%@', %@", title, message, error);
+    [Flurry logError:title message:message error:error];
+#endif
+}
+
 - (void) logEventWithName:(NSString *)eventName
 {
     [self logEventWithName:(NSString *)eventName withParameters:nil timed:NO];

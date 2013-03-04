@@ -4,6 +4,7 @@
 #import "LogModel+SpecHelper.h"
 
 #import "ManagedInsulinType.h"
+#import "ManagedLogDay+App.h"
 #import "ManagedLogEntry+App.h"
 
 NSPersistentStoreCoordinator* _persistentStoreCoordinator = nil;
@@ -68,6 +69,15 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator = nil;
     ManagedLogDay* logDay = [LogModel insertManagedLogDayIntoContext:self.managedObjectContext];
     [(NSMutableArray*)self.logDays addObject:logDay];
     return logDay;
+}
+
+- (ManagedLogEntry*) insertManagedLogEntryIntoManagedLogDay:(ManagedLogDay*)logDay
+{
+    ManagedLogEntry* logEntry = [logDay insertManagedLogEntry];
+    logEntry.timestamp = [NSDate date];
+    logEntry.glucoseUnits = [NSNumber numberWithInt:[LogModel glucoseUnitsSetting]];
+
+    return logEntry;
 }
 
 @end
