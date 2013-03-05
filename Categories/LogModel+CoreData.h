@@ -14,7 +14,7 @@
 
 + (NSFetchRequest*) fetchRequestForLogDays;
 + (NSFetchRequest*) fetchRequestForOrderedLogDays;
-+ (NSFetchRequest*) fetchRequestForOrderedCategoriesInContext:(NSManagedObjectContext*)managedObjectContext;
++ (NSFetchRequest*) fetchRequestForOrderedCategories;
 + (NSFetchRequest*) fetchRequestForOrderedInsulinTypesInContext:(NSManagedObjectContext*)managedObjectContext;
 
 + (ManagedCategory*) insertManagedCategoryIntoContext:(NSManagedObjectContext*)managedObjectContext;

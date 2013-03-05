@@ -1,36 +1,54 @@
-#import "AppDelegate.h"
 #import "CategoryViewController.h"
 #import "Constants.h"
+#import "FlurryLogger.h"
+
 #import "LogEntry.h"
-#import "LogModel.h"
+#import "LogModel+CoreData.h"
 #import "ManagedCategory.h"
 
 #define	kCategoriesSectionNumber		0
 #define	kRestoreDefaultsSectionNumber		1
 
+@interface CategoryViewController () <NSFetchedResultsControllerDelegate>
+@end
+
 @implementation CategoryViewController
 {
+    BOOL    userDrivenChange;
     ManagedCategory*	deleteCategory;
+    NSFetchedResultsController*	fetchedResultsController;
 }
 
 @synthesize model;
 
-- (id) init
+- (id) initWithStyle:(UITableViewStyle)style logModel:(LogModel*)logModel
 {
-    if( self = [super initWithStyle:UITableViewStyleGrouped] )
-	{
-		self.title = @"Categories";
-		dirty = NO;
-	}
-	return self;
+    self = [super initWithStyle:style];
+    if( self )
+    {
+	self.title = @"Categories";
+	userDrivenChange = NO;
+
+	model = logModel;
+
+	fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:[LogModel fetchRequestForOrderedCategories]
+								       managedObjectContext:model.managedObjectContext
+									 sectionNameKeyPath:nil
+										  cacheName:nil];
+	fetchedResultsController.delegate = self;
+
+	NSError* error = nil;
+	[fetchedResultsController performFetch:&error];
+	if( error )
+	    [FlurryLogger logError:@"Unresolved Error" message:[error localizedDescription] error:error];
+
+    }
+    return self;
 }
 
 - (void) setEditing:(BOOL)e animated:(BOOL)animated
 {
 	[super setEditing:e animated:animated];
-	// Flush the category array to the database if it has been modified
-	if( dirty )
-		dirty = NO;
 
     // Eanble the Add button while editing
 	if( e )
@@ -42,13 +60,9 @@
 
 - (void)viewDidLoad
 {
-    self.tableView.allowsSelectionDuringEditing = YES;
-}
+    [super viewDidLoad];
 
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-    [self.tableView reloadData];	// Redisplay the data to update the checkmark
+    self.tableView.allowsSelectionDuringEditing = YES;
 }
 
 #pragma mark -
@@ -66,32 +80,125 @@
 
 - (void) appendNewCategory
 {
-    if( [self.delegate respondsToSelector:@selector(categoryViewControllerCreateCategory)] )
+    const unsigned index = fetchedResultsController.fetchedObjects.count;
+
+    [model addCategoryWithName:nil];
+    [model save];
+
+    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:kCategoriesSectionNumber]
+			  atScrollPosition:UITableViewScrollPositionNone
+				  animated:YES];
+    deleteRow = index;	// Reuse deleteRow to avoid creating a new variable
+    [self performSelector:@selector(editRow) withObject:nil afterDelay:0.2];
+}
+
+- (void) configureCell:(UITableViewCell*)cell forCategory:(ManagedCategory*)category
+{
+    if( self.editing )
     {
-	const unsigned index = [model.categories count];
-	[self.delegate categoryViewControllerCreateCategory];
-	NSIndexPath *const path = [NSIndexPath indexPathForRow:index inSection:0];
-	[self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:path]
-			      withRowAnimation:UITableViewRowAnimationFade];
-	[self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionNone animated:YES];
-	deleteRow = index;	// Reuse deleteRow to avoid creating a new variable
-	[self performSelector:@selector(editRow) withObject:nil afterDelay:0.2];
+	((TextFieldCell*)cell).editedObject = category;
+	((TextFieldCell*)cell).textField.text = [category name];
+	cell.accessibilityLabel = [category name];
+    }
+    else
+    {
+	cell.textLabel.text = [category name];
+	// Set the row as selected if it matches the currently selected category
+	if( [category isEqual:self.selectedCategory] )
+	    [self.tableView selectRowAtIndexPath:[self.tableView indexPathForCell:cell]
+					animated:NO
+				  scrollPosition:UITableViewScrollPositionNone];
     }
 }
 
-- (void) deleteCategory:(ManagedCategory*)category atIndex:(unsigned)index
+- (void) deleteCategory:(ManagedCategory*)category
 {
-    [self.delegate categoryViewControllerDidDeleteCategory:category];
-    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]]
-			  withRowAnimation:UITableViewRowAnimationFade];
+    [model removeCategory:category];
+    [model save];
+}
+
+- (NSIndexPath*) translateFetchedIndexPath:(NSIndexPath*)indexPath
+{
+    return self.editing ? indexPath : [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
+}
+
+- (NSIndexPath*) translateTableViewIndexPath:(NSIndexPath*)indexPath
+{
+    return self.editing ? indexPath : [NSIndexPath indexPathForRow:indexPath.row-1 inSection:indexPath.section];
+}
+
+#pragma mark - Delegates
+
+#pragma mark NSFetchedResultsControllerDelegate
+
+- (void) controllerWillChangeContent:(NSFetchedResultsController *)controller
+{
+    if( !userDrivenChange )
+	[self.tableView beginUpdates];
+}
+
+- (void) controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath
+{
+    switch( type )
+    {
+	case NSFetchedResultsChangeDelete:
+	    [self.tableView deleteRowsAtIndexPaths:@[[self translateFetchedIndexPath:indexPath]]
+				  withRowAnimation:UITableViewRowAnimationAutomatic];
+	    break;
+	case NSFetchedResultsChangeInsert:
+	    [self.tableView insertRowsAtIndexPaths:@[[self translateFetchedIndexPath:newIndexPath]]
+				  withRowAnimation:UITableViewRowAnimationAutomatic];
+	    break;
+	case NSFetchedResultsChangeMove:
+	    if( !userDrivenChange )
+	    {
+		[self.tableView deleteRowsAtIndexPaths:@[[self translateFetchedIndexPath:indexPath]]
+				      withRowAnimation:UITableViewRowAnimationAutomatic];
+		[self.tableView insertRowsAtIndexPaths:@[[self translateFetchedIndexPath:newIndexPath]]
+				      withRowAnimation:UITableViewRowAnimationAutomatic];
+	    }
+	    break;
+	case NSFetchedResultsChangeUpdate:
+	    if( !userDrivenChange )
+	    {
+		[self configureCell:[self.tableView cellForRowAtIndexPath:[self translateFetchedIndexPath:indexPath]]
+			forCategory:[fetchedResultsController objectAtIndexPath:indexPath]];
+	    }
+	    break;
+    }
+}
+
+- (void) controller:(NSFetchedResultsController *)controller didChangeSection:(id<NSFetchedResultsSectionInfo>)sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type
+{
+    NSIndexSet* indexSet = [NSIndexSet indexSetWithIndex:sectionIndex];
+    switch( type )
+    {
+	case NSFetchedResultsChangeDelete:
+	    [self.tableView deleteSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
+	    break;
+	case NSFetchedResultsChangeInsert:
+	    [self.tableView insertSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
+	    break;
+    }
+}
+
+- (void) controllerDidChangeContent:(NSFetchedResultsController *)controller
+{
+    if( !userDrivenChange )
+	[self.tableView endUpdates];
 }
 
 #pragma mark <UITableViewDelegate>
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
+    NSUInteger count = fetchedResultsController.sections.count;
+
     // Edit mode shows an extra section for restoring defaults
-    return self.editing ? 2 : 1;
+    if( self.editing )
+	++count;
+
+    return count;
 }
 
 
@@ -100,8 +207,18 @@
     if( kRestoreDefaultsSectionNumber == section )
 	return 1;
 
-	// When not in editing mode there is one extra row for "None"
-	return self.editing ? [model.categories count] : [model.categories count] + 1;
+    NSArray* sections = fetchedResultsController.sections;
+    if( 0 == sections.count )
+	return 0;
+
+    id<NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
+    NSUInteger count = [sectionInfo numberOfObjects];
+
+    // When not in editing mode there is one extra row for "None"
+    if( !self.editing )
+	++count;
+
+    return count;
 }
 
 
@@ -134,45 +251,34 @@
 			cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	}
 
-	// If not editing, the first row is "None", and the categories need to be shifted down one row.
-	switch( section )
+    // If not editing, the first row is "None", and the categories need to be shifted down one row.
+    switch( section )
+    {
+	case kCategoriesSectionNumber:
 	{
-	    case kCategoriesSectionNumber:
+	    if( self.editing )
+		[self configureCell:cell forCategory:[fetchedResultsController objectAtIndexPath:indexPath]];
+	    else
 	    {
-		const unsigned row = indexPath.row;
-
-		if( self.editing )
-		{
-		    ManagedCategory *const c = [model.categories objectAtIndex:row];
-		    ((TextFieldCell*)cell).editedObject = c;
-		    ((TextFieldCell*)cell).textField.text = [c name];
-		    cell.accessibilityLabel = [c name];
-		}
+		if( 0 != indexPath.row )	// A regular category row
+		    [self configureCell:cell
+			    forCategory:[fetchedResultsController objectAtIndexPath:[self translateTableViewIndexPath:indexPath]]];
 		else
 		{
-		    if( row )	// A regular category row
-		    {
-			cell.textLabel.text = [[model.categories objectAtIndex:(row-1)] name];
-			// Set the row as selected if it matches the currently selected category
-			if( [model.categories objectAtIndex:(row-1)] == self.selectedCategory )
-			    [tv selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-		    }
-		    else	// The "None" row
-		    {
-			cell.textLabel.text = @"None";	// Dummy "none" category so the user can select no category
-			// Set the "None" row as selected if no category is currently selected
-			if( !self.selectedCategory )
-			    [tv selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-		    }
+		    cell.textLabel.text = @"None";	// Dummy "none" category so the user can select no category
+		    // Set the "None" row as selected if no category is currently selected
+		    if( !self.selectedCategory )
+			[tv selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
 		}
-
-		break;
 	    }
-	    case kRestoreDefaultsSectionNumber:
-		cell.textLabel.text = @"Restore Default Categories";
-		cell.textLabel.textAlignment = UITextAlignmentCenter;
-		break;
+
+	    break;
 	}
+	case kRestoreDefaultsSectionNumber:
+	    cell.textLabel.text = @"Restore Default Categories";
+	    cell.textLabel.textAlignment = UITextAlignmentCenter;
+	    break;
+    }
 
 	return cell;
 }
@@ -183,16 +289,13 @@
     {
 	if( kRestoreDefaultsSectionNumber == indexPath.section )
 	    if( [self.delegate respondsToSelector:@selector(categoryViewControllerDidSelectRestoreDefaults)] )
-	    {
 		[self.delegate categoryViewControllerDidSelectRestoreDefaults];
-		[self.tableView reloadData];
-	    }
     }
     else
     {
 	const unsigned row = indexPath.row;
 	// Row 0 is the "None" row
-	self.selectedCategory = row ? [model.categories objectAtIndex:row-1] : nil;
+	self.selectedCategory = row ? [fetchedResultsController objectAtIndexPath:[self translateTableViewIndexPath:indexPath]] : nil;
 	if( [self.delegate respondsToSelector:@selector(categoryViewControllerDidSelectCategory:)] )
 	    [self.delegate categoryViewControllerDidSelectCategory:self.selectedCategory];
     }
@@ -213,16 +316,16 @@
 
 - (NSIndexPath*) tableView:(UITableView*)tv targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath*)fromPath toProposedIndexPath:(NSIndexPath*)toPath
 {
-	if( toPath.row < [model.categories count] )
-		return toPath;
-	return [NSIndexPath indexPathForRow:([model.categories count]-1) inSection:toPath.section];
+    if( (toPath.section == kCategoriesSectionNumber) && ([self translateTableViewIndexPath:toPath].row < fetchedResultsController.fetchedObjects.count) )
+	    return toPath;
+    return [self translateFetchedIndexPath:[NSIndexPath indexPathForRow:(fetchedResultsController.fetchedObjects.count-1) inSection:kCategoriesSectionNumber]];
 }
 
 #pragma mark - <UITableViewDataSource>
 
 - (void)tableView:(UITableView *)tv commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)path
 {
-    ManagedCategory *const category = [model.categories objectAtIndex:path.row];
+    ManagedCategory* category = [fetchedResultsController objectAtIndexPath:[self translateTableViewIndexPath:path]];
 
     // If row is deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
@@ -241,14 +344,24 @@
 	    [alert show];
 	}
 	else
-	    [self deleteCategory:category atIndex:path.row];
+	    [self deleteCategory:category];
     }
 }
 
-- (void) tableView:(UITableView*)tv moveRowAtIndexPath:(NSIndexPath*)fromPath toIndexPath:(NSIndexPath*)toPath
+- (void) tableView:(UITableView*)tv moveRowAtIndexPath:(NSIndexPath*)fromIndexPath toIndexPath:(NSIndexPath*)toIndexPath
 {
-    [model moveCategoryAtIndex:fromPath.row toIndex:toPath.row];
-	dirty = YES;
+    userDrivenChange = YES;
+
+    NSMutableArray* categories = [[fetchedResultsController fetchedObjects] mutableCopy];
+    NSManagedObject* category = [fetchedResultsController objectAtIndexPath:fromIndexPath];
+
+    [categories removeObject:category];
+    [categories insertObject:category atIndex:toIndexPath.row];
+
+    [model flushCategories:categories];
+    [model save];
+
+    userDrivenChange = NO;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -263,7 +376,7 @@
 - (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if( buttonIndex )
-	[self deleteCategory:deleteCategory atIndex:deleteRow];
+	[self deleteCategory:deleteCategory];
     else
 	// Reload the table on cancel to work around a display bug
 	[self.tableView reloadData];

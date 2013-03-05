@@ -2,7 +2,7 @@
 //  ManagedCategory.h
 //  Glucose
 //
-//  Created by Brandon Fosdick on 01/13/13.
+//  Created by Brandon Fosdick on 03/05/13.
 //
 //
 
@@ -14,7 +14,7 @@
 @interface ManagedCategory : NSManagedObject
 
 @property (nonatomic, retain) NSString * name;
-@property (nonatomic) int32_t sequenceNumber;
+@property (nonatomic, retain) NSNumber * sequenceNumber;
 @property (nonatomic, retain) NSSet *logEntries;
 @end
 

@@ -36,7 +36,7 @@
     {
 	ManagedCategory* managedCategory = [LogModel insertManagedCategoryIntoContext:managedObjectContext];
 	managedCategory.name = [category objectForKey:@"name"];
-	managedCategory.sequenceNumber = [[category objectForKey:@"sequence"] intValue];
+	managedCategory.sequenceNumber = [category objectForKey:@"sequence"];
     }
 
     for( NSDictionary* insulinType in bundledInsulinTypes )
@@ -173,13 +173,10 @@
     return fetchRequest;
 }
 
-+ (NSFetchRequest*) fetchRequestForOrderedCategoriesInContext:(NSManagedObjectContext*)managedObjectContext
++ (NSFetchRequest*) fetchRequestForOrderedCategories
 {
-    NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] init];
-    fetchRequest.entity = [NSEntityDescription entityForName:@"Category" inManagedObjectContext:managedObjectContext];
-
-    NSSortDescriptor* sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sequenceNumber" ascending:YES];
-    fetchRequest.sortDescriptors = @[sortDescriptor];
+    NSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Category"];
+    fetchRequest.sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:@"sequenceNumber" ascending:YES]];
 
     return fetchRequest;
 }

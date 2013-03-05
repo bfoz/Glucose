@@ -324,9 +324,8 @@ enum AboutSectionRows
 	    {
 		case kCategoryRow:
 		{
-		    CategoryViewController* categoryViewController = [[CategoryViewController alloc] init];
+		    CategoryViewController* categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStyleGrouped logModel:model];
 		    categoryViewController.delegate = self;
-		    categoryViewController.model = model;
 
 		    [self.navigationController pushViewController:categoryViewController animated:YES];
 		    // Set editing mode after pushing the view controller. The UITableView doesn't exist
@@ -465,12 +464,6 @@ enum AboutSectionRows
 
 #pragma mark -
 #pragma mark <CategoryViewControllerDelegate>
-
-- (void) categoryViewControllerCreateCategory
-{
-    [model addCategoryWithName:nil];
-    [model save];
-}
 
 - (void) categoryViewControllerDidDeleteCategory:(ManagedCategory*)category
 {

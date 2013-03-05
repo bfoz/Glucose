@@ -6,9 +6,6 @@
 
 @interface CategoryViewController : UITableViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
-    LogModel*			model;
-
-	BOOL			dirty;
     unsigned	deleteRow;
 }
 
@@ -16,13 +13,13 @@
 @property (nonatomic, strong) LogModel*				    model;
 @property (nonatomic, strong) ManagedCategory* selectedCategory;
 
+- (id) initWithStyle:(UITableViewStyle)style logModel:(LogModel*)logModel;
+
 @end
 
 @protocol CategoryViewControllerDelegate <NSObject>
 
 @optional
-- (void) categoryViewControllerCreateCategory;
-- (void) categoryViewControllerDidDeleteCategory:(ManagedCategory*)category;
 - (void) categoryViewControllerDidSelectCategory:(ManagedCategory*)category;
 - (void) categoryViewControllerDidSelectRestoreDefaults;
 

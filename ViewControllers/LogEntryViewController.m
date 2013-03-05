@@ -556,9 +556,8 @@ static NSUserDefaults* defaults = nil;
 	    case 1: 
 		if( !categoryViewController )
 		{
-		    categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain];
+		    categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain logModel:model];
 		    categoryViewController.delegate = self;
-		    categoryViewController.model = model;
 		}
 		categoryViewController.selectedCategory = selectedCategory;
 		[self presentModalViewController:categoryViewController animated:YES];

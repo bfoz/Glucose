@@ -129,7 +129,7 @@ describe(@"LogModel+Migration", ^{
 	});
 
 	it(@"should migrate the categories", ^{
-	    NSFetchRequest* fetchRequest = [LogModel fetchRequestForOrderedCategoriesInContext:managedObjectContext];
+	    NSFetchRequest* fetchRequest = [LogModel fetchRequestForOrderedCategories];
 	    NSArray* fetchedObjects = [managedObjectContext executeFetchRequest:fetchRequest error:nil];
 	    fetchedObjects.count should equal(9);
 	});

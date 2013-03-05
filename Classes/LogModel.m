@@ -220,26 +220,12 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 }
 
 // Flush the category list to the database
-- (void) flushCategories
+- (void) flushCategories:(NSArray*)categories
 {
     unsigned index = 0;
-    for( ManagedCategory* category in self.categories )
-	category.sequenceNumber = index;
+    for( ManagedCategory* category in categories )
+	category.sequenceNumber = [NSNumber numberWithInt:index++];
     categoryNameMaxWidth = nil;
-}
-
-- (void) moveCategoryAtIndex:(unsigned)from toIndex:(unsigned)to
-{
-    Category *const c = [self.categories objectAtIndex:from];
-
-    /* The previous line lazy-instantiated the categories array, so there's no
-	longer a need to use the accessor method. */
-    [self.categories removeObjectAtIndex:from];
-    [self.categories insertObject:c atIndex:to];
-
-    // Flush the array to preserve the new sequence
-    [self flushCategories];
-
 }
 
 - (void) removeCategory:(ManagedCategory*)category
@@ -269,7 +255,7 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     {
 	ManagedCategory* managedCategory = [LogModel insertManagedCategoryIntoContext:self.managedObjectContext];
 	managedCategory.name = category.categoryName;
-	managedCategory.sequenceNumber = index;
+	managedCategory.sequenceNumber = [NSNumber numberWithInt:index];
 	++index;
     }
 
@@ -518,7 +504,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 - (NSArray*) categories
 {
     if( !_categories )
-	_categories = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedCategoriesInContext:self.managedObjectContext]
+	_categories = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedCategories]
 											      error:nil]];
     return _categories;
 }

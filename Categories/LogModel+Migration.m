@@ -158,7 +158,7 @@ int numerOfLogEntriesInDatabase(sqlite3* database)
 	ManagedCategory* managedCategory = [self insertOrIgnoreManagedCategoryName:name inContext:managedObjectContext];
 
 	if( SQLITE_NULL != sqlite3_column_type(statement, 1) )
-	    managedCategory.sequenceNumber = sqlite3_column_int(statement, 1);
+	    managedCategory.sequenceNumber = [NSNumber numberWithInt:sqlite3_column_int(statement, 1)];
 
 	[categories setObject:managedCategory forKey:[NSNumber numberWithInt:categoryID]];
 
