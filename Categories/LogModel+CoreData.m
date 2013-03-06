@@ -181,14 +181,10 @@
     return fetchRequest;
 }
 
-+ (NSFetchRequest*) fetchRequestForOrderedInsulinTypesInContext:(NSManagedObjectContext*)managedObjectContext
++ (NSFetchRequest*) fetchRequestForOrderedInsulinTypes
 {
-    NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription* entity = [NSEntityDescription entityForName:@"InsulinType" inManagedObjectContext:managedObjectContext];
-    fetchRequest.entity = entity;
-
-    NSSortDescriptor* sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sequenceNumber" ascending:YES];
-    fetchRequest.sortDescriptors = @[sortDescriptor];
+    NSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"InsulinType"];
+    fetchRequest.sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:@"sequenceNumber" ascending:YES]];
 
     return fetchRequest;
 }

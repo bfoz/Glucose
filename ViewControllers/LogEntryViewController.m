@@ -571,9 +571,8 @@ static NSUserDefaults* defaults = nil;
     {
 	if( !insulinTypeViewController )
 	{
-	    insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain];
+	    insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain logModel:model];
 	    insulinTypeViewController.delegate = self;
-	    insulinTypeViewController.model = model;
 	}
 	selectedIndexPath = path;
 	DoseFieldCell* cell = (DoseFieldCell*)[self.tableView cellForRowAtIndexPath:path];

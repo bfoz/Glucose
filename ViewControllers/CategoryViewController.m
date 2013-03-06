@@ -41,7 +41,6 @@
 	[fetchedResultsController performFetch:&error];
 	if( error )
 	    [FlurryLogger logError:@"Unresolved Error" message:[error localizedDescription] error:error];
-
     }
     return self;
 }

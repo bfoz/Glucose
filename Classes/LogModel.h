@@ -69,10 +69,8 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 # pragma mark Insulin Types
 - (ManagedInsulinType*) addInsulinTypeWithName:(NSString*)name;
 - (void) flushInsulinTypes;
-- (void) moveInsulinTypeAtIndex:(unsigned)from toIndex:(unsigned)to;
 - (unsigned) numberOfLogEntriesForInsulinType:(ManagedInsulinType*)insulinType;
 - (void) removeInsulinType:(ManagedInsulinType*)type;
-- (void) updateInsulinType:(ManagedInsulinType*)type;
 - (void) restoreBundledInsulinTypes;
 
 #pragma mark Insulin Types for New Entries

@@ -135,7 +135,7 @@ describe(@"LogModel+Migration", ^{
 	});
 
 	it(@"should migrate insulin types", ^{
-	    NSFetchRequest* fetchRequest = [LogModel fetchRequestForOrderedInsulinTypesInContext:managedObjectContext];
+	    NSFetchRequest* fetchRequest = [LogModel fetchRequestForOrderedInsulinTypes];
 	    NSArray* fetchedObjects = [managedObjectContext executeFetchRequest:fetchRequest error:nil];
 	    fetchedObjects.count should equal(11);
 	});

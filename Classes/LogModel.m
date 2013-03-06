@@ -41,8 +41,6 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 
 @property (nonatomic, strong) NSArray*    categories;
 
-- (void) clearInsulinTypeShortNameMaxWidth;
-
 @end
 
 void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter)
@@ -249,12 +247,6 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     return insulinType;
 }
 
-// Clear the max width so it will be recomputed next time it's needed
-- (void) clearInsulinTypeShortNameMaxWidth
-{
-    insulinTypeShortNameMaxWidth = NULL;
-}
-
 // Flush the insulin types list to the database
 - (void) flushInsulinTypes
 {
@@ -283,20 +275,6 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     return [insulinTypeShortNameMaxWidth unsignedIntValue];
 }
 
-- (void) moveInsulinTypeAtIndex:(unsigned)from toIndex:(unsigned)to
-{
-    ManagedInsulinType *const type = [self.insulinTypes objectAtIndex:from];
-
-    /* The previous line lazy-instantiated the insulin types array, so there's
-	no longer a need to use the accessor method. */
-    [self.insulinTypes removeObjectAtIndex:from];
-    [self.insulinTypes insertObject:type atIndex:to];
-
-    // Flush the array to preserve the new sequence
-    [self flushInsulinTypes];
-
-}
-
 - (unsigned) numberOfLogEntriesForInsulinType:(ManagedInsulinType*)insulinType
 {
     NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] init];
@@ -312,13 +290,6 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 {
     [self removeInsulinTypeForNewEntries:insulinType];
     [self.insulinTypes removeObject:insulinType];
-    [self clearInsulinTypeShortNameMaxWidth];
-}
-
-- (void) updateInsulinType:(InsulinType*)type
-{
-    [self save];
-    [self clearInsulinTypeShortNameMaxWidth];
 }
 
 - (void) restoreBundledInsulinTypes
@@ -486,7 +457,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 - (NSArray*) insulinTypes
 {
     if( !_insulinTypes )
-	_insulinTypes = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedInsulinTypesInContext:self.managedObjectContext]
+	_insulinTypes = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedInsulinTypes]
 												error:nil]];
     return _insulinTypes;
 }
@@ -537,6 +508,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     if( _managedObjectContext )
     {
 	categoryNameMaxWidth = nil;
+	insulinTypeShortNameMaxWidth = NULL;
 	[LogModel saveManagedObjectContext:_managedObjectContext];
     }
 }

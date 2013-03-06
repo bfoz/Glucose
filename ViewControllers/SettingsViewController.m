@@ -336,9 +336,8 @@ enum AboutSectionRows
 		}
 		case kInsulinTypeRow:
 		{
-		    InsulinTypeViewController* insulinTypeViewController = [[InsulinTypeViewController alloc] init];
+		    InsulinTypeViewController* insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped logModel:model];
 		    insulinTypeViewController.delegate = self;
-		    insulinTypeViewController.model = model;
 		    [insulinTypeViewController setMultiCheck:NO];
 
 		    [self.navigationController pushViewController:insulinTypeViewController animated:YES];
@@ -349,9 +348,8 @@ enum AboutSectionRows
 		}
 		case kDefaultInsulinRow:
 		{
-		    InsulinTypeViewController* defaultInsulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped];
+		    InsulinTypeViewController* defaultInsulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStyleGrouped logModel:model];
 		    defaultInsulinTypeViewController.delegate = self;
-		    defaultInsulinTypeViewController.model = model;
 		    defaultInsulinTypeViewController.title = @"Default Insulin Types";
 		    defaultInsulinTypeViewController.multiCheck = YES;
 		    [defaultInsulinTypeViewController setSelectedInsulinTypesWithArray:model.insulinTypesForNewEntries];
@@ -479,21 +477,6 @@ enum AboutSectionRows
 
 #pragma mark -
 #pragma mark <InsulinTypeViewControllerDelegate>
-
-- (void) insulinTypeViewControllerCreateInsulinType
-{
-    [model addInsulinTypeWithName:nil];
-}
-
-- (void) insulinTypeViewControllerDidDeleteInsulinType:(ManagedInsulinType*)type;
-{
-    [model removeInsulinType:type];
-}
-
-- (void) insulinTypeViewControllerDidEndMultiSelect
-{
-    [model flushInsulinTypesForNewEntries];
-}
 
 - (BOOL) insulinTypeViewControllerDidSelectInsulinType:(ManagedInsulinType*)type
 {

@@ -1,18 +1,13 @@
 #import <UIKit/UIKit.h>
 #import "TextFieldCell.h"	// Needed for TextFieldCellDelegate
 
-@class LogEntry;
 @class LogModel;
 @class ManagedInsulinType;
-@class TextFieldCell;
 
 @protocol InsulinTypeViewControllerDelegate;
 
 @interface InsulinTypeViewController : UITableViewController <TextFieldCellDelegate, UIAlertViewDelegate>
 {
-    LogModel*				    model;
-
-    BOOL			dirty;
     BOOL			multiCheck;
     unsigned	    deleteRowNum;
     enum
@@ -26,6 +21,8 @@
 @property (nonatomic, strong) LogModel*					model;
 @property (nonatomic, assign) BOOL	multiCheck;
 
+- (id) initWithStyle:(UITableViewStyle*)style logModel:(LogModel*)logModel;
+
 - (BOOL) insulinTypeIsSelected:(ManagedInsulinType*)insulinType;
 
 - (void) setMultiCheck:(BOOL)e;
@@ -37,9 +34,6 @@
 @protocol InsulinTypeViewControllerDelegate <NSObject>
 
 @optional
-- (void) insulinTypeViewControllerCreateInsulinType;
-- (void) insulinTypeViewControllerDidDeleteInsulinType:(ManagedInsulinType*)type;
-- (void) insulinTypeViewControllerDidEndMultiSelect;
 - (BOOL) insulinTypeViewControllerDidSelectInsulinType:(ManagedInsulinType*)type;
 - (void) insulinTypeViewControllerDidSelectRestoreDefaults;
 - (void) insulinTypeViewControllerDidUnselectInsulinType:(ManagedInsulinType*)type;
