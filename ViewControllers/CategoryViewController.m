@@ -358,7 +358,10 @@
     [categories removeObject:category];
     [categories insertObject:category atIndex:toIndexPath.row];
 
-    [model flushCategories:categories];
+    unsigned index = 0;
+    for( ManagedCategory* category in categories )
+	category.sequenceNumber = [NSNumber numberWithInt:index++];
+
     [model save];
 
     userDrivenChange = NO;
@@ -390,7 +393,7 @@
     if( !c || !cell )
 	return;
     c.name = (cell.text && cell.text.length) ? cell.text : nil;
-    [model updateCategory:c];
+    [model save];
 }
 
 @end

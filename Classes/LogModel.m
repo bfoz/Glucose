@@ -41,7 +41,6 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 
 @property (nonatomic, strong) NSArray*    categories;
 
-- (void) clearCategoryNameMaxWidth;
 - (void) clearInsulinTypeShortNameMaxWidth;
 
 @end
@@ -214,31 +213,9 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     return [categoryNameMaxWidth unsignedIntValue];
 }
 
-// Clear the max width so it will be recomputed next time it's needed
-- (void) clearCategoryNameMaxWidth
-{
-    categoryNameMaxWidth = NULL;
-}
-
-// Flush the category list to the database
-- (void) flushCategories:(NSArray*)categories
-{
-    unsigned index = 0;
-    for( ManagedCategory* category in categories )
-	category.sequenceNumber = [NSNumber numberWithInt:index++];
-    categoryNameMaxWidth = nil;
-}
-
 - (void) removeCategory:(ManagedCategory*)category
 {
     [self.managedObjectContext deleteObject:category];
-    [self clearCategoryNameMaxWidth];
-}
-
-- (void) updateCategory:(ManagedCategory*)category
-{
-    [self save];
-    [self clearCategoryNameMaxWidth];
 }
 
 - (void) restoreBundledCategories
@@ -558,7 +535,10 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 - (void) save
 {
     if( _managedObjectContext )
+    {
+	categoryNameMaxWidth = nil;
 	[LogModel saveManagedObjectContext:_managedObjectContext];
+    }
 }
 
 - (void) undo

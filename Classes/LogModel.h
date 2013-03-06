@@ -63,8 +63,6 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 
 #pragma mark Categories
 - (ManagedCategory*) addCategoryWithName:(NSString*)name;
-- (void) flushCategories:(NSArray*)categories;
-- (void) updateCategory:(ManagedCategory*)category;
 - (void) removeCategory:(ManagedCategory*)category;
 - (void) restoreBundledCategories;
 
