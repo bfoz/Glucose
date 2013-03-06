@@ -202,7 +202,7 @@
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return MAX(1, fetchedResultsController.sections.count);
+    return fetchedResultsController.sections.count;
 }
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -217,8 +217,6 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     NSArray* sections = [fetchedResultsController sections];
-    if( 0 == sections.count )
-	return @"Today";
 
     id<NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
     ManagedLogEntry* logEntry = [[sectionInfo objects] lastObject];

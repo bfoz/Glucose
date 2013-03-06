@@ -93,13 +93,8 @@ describe(@"LogViewController", ^{
 	    logModel.numberOfLogDays should equal(0);
 	});
 
-	it(@"should have a single empty Today section", ^{
-	    controller.tableView.numberOfSections should equal(1);
-	    [controller.tableView numberOfRowsInSection:0] should equal(0);
-	});
-
-	it(@"should have a proper section title", ^{
-	    [controller tableView:nil titleForHeaderInSection:0] should equal(@"Today");
+	it(@"should have no sections", ^{
+	    controller.tableView.numberOfSections should equal(0);
 	});
     });
 
