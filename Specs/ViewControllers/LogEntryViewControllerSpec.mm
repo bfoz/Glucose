@@ -24,6 +24,7 @@ enum Sections
 };
 
 @interface LogEntryViewController (UISpecs) <EditTextViewControllerDelegate>
+@property (nonatomic, strong) NSArray*    categories;
 @property (nonatomic, strong) UILabel*	    categoryLabel;
 @property (nonatomic, strong) DateField*    timestampField;
 @property (nonatomic, strong) UILabel*	    timestampLabel;

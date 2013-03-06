@@ -39,6 +39,8 @@ NSString* GlucoseUnitsTypeString_mmolL	= @"mmol/L";
 
 @interface LogModel ()
 
+@property (nonatomic, strong) NSArray*    categories;
+
 - (void) clearCategoryNameMaxWidth;
 - (void) clearInsulinTypeShortNameMaxWidth;
 
@@ -56,7 +58,6 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     NSManagedObjectContext*	    _managedObjectContext;
 }
 
-@synthesize categories = _categories;
 @synthesize insulinTypes = _insulinTypes;
 @synthesize insulinTypesForNewEntries = _insulinTypesForNewEntries;
 
@@ -231,7 +232,6 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 - (void) removeCategory:(ManagedCategory*)category
 {
     [self.managedObjectContext deleteObject:category];
-    [self.categories removeObject:category];
     [self clearCategoryNameMaxWidth];
 }
 
@@ -503,10 +503,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
 - (NSArray*) categories
 {
-    if( !_categories )
-	_categories = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedCategories]
-											      error:nil]];
-    return _categories;
+    return [self.managedObjectContext executeFetchRequest:[LogModel fetchRequestForOrderedCategories] error:nil];
 }
 
 - (NSArray*) insulinTypes

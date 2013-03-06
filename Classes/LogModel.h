@@ -31,7 +31,6 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 }
 
 @property (nonatomic, strong, readonly) NSNumberFormatter*	averageGlucoseFormatter;
-@property (nonatomic, strong, readonly)	NSMutableArray*	categories;
 @property (nonatomic, strong, readonly)	NSMutableArray*	insulinTypes;
 @property (nonatomic, strong, readonly)	NSMutableOrderedSet*	insulinTypesForNewEntries;
 
