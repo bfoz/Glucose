@@ -70,6 +70,7 @@
 	    NSArray* storedInsulinTypesForNewEntries = [LogModel settingsNewEntryInsulinTypes];
 	    if( !storedInsulinTypesForNewEntries.count )
 	    {
+		[LogModel saveManagedObjectContext:importContext];
 		ManagedInsulinType* aspart = [self insertOrIgnoreManagedInsulinTypeShortName:@"Aspart" intoContext:importContext];
 		ManagedInsulinType* nph = [self insertOrIgnoreManagedInsulinTypeShortName:@"NPH" intoContext:importContext];
 		[LogModel flushInsulinTypesForNewEntries:[NSOrderedSet orderedSetWithArray:@[aspart, nph]]];

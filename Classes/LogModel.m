@@ -471,7 +471,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 	{
 	    NSManagedObjectID* managedObjectID = [self.managedObjectContext.persistentStoreCoordinator managedObjectIDForURIRepresentation:[NSURL URLWithString:insulinTypeURIString]];
 	    if( managedObjectID )
-		[_insulinTypesForNewEntries addObject:[self.managedObjectContext objectWithID:managedObjectID]];
+		[_insulinTypesForNewEntries addObject:[self.managedObjectContext existingObjectWithID:managedObjectID error:nil]];
 	}
     }
 
