@@ -444,7 +444,7 @@ static NSUserDefaults* defaults = nil;
 		    else
 			glucoseCell = [NumberFieldCell cellForNumber:nil
 							   precision:[model glucosePrecisionForNewEntries]
-							 unitsString:[LogModel glucoseUnitsSettingString]
+							 unitsString:[NSString stringWithFormat:@" %@", [LogModel glucoseUnitsSettingString]]
 						  inputAccessoryView:self.inputToolbar
 							    delegate:self
 							   tableView:tv];

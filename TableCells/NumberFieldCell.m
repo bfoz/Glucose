@@ -17,7 +17,7 @@
 {
     return [self cellForNumber:logEntry.glucose
 		     precision:logEntry.glucosePrecision
-		   unitsString:logEntry.glucoseUnitsString
+		   unitsString:[NSString stringWithFormat:@" %@", logEntry.glucoseUnitsString]
 	    inputAccessoryView:accessoryView
 		      delegate:delegate
 		     tableView:tableView];
