@@ -24,7 +24,6 @@ enum Sections
 };
 
 @interface LogEntryViewController (UISpecs) <EditTextViewControllerDelegate>
-@property (nonatomic, strong) NSArray*    categories;
 @property (nonatomic, strong) UILabel*	    categoryLabel;
 @property (nonatomic, strong) DateField*    timestampField;
 @property (nonatomic, strong) UILabel*	    timestampLabel;
@@ -696,7 +695,7 @@ describe(@"LogEntryViewController", ^{
 		__block ManagedCategory* category;
 
 		beforeEach(^{
-		    category = [[logModel categories] lastObject];
+		    category = logModel.categories.lastObject;
 		    category should_not be_nil;
 		    [controller categoryViewControllerDidSelectCategory:category];
 		    [controller viewDidAppear:NO];

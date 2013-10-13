@@ -34,6 +34,7 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 @property (nonatomic, strong, readonly)	NSMutableArray*	insulinTypes;
 @property (nonatomic, strong, readonly)	NSMutableOrderedSet*	insulinTypesForNewEntries;
 
+@property (nonatomic, strong, readonly) NSArray*    categories;
 @property (nonatomic, readonly)	unsigned    categoryNameMaxWidth;
 @property (nonatomic, readonly)	unsigned    insulinTypeShortNameMaxWidth;
 
