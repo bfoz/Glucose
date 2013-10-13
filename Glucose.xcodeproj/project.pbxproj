@@ -69,8 +69,6 @@
 		158F40B5162A3EFC0000DD52 /* PurgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A7162A3EFC0000DD52 /* PurgeViewController.m */; };
 		158F40B6162A3EFC0000DD52 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A9162A3EFC0000DD52 /* SettingsViewController.m */; };
 		158F40B7162A3EFC0000DD52 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A9162A3EFC0000DD52 /* SettingsViewController.m */; };
-		158F40B8162A3EFC0000DD52 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40AB162A3EFC0000DD52 /* SlidingViewController.m */; };
-		158F40B9162A3EFC0000DD52 /* SlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40AB162A3EFC0000DD52 /* SlidingViewController.m */; };
 		158F40BB162A4B690000DD52 /* DropboxExportViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 158F40BA162A4B690000DD52 /* DropboxExportViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		158F40F1162A4D450000DD52 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 150829F10E500DCA00FB556A /* CoreGraphics.framework */; };
 		158F40F2162A4D750000DD52 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1517983E1250156100E28662 /* MessageUI.framework */; };
@@ -293,8 +291,6 @@
 		158F40A7162A3EFC0000DD52 /* PurgeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PurgeViewController.m; sourceTree = "<group>"; };
 		158F40A8162A3EFC0000DD52 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		158F40A9162A3EFC0000DD52 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
-		158F40AA162A3EFC0000DD52 /* SlidingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlidingViewController.h; sourceTree = "<group>"; };
-		158F40AB162A3EFC0000DD52 /* SlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlidingViewController.m; sourceTree = "<group>"; };
 		158F40BA162A4B690000DD52 /* DropboxExportViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DropboxExportViewControllerSpec.mm; sourceTree = "<group>"; };
 		158F41DB162B730C0000DD52 /* SpecsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecsHelper.h; sourceTree = "<group>"; };
 		158F41DC162B73760000DD52 /* UIControl+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+SpecHelper.h"; sourceTree = "<group>"; };
@@ -476,8 +472,6 @@
 				158F40A7162A3EFC0000DD52 /* PurgeViewController.m */,
 				158F40A8162A3EFC0000DD52 /* SettingsViewController.h */,
 				158F40A9162A3EFC0000DD52 /* SettingsViewController.m */,
-				158F40AA162A3EFC0000DD52 /* SlidingViewController.h */,
-				158F40AB162A3EFC0000DD52 /* SlidingViewController.m */,
 				1524475C16ACF6D900422F3E /* SplashViewController.h */,
 				1524475D16ACF6D900422F3E /* SplashViewController.m */,
 			);
@@ -995,7 +989,6 @@
 				158F40B3162A3EFC0000DD52 /* LogViewController.m in Sources */,
 				158F40B5162A3EFC0000DD52 /* PurgeViewController.m in Sources */,
 				158F40B7162A3EFC0000DD52 /* SettingsViewController.m in Sources */,
-				158F40B9162A3EFC0000DD52 /* SlidingViewController.m in Sources */,
 				158F40BB162A4B690000DD52 /* DropboxExportViewControllerSpec.mm in Sources */,
 				158F41DE162B73760000DD52 /* UIControl+SpecHelper.m in Sources */,
 				15C2E7C6162D29D4002115FD /* DateField.m in Sources */,
@@ -1062,7 +1055,6 @@
 				158F40B2162A3EFC0000DD52 /* LogViewController.m in Sources */,
 				158F40B4162A3EFC0000DD52 /* PurgeViewController.m in Sources */,
 				158F40B6162A3EFC0000DD52 /* SettingsViewController.m in Sources */,
-				158F40B8162A3EFC0000DD52 /* SlidingViewController.m in Sources */,
 				15C2E7C5162D29D4002115FD /* DateField.m in Sources */,
 				15E59E601698CD410067BDC1 /* LogModel+SQLite.m in Sources */,
 				15E59FE91699195E0067BDC1 /* Glucose.xcdatamodeld in Sources */,
