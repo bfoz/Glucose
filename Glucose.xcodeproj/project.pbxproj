@@ -22,6 +22,7 @@
 		1524475B16ACD59700422F3E /* ManagedLogDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 1524475916ACD59700422F3E /* ManagedLogDay.m */; };
 		1524475E16ACF6D900422F3E /* SplashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1524475D16ACF6D900422F3E /* SplashViewController.m */; };
 		1524475F16ACF6D900422F3E /* SplashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1524475D16ACF6D900422F3E /* SplashViewController.m */; };
+		15271CAC180B6A2B000273AD /* Icon120.png in Resources */ = {isa = PBXBuildFile; fileRef = 1504E020180B60D5001AE1AA /* Icon120.png */; };
 		152DCCC216A28A0300EA9371 /* LogModel+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 152DCCC116A28A0300EA9371 /* LogModel+SpecHelper.m */; };
 		153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 153F26A00E7F70C000F75D9F /* Security.framework */; };
 		1545EB5716C73370001C0EDE /* SplashViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1545EB5616C73370001C0EDE /* SplashViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -216,6 +217,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1504E020180B60D5001AE1AA /* Icon120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon120.png; path = Resources/Icon120.png; sourceTree = "<group>"; };
 		15051FFE0E6E47CC00E0BAE4 /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		150829AB0E5008B100FB556A /* TextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextFieldCell.h; path = TableCells/TextFieldCell.h; sourceTree = "<group>"; };
 		150829AC0E5008B100FB556A /* TextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextFieldCell.m; path = TableCells/TextFieldCell.m; sourceTree = "<group>"; };
@@ -708,10 +710,11 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				15E59FE71699195E0067BDC1 /* Glucose.xcdatamodeld */,
 				15051FFE0E6E47CC00E0BAE4 /* Entitlements.plist */,
 				1585DEC00E6A217200FB9C39 /* glucose.sqlite */,
+				15E59FE71699195E0067BDC1 /* Glucose.xcdatamodeld */,
 				1576A8B50E6667F7004EBBC0 /* Icon.png */,
+				1504E020180B60D5001AE1AA /* Icon120.png */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 			);
 			name = Resources;
@@ -914,6 +917,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15271CAC180B6A2B000273AD /* Icon120.png in Resources */,
 				1576A8B60E6667F7004EBBC0 /* Icon.png in Resources */,
 				1585DEC10E6A217200FB9C39 /* glucose.sqlite in Resources */,
 				15C30BB8161D476500976444 /* Default-568h@2x.png in Resources */,
