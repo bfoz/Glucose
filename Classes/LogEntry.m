@@ -423,7 +423,7 @@ _var = _val;
 	}
 
 	if( glucoseUnits && (0 != glucoseUnits.length) )
-	    self.glucosePrecision = (self.glucoseUnits == kGlucoseUnits_mgdL) ? 0 : 1;
+	    self.glucosePrecision = [self.glucoseUnits isEqual:kGlucoseUnits_mgdL] ? 0 : 1;
 
 	// Empty the array if there are no valid doses
 	unsigned count = 0;
@@ -482,7 +482,7 @@ _var = _val;
 	if( glucose && ![glucose isEqualToNumber:[NSNumber numberWithInt:0]] )
 		sqlite3_bind_double(flush_statement, 2, [glucose doubleValue]);
 
-	const unsigned a = (glucoseUnits == kGlucoseUnits_mgdL) ? 0 : 1;
+	const unsigned a = [glucoseUnits isEqual:kGlucoseUnits_mgdL] ? 0 : 1;
 	sqlite3_bind_int(flush_statement, 3, a);	// glucoseUnits
 
 	if( self.category )
@@ -551,7 +551,7 @@ _var = _val;
     {
 	if( glucoseUnits )
 	{
-	    const unsigned precision = (glucoseUnits == kGlucoseUnits_mgdL) ? 0 : 1;
+	    const unsigned precision = [glucoseUnits isEqual:kGlucoseUnits_mgdL] ? 0 : 1;
 	    glucoseString = [NSString localizedStringWithFormat:@"%.*f%@", precision, [glucose floatValue], glucoseUnits];
 	}
 	else
