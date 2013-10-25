@@ -281,18 +281,11 @@ enum AboutSectionRows
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
     if( kSectionAbout == section )
-	return @"Copyright 2008-2013 Brandon Fosdick";
-    return nil;
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    if( kSectionAbout == section )
     {
 	NSBundle *const mainBundle = [NSBundle mainBundle];
-	NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
-	NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
-	return [NSString stringWithFormat:@"%@ v%@", n, v];
+	NSString* version = [mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+	NSString* name = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
+	return [NSString stringWithFormat:@"%@ v%@\nCopyright 2008-2013 Brandon Fosdick", name, version];
     }
     return nil;
 }
