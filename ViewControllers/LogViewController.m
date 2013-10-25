@@ -147,6 +147,15 @@
     [self inspectLogEntry:nil];
 }
 
+- (UIColor*) colorForGlucose:(CGFloat)glucose
+{
+    if( glucose > [_model highGlucoseWarningThreshold] )
+	return [UIColor blueColor];
+    else if( glucose < [_model lowGlucoseWarningThreshold] )
+	return [UIColor redColor];
+    return [UIColor darkTextColor];
+}
+
 #pragma mark NSFetchedResultsControllerDelegate
 
 - (void) controllerWillChangeContent:(NSFetchedResultsController *)controller
@@ -229,6 +238,31 @@
     return dateString;
 }
 
+- (void) tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
+{
+    if( [view isKindOfClass:[UITableViewHeaderFooterView class]] )
+    {
+	NSArray* sections = [fetchedResultsController sections];
+
+	id<NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
+	ManagedLogEntry* logEntry = [[sectionInfo objects] lastObject];
+	ManagedLogDay* logDay = logEntry.logDay;
+	NSString* dateString = [shortDateFormatter stringFromDate:logDay.date];
+
+	// Don't display the average if it's zero
+	if( logDay.averageGlucose && ![logDay.averageGlucose isEqualToNumber:@0] )
+	{
+	    NSString* averageString = [_model.averageGlucoseFormatter stringFromNumber:logDay.averageGlucose];
+	    NSString* string = [NSString stringWithFormat:@"%@ (%@)", dateString, averageString];
+	    NSMutableAttributedString* text = [[NSMutableAttributedString alloc] initWithString:string];
+	    [text addAttribute:NSForegroundColorAttributeName value:[self colorForGlucose:logDay.averageGlucose.floatValue] range:NSMakeRange(dateString.length+2, averageString.length)];
+	    ((UITableViewHeaderFooterView*)view).textLabel.attributedText = text;
+	}
+	else
+	    ((UITableViewHeaderFooterView*)view).textLabel.text = dateString;
+    }
+}
+
 - (void) configureCell:(LogEntryCell*)cell forLogEntry:(ManagedLogEntry*)logEntry
 {
     // Configure the cell
@@ -240,12 +274,7 @@
     // Color the glucose values accordingly
     const float glucose = [logEntry.glucose floatValue];
 
-    if( glucose > [_model highGlucoseWarningThreshold] )
-	cell.labelGlucose.textColor = [UIColor blueColor];
-    else if( glucose < [_model lowGlucoseWarningThreshold] )
-	cell.labelGlucose.textColor = [UIColor redColor];
-    else
-	cell.labelGlucose.textColor = [UIColor darkTextColor];
+    cell.labelGlucose.textColor = [self colorForGlucose:glucose];
 
     if( logEntry.insulinDoses.count )
     {
