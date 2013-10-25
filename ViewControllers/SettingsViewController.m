@@ -281,7 +281,7 @@ enum AboutSectionRows
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
     if( kSectionAbout == section )
-	return @"Copyright 2008-2011 Brandon Fosdick";
+	return @"Copyright 2008-2013 Brandon Fosdick";
     return nil;
 }
 
