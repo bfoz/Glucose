@@ -375,7 +375,7 @@ enum AboutSectionRows
 			mail.mailComposeDelegate = self;
 
 			NSBundle *const mainBundle = [NSBundle mainBundle];
-			NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"];
+			NSString *const v = [mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
 			NSString *const n = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
 			UIDevice *const device = [UIDevice currentDevice];
 			[mail setSubject:[NSString stringWithFormat:@"%@ v%@ on %@ %@", n, v, device.model, device.systemVersion]];
