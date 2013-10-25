@@ -97,7 +97,6 @@
 		15C30BBB161D48C600976444 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BBA161D48C600976444 /* Default.png */; };
 		15C30BBD161D494700976444 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15C30BBC161D494700976444 /* Icon@2x.png */; };
 		15C6D50A16327F7000D6838D /* UIView+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C6D50916327F7000D6838D /* UIView+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		15C6D5C516337D5300D6838D /* libFlurry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15C6D5C416337D5300D6838D /* libFlurry.a */; };
 		15C6D5C716337EE100D6838D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15C6D5C616337EE000D6838D /* SystemConfiguration.framework */; };
 		15C8F66F1630E0DE00CA92D4 /* UIViewController+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15DE033116DDD14900632530 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DE033016DDD14900632530 /* ManagedInsulinDose.m */; };
@@ -115,6 +114,7 @@
 		15E5A009169A6A730067BDC1 /* CategoryViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15E5A008169A6A730067BDC1 /* CategoryViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15E5A00C169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E5A00B169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15E627DD16D359CA00D8DAA3 /* DoseFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829BA0E5009B400FB556A /* DoseFieldCell.m */; };
+		15EAB028181A35030002270A /* libFlurry_4.3.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15EAB027181A35030002270A /* libFlurry_4.3.0.a */; };
 		15EC68CD13B1B74900016937 /* LogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EC68CC13B1B74900016937 /* LogModel.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -332,7 +332,6 @@
 		15C6D50816327F7000D6838D /* UIView+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SpecHelper.h"; sourceTree = "<group>"; };
 		15C6D50916327F7000D6838D /* UIView+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SpecHelper.m"; sourceTree = "<group>"; };
 		15C6D5C316337D5300D6838D /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
-		15C6D5C416337D5300D6838D /* libFlurry.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry.a; sourceTree = "<group>"; };
 		15C6D5C616337EE000D6838D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		15C8F66C1630E00900CA92D4 /* UIViewController+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SpecHelper.h"; sourceTree = "<group>"; };
 		15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SpecHelper.m"; sourceTree = "<group>"; };
@@ -350,6 +349,7 @@
 		15E5A008169A6A730067BDC1 /* CategoryViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CategoryViewControllerSpec.mm; sourceTree = "<group>"; };
 		15E5A00A169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+SpecHelper.h"; sourceTree = "<group>"; };
 		15E5A00B169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+SpecHelper.m"; sourceTree = "<group>"; };
+		15EAB027181A35030002270A /* libFlurry_4.3.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_4.3.0.a; sourceTree = "<group>"; };
 		15EC68CB13B1B74900016937 /* LogModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogModel.h; sourceTree = "<group>"; };
 		15EC68CC13B1B74900016937 /* LogModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogModel.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -394,7 +394,7 @@
 				15A321940ED28A7E00C16388 /* AddressBookUI.framework in Frameworks */,
 				1517983F1250156100E28662 /* MessageUI.framework in Frameworks */,
 				158F4094162A11AA0000DD52 /* DropboxSDK.framework in Frameworks */,
-				15C6D5C516337D5300D6838D /* libFlurry.a in Frameworks */,
+				15EAB028181A35030002270A /* libFlurry_4.3.0.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -620,7 +620,7 @@
 			isa = PBXGroup;
 			children = (
 				15C6D5C316337D5300D6838D /* Flurry.h */,
-				15C6D5C416337D5300D6838D /* libFlurry.a */,
+				15EAB027181A35030002270A /* libFlurry_4.3.0.a */,
 			);
 			name = Flurry;
 			path = Frameworks/Flurry;
@@ -1126,7 +1126,7 @@
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Frameworks\"",
+					"$(SRCROOT)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Glucose_Prefix.pch;
@@ -1137,7 +1137,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Frameworks/Flurry\"",
+					"$(SRCROOT)/Frameworks/Flurry",
 				);
 				PRODUCT_NAME = Glucose;
 				PROVISIONING_PROFILE = "";
@@ -1276,7 +1276,7 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Frameworks\"",
+					"$(SRCROOT)/Frameworks",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1289,7 +1289,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Frameworks/Flurry\"",
+					"$(SRCROOT)/Frameworks/Flurry",
 				);
 				PRODUCT_NAME = Glucose;
 				PROVISIONING_PROFILE = "";
@@ -1306,7 +1306,7 @@
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Frameworks\"",
+					"$(SRCROOT)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Glucose_Prefix.pch;
@@ -1318,7 +1318,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Frameworks/Flurry\"",
+					"$(SRCROOT)/Frameworks/Flurry",
 				);
 				PRODUCT_NAME = Glucose;
 				PROVISIONING_PROFILE = "";
