@@ -80,6 +80,29 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addNewEntry:)];
 }
 
+- (void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+
+    // Update the LogEntryCell class width trackers
+    [LogEntryCell setInsulinTypeShortNameWidth:_model.insulinTypeShortNameMaxWidth];
+    [LogEntryCell setCategoryNameWidth:_model.categoryNameMaxWidth];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+					     selector:@selector(willEnterForegroundNotification:)
+						 name:UIApplicationWillEnterForegroundNotification
+					       object:nil];
+}
+
+- (void) viewWillDisappear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+#pragma mark -
+
 - (void) inspectLogEntry:(ManagedLogEntry*)entry
 {
     LogEntryViewController* logEntryViewController;
@@ -116,17 +139,6 @@
 						   forView:self.navigationController.view cache:YES];
     [self.navigationController pushViewController:settingsViewController animated:NO];	
 	[UIView commitAnimations];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-
-    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
-
-    // Update the LogEntryCell class width trackers
-    [LogEntryCell setInsulinTypeShortNameWidth:_model.insulinTypeShortNameMaxWidth];
-    [LogEntryCell setCategoryNameWidth:_model.categoryNameMaxWidth];
 }
 
 // Invoked when the user touches Edit.
@@ -349,6 +361,13 @@
 			     cache:YES];
     [self.navigationController popViewControllerAnimated:NO];
     [UIView commitAnimations];
+}
+
+#pragma mark NSNotification Observeration
+
+- (void) willEnterForegroundNotification:(NSNotification *)notification
+{
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 @end
