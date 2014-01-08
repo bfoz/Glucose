@@ -554,7 +554,7 @@ static NSUserDefaults* defaults = nil;
 		CategoryViewController* categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain logModel:model];
 		categoryViewController.delegate = self;
 		categoryViewController.selectedCategory = selectedCategory;
-		[self presentModalViewController:categoryViewController animated:YES];
+		[self presentViewController:categoryViewController animated:YES completion:nil];
 		break;
 	    }
 	    case 2: // Go into edit mode if the user taps anywhere on the row
@@ -569,7 +569,7 @@ static NSUserDefaults* defaults = nil;
 	selectedIndexPath = path;
 	DoseFieldCell* cell = (DoseFieldCell*)[self.tableView cellForRowAtIndexPath:path];
 	[insulinTypeViewController setSelectedInsulinType:cell.insulinType];
-	[self presentModalViewController:insulinTypeViewController animated:YES];
+	[self presentViewController:insulinTypeViewController animated:YES completion:nil];
     }
     else if( (kSectionNote == section) && self.editing )
     {
@@ -647,7 +647,7 @@ static NSUserDefaults* defaults = nil;
 
 - (void) categoryViewControllerDidSelectCategory:(ManagedCategory *)category
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
     selectedCategory = category;
     [self updateCategoryLabel];
 
@@ -690,7 +690,7 @@ static NSUserDefaults* defaults = nil;
 
 - (BOOL) insulinTypeViewControllerDidSelectInsulinType:(ManagedInsulinType*)insulinType
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 
     if( selectedIndexPath )
     {

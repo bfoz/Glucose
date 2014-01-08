@@ -385,7 +385,7 @@ enum AboutSectionRows
 			[mail setToRecipients:toRecipients];
 
 			// Present the mail composition interface.
-			[self presentModalViewController:mail animated:YES];
+			[self presentViewController:mail animated:YES completion:nil];
 		    }
 		    else
 		    {
@@ -496,7 +496,7 @@ enum AboutSectionRows
 	   didFinishWithResult:(MFMailComposeResult) result
 			 error:(NSError*) error
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

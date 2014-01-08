@@ -129,7 +129,7 @@
 		pvc.displayedProperties = [NSArray arrayWithObject:[NSNumber numberWithInt:kABPersonEmailProperty]];
 		pvc.personViewDelegate = self;
 		[pvc setHighlightedItemForProperty:kABPersonEmailProperty withIdentifier:selectedContact.emailID];
-		[self presentModalViewController:pvc animated:YES];
+		[self presentViewController:pvc animated:YES completion:nil];
 	}
 }
 
@@ -181,12 +181,12 @@
 	ABPeoplePickerNavigationController* picker = [[ABPeoplePickerNavigationController alloc] init];
 	picker.peoplePickerDelegate = self;
 	picker.displayedProperties = [NSArray arrayWithObject:[NSNumber numberWithInt:kABPersonEmailProperty]];
-	[self presentModalViewController:picker animated:YES];
+	[self presentViewController:picker animated:YES completion:nil];
 }
 
 - (void) peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController*)picker
 {
-	[self dismissModalViewControllerAnimated:YES];
+	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (BOOL) peoplePickerNavigationController:(ABPeoplePickerNavigationController*)picker shouldContinueAfterSelectingPerson:(ABRecordRef)person
@@ -198,7 +198,7 @@
 		// Save the record id and property id
 		[self addPerson:person identifier:ABMultiValueGetIdentifierAtIndex(email, 0)];
 	CFRelease(email);
-		[self dismissModalViewControllerAnimated:YES];
+		[self dismissViewControllerAnimated:YES completion:nil];
 		return NO;
 	}
     CFRelease(email);
@@ -208,7 +208,7 @@
 - (BOOL) peoplePickerNavigationController:(ABPeoplePickerNavigationController*)picker shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
 {
 	[self addPerson:person identifier:identifier];
-	[self dismissModalViewControllerAnimated:YES];
+	[self dismissViewControllerAnimated:YES completion:nil];
 	return NO;
 }
 
@@ -218,7 +218,7 @@
 - (BOOL) personViewController:(ABPersonViewController*)pvc shouldPerformDefaultActionForPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
 {
 	selectedContact.emailID = identifier;
-	[self dismissModalViewControllerAnimated:YES];
+	[self dismissViewControllerAnimated:YES completion:nil];
 	return NO;
 }
 
