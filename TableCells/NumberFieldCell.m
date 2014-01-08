@@ -72,14 +72,14 @@
 	CGRect fieldFrame = CGRectMake(insetFrame.origin.x, insetFrame.origin.y, x, insetFrame.size.height);
 	CGRect unitsFrame = CGRectMake(insetFrame.origin.x+x, insetFrame.origin.y, x, insetFrame.size.height);
 	field.frame = fieldFrame;
-	field.textAlignment = UITextAlignmentRight;
+	field.textAlignment = NSTextAlignmentRight;
 	label.frame = unitsFrame;
 	label.hidden = NO;
     }
     else
     {
 	field.frame  = insetFrame;
-	field.textAlignment = UITextAlignmentCenter;
+	field.textAlignment = NSTextAlignmentCenter;
 	label.hidden = YES; // Hide the label in case it had been shown by a previous layout
     }
 }

@@ -186,7 +186,7 @@ enum Sections
 	    break;
 	case kSectionPurgeButton:
 	    cell.textLabel.text = [self textForPurgeButton];
-	    cell.textLabel.textAlignment = UITextAlignmentCenter;
+	    cell.textLabel.textAlignment = NSTextAlignmentCenter;
 	    cell.textLabel.textColor = numberOfRecordsToPurge ? [UIColor darkTextColor] : [UIColor grayColor];
 	    break;
     }

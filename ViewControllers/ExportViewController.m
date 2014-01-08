@@ -98,7 +98,7 @@ enum Sections
 		if( session.userIds.count == row )
 		{
 		    cell.textLabel.text = @"Link another Dropbox account";
-		    cell.textLabel.textAlignment = UITextAlignmentCenter;
+		    cell.textLabel.textAlignment = NSTextAlignmentCenter;
 		    cell.textLabel.textColor = [UIColor blueColor];
 		    cell.textLabel.font = [UIFont italicSystemFontOfSize:[UIFont systemFontSize]];
 		}
@@ -117,7 +117,7 @@ enum Sections
 	    else
 	    {
 		cell.textLabel.text = @"Link your Dropbox account";
-		cell.textLabel.textAlignment = UITextAlignmentCenter;
+		cell.textLabel.textAlignment = NSTextAlignmentCenter;
 	    }
 	    break;
 	}

@@ -308,7 +308,7 @@
 	    break;
 	case kRestoreDefaultsSectionNumber:
 	    cell.textLabel.text = @"Restore Default Types";
-	    cell.textLabel.textAlignment = UITextAlignmentCenter;
+	    cell.textLabel.textAlignment = NSTextAlignmentCenter;
 	    break;
     }
 

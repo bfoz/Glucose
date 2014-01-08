@@ -191,7 +191,7 @@ enum AboutSectionRows
     // Default all rows to bold, black and label-sized
     cell.textLabel.textColor = [UIColor darkTextColor];
     cell.textLabel.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
-    cell.textLabel.textAlignment = UITextAlignmentLeft;
+    cell.textLabel.textAlignment = NSTextAlignmentLeft;
 
     const unsigned section = indexPath.section;
     const unsigned row = indexPath.row;
@@ -229,7 +229,7 @@ enum AboutSectionRows
 		f = [[NumberField alloc] initWithDelegate:self];
 		f.frame = CGRectMake(0, kCellTopOffset*2, 50, 20);
 		f.precision = (kGlucoseUnits_mgdL == [LogModel glucoseUnitsSetting]) ? 0 : 1;
-		f.textAlignment = UITextAlignmentRight;
+		f.textAlignment = NSTextAlignmentRight;
 		cell.accessoryView = f;
 	    }
 	    switch( row )

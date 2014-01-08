@@ -33,37 +33,37 @@ unsigned insulinTypeShortNameWidth = 0;
 	{
 		labelCategory = [[UILabel alloc] initWithFrame:CGRectZero];
 		[self.contentView addSubview:labelCategory];
-		labelCategory.textAlignment = UITextAlignmentLeft;
+		labelCategory.textAlignment = NSTextAlignmentLeft;
 		labelCategory.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
 
 		labelDose0 = [[UILabel alloc] initWithFrame:CGRectZero];
 		[self.contentView addSubview:labelDose0];
-		labelDose0.textAlignment = UITextAlignmentRight;
+		labelDose0.textAlignment = NSTextAlignmentRight;
 		labelDose0.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
 		
 		labelDose1 = [[UILabel alloc] initWithFrame:CGRectZero];
 		[self.contentView addSubview:labelDose1];
-		labelDose1.textAlignment = UITextAlignmentRight;
+		labelDose1.textAlignment = NSTextAlignmentRight;
 		labelDose1.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
 		
 		labelGlucose = [[UILabel alloc] initWithFrame:CGRectZero];
 		[self.contentView addSubview:labelGlucose];
-		labelGlucose.textAlignment = UITextAlignmentCenter;
+		labelGlucose.textAlignment = NSTextAlignmentCenter;
 		labelGlucose.font = [UIFont boldSystemFontOfSize:[UIFont buttonFontSize]];
 
 		labelTimestamp = [[UILabel alloc] initWithFrame:CGRectZero];
 		[self.contentView addSubview:labelTimestamp];
-		labelTimestamp.textAlignment = UITextAlignmentLeft;
+		labelTimestamp.textAlignment = NSTextAlignmentLeft;
 		labelTimestamp.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
 
 		labelType0 = [[UILabel alloc] initWithFrame:CGRectZero];
 		[self.contentView addSubview:labelType0];
-		labelType0.textAlignment = UITextAlignmentLeft;
+		labelType0.textAlignment = NSTextAlignmentLeft;
 		labelType0.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
 
 		labelType1 = [[UILabel alloc] initWithFrame:CGRectZero];
 		[self.contentView addSubview:labelType1];
-		labelType1.textAlignment = UITextAlignmentLeft;
+		labelType1.textAlignment = NSTextAlignmentLeft;
 		labelType1.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
 	}
 	return self;
@@ -180,7 +180,7 @@ unsigned insulinTypeShortNameWidth = 0;
 	{
 		labelNote = [[UILabel alloc] initWithFrame:CGRectZero];
 		[self.contentView addSubview:labelNote];
-		labelNote.textAlignment = UITextAlignmentLeft;
+		labelNote.textAlignment = NSTextAlignmentLeft;
 		[self setNeedsLayout];
 	}
 	if( labelNote )

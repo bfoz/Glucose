@@ -180,14 +180,14 @@ enum Sections
 	    break;
 	case kSectionExport:
 	    cell.textLabel.text = [self textForExportButton];
-	    cell.textLabel.textAlignment = UITextAlignmentCenter;
+	    cell.textLabel.textAlignment = NSTextAlignmentCenter;
 	    cell.textLabel.textColor = numberOfRecordsToExport ? [UIColor darkTextColor] : [UIColor grayColor];
 	    break;
 
 	case kSectionUnlink:
 	    cell.backgroundColor = [UIColor redColor];
 	    cell.textLabel.text = @"Unlink this account";
-	    cell.textLabel.textAlignment = UITextAlignmentCenter;
+	    cell.textLabel.textAlignment = NSTextAlignmentCenter;
 	    cell.textLabel.textColor = [UIColor whiteColor];
 	    break;
     }

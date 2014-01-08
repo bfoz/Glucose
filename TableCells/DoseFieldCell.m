@@ -50,7 +50,7 @@
 
 	_doseField = [[NumberField alloc] initWithDelegate:self];
 	_doseField.backgroundColor = [UIColor clearColor];
-	_doseField.textAlignment = UITextAlignmentRight;
+	_doseField.textAlignment = NSTextAlignmentRight;
 	_doseField.textColor = [UIColor blueColor];
 	_doseField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
 	_doseField.font = [UIFont systemFontOfSize:[UIFont labelFontSize]];
@@ -64,7 +64,7 @@
 	self.textLabel.backgroundColor = [UIColor clearColor];
 	self.textLabel.text = @"New Insulin Dose";
 	self.textLabel.textColor = [UIColor lightGrayColor];
-	self.textLabel.textAlignment = UITextAlignmentCenter;
+	self.textLabel.textAlignment = NSTextAlignmentCenter;
 
 	[self.contentView addSubview:_doseField];
 	[self.contentView addSubview:_typeField];

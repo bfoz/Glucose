@@ -225,14 +225,14 @@ static NSUserDefaults* defaults = nil;
 	noteCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	noteCell.textLabel.numberOfLines = noteText ? 0 : 1;
 	noteCell.textLabel.text = noteText ? noteText : @"Add a Note";
-	noteCell.textLabel.textAlignment = noteText ? UITextAlignmentLeft : UITextAlignmentCenter;
+	noteCell.textLabel.textAlignment = noteText ? NSTextAlignmentLeft : NSTextAlignmentCenter;
     }
     else
     {
 	noteCell.accessoryType = UITableViewCellAccessoryNone;
 	noteCell.textLabel.numberOfLines = 0;
 	noteCell.textLabel.text = noteText;
-	noteCell.textLabel.textAlignment = UITextAlignmentLeft;
+	noteCell.textLabel.textAlignment = NSTextAlignmentLeft;
     }
 }
 
@@ -380,7 +380,7 @@ static NSUserDefaults* defaults = nil;
 	    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
 	    cell.accessoryType = self.editing ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
 	    cell.textLabel.backgroundColor = [UIColor clearColor];
-	    cell.textLabel.textAlignment = UITextAlignmentCenter;
+	    cell.textLabel.textAlignment = NSTextAlignmentCenter;
 	    if( kRowCategory == row )
 		self.categoryLabel = cell.textLabel;
 	}
@@ -417,7 +417,7 @@ static NSUserDefaults* defaults = nil;
 	    case 0:	// Timestamp
 	    {
 		cell.textLabel.text = [dateFormatter stringFromDate:(self.logEntry ? self.logEntry.timestamp : [NSDate date])];
-		cell.textLabel.textAlignment = UITextAlignmentCenter;
+		cell.textLabel.textAlignment = NSTextAlignmentCenter;
 		_timestampField = [[DateField alloc] initWithFrame:cell.textLabel.frame];
 		_timestampField.delegate = self;
 		_timestampField.hidden = YES;
@@ -449,7 +449,7 @@ static NSUserDefaults* defaults = nil;
 		else
 		{
 		    cell.textLabel.text = [self.logEntry glucoseString];
-		    cell.textLabel.textAlignment = UITextAlignmentCenter;
+		    cell.textLabel.textAlignment = NSTextAlignmentCenter;
 
 		    // Color the glucose values accordingly
 		    const float glucose = [self.logEntry.glucose floatValue];

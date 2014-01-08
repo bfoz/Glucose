@@ -54,7 +54,7 @@
 
     self.textLabel.frame = CGRectMake(0, CGRectGetMaxY(self.activityIndicator.frame), self.view.frame.size.width, 20);
     self.textLabel.backgroundColor = [UIColor clearColor];
-    self.textLabel.textAlignment = UITextAlignmentCenter;
+    self.textLabel.textAlignment = NSTextAlignmentCenter;
     self.textLabel.textColor = [UIColor whiteColor];
 
     if( needsMigration )

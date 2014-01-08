@@ -72,7 +72,7 @@
     CFTypeRef v = ABMultiValueCopyValueAtIndex(email, i);
     cell.text = [NSString stringWithFormat:@"%@ <%@>", ABRecordCopyCompositeName(person), v];
 #else
-    cell.textLabel.textAlignment = UITextAlignmentCenter;
+    cell.textLabel.textAlignment = NSTextAlignmentCenter;
     ABAddressBookRef book = ABAddressBookCreate();
     cell.textLabel.text = (NSString*)CFBridgingRelease(ABRecordCopyCompositeName(ABAddressBookGetPersonWithRecordID(book, c.recordID)));
     CFRelease(book);
