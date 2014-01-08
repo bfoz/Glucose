@@ -37,10 +37,6 @@ enum GlucoseSectionRows
 };
 
 @interface LogEntryViewController () <CategoryViewControllerDelegate, DateFieldDelegate, DoseFieldCellDelegate, EditTextViewControllerDelegate, InsulinTypeViewControllerDelegate, NumberFieldCellDelegate>
-{
-    CategoryViewController*	categoryViewController;
-    InsulinTypeViewController*	insulinTypeViewController;
-}
 
 @property (nonatomic, strong) NSDateFormatter*	dateFormatter;
 
@@ -553,15 +549,14 @@ static NSUserDefaults* defaults = nil;
 		[_timestampField becomeFirstResponder];
 		[self.tableView deselectRowAtIndexPath:path animated:YES];
 		break;
-	    case 1: 
-		if( !categoryViewController )
-		{
-		    categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain logModel:model];
-		    categoryViewController.delegate = self;
-		}
+	    case 1:
+	    {
+		CategoryViewController* categoryViewController = [[CategoryViewController alloc] initWithStyle:UITableViewStylePlain logModel:model];
+		categoryViewController.delegate = self;
 		categoryViewController.selectedCategory = selectedCategory;
 		[self presentModalViewController:categoryViewController animated:YES];
 		break;
+	    }
 	    case 2: // Go into edit mode if the user taps anywhere on the row
 		[glucoseCell becomeFirstResponder];
 		break;
@@ -569,11 +564,8 @@ static NSUserDefaults* defaults = nil;
     }
     else if( kSectionInsulin == section )
     {
-	if( !insulinTypeViewController )
-	{
-	    insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain logModel:model];
-	    insulinTypeViewController.delegate = self;
-	}
+	InsulinTypeViewController* insulinTypeViewController = [[InsulinTypeViewController alloc] initWithStyle:UITableViewStylePlain logModel:model];
+	insulinTypeViewController.delegate = self;
 	selectedIndexPath = path;
 	DoseFieldCell* cell = (DoseFieldCell*)[self.tableView cellForRowAtIndexPath:path];
 	[insulinTypeViewController setSelectedInsulinType:cell.insulinType];
