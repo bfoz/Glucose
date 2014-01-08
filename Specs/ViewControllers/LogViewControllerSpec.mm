@@ -12,6 +12,10 @@
 using namespace Cedar::Matchers;
 using namespace Cedar::Doubles;
 
+@interface LogViewController (Specs)
+- (void) willEnterForegroundNotification:(NSNotification *)notification;
+@end
+
 SPEC_BEGIN(LogViewControllerSpec)
 
 describe(@"LogViewController", ^{
@@ -108,6 +112,11 @@ describe(@"LogViewController", ^{
 	    [logModel insertManagedLogEntryIntoManagedLogDay:logDay0].glucose = @100;
 	    [logModel insertManagedLogEntryIntoManagedLogDay:logDay0].glucose = @200;
 
+	    ManagedLogDay* yesterday = [logModel insertManagedLogDay];
+	    yesterday.date = [logDay0.date dateByAddingTimeInterval:-24*60*60];
+	    [logModel insertManagedLogEntryIntoManagedLogDay:yesterday].glucose = @100;
+	    [logModel insertManagedLogEntryIntoManagedLogDay:yesterday].glucose = @200;
+
 	    ManagedLogDay* logDay1 = [logModel insertManagedLogDay];
 	    NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	    dateFormatter.dateStyle = NSDateFormatterMediumStyle;
@@ -119,23 +128,26 @@ describe(@"LogViewController", ^{
 	    [logModel insertManagedLogEntryIntoManagedLogDay:logDay1].glucose = @300;
 
 	    [logDay0 updateStatistics];
+	    [yesterday updateStatistics];
 	    [logDay1 updateStatistics];
 
 	    [logModel save];
 	});
 
 	it(@"should have 1 section per day", ^{
-	    controller.tableView.numberOfSections should equal(2);
+	    controller.tableView.numberOfSections should equal(3);
 	});
 
 	it(@"should have a row for each entry in a section", ^{
 	    [controller.tableView numberOfRowsInSection:0] should equal(2);
-	    [controller.tableView numberOfRowsInSection:1] should equal(3);
+	    [controller.tableView numberOfRowsInSection:1] should equal(2);
+	    [controller.tableView numberOfRowsInSection:2] should equal(3);
 	});
 
 	it(@"should have proper section titles", ^{
 	    [controller tableView:nil titleForHeaderInSection:0] should equal(@"Today (150 mg/dL)");
-	    [controller tableView:nil titleForHeaderInSection:1] should equal(@"1/1/13 (200 mg/dL)");
+	    [controller tableView:nil titleForHeaderInSection:1] should equal(@"Yesterday");
+	    [controller tableView:nil titleForHeaderInSection:2] should equal(@"1/1/13 (200 mg/dL)");
 	});
 
 	describe(@"when a row is tapped", ^{
@@ -151,6 +163,38 @@ describe(@"LogViewController", ^{
 		LogEntryViewController* logEntryViewController = (LogEntryViewController*)controller.navigationController.topViewController;
 		logEntryViewController.editingNewEntry should_not be_truthy;
 	    });
+	});
+    });
+
+    describe(@"when returning to the foreground the next day", ^{
+	beforeEach(^{
+	    [LogModel setGlucoseUnitsSetting:kGlucoseUnits_mgdL];
+
+	    ManagedLogDay* today = [logModel insertManagedLogDay];
+
+	    today.date = [NSDate date];
+	    [logModel insertManagedLogEntryIntoManagedLogDay:today].glucose = @100;
+	    [logModel insertManagedLogEntryIntoManagedLogDay:today].glucose = @200;
+
+	    ManagedLogDay* yesterday = [logModel insertManagedLogDay];
+	    yesterday.date = [today.date dateByAddingTimeInterval:-24*60*60];
+	    [logModel insertManagedLogEntryIntoManagedLogDay:yesterday].glucose = @100;
+	    [logModel insertManagedLogEntryIntoManagedLogDay:yesterday].glucose = @200;
+
+	    [today updateStatistics];
+	    [yesterday updateStatistics];
+
+	    [logModel save];
+
+	    // Fake a new day by changing the logDay dates
+	    today.date = [today.date dateByAddingTimeInterval:-24*60*60];
+	    yesterday.date = [today.date dateByAddingTimeInterval:-24*60*60];
+//
+//	    [controller willEnterForegroundNotification:nil];
+	});
+
+	it(@"should update the section headers", ^{
+	    [controller tableView:nil titleForHeaderInSection:0] should equal(@"Yesterday (150 mg/dL)");
 	});
     });
 });
