@@ -73,9 +73,17 @@
     cell.text = [NSString stringWithFormat:@"%@ <%@>", ABRecordCopyCompositeName(person), v];
 #else
     cell.textLabel.textAlignment = NSTextAlignmentCenter;
-    ABAddressBookRef book = ABAddressBookCreate();
-    cell.textLabel.text = (NSString*)CFBridgingRelease(ABRecordCopyCompositeName(ABAddressBookGetPersonWithRecordID(book, c.recordID)));
-    CFRelease(book);
+
+    CFErrorRef err;
+    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &err);
+    ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
+	if( granted )
+	{
+	    dispatch_async(dispatch_get_main_queue(), ^{
+		cell.textLabel.text = (NSString*)CFBridgingRelease(ABRecordCopyCompositeName(ABAddressBookGetPersonWithRecordID(addressBook, c.recordID)));
+	    });
+	}
+    });
 #endif
 
     return cell;
@@ -106,9 +114,18 @@
 		selectedContact = [contacts objectAtIndex:row];
 		ABPersonViewController* pvc = [[ABPersonViewController alloc] init];
 		pvc.allowsEditing = NO;
-	    ABAddressBookRef ab = ABAddressBookCreate();
-		pvc.displayedPerson = ABAddressBookGetPersonWithRecordID(ab, selectedContact.recordID);
-	    CFRelease(ab);
+
+	    CFErrorRef err;
+	    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &err);
+	    ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
+		if( granted )
+		{
+		    dispatch_async(dispatch_get_main_queue(), ^{
+			pvc.displayedPerson = ABAddressBookGetPersonWithRecordID(addressBook, selectedContact.recordID);
+		    });
+		}
+	    });
+
 		pvc.displayedProperties = [NSArray arrayWithObject:[NSNumber numberWithInt:kABPersonEmailProperty]];
 		pvc.personViewDelegate = self;
 		[pvc setHighlightedItemForProperty:kABPersonEmailProperty withIdentifier:selectedContact.emailID];
