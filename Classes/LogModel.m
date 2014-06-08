@@ -405,7 +405,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
     NSArray* fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:nil];
     if( fetchedObjects.count )
-	return [fetchedObjects objectAtIndex:0];
+	return [(ManagedLogEntry*)[fetchedObjects objectAtIndex:0] timestamp];
     return nil;
 }
 
