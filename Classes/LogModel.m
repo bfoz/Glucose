@@ -163,6 +163,7 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 	NSMutableArray* columns = [NSMutableArray array];
 
 	[columns addObject:[dateFormatter stringFromDate:logEntry.timestamp]];
+	[columns addObject:logEntry.glucose ? logEntry.glucose : @""];
 	[columns addObject:logEntry.glucoseUnitsString];
 	[columns addObject:logEntry.category.name];
 
