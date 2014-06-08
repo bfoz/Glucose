@@ -1,6 +1,6 @@
 #import "AppDelegate.h"
 
-#import <DropboxSDK/DropboxSDK.h>
+#import <Dropbox/Dropbox.h>
 
 #import "Constants.h"
 #import "ExportViewController.h"
@@ -12,13 +12,8 @@ enum Sections
     NUM_SECTIONS
 };
 
-@interface ExportViewController () <DBRestClientDelegate>
-@property (nonatomic, strong) DBRestClient* dropboxClient;
-@end
-
 @implementation ExportViewController
 {
-    NSMutableDictionary*    accountInfo;
     LogModel*	logModel;
 }
 
@@ -26,7 +21,6 @@ enum Sections
 {
     if( self = [super initWithStyle:UITableViewStyleGrouped] )
     {
-	accountInfo = [[NSMutableDictionary alloc] init];
 	logModel = model;
     }
     return self;
@@ -38,19 +32,35 @@ enum Sections
 
     self.title = @"Export";
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dropboxSessionLinkedAccount:) name:kDropboxSessionLinkedAccountNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dropboxSessionUnlinkedAccount:) name:kDropboxSessionUnlinkedAccountNotification object:nil];
+    DBAccountManager* manager = DBAccountManager.sharedManager;
+    [manager addObserver:self block:^(DBAccount* account) {
+	if( account.isLinked )
+	{
+	    if( account.info )
+		[account removeObserver:self];
+	    else
+	    {
+		__weak DBAccount* weakAccount = account;
+		[account addObserver:self block:^{
+		    if( weakAccount.isLinked && weakAccount.info )
+		    {
+			[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kSectionDropBox]
+				      withRowAnimation:UITableViewRowAnimationFade];
+			[weakAccount removeObserver:self];
+		    }
+		}];
+	    }
+	}
 
-    DBSession *const session = [DBSession sharedSession];
-    if( [session isLinked] )
-	[self.dropboxClient loadAccountInfo];
+	[self.tableView reloadData];
+    }];
 
     self.tableView.scrollEnabled = NO;	// Disable scrolling
 }
 
 - (void) dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[DBAccountManager sharedManager] removeObserver:self];
 }
 
 #pragma mark <UITableViewDataSource>
@@ -67,8 +77,8 @@ enum Sections
     {
 	case kSectionDropBox:
 	{
-	    DBSession *const session = [DBSession sharedSession];
-	    return [session isLinked] ? session.userIds.count+1 : 1;
+	    NSArray* accounts = [DBAccountManager sharedManager].linkedAccounts;
+	    return accounts ? accounts.count+1 : 1;
 	}
     }
     return 0;
@@ -92,10 +102,10 @@ enum Sections
     {
 	case kSectionDropBox:
 	{
-	    DBSession* session = [DBSession sharedSession];
-	    if( session.isLinked )
+	    NSArray* accounts = [DBAccountManager sharedManager].linkedAccounts;
+	    if( accounts )
 	    {
-		if( session.userIds.count == row )
+		if( accounts.count == row )
 		{
 		    cell.textLabel.text = @"Link another Dropbox account";
 		    cell.textLabel.textAlignment = NSTextAlignmentCenter;
@@ -104,13 +114,12 @@ enum Sections
 		}
 		else
 		{
-		    NSString* userID = [session.userIds objectAtIndex:row];
-		    DBAccountInfo* account = [accountInfo objectForKey:userID];
-		    NSString* accountName = account.displayName;
+		    DBAccount* account = [accounts objectAtIndex:row];
+		    NSString* accountName = account.info.displayName;
 		    if( accountName && accountName.length )
 			cell.textLabel.text = [NSString stringWithFormat:@"Export to %@", accountName];
 		    else
-			cell.textLabel.text = [NSString stringWithFormat:@"Export to account %@", userID];
+			cell.textLabel.text = [NSString stringWithFormat:@"Export to account %@", account.userId];
 		    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		}
 	    }
@@ -148,52 +157,16 @@ enum Sections
     const unsigned section = indexPath.section;
     if( section == kSectionDropBox )
     {
-	DBSession* session = [DBSession sharedSession];
-	if( session.isLinked )
+	NSArray* accounts = [DBAccountManager sharedManager].linkedAccounts;
+	if( accounts )
 	{
-	    DropboxExportViewController* controller = [[DropboxExportViewController alloc] initWithUserID:[session.userIds objectAtIndex:indexPath.row] dataSource:logModel];
+	    DBAccount* account = accounts[indexPath.row];
+	    DropboxExportViewController* controller = [[DropboxExportViewController alloc] initWithDropboxAccount:account dataSource:logModel];
 	    [self.navigationController pushViewController:controller animated:YES];
 	}
-	else if( session.userIds.count == indexPath.row )
-	{
-	    [[DBSession sharedSession] linkFromController:self];
-	}
+	else
+	    [[DBAccountManager sharedManager] linkFromController:self];
     }
-}
-
-#pragma mark Accessors
-
-- (DBRestClient *) dropboxClient
-{
-    if( !_dropboxClient)
-    {
-	_dropboxClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
-	_dropboxClient.delegate = self;
-    }
-    return _dropboxClient;
-}
-
-#pragma mark DBRestClientDelegate
-
-- (void)restClient:(DBRestClient*)client loadedAccountInfo:(DBAccountInfo*)info
-{
-    [accountInfo setObject:info forKey:info.userId];
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kSectionDropBox]
-		  withRowAnimation:UITableViewRowAnimationFade];
-}
-
-#pragma mark Notification Handlers
-
-- (void) dropboxSessionLinkedAccount:(NSNotification*)notification
-{
-    [self.dropboxClient loadAccountInfo];
-
-    [self.tableView reloadData];
-}
-
-- (void) dropboxSessionUnlinkedAccount:(NSNotification*)notification
-{
-    [self.tableView reloadData];
 }
 
 @end

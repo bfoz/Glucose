@@ -1,9 +1,10 @@
 #import <UIKit/UIKit.h>
 
+@class DBAccount;
 @class LogModel;
 
 @interface DropboxExportViewController : UITableViewController
 
-- (id) initWithUserID:(NSString*)userID dataSource:(LogModel*)logModel;
+- (id) initWithDropboxAccount:(DBAccount*)dropboxAccount dataSource:(LogModel*)logModel;
 
 @end

@@ -25,7 +25,7 @@ describe(@"DropboxExportViewController", ^{
     __block DropboxExportViewController* controller;
 
     beforeEach(^{
-	controller = [[DropboxExportViewController alloc] initWithUserID:@"" dataSource:nil];
+	controller = [[DropboxExportViewController alloc] initWithDropboxAccount:nil dataSource:nil];
 	UIViewController* top = [[UIViewController alloc] init];
 	UINavigationController* navigation = [[[UINavigationController alloc] initWithRootViewController:top] autorelease];
 	[navigation pushViewController:controller animated:NO];

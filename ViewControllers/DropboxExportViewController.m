@@ -1,6 +1,6 @@
 #import "DropboxExportViewController.h"
 
-#import <DropboxSDK/DropboxSDK.h>
+#import <Dropbox/Dropbox.h>
 
 #import "AppDelegate.h"
 #import "Constants.h"
@@ -20,15 +20,17 @@ enum Sections
 @property (readwrite, retain) UIView *inputAccessoryView;
 @end
 
-@interface DropboxExportViewController () <DBRestClientDelegate, UITextFieldDelegate>
-@property (nonatomic, strong) DBRestClient* dropboxClient;
+@interface DropboxExportViewController () <UITextFieldDelegate>
 @end
 
 @implementation DropboxExportViewController
 {
     NSDateFormatter*	dateFormatter;
     UIDatePicker*	datePicker;
-    NSString*	dropboxUserID;
+
+    DBAccount*	    account;
+    DBFilesystem*   filesystem;
+
     LogModel*	logModel;
     unsigned	numberOfRecordsToExport;
     NSString*	tempPath;
@@ -46,13 +48,21 @@ enum Sections
     UITextField*    startField;
 }
 
-- (id) initWithUserID:(NSString*)userID dataSource:(LogModel*)model
+- (id) initWithDropboxAccount:(DBAccount*)dropboxAccount dataSource:(LogModel*)model
 {
     self = [super initWithStyle:UITableViewStyleGrouped];
     if( self )
     {
 	self.title = @"Dropbox";
-	dropboxUserID = userID;
+
+	account = dropboxAccount;
+	filesystem = [[DBFilesystem alloc] initWithAccount:account];
+
+	__weak __typeof(self) weakSelf = self;
+	[filesystem addObserver:self block:^{
+	    [weakSelf updateTheExportButton];
+	}];
+
 	logModel = model;
 
 	dateFormatter = [[NSDateFormatter alloc] init];
@@ -76,6 +86,11 @@ enum Sections
 	numberOfRecordsToExport = [model numberOfLogEntriesFromDate:startDate toDate:endDate];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [filesystem removeObserver:self];
 }
 
 - (UIView*) pickerInputAccessoryView
@@ -117,7 +132,9 @@ enum Sections
 
 - (NSString*) textForExportButton
 {
-    if( numberOfRecordsToExport )
+    if( !filesystem.completedFirstSync )
+	return @"Waiting for Dropbox to sync";
+    else if( numberOfRecordsToExport )
 	return [NSString stringWithFormat:@"Export %u record%@", numberOfRecordsToExport, (numberOfRecordsToExport > 1) ? @"s" : @""];
     return @"No records to export";
 }
@@ -238,35 +255,72 @@ enum Sections
 	NSData* data = [logModel csvDataFromDate:startDate toDate:endDate];
 	NSString* filename = [NSString stringWithFormat:@"Export from %@ to %@.csv", [logModel shortStringFromDate:startDate], [logModel shortStringFromDate:endDate]];
 	filename = [filename stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
-	tempPath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
 
-	if( [data writeToFile:tempPath atomically:YES] )
+	if( filesystem )
 	{
-	    [self.dropboxClient uploadFile:filename
-				    toPath:@"/"
-			     withParentRev:nil
-				  fromPath:tempPath];
+	    DBPath* path = [[DBPath root] childPath:filename];
 
-	    // Create an alert for displaying a progress bar while uploading
-	    progressAlertView = [[UIAlertView alloc] initWithTitle:@"Exporting..."
-							   message:nil
-						      delegate:nil
-						 cancelButtonTitle:nil
-						 otherButtonTitles:nil];
-	    // Add a progress bar to the alert
-	    progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(30,80,225,90)];
-	    [progressAlertView addSubview:progressView];
-	    [progressView setProgressViewStyle:UIProgressViewStyleDefault];
-	    [progressAlertView show];
+	    DBError* error;
+	    DBFile* file = [filesystem createFile:path error:&error];
+	    if( file )
+	    {
+		[file writeData:data error:nil];
+
+		NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+		[defaults setObject:[NSDate date] forKey:kLastExportDropboxDate];
+		[defaults setObject:endDate forKey:kLastExportDropboxEndDate];
+		[defaults setObject:startDate forKey:kLastExportDropboxStartDate];
+
+		[self updateTheExportButton];
+	    }
+	    else
+	    {
+		NSString* message = @"Could not create the Dropbox file";
+		switch( error.code )
+		{
+			case DBErrorParamsExists:
+			    message = @"That file already exists";
+			break;
+		    default:
+			break;
+		}
+		[[[UIAlertView alloc] initWithTitle:@"Oops"
+					    message:message
+					   delegate:nil
+				  cancelButtonTitle:@"Ok"
+				  otherButtonTitles:nil] show];
+	    }
 	}
-	else
-	{
-	    [[[UIAlertView alloc] initWithTitle:@"Oops"
-					message:@"Could not create a temporary file"
-				       delegate:nil
-			      cancelButtonTitle:@"Ok"
-			      otherButtonTitles:nil] show];
-	}
+
+//	tempPath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
+//
+//	if( [data writeToFile:tempPath atomically:YES] )
+//	{
+//	    [self.dropboxClient uploadFile:filename
+//				    toPath:@"/"
+//			     withParentRev:nil
+//				  fromPath:tempPath];
+//
+//	    // Create an alert for displaying a progress bar while uploading
+//	    progressAlertView = [[UIAlertView alloc] initWithTitle:@"Exporting..."
+//							   message:nil
+//						      delegate:nil
+//						 cancelButtonTitle:nil
+//						 otherButtonTitles:nil];
+//	    // Add a progress bar to the alert
+//	    progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(30,80,225,90)];
+//	    [progressAlertView addSubview:progressView];
+//	    [progressView setProgressViewStyle:UIProgressViewStyleDefault];
+//	    [progressAlertView show];
+//	}
+//	else
+//	{
+//	    [[[UIAlertView alloc] initWithTitle:@"Oops"
+//					message:@"Could not create a temporary file"
+//				       delegate:nil
+//			      cancelButtonTitle:@"Ok"
+//			      otherButtonTitles:nil] show];
+//	}
     }
     else if( kSectionRange == section )
     {
@@ -277,9 +331,8 @@ enum Sections
     }
     else if( kSectionUnlink == section )
     {
-	DBSession* session = [DBSession sharedSession];
-	[session unlinkUserId:dropboxUserID];
-	[[NSNotificationCenter defaultCenter] postNotificationName:kDropboxSessionUnlinkedAccountNotification object:session];
+	[account unlink];
+	account = nil;
 	[self.navigationController popViewControllerAnimated:YES];
 
 	NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
@@ -293,15 +346,15 @@ enum Sections
 
 #pragma mark Accessors
 
-- (DBRestClient *) dropboxClient
-{
-    if( !_dropboxClient)
-    {
-	_dropboxClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
-	_dropboxClient.delegate = self;
-    }
-    return _dropboxClient;
-}
+//- (DBRestClient *) dropboxClient
+//{
+//    if( !_dropboxClient)
+//    {
+//	_dropboxClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
+//	_dropboxClient.delegate = self;
+//    }
+//    return _dropboxClient;
+//}
 
 #pragma mark Actions
 
@@ -326,41 +379,41 @@ enum Sections
 
 #pragma mark DBRestClientDelegate
 
-- (void) cleanupAfterTheUpload
-{
-    [progressAlertView dismissWithClickedButtonIndex:0 animated:YES];
-    progressAlertView = nil;
-    if( tempPath )
-	[[NSFileManager defaultManager] removeItemAtPath:tempPath error:nil];
-}
-
-- (void) restClient:(DBRestClient*)client uploadedFile:(NSString*)destPath from:(NSString*)srcPath metadata:(DBMetadata*)metadata
-{
-    [self cleanupAfterTheUpload];
-
-    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:[NSDate date] forKey:kLastExportDropboxDate];
-    [defaults setObject:endDate forKey:kLastExportDropboxEndDate];
-    [defaults setObject:startDate forKey:kLastExportDropboxStartDate];
-
-    [self updateTheExportButton];
-}
-
-- (void) restClient:(DBRestClient*)client uploadProgress:(CGFloat)progress forFile:(NSString*)destPath from:(NSString*)srcPath
-{
-    [progressView setProgress:progress];
-}
-
-- (void) restClient:(DBRestClient*)client uploadFileFailedWithError:(NSError*)error
-{
-    [self cleanupAfterTheUpload];
-
-    [[[UIAlertView alloc] initWithTitle:@"Failed to upload"
-			       message:error.localizedDescription
-			      delegate:self
-		      cancelButtonTitle:@"Ok"
-		     otherButtonTitles:nil] show];
-}
+//- (void) cleanupAfterTheUpload
+//{
+//    [progressAlertView dismissWithClickedButtonIndex:0 animated:YES];
+//    progressAlertView = nil;
+//    if( tempPath )
+//	[[NSFileManager defaultManager] removeItemAtPath:tempPath error:nil];
+//}
+//
+//- (void) restClient:(DBRestClient*)client uploadedFile:(NSString*)destPath from:(NSString*)srcPath metadata:(DBMetadata*)metadata
+//{
+//    [self cleanupAfterTheUpload];
+//
+//    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+//    [defaults setObject:[NSDate date] forKey:kLastExportDropboxDate];
+//    [defaults setObject:endDate forKey:kLastExportDropboxEndDate];
+//    [defaults setObject:startDate forKey:kLastExportDropboxStartDate];
+//
+//    [self updateTheExportButton];
+//}
+//
+//- (void) restClient:(DBRestClient*)client uploadProgress:(CGFloat)progress forFile:(NSString*)destPath from:(NSString*)srcPath
+//{
+//    [progressView setProgress:progress];
+//}
+//
+//- (void) restClient:(DBRestClient*)client uploadFileFailedWithError:(NSError*)error
+//{
+//    [self cleanupAfterTheUpload];
+//
+//    [[[UIAlertView alloc] initWithTitle:@"Failed to upload"
+//			       message:error.localizedDescription
+//			      delegate:self
+//		      cancelButtonTitle:@"Ok"
+//		     otherButtonTitles:nil] show];
+//}
 
 #pragma mark UITextFieldDelegate
 

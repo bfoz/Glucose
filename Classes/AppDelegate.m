@@ -1,6 +1,6 @@
 #import "AppDelegate.h"
 
-#import <DropboxSDK/DropboxSDK.h>
+#import <Dropbox/Dropbox.h>
 
 #import "LogModel+CoreData.h"
 #import "LogModel+Migration.h"
@@ -49,10 +49,9 @@ NSDateFormatter* shortDateFormatter = nil;
 	//  The background color is what shows up behind the flipping views
 	window.backgroundColor = [UIColor blackColor];
 	
-    DBSession* session = [[DBSession alloc] initWithAppKey:dropboxAppKey
-						 appSecret:dropboxAppSecret
-						      root:kDBRootAppFolder];
-    [DBSession setSharedSession:session];
+    DBAccountManager* accountManager = [[DBAccountManager alloc] initWithAppKey:dropboxAppKey
+									 secret:dropboxAppSecret];
+    [DBAccountManager setSharedManager:accountManager];
 
     SplashViewController* splashViewController = [[SplashViewController alloc] initForMigration:[LogModel needsMigration]];
     splashViewController.delegate = self;
@@ -67,17 +66,20 @@ NSDateFormatter* shortDateFormatter = nil;
     return YES;
 }
 
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+- (BOOL) application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {
-    DBSession* session = [DBSession sharedSession];
-    if( [session handleOpenURL:url] )
+    // Handle Dropbox URLs
+    DBAccount* account = [[DBAccountManager sharedManager] handleOpenURL:url];
+    if( account )
     {
-        if( session.isLinked )
+	if( account.isLinked )
 	{
-	    [[NSNotificationCenter defaultCenter] postNotificationName:kDropboxSessionLinkedAccountNotification object:session];
-        }
+	    [[NSNotificationCenter defaultCenter] postNotificationName:kDropboxSessionLinkedAccountNotification
+								object:account];
+	}
         return YES;
     }
+
     // Add whatever other url handling code your app requires here
     return NO;
 }
