@@ -49,7 +49,7 @@
     if( range.length && (0 == [string length]) )
         s = [s substringToIndex:(s.length - range.length)];
 
-    const int i = s.length - 1;
+    const long i = s.length - 1;
     if( i > 0 )
 	super.text = [NSString stringWithFormat:@"%@.%@", [s substringToIndex:i], [s substringFromIndex:i]];
     else if( i == 0 )

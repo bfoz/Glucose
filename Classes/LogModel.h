@@ -70,7 +70,7 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 # pragma mark Insulin Types
 - (ManagedInsulinType*) addInsulinTypeWithName:(NSString*)name;
 - (void) flushInsulinTypes;
-- (unsigned) numberOfLogEntriesForInsulinType:(ManagedInsulinType*)insulinType;
+- (NSUInteger) numberOfLogEntriesForInsulinType:(ManagedInsulinType*)insulinType;
 - (void) removeInsulinType:(ManagedInsulinType*)type;
 - (void) restoreBundledInsulinTypes;
 
@@ -83,12 +83,12 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 
 #pragma mark Log Days
 - (ManagedLogDay*) logDayForDate:(NSDate*)date;
-- (unsigned) numberOfLogDays;
+- (NSUInteger) numberOfLogDays;
 
 #pragma mark Log Entries
 - (NSFetchRequest*) fetchRequestForOrderedLogEntries;
 - (NSDate*) dateOfEarliestLogEntry;
-- (unsigned) numberOfLogEntriesFromDate:(NSDate*)fromDate toDate:(NSDate*)toDate;
+- (NSUInteger) numberOfLogEntriesFromDate:(NSDate*)fromDate toDate:(NSDate*)toDate;
 
 + (ManagedLogDay*) insertManagedLogDayIntoContext:(NSManagedObjectContext*)managedObjectContext;
 - (ManagedLogEntry*) insertManagedLogEntry;

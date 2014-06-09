@@ -21,7 +21,7 @@ enum Sections
     NSDateFormatter*	dateFormatter;
     UIDatePicker*	datePicker;
     LogModel*	logModel;
-    unsigned	numberOfRecordsToPurge;
+    NSUInteger	numberOfRecordsToPurge;
 
     UITextField*    pickerField;
     UIToolbar*	    pickerInputAccessoryView;
@@ -96,7 +96,7 @@ enum Sections
 - (NSString*) textForPurgeButton
 {
     if( numberOfRecordsToPurge )
-	return [NSString stringWithFormat:@"Purge %u record%@", numberOfRecordsToPurge, (numberOfRecordsToPurge > 1) ? @"s" : @""];
+	return [NSString stringWithFormat:@"Purge %lu record%@", (unsigned long)numberOfRecordsToPurge, (numberOfRecordsToPurge > 1) ? @"s" : @""];
     return @"No records to purge";
 }
 
@@ -157,7 +157,7 @@ enum Sections
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *cellIdentifier = @"Cell";
-    const unsigned section = indexPath.section;
+    const NSInteger section = indexPath.section;
 
     UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellIdentifier];
     if( !cell )
@@ -197,7 +197,7 @@ enum Sections
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    const unsigned section = indexPath.section;
+    const NSInteger section = indexPath.section;
     if( kSectionRange == section )
     {
 	if( indexPath.row )
@@ -207,7 +207,7 @@ enum Sections
     }
     else if( (kSectionPurgeButton == section) && numberOfRecordsToPurge )
     {
-	[[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Purge %u Records?", numberOfRecordsToPurge]
+	[[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Purge %lu Records?", (unsigned long)numberOfRecordsToPurge]
 				    message:[NSString stringWithFormat:@"Delete all records from %@ to %@?", [dateFormatter stringFromDate:startDate], [dateFormatter stringFromDate:endDate]]
 				   delegate:self
 			  cancelButtonTitle:@"Cancel"

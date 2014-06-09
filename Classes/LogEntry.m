@@ -51,8 +51,11 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 @end
 
 @implementation LogEntry
+{
+    unsigned	entryID;
+}
 
-@synthesize entryID, dirty;
+@synthesize dirty;
 @synthesize glucose;
 @synthesize glucoseUnits;
 @synthesize insulin;
@@ -75,7 +78,7 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
 
     unsigned entryID = 0;
     if( sqlite3_step(statementInsertEntry) )
-	entryID = sqlite3_last_insert_rowid(database);
+	entryID = (unsigned)sqlite3_last_insert_rowid(database);
     sqlite3_reset(statementInsertEntry);
 
     if( 0 == entryID )
@@ -194,9 +197,9 @@ static sqlite3_stmt*	statementLoadTimestampForID = NULL;
     }
 
     if( src )
-	sqlite3_bind_int(statement, 1, src.categoryID);
+	sqlite3_bind_int(statement, 1, (int)src.categoryID);
     if( dest )
-	sqlite3_bind_int(statement, 2, dest.categoryID);
+	sqlite3_bind_int(statement, 2, (int)dest.categoryID);
 
     const int result = sqlite3_step(statement);
     sqlite3_finalize(statement);
@@ -457,7 +460,7 @@ _var = _val;
             NSAssert1(0, @"Error: failed to prepare statement with message '%s'.", sqlite3_errmsg(db));
     }
 
-    sqlite3_bind_int(delete_statement, 1, entryID);
+    sqlite3_bind_int(delete_statement, 1, (int)entryID);
     int success = sqlite3_step(delete_statement);
     sqlite3_reset(delete_statement);
     if( success != SQLITE_DONE )
@@ -486,7 +489,7 @@ _var = _val;
 	sqlite3_bind_int(flush_statement, 3, a);	// glucoseUnits
 
 	if( self.category )
-		sqlite3_bind_int(flush_statement, 4, [self.category categoryID]);
+		sqlite3_bind_int(flush_statement, 4, (int)[self.category categoryID]);
 
 	unsigned i = 0;
 	for( InsulinDose* dose in self.insulin )
@@ -498,14 +501,14 @@ _var = _val;
 		if( dose.dose && dose.insulinType && ([dose.dose floatValue] != 0) )
 		{
 			sqlite3_bind_double(flush_statement, 5+i, [dose.dose doubleValue]);
-			sqlite3_bind_int(flush_statement, 7+i, [dose.insulinType typeID]);
+			sqlite3_bind_int(flush_statement, 7+i, (int)[dose.insulinType typeID]);
 			++i;
 		}
 	}
 
 	if( note && [note length] )
 		sqlite3_bind_text(flush_statement, 9, [note UTF8String], -1, SQLITE_TRANSIENT);
-	sqlite3_bind_int(flush_statement, 10, entryID);
+	sqlite3_bind_int(flush_statement, 10, (int)entryID);
 
 	// Execute the query.
 	int success = sqlite3_step(flush_statement);
@@ -528,7 +531,7 @@ _var = _val;
 	}
     }
 
-    sqlite3_bind_int(statementLoadEntryforID, 1, entryID);
+    sqlite3_bind_int(statementLoadEntryforID, 1, (int)entryID);
 
     if( sqlite3_step(statementLoadEntryforID) == SQLITE_ROW )
     {

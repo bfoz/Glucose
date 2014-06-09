@@ -5,9 +5,6 @@
 @protocol CategoryViewControllerDelegate;
 
 @interface CategoryViewController : UITableViewController <TextFieldCellDelegate, UIAlertViewDelegate>
-{
-    unsigned	deleteRow;
-}
 
 @property (nonatomic, weak) id <CategoryViewControllerDelegate>   delegate;
 @property (nonatomic, strong) LogModel*				    model;

@@ -32,7 +32,7 @@ enum Sections
     DBFilesystem*   filesystem;
 
     LogModel*	logModel;
-    unsigned	numberOfRecordsToExport;
+    NSUInteger	numberOfRecordsToExport;
     NSString*	tempPath;
 
     UITextField*    pickerField;
@@ -135,7 +135,7 @@ enum Sections
     if( !filesystem.completedFirstSync )
 	return @"Waiting for Dropbox to sync";
     else if( numberOfRecordsToExport )
-	return [NSString stringWithFormat:@"Export %u record%@", numberOfRecordsToExport, (numberOfRecordsToExport > 1) ? @"s" : @""];
+	return [NSString stringWithFormat:@"Export %lu record%@", (unsigned long)numberOfRecordsToExport, (numberOfRecordsToExport > 1) ? @"s" : @""];
     return @"No records to export";
 }
 
@@ -168,8 +168,8 @@ enum Sections
     static NSString *cellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
 
-    const unsigned row = indexPath.row;
-    const unsigned section = indexPath.section;
+    const NSInteger row = indexPath.row;
+    const NSInteger section = indexPath.section;
 
     if( !cell )
     {
@@ -249,7 +249,7 @@ enum Sections
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    const unsigned section = indexPath.section;
+    const NSInteger section = indexPath.section;
     if( (kSectionExport == section) && numberOfRecordsToExport )
     {
 	NSData* data = [logModel csvDataFromDate:startDate toDate:endDate];

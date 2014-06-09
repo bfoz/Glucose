@@ -306,7 +306,7 @@ static NSUserDefaults* defaults = nil;
 // Section 0 - Timestamp/Category/Glucose
 //	Row 0 => Row 0
 //	Row 2 (Glucose) => Row 1 if not editing and there is a glucose reading, but no category
-- (unsigned) translateRow:(unsigned)row inSection:(unsigned)section
+- (NSInteger) translateRow:(NSInteger)row inSection:(NSInteger)section
 {
     if( !self.editing && (0 == section) && (1==row) && !selectedCategory && self.logEntry.glucose )
 	return 2;
@@ -333,7 +333,7 @@ static NSUserDefaults* defaults = nil;
     return 0;
 }
 
-- (NSString*) cellIDForSection:(unsigned)section row:(unsigned)row
+- (NSString*) cellIDForSection:(NSInteger)section row:(NSInteger)row
 {
     if( self.editing )
     {
@@ -365,8 +365,8 @@ static NSUserDefaults* defaults = nil;
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    const unsigned section = indexPath.section;
-    unsigned row = [self translateRow:indexPath.row inSection:section];
+    const NSInteger section = indexPath.section;
+    NSInteger row = [self translateRow:indexPath.row inSection:section];
 
     NSString *const cellID = [self cellIDForSection:section row:row];
 
@@ -539,7 +539,7 @@ static NSUserDefaults* defaults = nil;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)path
 {
-    const unsigned section = path.section;
+    const NSInteger section = path.section;
 
     if( 0 == section )
     {

@@ -8,7 +8,6 @@
 
 @interface LogEntry : NSObject
 {
-	unsigned	entryID;
     NSNumber*	glucose;
     NSString*	glucoseString;
 	NSString*	glucoseUnits;
@@ -19,7 +18,6 @@
 	BOOL	hydrated;
 }
 
-@property (nonatomic, readonly)	unsigned	entryID;
 @property (nonatomic, strong)	Category*	category;
 @property (nonatomic, readonly)	BOOL		dirty;
 @property (nonatomic, strong)	NSNumber*	glucose;

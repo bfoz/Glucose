@@ -276,7 +276,7 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     return [insulinTypeShortNameMaxWidth unsignedIntValue];
 }
 
-- (unsigned) numberOfLogEntriesForInsulinType:(ManagedInsulinType*)insulinType
+- (NSUInteger) numberOfLogEntriesForInsulinType:(ManagedInsulinType*)insulinType
 {
     NSFetchRequest* fetchRequest = [[NSFetchRequest alloc] init];
     fetchRequest.entity = [NSEntityDescription entityForName:@"LogEntry" inManagedObjectContext:self.managedObjectContext];
@@ -326,8 +326,8 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 - (void) flushInsulinTypesForNewEntries
 {
     [_insulinTypesForNewEntries sortUsingComparator:^(id left, id right) {
-	unsigned a = [self.insulinTypes indexOfObjectIdenticalTo:left];
-	unsigned b = [self.insulinTypes indexOfObjectIdenticalTo:right];
+	NSUInteger a = [self.insulinTypes indexOfObjectIdenticalTo:left];
+	NSUInteger b = [self.insulinTypes indexOfObjectIdenticalTo:right];
 	if( a < b )
 	    return NSOrderedAscending;
 	if( a == b )
@@ -391,7 +391,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     return managedLogDay;
 }
 
-- (unsigned) numberOfLogDays
+- (NSUInteger) numberOfLogDays
 {
     return [self.managedObjectContext countForFetchRequest:[LogModel fetchRequestForOrderedLogDays] error:nil];
 }
@@ -410,7 +410,7 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
     return nil;
 }
 
-- (unsigned) numberOfLogEntriesFromDate:(NSDate*)startDate toDate:(NSDate*)endDate
+- (NSUInteger) numberOfLogEntriesFromDate:(NSDate*)startDate toDate:(NSDate*)endDate
 {
     NSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"LogEntry"];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"(timestamp >= %@) AND (timestamp <= %@)", startDate, endDate];

@@ -55,7 +55,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {    
     static NSString *CellIdentifier = @"Cell";
-	const unsigned row = indexPath.row;
+	const NSInteger row = indexPath.row;
 
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if( !cell )
@@ -93,7 +93,7 @@
 {    
     if( editingStyle == UITableViewCellEditingStyleDelete )
 	{
-		const unsigned row = indexPath.row;
+		const NSInteger row = indexPath.row;
 		[contacts removeObjectAtIndex:row];
 		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:YES];
     }
@@ -106,7 +106,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	const unsigned row = indexPath.row;
+	const NSInteger row = indexPath.row;
 
 	if( contacts && (row < [contacts count]) )
 	{

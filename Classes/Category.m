@@ -28,7 +28,7 @@ static const char *const sqlInsertUserCategory = "INSERT INTO LogEntryCategories
 	return NO;
     }
 
-    sqlite3_bind_int(statement, 1, c.categoryID);
+    sqlite3_bind_int(statement, 1, (int)c.categoryID);
     const int result = sqlite3_step(statement);
     sqlite3_finalize(statement);
     if( SQLITE_ERROR == result )
@@ -50,7 +50,7 @@ static const char *const sqlInsertUserCategory = "INSERT INTO LogEntryCategories
     if( !(c.categoryName && [c.categoryName length]) )
 	c.categoryName = @"New Category";
 
-    sqlite3_bind_int(statement, 1, c.categoryID);
+    sqlite3_bind_int(statement, 1, (int)c.categoryID);
     sqlite3_bind_text(statement, 2, [c.categoryName UTF8String], -1, SQLITE_TRANSIENT);
     int success = sqlite3_step(statement);
     if( SQLITE_ERROR == success )
@@ -102,7 +102,7 @@ static const char *const sqlInsertUserCategory = "INSERT INTO LogEntryCategories
     }
 
     sqlite3_bind_text(statement, 1, [self.categoryName UTF8String], -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int(statement, 2, self.categoryID);
+    sqlite3_bind_int(statement, 2, (int)self.categoryID);
     if( sqlite3_step(statement) != SQLITE_DONE )
 	NSLog(@"Error: failed to flush with message '%s'", sqlite3_errmsg(database));
     sqlite3_finalize(statement);

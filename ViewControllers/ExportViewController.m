@@ -88,8 +88,8 @@ enum Sections
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {	
     NSString* cellID = @"cellID";
-    const unsigned row	    = indexPath.row;
-    const unsigned section  = indexPath.section;
+    const NSInteger row	    = indexPath.row;
+    const NSInteger section  = indexPath.section;
 
     UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:cellID];
     if( !cell )
@@ -154,7 +154,7 @@ enum Sections
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    const unsigned section = indexPath.section;
+    const NSInteger section = indexPath.section;
     if( section == kSectionDropBox )
     {
 	NSArray* accounts = [DBAccountManager sharedManager].linkedAccounts;

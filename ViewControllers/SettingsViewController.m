@@ -193,8 +193,8 @@ enum AboutSectionRows
     cell.textLabel.font = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
     cell.textLabel.textAlignment = NSTextAlignmentLeft;
 
-    const unsigned section = indexPath.section;
-    const unsigned row = indexPath.row;
+    const NSInteger section = indexPath.section;
+    const NSInteger row = indexPath.row;
     switch( section )
     {
 	case kSectionExportPurge:
@@ -295,8 +295,8 @@ enum AboutSectionRows
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    const unsigned section = indexPath.section;
-    const unsigned row = indexPath.row;
+    const NSInteger section = indexPath.section;
+    const NSInteger row = indexPath.row;
     switch( section )
     {
 	case kSectionExportPurge:

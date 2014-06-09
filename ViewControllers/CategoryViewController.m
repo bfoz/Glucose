@@ -14,6 +14,7 @@
 
 @implementation CategoryViewController
 {
+    NSUInteger	deleteRow;
     BOOL    userDrivenChange;
     ManagedCategory*	deleteCategory;
     NSFetchedResultsController*	fetchedResultsController;
@@ -79,7 +80,7 @@
 
 - (void) appendNewCategory
 {
-    const unsigned index = fetchedResultsController.fetchedObjects.count;
+    const NSUInteger index = fetchedResultsController.fetchedObjects.count;
 
     [model addCategoryWithName:nil];
     [model save];
@@ -223,7 +224,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    const unsigned section = indexPath.section;
+    const NSInteger section = indexPath.section;
     NSString *const cellID = (self.editing && (section != kRestoreDefaultsSectionNumber)) ? @"EditCellID" : @"Cell";
 
 	UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
@@ -292,7 +293,7 @@
     }
     else
     {
-	const unsigned row = indexPath.row;
+	const NSInteger row = indexPath.row;
 	// Row 0 is the "None" row
 	self.selectedCategory = row ? [fetchedResultsController objectAtIndexPath:[self translateTableViewIndexPath:indexPath]] : nil;
 	if( [self.delegate respondsToSelector:@selector(categoryViewControllerDidSelectCategory:)] )
@@ -329,14 +330,14 @@
     // If row is deleted, remove it from the list.
     if( editingStyle == UITableViewCellEditingStyleDelete )
     {
-	const unsigned numRecords = category.logEntries.count;
+	const NSUInteger numRecords = category.logEntries.count;
 	// Ask the user for confirmation if numRecords != 0
 	if( numRecords )
 	{
 	    deleteCategory = category;
 	    deleteRow = path.row;
 	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?" 
-							    message:[NSString stringWithFormat:@"Deleting category '%@' will move %u log entr%@ to category 'None'", category.name, numRecords, ((numRecords>1)?@"ies":@"y")]
+							    message:[NSString stringWithFormat:@"Deleting category '%@' will move %lu log entr%@ to category 'None'", category.name, (unsigned long)numRecords, ((numRecords>1)?@"ies":@"y")]
 							   delegate:self
 						  cancelButtonTitle:@"Cancel"
 						  otherButtonTitles:@"OK", nil];

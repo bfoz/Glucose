@@ -28,7 +28,7 @@ static const char *const sqlInsertUserInsulinType = "INSERT INTO InsulinTypes (t
     if( !(t.shortName && [t.shortName length]) )
 	t.shortName = @"New Insulin Type";
 
-    sqlite3_bind_int(statement, 1, t.typeID);
+    sqlite3_bind_int(statement, 1, (int)t.typeID);
     sqlite3_bind_text(statement, 2, [t.shortName UTF8String], -1, SQLITE_TRANSIENT);
     int success = sqlite3_step(statement);
     if( SQLITE_ERROR == success )
@@ -76,7 +76,7 @@ static const char *const sqlInsertUserInsulinType = "INSERT INTO InsulinTypes (t
 	
 	if( sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK )
 	{
-		sqlite3_bind_int(statement, 1, typeID);
+		sqlite3_bind_int(statement, 1, (int)typeID);
 		int success = sqlite3_step(statement);
 		sqlite3_finalize(statement);
 		if( success != SQLITE_DONE )
@@ -95,7 +95,7 @@ static const char *const sqlInsertUserInsulinType = "INSERT INTO InsulinTypes (t
     }
 
     sqlite3_bind_text(statement, 1, [self.shortName UTF8String], -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int(statement, 2, self.typeID);
+    sqlite3_bind_int(statement, 2, (int)self.typeID);
     if( sqlite3_step(statement) != SQLITE_DONE )
 	NSLog(@"Error: failed to flush with message '%s'", sqlite3_errmsg(database));
     sqlite3_finalize(statement);

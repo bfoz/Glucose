@@ -14,6 +14,7 @@
 @implementation InsulinTypeViewController
 {
     ManagedInsulinType*	deleteInsulinType;
+    NSUInteger		deleteRowNum;
     BOOL    userDrivenChange;
     NSMutableSet*	selectedInsulinTypes;
     NSFetchedResultsController*	fetchedResultsController;
@@ -117,7 +118,7 @@
 
 - (void) appendNewInsulinType
 {
-    const unsigned index = fetchedResultsController.fetchedObjects.count;
+    const NSUInteger index = fetchedResultsController.fetchedObjects.count;
 
     [model addInsulinTypeWithName:nil];
     [model save];
@@ -167,7 +168,7 @@
 
 - (void) confirmDeleteInsulinType:(ManagedInsulinType*)insulinType
 {
-    const unsigned numRecords = [model numberOfLogEntriesForInsulinType:insulinType];
+    const NSUInteger numRecords = [model numberOfLogEntriesForInsulinType:insulinType];
     // Ask the user for confirmation if numRecords != 0
     if( numRecords )
     {
@@ -175,7 +176,7 @@
 	deleteRowNum = index;
 	deleteInsulinType = insulinType;
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are you sure?"
-							message:[NSString stringWithFormat:@"Deleting 'Insulin %@' will delete dose information from %u log entr%@", insulinType.shortName, numRecords, ((numRecords>1)?@"ies":@"y")]
+							message:[NSString stringWithFormat:@"Deleting 'Insulin %@' will delete dose information from %lu log entr%@", insulinType.shortName, (unsigned long)numRecords, ((numRecords>1)?@"ies":@"y")]
 						       delegate:self
 					      cancelButtonTitle:@"Cancel"
 					      otherButtonTitles:@"OK", nil];
@@ -274,7 +275,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {	
-    const unsigned section = indexPath.section;
+    const NSInteger section = indexPath.section;
     NSString* cellID = self.editing && (section != kRestoreDefaultsSectionNumber) ? @"EditCellID" : @"Cell";
 
     UITableViewCell* cell = [tv dequeueReusableCellWithIdentifier:cellID];
