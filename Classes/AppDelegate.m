@@ -36,6 +36,7 @@ NSDateFormatter* shortDateFormatter = nil;
 - (BOOL) application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {
 #ifdef APPSTORE
+    [Flurry setCrashReportingEnabled:YES];
     [Flurry startSession:@"X4DCQH62JV4JXP72BJJR"];
 #endif
 

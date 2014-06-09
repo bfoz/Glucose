@@ -100,6 +100,7 @@
 		15C8F66F1630E0DE00CA92D4 /* UIViewController+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15CAB6D61942EBBD0064BC2A /* Dropbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CAB6D51942EBBD0064BC2A /* Dropbox.framework */; };
 		15CAB6E2194518E00064BC2A /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CAB6E1194518E00064BC2A /* libc++.dylib */; };
+		15CAB6E619453D750064BC2A /* libFlurry_5.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CAB6E519453D750064BC2A /* libFlurry_5.0.0.a */; };
 		15DE033116DDD14900632530 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DE033016DDD14900632530 /* ManagedInsulinDose.m */; };
 		15DE033216DDD14900632530 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DE033016DDD14900632530 /* ManagedInsulinDose.m */; };
 		15E59E601698CD410067BDC1 /* LogModel+SQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */; };
@@ -115,7 +116,6 @@
 		15E5A009169A6A730067BDC1 /* CategoryViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15E5A008169A6A730067BDC1 /* CategoryViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15E5A00C169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E5A00B169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15E627DD16D359CA00D8DAA3 /* DoseFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 150829BA0E5009B400FB556A /* DoseFieldCell.m */; };
-		15EAB028181A35030002270A /* libFlurry_4.3.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15EAB027181A35030002270A /* libFlurry_4.3.0.a */; };
 		15EC68CD13B1B74900016937 /* LogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 15EC68CC13B1B74900016937 /* LogModel.m */; };
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -337,6 +337,7 @@
 		15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SpecHelper.m"; sourceTree = "<group>"; };
 		15CAB6D51942EBBD0064BC2A /* Dropbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Dropbox.framework; path = Frameworks/Dropbox.framework; sourceTree = "<group>"; };
 		15CAB6E1194518E00064BC2A /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
+		15CAB6E519453D750064BC2A /* libFlurry_5.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_5.0.0.a; sourceTree = "<group>"; };
 		15DE032F16DDD14900632530 /* ManagedInsulinDose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedInsulinDose.h; sourceTree = "<group>"; };
 		15DE033016DDD14900632530 /* ManagedInsulinDose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedInsulinDose.m; sourceTree = "<group>"; };
 		15E59E5E1698CD410067BDC1 /* LogModel+SQLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+SQLite.h"; sourceTree = "<group>"; };
@@ -351,7 +352,6 @@
 		15E5A008169A6A730067BDC1 /* CategoryViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CategoryViewControllerSpec.mm; sourceTree = "<group>"; };
 		15E5A00A169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+SpecHelper.h"; sourceTree = "<group>"; };
 		15E5A00B169A726E0067BDC1 /* UIBarButtonItem+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+SpecHelper.m"; sourceTree = "<group>"; };
-		15EAB027181A35030002270A /* libFlurry_4.3.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_4.3.0.a; sourceTree = "<group>"; };
 		15EC68CB13B1B74900016937 /* LogModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogModel.h; sourceTree = "<group>"; };
 		15EC68CC13B1B74900016937 /* LogModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogModel.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -392,12 +392,12 @@
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				150829F20E500DCA00FB556A /* CoreGraphics.framework in Frameworks */,
 				159E84410E5558BD0097EA6F /* libsqlite3.0.dylib in Frameworks */,
+				15CAB6E619453D750064BC2A /* libFlurry_5.0.0.a in Frameworks */,
 				15CAB6D61942EBBD0064BC2A /* Dropbox.framework in Frameworks */,
 				153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */,
 				15A321920ED28A7E00C16388 /* AddressBook.framework in Frameworks */,
 				15A321940ED28A7E00C16388 /* AddressBookUI.framework in Frameworks */,
 				1517983F1250156100E28662 /* MessageUI.framework in Frameworks */,
-				15EAB028181A35030002270A /* libFlurry_4.3.0.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -623,7 +623,7 @@
 			isa = PBXGroup;
 			children = (
 				15C6D5C316337D5300D6838D /* Flurry.h */,
-				15EAB027181A35030002270A /* libFlurry_4.3.0.a */,
+				15CAB6E519453D750064BC2A /* libFlurry_5.0.0.a */,
 			);
 			name = Flurry;
 			path = Frameworks/Flurry;
@@ -1143,6 +1143,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Frameworks/Flurry",
+					"$(PROJECT_DIR)/Frameworks/Flurry",
 				);
 				PRODUCT_NAME = Glucose;
 				PROVISIONING_PROFILE = "";
@@ -1296,6 +1297,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Frameworks/Flurry",
+					"$(PROJECT_DIR)/Frameworks/Flurry",
 				);
 				PRODUCT_NAME = Glucose;
 				PROVISIONING_PROFILE = "";
@@ -1326,6 +1328,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Frameworks/Flurry",
+					"$(PROJECT_DIR)/Frameworks/Flurry",
 				);
 				PRODUCT_NAME = Glucose;
 				PROVISIONING_PROFILE = "";
