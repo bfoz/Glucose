@@ -40,7 +40,7 @@
     if( !datePicker )
     {
 	datePicker = [[UIDatePicker alloc] init];
-	datePicker.datePickerMode = UIDatePickerModeDate;
+	datePicker.datePickerMode = UIDatePickerModeDateAndTime;
 	[datePicker addTarget:self action:@selector(datePickerDidChangeValue:) forControlEvents:UIControlEventValueChanged];
     }
     return datePicker;
