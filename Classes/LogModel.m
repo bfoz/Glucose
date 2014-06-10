@@ -481,10 +481,17 @@ static const unsigned DATE_COMPONENTS_FOR_DAY = (NSYearCalendarUnit |
 
 #pragma mark Core Data
 
+- (NSArray*) sortDescriptorsForOrderedLogEntries
+{
+    BOOL ascending = [[NSUserDefaults standardUserDefaults] boolForKey:kLogDaySortOder];
+    return @[[NSSortDescriptor sortDescriptorWithKey:@"logDay.date" ascending:NO],
+	     [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:ascending]];
+}
+
 - (NSFetchRequest*) fetchRequestForOrderedLogEntries
 {
     NSFetchRequest* fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"LogEntry"];
-    fetchRequest.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"logDay.date" ascending:NO], [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:NO]];
+    fetchRequest.sortDescriptors = [self sortDescriptorsForOrderedLogEntries];
 
     return fetchRequest;
 }

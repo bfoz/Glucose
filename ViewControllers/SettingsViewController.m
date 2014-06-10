@@ -27,6 +27,7 @@ enum Sections
 {
     kSectionExportPurge = 0,
     kSectionCategoriesTypes,
+    kSectionLogDaySortOrder,
     kSectionThresholdsUnits,
     kSectionAbout,
     NUM_SECTIONS
@@ -46,6 +47,12 @@ enum CategoriesTypesRows
     kDefaultInsulinRow,
     kFractionalInsulin,
     NUM_CATEGORIESTYPES_ROWS
+};
+
+enum LogDaySortOrderRows
+{
+    kSortOrderRow = 0,
+    NUM_LOGDAYSORTORDER_ROWS
 };
 
 enum ThresholdsUnitsRows
@@ -126,6 +133,13 @@ enum AboutSectionRows
     }
 }
 
+- (void) logDaySortOrderAction:(UISegmentedControl*)sender
+{
+    NSUserDefaults *const defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setInteger:sender.selectedSegmentIndex forKey:kLogDaySortOder];
+    [self.delegate settingsViewControllerDidChangeSortOrder];
+}
+
 #pragma mark Accessor
 
 - (UIToolbar*) inputToolbar
@@ -171,6 +185,7 @@ enum AboutSectionRows
     {
 	case kSectionExportPurge:	return NUM_EXPORTPURGE_ROWS;
         case kSectionCategoriesTypes:	return NUM_CATEGORIESTYPES_ROWS;
+	case kSectionLogDaySortOrder:	return NUM_LOGDAYSORTORDER_ROWS;
 	case kSectionThresholdsUnits:	return NUM_THRESHOLDUNITS_ROWS;
 	case kSectionAbout:		return NUM_ABOUT_ROWS;
     }
@@ -221,6 +236,16 @@ enum AboutSectionRows
 		    break;
 	    }
 	    break;
+	case kSectionLogDaySortOrder:
+	{
+	    cell.textLabel.text = @"Sort order";
+	    UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:@[@"Descending", @"Ascending"]];
+	    s.segmentedControlStyle = UISegmentedControlStyleBar;
+	    [s addTarget:self action:@selector(logDaySortOrderAction:) forControlEvents:UIControlEventValueChanged];
+	    s.selectedSegmentIndex = [[NSUserDefaults standardUserDefaults] integerForKey:kLogDaySortOder];
+	    cell.accessoryView = s;
+	    break;
+	}
 	case kSectionThresholdsUnits:
 	{	    
 	    NumberField* f;
@@ -280,7 +305,11 @@ enum AboutSectionRows
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-    if( kSectionAbout == section )
+    if( kSectionLogDaySortOrder == section )
+    {
+	return @"Select the sort order for records within each day on the main log view";
+    }
+    else if( kSectionAbout == section )
     {
 	NSBundle *const mainBundle = [NSBundle mainBundle];
 	NSString* version = [mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];

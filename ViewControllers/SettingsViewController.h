@@ -25,6 +25,7 @@
 @protocol SettingsViewControllerDelegate <NSObject>
 
 - (void) settingsViewControllerDidChangeGlucoseUnits;
+- (void) settingsViewControllerDidChangeSortOrder;
 - (void) settingsViewControllerDidPressBack;
 
 @end

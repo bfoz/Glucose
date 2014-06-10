@@ -352,6 +352,13 @@
     [self.tableView reloadData];
 }
 
+- (void) settingsViewControllerDidChangeSortOrder
+{
+    fetchedResultsController.fetchRequest.sortDescriptors = [self.model sortDescriptorsForOrderedLogEntries];
+    [fetchedResultsController performFetch:nil];
+    [self.tableView reloadData];
+}
+
 - (void) settingsViewControllerDidPressBack
 {
     [UIView beginAnimations:nil context:NULL];

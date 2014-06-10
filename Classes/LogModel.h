@@ -86,6 +86,7 @@ extern NSString* GlucoseUnitsTypeString_mmolL;
 - (NSUInteger) numberOfLogDays;
 
 #pragma mark Log Entries
+- (NSArray*) sortDescriptorsForOrderedLogEntries;
 - (NSFetchRequest*) fetchRequestForOrderedLogEntries;
 - (NSDate*) dateOfEarliestLogEntry;
 - (NSUInteger) numberOfLogEntriesFromDate:(NSDate*)fromDate toDate:(NSDate*)toDate;
