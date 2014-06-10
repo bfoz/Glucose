@@ -65,8 +65,6 @@
 		158F40B1162A3EFC0000DD52 /* LogEntryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A3162A3EFC0000DD52 /* LogEntryViewController.m */; };
 		158F40B2162A3EFC0000DD52 /* LogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A5162A3EFC0000DD52 /* LogViewController.m */; };
 		158F40B3162A3EFC0000DD52 /* LogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A5162A3EFC0000DD52 /* LogViewController.m */; };
-		158F40B4162A3EFC0000DD52 /* PurgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A7162A3EFC0000DD52 /* PurgeViewController.m */; };
-		158F40B5162A3EFC0000DD52 /* PurgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A7162A3EFC0000DD52 /* PurgeViewController.m */; };
 		158F40B6162A3EFC0000DD52 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A9162A3EFC0000DD52 /* SettingsViewController.m */; };
 		158F40B7162A3EFC0000DD52 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 158F40A9162A3EFC0000DD52 /* SettingsViewController.m */; };
 		158F40BB162A4B690000DD52 /* DropboxExportViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 158F40BA162A4B690000DD52 /* DropboxExportViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -289,8 +287,6 @@
 		158F40A3162A3EFC0000DD52 /* LogEntryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogEntryViewController.m; sourceTree = "<group>"; };
 		158F40A4162A3EFC0000DD52 /* LogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogViewController.h; sourceTree = "<group>"; };
 		158F40A5162A3EFC0000DD52 /* LogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogViewController.m; sourceTree = "<group>"; };
-		158F40A6162A3EFC0000DD52 /* PurgeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgeViewController.h; sourceTree = "<group>"; };
-		158F40A7162A3EFC0000DD52 /* PurgeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PurgeViewController.m; sourceTree = "<group>"; };
 		158F40A8162A3EFC0000DD52 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		158F40A9162A3EFC0000DD52 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		158F40BA162A4B690000DD52 /* DropboxExportViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DropboxExportViewControllerSpec.mm; sourceTree = "<group>"; };
@@ -473,8 +469,6 @@
 				158F40A3162A3EFC0000DD52 /* LogEntryViewController.m */,
 				158F40A4162A3EFC0000DD52 /* LogViewController.h */,
 				158F40A5162A3EFC0000DD52 /* LogViewController.m */,
-				158F40A6162A3EFC0000DD52 /* PurgeViewController.h */,
-				158F40A7162A3EFC0000DD52 /* PurgeViewController.m */,
 				158F40A8162A3EFC0000DD52 /* SettingsViewController.h */,
 				158F40A9162A3EFC0000DD52 /* SettingsViewController.m */,
 				1524475C16ACF6D900422F3E /* SplashViewController.h */,
@@ -995,7 +989,6 @@
 				158F40AF162A3EFC0000DD52 /* InsulinTypeViewController.m in Sources */,
 				158F40B1162A3EFC0000DD52 /* LogEntryViewController.m in Sources */,
 				158F40B3162A3EFC0000DD52 /* LogViewController.m in Sources */,
-				158F40B5162A3EFC0000DD52 /* PurgeViewController.m in Sources */,
 				158F40B7162A3EFC0000DD52 /* SettingsViewController.m in Sources */,
 				158F40BB162A4B690000DD52 /* DropboxExportViewControllerSpec.mm in Sources */,
 				158F41DE162B73760000DD52 /* UIControl+SpecHelper.m in Sources */,
@@ -1061,7 +1054,6 @@
 				158F40AE162A3EFC0000DD52 /* InsulinTypeViewController.m in Sources */,
 				158F40B0162A3EFC0000DD52 /* LogEntryViewController.m in Sources */,
 				158F40B2162A3EFC0000DD52 /* LogViewController.m in Sources */,
-				158F40B4162A3EFC0000DD52 /* PurgeViewController.m in Sources */,
 				158F40B6162A3EFC0000DD52 /* SettingsViewController.m in Sources */,
 				15C2E7C5162D29D4002115FD /* DateField.m in Sources */,
 				15E59E601698CD410067BDC1 /* LogModel+SQLite.m in Sources */,

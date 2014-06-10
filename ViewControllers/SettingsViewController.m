@@ -6,7 +6,6 @@
 #import "InsulinTypeViewController.h"
 #import "LogModel.h"
 #import "NumberField.h"
-#import "PurgeViewController.h"
 #import "SettingsViewController.h"
 
 #define	URL_PROJECT_PAGE    @"http://bfoz.github.com/Glucose/"
@@ -36,7 +35,6 @@ enum Sections
 enum ExportPurgeRows
 {
     kExportRow = 0,
-    kPurgeRow,
     NUM_EXPORTPURGE_ROWS
 };
 
@@ -217,7 +215,6 @@ enum AboutSectionRows
 	    switch( row )
 	    {
 		case kExportRow:    cell.textLabel.text = @"Export"; break;
-		case kPurgeRow:	    cell.textLabel.text = @"Purge"; break;
 	    }
 	    break;
 	case kSectionCategoriesTypes:
@@ -333,10 +330,6 @@ enum AboutSectionRows
 	    {
 		case kExportRow:
 		    [self.navigationController pushViewController:[[ExportViewController alloc] initWithDataSource:self.model]
-							 animated:YES];
-		    break;
-		case kPurgeRow:
-		    [self.navigationController pushViewController:[[PurgeViewController alloc] initWithDataSource:model]
 							 animated:YES];
 		    break;
 	    }

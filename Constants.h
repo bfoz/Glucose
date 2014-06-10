@@ -125,6 +125,3 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 #define kLastExportGoogleFromDate		@"LastExportGoogleFromDate"
 #define kLastExportGoogleToDate			@"LastExportGoogleToDate"
 #define kLastExportGoogleOnDate			@"LastExportGoogleOnDate"
-#define	kLastPurgeFromDate		@"LastPurgeFromDate"
-#define	kLastPurgeToDate		@"LastPurgeToDate"
-#define	kLastPurgedOnDate		@"LastPurgedOnDate"
