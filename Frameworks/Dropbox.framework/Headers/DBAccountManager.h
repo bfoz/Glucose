@@ -2,9 +2,9 @@
 
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
 #endif
-
-#import "DBError.h"
 
 @class DBAccount;
 
@@ -37,13 +37,16 @@ typedef void (^DBLinkCompletionBlock)(DBAccount *account);
 /** A convenient place to get your app's account manager. */
 + (DBAccountManager *)sharedManager;
 
-
-
 #if TARGET_OS_IPHONE
 
 /** @name Linking new accounts (iOS) */
 
-/** (iOS only) This method begins the process for linking new accounts.
+/** (iOS only) This method begins the process for linking new accounts.  The user
+ will be prompted to log in and authorize your app.  The result is delivered to your
+ app via a URL, and you must call <handleOpenURL:> to finish linking.
+
+ Your app can call this method repeatedly to link more than one account (such as
+ personal and a business account).
 
  @param rootController the topmost view controller in your controller hierarchy.
  */
@@ -64,7 +67,12 @@ typedef void (^DBLinkCompletionBlock)(DBAccount *account);
 
 /** (OS X only) This method begins the process for linking new accounts.
 
- This will open the auth flow in a sheet. If parentWindow is `nil` it will open in a new window. When the user exits the flow, `block` will be called with the linked account which might be `nil` if the user cancelled or if there were errors.
+ This will open the auth flow in a sheet. If parentWindow is `nil` it will open in a new window.
+ When the user exits the flow, `block` will be called with the linked account which might be `nil`
+ if the user cancelled or if there were errors.
+
+ Your app can call this method repeatedly to link more than one account (such as
+ personal and a business account).
 
  @param parentWindow the parent window the auth flow modal should be attached to.
  @param block the block that gets called when the user is done linking.
@@ -76,9 +84,9 @@ typedef void (^DBLinkCompletionBlock)(DBAccount *account);
 
 /** @name Getting the current state */
 
-/** The currently linked account, or `nil` if there are no accounts currently linked.
+/** The most recently linked account, or `nil` if there are no accounts currently linked.
 
- If your app needs to link multiple accounts at the same time, you should always use the
+ If your app needs to link multiple accounts at the same time, you should use the
  <linkedAccounts> property. */
 @property (nonatomic, readonly) DBAccount *linkedAccount;
 
@@ -86,7 +94,6 @@ typedef void (^DBLinkCompletionBlock)(DBAccount *account);
 
  The accounts are ordered from the least recently to the most recently linked. */
 @property (nonatomic, readonly) NSArray *linkedAccounts;
-
 
 /** @name Watching for changes */
 

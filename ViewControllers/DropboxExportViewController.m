@@ -278,7 +278,7 @@ enum Sections
 		NSString* message = @"Could not create the Dropbox file";
 		switch( error.code )
 		{
-			case DBErrorParamsExists:
+			case DBErrorExists:
 			    message = @"That file already exists";
 			break;
 		    default:

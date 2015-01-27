@@ -95,9 +95,9 @@
 		15C6D50A16327F7000D6838D /* UIView+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C6D50916327F7000D6838D /* UIView+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15C6D5C716337EE100D6838D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15C6D5C616337EE000D6838D /* SystemConfiguration.framework */; };
 		15C8F66F1630E0DE00CA92D4 /* UIViewController+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		15CAB6D61942EBBD0064BC2A /* Dropbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CAB6D51942EBBD0064BC2A /* Dropbox.framework */; };
 		15CAB6E2194518E00064BC2A /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CAB6E1194518E00064BC2A /* libc++.dylib */; };
 		15CAB6E619453D750064BC2A /* libFlurry_5.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CAB6E519453D750064BC2A /* libFlurry_5.0.0.a */; };
+		15CBAAC91A77363500AC4156 /* Dropbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CBAAC81A77363500AC4156 /* Dropbox.framework */; };
 		15DE033116DDD14900632530 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DE033016DDD14900632530 /* ManagedInsulinDose.m */; };
 		15DE033216DDD14900632530 /* ManagedInsulinDose.m in Sources */ = {isa = PBXBuildFile; fileRef = 15DE033016DDD14900632530 /* ManagedInsulinDose.m */; };
 		15E59E601698CD410067BDC1 /* LogModel+SQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 15E59E5F1698CD410067BDC1 /* LogModel+SQLite.m */; };
@@ -329,9 +329,9 @@
 		15C6D5C616337EE000D6838D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		15C8F66C1630E00900CA92D4 /* UIViewController+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SpecHelper.h"; sourceTree = "<group>"; };
 		15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SpecHelper.m"; sourceTree = "<group>"; };
-		15CAB6D51942EBBD0064BC2A /* Dropbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Dropbox.framework; path = Frameworks/Dropbox.framework; sourceTree = "<group>"; };
 		15CAB6E1194518E00064BC2A /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		15CAB6E519453D750064BC2A /* libFlurry_5.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_5.0.0.a; sourceTree = "<group>"; };
+		15CBAAC81A77363500AC4156 /* Dropbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Dropbox.framework; sourceTree = "<group>"; };
 		15DE032F16DDD14900632530 /* ManagedInsulinDose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedInsulinDose.h; sourceTree = "<group>"; };
 		15DE033016DDD14900632530 /* ManagedInsulinDose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedInsulinDose.m; sourceTree = "<group>"; };
 		15E59E5E1698CD410067BDC1 /* LogModel+SQLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+SQLite.h"; sourceTree = "<group>"; };
@@ -384,9 +384,9 @@
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				150829F20E500DCA00FB556A /* CoreGraphics.framework in Frameworks */,
+				15CBAAC91A77363500AC4156 /* Dropbox.framework in Frameworks */,
 				159E84410E5558BD0097EA6F /* libsqlite3.0.dylib in Frameworks */,
 				15CAB6E619453D750064BC2A /* libFlurry_5.0.0.a in Frameworks */,
-				15CAB6D61942EBBD0064BC2A /* Dropbox.framework in Frameworks */,
 				153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */,
 				15A321920ED28A7E00C16388 /* AddressBook.framework in Frameworks */,
 				15A321940ED28A7E00C16388 /* AddressBookUI.framework in Frameworks */,
@@ -609,8 +609,7 @@
 				15C6D5C316337D5300D6838D /* Flurry.h */,
 				15CAB6E519453D750064BC2A /* libFlurry_5.0.0.a */,
 			);
-			name = Flurry;
-			path = Frameworks/Flurry;
+			path = Flurry;
 			sourceTree = "<group>";
 		};
 		15E59E591698CB240067BDC1 /* Categories */ = {
@@ -713,7 +712,7 @@
 				15CAB6E1194518E00064BC2A /* libc++.dylib */,
 				15E59FE4169918FA0067BDC1 /* CoreData.framework */,
 				150829F10E500DCA00FB556A /* CoreGraphics.framework */,
-				15CAB6D51942EBBD0064BC2A /* Dropbox.framework */,
+				15CBAAC81A77363500AC4156 /* Dropbox.framework */,
 				15C6D5C216337D5300D6838D /* Flurry */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				159E84400E5558BD0097EA6F /* libsqlite3.0.dylib */,
@@ -723,7 +722,7 @@
 				15C6D5C616337EE000D6838D /* SystemConfiguration.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 			);
-			name = Frameworks;
+			path = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
