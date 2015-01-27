@@ -2,8 +2,6 @@
 
 #import "DateField.h"
 
-using namespace Cedar::Matchers;
-
 SPEC_BEGIN(DateFieldSpec)
 
 describe(@"DateField", ^{
@@ -13,7 +11,7 @@ describe(@"DateField", ^{
     beforeEach(^{
 	dateField = [[DateField alloc] initWithFrame:CGRectZero];
 
-	mockDelegate = [OCMockObject mockForProtocol:@protocol(DateFieldDelegate)];
+	mockDelegate = fake_for(@protocol(DateFieldDelegate));
 	dateField.delegate = mockDelegate;
     });
 
@@ -43,22 +41,19 @@ describe(@"DateField", ^{
 
     xdescribe(@"when firstResponder", ^{
 	beforeEach(^{
-	    BOOL yes = YES;
-	    [[[mockDelegate expect] andReturnValue:OCMOCK_VALUE(yes)] textFieldShouldBeginEditing:dateField];
+	    mockDelegate stub_method(@selector(textFieldShouldBeginEditing:)).with(dateField).and_return(YES);
 	    [dateField becomeFirstResponder];
 	});
 
 	describe(@"when the Cancel button is tapped", ^{
 	    beforeEach(^{
-		[[mockDelegate expect] dateFieldWillCancelEditing:OCMOCK_ANY];
-		[[mockDelegate expect] textFieldDidEndEditing:OCMOCK_ANY];
-
 		UIToolbar* toolbar = (UIToolbar*)dateField.inputAccessoryView;
 		[[toolbar.items objectAtIndex:0] tap];
 	    });
 
 	    it(@"should notify the delegate", ^{
-		[mockDelegate verify];
+		mockDelegate should have_received("dateFieldWillCancelEditing:").with(Arguments::anything);
+		mockDelegate should have_received("textFieldDidEndEditing:").with(Arguments::anything);
 	    });
 
 	    it(@"should resign first responder", ^{
@@ -68,14 +63,12 @@ describe(@"DateField", ^{
 
 	describe(@"when the Done button is tapped", ^{
 	    beforeEach(^{
-		[[mockDelegate expect] textFieldDidEndEditing:OCMOCK_ANY];
-
 		UIToolbar* toolbar = (UIToolbar*)dateField.inputAccessoryView;
 		[[toolbar.items objectAtIndex:2] tap];
 	    });
 
 	    it(@"should notify the delegate", ^{
-		[mockDelegate verify];
+		mockDelegate should have_received("textFieldDidEndEditing:").with(Arguments::anything);
 	    });
 
 	    it(@"should resign first responder", ^{
@@ -85,12 +78,11 @@ describe(@"DateField", ^{
 
 	describe(@"when a date is picked", ^{
 	    beforeEach(^{
-		[[mockDelegate expect] dateFieldDidChangeValue:OCMOCK_ANY];
 		[(UIDatePicker*)dateField.inputView setDate:[NSDate date] animated:NO];
 	    });
 
 	    it(@"should notify the delegate", ^{
-		[mockDelegate verify];
+		mockDelegate should have_received("dateFieldDidChangeValue:").with(Arguments::anything);
 	    });
 	});
     });

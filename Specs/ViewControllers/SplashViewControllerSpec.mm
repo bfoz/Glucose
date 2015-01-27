@@ -23,7 +23,7 @@ describe(@"SplashViewController", ^{
     __block id mockDelegate;
 
     beforeEach(^{
-	mockDelegate = [OCMockObject mockForProtocol:@protocol(SplashViewControllerDelegate)];
+	mockDelegate = nice_fake_for(@protocol(SplashViewControllerDelegate));
     });
 
     describe(@"when the database needs migration", ^{
@@ -56,12 +56,11 @@ describe(@"SplashViewController", ^{
 
 	describe(@"when the migration finishes", ^{
 	    beforeEach(^{
-		[[mockDelegate expect] splashViewControllerDidFinish];
 		[controller didFinishMigration];
 	    });
 
 	    it(@"should inform the delegate", ^{
-		[mockDelegate verify];
+		mockDelegate should have_received("splashViewControllerDidFinish");
 	    });
 	});
     });
@@ -71,14 +70,12 @@ describe(@"SplashViewController", ^{
 	    controller = [[SplashViewController alloc] initForMigration:NO];
 	    controller.delegate = mockDelegate;
 
-	    [[mockDelegate expect] splashViewControllerDidFinish];
-
 	    controller.view should_not be_nil;
 	    [controller viewDidAppear:NO];
 	});
 
 	it(@"should inform the delegate", ^{
-	    [mockDelegate verify];
+	    mockDelegate should have_received("splashViewControllerDidFinish");
 	});
     });
 });

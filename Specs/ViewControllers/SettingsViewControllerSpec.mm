@@ -5,8 +5,6 @@
 #import "InsulinTypeViewController.h"
 #import "SettingsViewController.h"
 
-using namespace Cedar::Matchers;
-
 @interface SettingsViewController () <CategoryViewControllerDelegate, InsulinTypeViewControllerDelegate>
 @end
 
@@ -22,7 +20,7 @@ describe(@"SettingsViewController", ^{
 	navigationController = [[[UINavigationController alloc] initWithRootViewController:controller] autorelease];
 	navigationController.topViewController should be_same_instance_as(controller);
 
-	mockLogModel = [OCMockObject mockForClass:[LogModel class]];
+	mockLogModel = nice_fake_for(LogModel.class);
 	controller.model = mockLogModel;
 
 	controller.view should_not be_nil;
@@ -40,37 +38,35 @@ describe(@"SettingsViewController", ^{
 	__block id mockDelegate;
 
 	beforeEach(^{
-	    mockDelegate = [OCMockObject mockForProtocol:@protocol(SettingsViewControllerDelegate)];
+	    mockDelegate = nice_fake_for(@protocol(SettingsViewControllerDelegate));
 	    controller.delegate = mockDelegate;
 
-	    [[mockDelegate expect] settingsViewControllerDidPressBack];
-	    [[mockLogModel expect] flushInsulinTypesForNewEntries];
 	    [controller.navigationItem.rightBarButtonItem tap];
 	});
 
 	it(@"should inform the delegate", ^{
-	    [mockDelegate verify];
+	    mockDelegate should have_received("settingsViewControllerDidPressBack");
 	});
 
 	it(@"should flush insulin types for new entries", ^{
-	    [mockLogModel verify];
+	    mockLogModel should have_received("flushInsulinTypesForNewEntries");
 	});
     });
 
     describe(@"Category view controller delegate", ^{
 	it(@"should inform the model when the user restores the default categories", ^{
-	    [[mockLogModel expect] restoreBundledCategories];
-	    [[mockLogModel expect] save];
 	    [controller categoryViewControllerDidSelectRestoreDefaults];
-	    [mockLogModel verify];
+
+	    mockLogModel should have_received("restoreBundledCategories");
+	    mockLogModel should have_received("save");
 	});
     });
 
     describe(@"Insulin Type view controller delegate", ^{
 	it(@"should inform the model when the user restores the default insulin types", ^{
-	    [[mockLogModel expect] restoreBundledInsulinTypes];
 	    [controller insulinTypeViewControllerDidSelectRestoreDefaults];
-	    [mockLogModel verify];
+
+	    mockLogModel should have_received("restoreBundledInsulinTypes");
 	});
     });
 });

@@ -13,8 +13,6 @@
 #import "NumberFieldCell.h"
 #import "TextViewCell.h"
 
-using namespace Cedar::Matchers;
-
 enum Sections
 {
     kSectionGlucose = 0,
@@ -781,12 +779,8 @@ describe(@"LogEntryViewController", ^{
 	});
 
 	describe(@"when the Done button is tapped", ^{
-	    __block id mockDelegate;
-
 	    beforeEach(^{
-		mockDelegate = [OCMockObject mockForProtocol:@protocol(LogEntryViewDelegate)];
-		controller.delegate = mockDelegate;
-		[[mockDelegate expect] logEntryView:controller didEndEditingEntry:OCMOCK_ANY];
+		controller.delegate = nice_fake_for(@protocol(LogEntryViewDelegate));
 	    });
 
 	    describe(@"in general", ^{
@@ -807,7 +801,7 @@ describe(@"LogEntryViewController", ^{
 		});
 
 		it(@"should inform the delegate", ^{
-		    [mockDelegate verify];
+		    controller.delegate should have_received("logEntryView:didEndEditingEntry:").with(controller, Arguments::anything);
 		});
 	    });
 

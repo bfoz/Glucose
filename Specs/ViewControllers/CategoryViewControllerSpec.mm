@@ -10,9 +10,6 @@
 #define	kCategoriesSectionNumber		0
 #define	kRestoreDefaultsSectionNumber		1
 
-using namespace Cedar::Matchers;
-using namespace Cedar::Doubles;
-
 SPEC_BEGIN(CategoryViewControllerSpec)
 
 describe(@"CategoryViewController", ^{
