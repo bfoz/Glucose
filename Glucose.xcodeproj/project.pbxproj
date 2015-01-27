@@ -494,13 +494,13 @@
 			isa = PBXGroup;
 			children = (
 				1581CDDF155F091D00B069F2 /* Cedar.framework */,
-				1581CDE1155F091D00B069F2 /* Specs */,
-				1581CDE3155F091D00B069F2 /* FocusedSpecs */,
+				1581CDE1155F091D00B069F2 /* Cedar OS X Specs */,
+				1581CDE3155F091D00B069F2 /* Cedar OS X FocusedSpecs */,
 				1581CDE5155F091D00B069F2 /* libCedar-StaticLib.a */,
-				1581CDE7155F091D00B069F2 /* iOSSpecs.app */,
+				1581CDE7155F091D00B069F2 /* Cedar iOS Specs.app */,
 				15CBAAB91A77307100AC4156 /* Cedar iOS FrameworkSpecs.app */,
-				1581CDE9155F091D00B069F2 /* OCUnitApp.app */,
-				1581CDEB155F091D00B069F2 /* OCUnitAppTests.octest */,
+				1581CDE9155F091D00B069F2 /* Cedar iOS Host App.app */,
+				1581CDEB155F091D00B069F2 /* Cedar iOS SenTestingKit Tests.octest */,
 				15CBAABB1A77307100AC4156 /* XCUnitAppTests.xctest */,
 				15CBAABD1A77307100AC4156 /* Cedar OS X Host App.app */,
 				15CBAABF1A77307100AC4156 /* Cedar OS X Host AppTests.xctest */,
@@ -814,14 +814,14 @@
 			remoteRef = 1581CDDE155F091D00B069F2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1581CDE1155F091D00B069F2 /* Specs */ = {
+		1581CDE1155F091D00B069F2 /* Cedar OS X Specs */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = "Cedar OS X Specs";
 			remoteRef = 1581CDE0155F091D00B069F2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1581CDE3155F091D00B069F2 /* FocusedSpecs */ = {
+		1581CDE3155F091D00B069F2 /* Cedar OS X FocusedSpecs */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = "Cedar OS X FocusedSpecs";
@@ -835,21 +835,21 @@
 			remoteRef = 1581CDE4155F091D00B069F2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1581CDE7155F091D00B069F2 /* iOSSpecs.app */ = {
+		1581CDE7155F091D00B069F2 /* Cedar iOS Specs.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = "Cedar iOS Specs.app";
 			remoteRef = 1581CDE6155F091D00B069F2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1581CDE9155F091D00B069F2 /* OCUnitApp.app */ = {
+		1581CDE9155F091D00B069F2 /* Cedar iOS Host App.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = "Cedar iOS Host App.app";
 			remoteRef = 1581CDE8155F091D00B069F2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1581CDEB155F091D00B069F2 /* OCUnitAppTests.octest */ = {
+		1581CDEB155F091D00B069F2 /* Cedar iOS SenTestingKit Tests.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "Cedar iOS SenTestingKit Tests.octest";
