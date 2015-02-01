@@ -21,12 +21,15 @@ enum Sections
     NUM_SECTIONS
 };
 
-@interface LogEntryViewController (UISpecs) <EditTextViewControllerDelegate>
+@interface LogEntryViewController (UISpecs) <DateFieldDelegate, DoseFieldCellDelegate, EditTextViewControllerDelegate, NumberFieldCellDelegate>
 @property (nonatomic, strong) UILabel*	    categoryLabel;
+@property (nonatomic, strong) NumberFieldCell*	glucoseCell;
 @property (nonatomic, strong) DateField*    timestampField;
 @property (nonatomic, strong) UILabel*	    timestampLabel;
 
 - (void) categoryViewControllerDidSelectCategory:(id)category;
+- (void) didTapToolbarCancelButton;
+- (void) didTapDoneButton;
 @end
 
 SPEC_BEGIN(LogEntryViewControllerSpec)
@@ -37,7 +40,7 @@ describe(@"LogEntryViewController", ^{
     __block LogModel*	logModel;
 
     beforeEach(^{
-	logModel = [[[LogModel alloc] init] autorelease];
+	logModel = [[LogModel alloc] init];
     });
 
     describe(@"when displaying an existing log entry", ^{
@@ -46,13 +49,15 @@ describe(@"LogEntryViewController", ^{
 	beforeEach(^{
 	    logEntry = [logModel insertManagedLogEntry];
 
-	    controller = [[[LogEntryViewController alloc] initWithLogEntry:logEntry] autorelease];
+	    controller = [[LogEntryViewController alloc] initWithLogEntry:logEntry];
 	    controller.model = logModel;
 
-	    UIViewController* rootViewController = [[[UIViewController alloc] init] autorelease];
-	    navigationController = [[[UINavigationController alloc] initWithRootViewController:rootViewController] autorelease];
+	    UIViewController* rootViewController = [[UIViewController alloc] init];
+	    navigationController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
 	    [navigationController pushViewController:controller animated:NO];
 	    navigationController.topViewController.view should_not be_nil;
+
+	    [controller viewDidLoad];
 	});
 
 	it(@"should not be editing", ^{
@@ -63,6 +68,11 @@ describe(@"LogEntryViewController", ^{
 	it(@"should have a right bar button item for editing", ^{
 	    controller.navigationItem.rightBarButtonItem should_not be_nil;
 	    controller.navigationItem.rightBarButtonItem should be_same_instance_as(controller.editButtonItem);
+	});
+
+	it(@"must have a table view", ^{
+	    controller.tableView should_not be_nil;
+	    controller.tableView should be_instance_of(UITableView.class);
 	});
 
 	it(@"should have a proper table delegate and dataSource", ^{
@@ -243,80 +253,92 @@ describe(@"LogEntryViewController", ^{
 		    });
 		});
 
-		it(@"should have a NumberFieldCell for row 2", ^{
-		    UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:0]];
-		    cell should_not be_nil;
-		    cell should be_instance_of([NumberFieldCell class]);
-		});
-
-		describe(@"when the Glucose cell is tapped", ^{
-		    __block NumberFieldCell* glucoseCell;
+		context(@"Row 2 (Glucose)", ^{
+		    __block NumberFieldCell* cell;
+		    __block NSIndexPath* indexPath =[NSIndexPath indexPathForRow:2 inSection:0];
 
 		    beforeEach(^{
-			NSIndexPath* indexPath = [NSIndexPath indexPathForRow:2 inSection:0];
-			glucoseCell = (NumberFieldCell*)[controller.tableView cellForRowAtIndexPath:indexPath];
-			[controller tableView:controller.tableView didSelectRowAtIndexPath:indexPath];
+			cell = (NumberFieldCell*)[controller.tableView cellForRowAtIndexPath:indexPath];
 		    });
 
-		    it(@"should display the keyboard", ^{
-			glucoseCell.field.isFirstResponder should be_truthy;
+		    it(@"must be a NumberFieldCell", ^{
+			cell should be_instance_of(NumberFieldCell.class);
 		    });
 
-		    it(@"should disable the right nav bar button", ^{
-			controller.navigationItem.rightBarButtonItem.enabled should_not be_truthy;
+		    it(@"must have a delegate", ^{
+			cell.delegate should be_same_instance_as(controller);
 		    });
 
-		    it(@"should have Cancel and Done buttons above the keyboard", ^{
-			UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
-			toolbar should_not be_nil;
-			toolbar should be_instance_of([UIToolbar class]);
-			toolbar.items.count should equal(3);
-		    });
-
-		    describe(@"when the Glucose value is changed", ^{
+		    describe(@"when the cell is tapped", ^{
 			beforeEach(^{
-			    glucoseCell.number = @42;
+			    spy_on(cell);
+			    cell.field should_not be_nil;
+
+			    [controller tableView:controller.tableView didSelectRowAtIndexPath:indexPath];
+			});
+
+			it(@"should display the keyboard", ^{
+			    cell should have_received("becomeFirstResponder");
+			});
+
+			it(@"should have Cancel and Done buttons above the keyboard", ^{
+			    UIToolbar* toolbar = (UIToolbar*)cell.field.inputAccessoryView;
+			    toolbar should_not be_nil;
+			    toolbar should be_instance_of([UIToolbar class]);
+			    toolbar.items.count should equal(3);
+			});
+		    });
+
+		    describe(@"when the Glucose cell begins editing", ^{
+			beforeEach(^{
+			    [controller numberFieldCellDidBeginEditing:cell];
+			});
+
+			it(@"should disable the Save button", ^{
+			    controller.navigationItem.rightBarButtonItem.enabled should_not be_truthy;
 			});
 
 			describe(@"when the Cancel button is tapped", ^{
-			    __block UIBarButtonItem* cancelButton;
-
 			    beforeEach(^{
-				UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
-				cancelButton = [toolbar.items objectAtIndex:0];
-				[cancelButton tap];
+				spy_on(cell);
+
+				[controller didTapToolbarCancelButton];
 			    });
 
-			    it(@"should resign first responder", ^{
-				glucoseCell.field.isFirstResponder should_not be_truthy;
+			    it(@"must inform the cell", ^{
+				cell should have_received("cancel");
 			    });
 
-			    it(@"should restore the previous value", ^{
-				glucoseCell.number should_not equal(@42);
-			    });
+			    describe(@"when the cell ends editing", ^{
+				beforeEach(^{
+				    [controller numberFieldCellDidEndEditing:cell];
+				});
 
-			    it(@"should enable the right nav bar button", ^{
-				controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+				it(@"should enable the right nav bar button", ^{
+				    controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+				});
 			    });
 			});
 
 			describe(@"when the Done button is tapped", ^{
 			    beforeEach(^{
-				UIToolbar* toolbar = (UIToolbar*)glucoseCell.field.inputAccessoryView;
-				UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
-				[doneButton tap];
+				spy_on(cell);
+
+				[controller didTapDoneButton];
 			    });
 
-			    it(@"should resign first responder", ^{
-				glucoseCell.field.isFirstResponder should_not be_truthy;
+			    it(@"must inform the cell", ^{
+				cell should have_received("save");
 			    });
 
-			    it(@"should accept the new value", ^{
-				glucoseCell.number should equal(@42);
-			    });
+			    describe(@"when the cell ends editing", ^{
+				beforeEach(^{
+				    [controller numberFieldCellDidEndEditing:cell];
+				});
 
-			    it(@"should enable the right nav bar button", ^{
-				controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+				it(@"should enable the right nav bar button", ^{
+				    controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+				});
 			    });
 			});
 		    });
@@ -329,11 +351,7 @@ describe(@"LogEntryViewController", ^{
 
 	    describe(@"Section 2 - Note", ^{
 		__block UITableViewCell* cell;
-		__block NSIndexPath*    noteRowIndexPath;
-
-		beforeEach(^{
-		    noteRowIndexPath = [NSIndexPath indexPathForRow:0 inSection:kSectionNote];
-		});
+		__block NSIndexPath*    noteRowIndexPath = [NSIndexPath indexPathForRow:0 inSection:kSectionNote];
 
 		it(@"should have 1 row", ^{
 		    [controller.tableView numberOfRowsInSection:kSectionNote] should equal(1);
@@ -370,15 +388,16 @@ describe(@"LogEntryViewController", ^{
 
 		    describe(@"when the row is tapped", ^{
 			beforeEach(^{
+			    NSLog(@"%ld %ld", (long)noteRowIndexPath.section, (long)noteRowIndexPath.row);
 			    [controller tableView:nil didSelectRowAtIndexPath:noteRowIndexPath];
 			});
 
 			it(@"should display the edit text view", ^{
-			    controller.navigationController.topViewController should be_instance_of([EditTextViewController class]);
+			    controller.presentedViewController should be_instance_of([EditTextViewController class]);
 			});
 
 			it(@"should set the initial text for the edit text view", ^{
-			    EditTextViewController* editController = (EditTextViewController*)controller.navigationController.topViewController;
+			    EditTextViewController* editController = (EditTextViewController*)controller.presentedViewController;
 			    editController.text should equal(noteText);
 			});
 
@@ -448,11 +467,11 @@ describe(@"LogEntryViewController", ^{
 			});
 
 			it(@"should display the edit text view", ^{
-			    controller.navigationController.topViewController should be_instance_of([EditTextViewController class]);
+			    controller.presentedViewController should be_instance_of([EditTextViewController class]);
 			});
 
 			it(@"should set the initial text for the edit text view", ^{
-			    EditTextViewController* editController = (EditTextViewController*)controller.navigationController.topViewController;
+			    EditTextViewController* editController = (EditTextViewController*)controller.presentedViewController;
 			    editController.text.length should equal(0);
 			});
 
@@ -507,6 +526,8 @@ describe(@"LogEntryViewController", ^{
 
 	    describe(@"when the Save button is tapped", ^{
 		beforeEach(^{
+		    spy_on(controller.model);
+
 		    [controller.navigationItem.rightBarButtonItem tap];
 		});
 
@@ -523,7 +544,7 @@ describe(@"LogEntryViewController", ^{
 		});
 
 		it(@"should update the model", ^{
-		    [controller.logEntry hasChanges] should_not be_truthy;
+		    controller.model should have_received("commitChanges");
 		});
 	    });
 	});
@@ -533,7 +554,7 @@ describe(@"LogEntryViewController", ^{
 	beforeEach(^{
 	    UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:[[UIViewController alloc] init]];
 
-	    controller = [[[LogEntryViewController alloc] initWithLogModel:logModel] autorelease];
+	    controller = [[LogEntryViewController alloc] initWithLogModel:logModel];
 
 	    [navigationController pushViewController:controller animated:YES];
 
@@ -615,15 +636,29 @@ describe(@"LogEntryViewController", ^{
 
 	describe(@"when the timestamp row is tapped", ^{
 	    beforeEach(^{
+		[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+
+		spy_on(controller.timestampField);
+
 		[controller tableView:nil didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionGlucose]];
 	    });
 
-	    it(@"should become first responder", ^{
-		[controller.timestampField isFirstResponder] should be_truthy;
+	    it(@"must have a delegate", ^{
+		controller.timestampField.delegate should be_same_instance_as(controller);
 	    });
 
-	    it(@"should disable the right nav bar button", ^{
-		controller.navigationItem.rightBarButtonItem.enabled should_not be_truthy;
+	    it(@"should become first responder", ^{
+		controller.timestampField should have_received("becomeFirstResponder");
+	    });
+
+	    describe(@"when the timestamp field begins editing", ^{
+		beforeEach(^{
+		    [controller textFieldDidBeginEditing:controller.timestampField];
+		});
+
+		it(@"must disable the right nav bar button", ^{
+		    controller.navigationItem.rightBarButtonItem.enabled should_not be_truthy;
+		});
 	    });
 
 	    describe(@"when the date is changed", ^{
@@ -648,12 +683,18 @@ describe(@"LogEntryViewController", ^{
 			[controller.timestampField isFirstResponder] should_not be_truthy;
 		    });
 
-		    it(@"should enable the right nav bar button", ^{
-			controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
-		    });
-
 		    it(@"should restore the original date", ^{
 			controller.timestampField.date = originalDate;
+		    });
+
+		    describe(@"when the field ends editing", ^{
+			beforeEach(^{
+			    [controller textFieldDidEndEditing:controller.timestampField];
+			});
+
+			it(@"should enable the right nav bar button", ^{
+			    controller.navigationItem.rightBarButtonItem.enabled should be_truthy;
+			});
 		    });
 		});
 
@@ -682,25 +723,34 @@ describe(@"LogEntryViewController", ^{
 
 	describe(@"when the Category row is tapped", ^{
 	    beforeEach(^{
-		[controller tableView:controller.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionGlucose]];
+		spy_on(controller);
+
+		// Force the Category cell into existence
+		NSIndexPath* indexPath = [NSIndexPath indexPathForRow:1 inSection:kSectionGlucose];
+		[controller.tableView cellForRowAtIndexPath:indexPath];
+
+		[controller tableView:controller.tableView didSelectRowAtIndexPath:indexPath];
 	    });
 
 	    it(@"should display a modal Category picker", ^{
-		controller.modalViewController should_not be_nil;
+		controller should have_received("presentViewController:animated:completion:").with(Arguments::anything, YES, nil);
 	    });
 
 	    describe(@"when a Category is picked", ^{
 		__block ManagedCategory* category;
 
 		beforeEach(^{
-		    category = logModel.categories.lastObject;
-		    category should_not be_nil;
+		    spy_on(controller);
+		    spy_on(controller.glucoseCell);
+
+		    category = [logModel addCategoryWithName:@"TestCategory"];
+
 		    [controller categoryViewControllerDidSelectCategory:category];
 		    [controller viewDidAppear:NO];
 		});
 
 		it(@"should dismiss the picker", ^{
-		    controller.modalViewController should be_nil;
+		    controller should have_received("dismissViewControllerAnimated:completion:").with(YES, nil);
 		});
 
 		it(@"should update the Category label", ^{
@@ -709,8 +759,7 @@ describe(@"LogEntryViewController", ^{
 		});
 
 		it(@"should make the Glucose row the first responder", ^{
-		    NumberFieldCell* cell = (NumberFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:kSectionGlucose]];
-		    cell.field.isFirstResponder should be_truthy;
+		    controller.glucoseCell should have_received("becomeFirstResponder");
 		});
 	    });
 	});
@@ -720,6 +769,8 @@ describe(@"LogEntryViewController", ^{
 	    __block NSIndexPath*    noteRowIndexPath;
 
 	    beforeEach(^{
+		spy_on(controller);
+
 		noteRowIndexPath = [NSIndexPath indexPathForRow:0 inSection:kSectionNote];
 		cell = [controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionNote]];
 
@@ -727,7 +778,7 @@ describe(@"LogEntryViewController", ^{
 	    });
 
 	    it(@"should display an edit text view controller", ^{
-		controller.navigationController.topViewController should be_instance_of([EditTextViewController class]);
+		controller should have_received("presentViewController:animated:completion:").with(Arguments::anything, YES, nil);
 	    });
 
 	    describe(@"when the edit text view returns", ^{
@@ -841,7 +892,7 @@ describe(@"LogEntryViewController", ^{
 
 		UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:[[UIViewController alloc] init]];
 
-		controller = [[[LogEntryViewController alloc] initWithLogModel:logModel] autorelease];
+		controller = [[LogEntryViewController alloc] initWithLogModel:logModel];
 
 		[navigationController pushViewController:controller animated:NO];
 
@@ -854,6 +905,9 @@ describe(@"LogEntryViewController", ^{
 
 	    it(@"should have the proper number of insulin rows", ^{
 		[controller.tableView numberOfRowsInSection:kSectionInsulin] should equal(logModel.insulinTypesForNewEntries.count);
+	    });
+
+	    it(@"must be the delegate for all of the insulin rows", ^{
 	    });
 
 	    it(@"should set the editing style for insulin rows", ^{
@@ -878,70 +932,76 @@ describe(@"LogEntryViewController", ^{
 		});
 	    });
 
-	    describe(@"when the dose field of the first dose row is tapped", ^{
+	    describe(@"when the dose field of the first dose row begins editing", ^{
 		__block DoseFieldCell* cell;
 
 		beforeEach(^{
 		    cell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionInsulin]];
-		    [cell.doseField becomeFirstResponder] should be_truthy;
+
+		    [controller doseDidBeginEditing:cell];
 		});
 
-		it(@"should show the keyboard", ^{
-		    [cell.doseField isFirstResponder] should be_truthy;
+		it(@"should disable the Save button", ^{
+		    controller.navigationItem.rightBarButtonItem.enabled should_not be_truthy;
 		});
 
+		// This is checked here, instead of in DoseFieldCellSpec, because
+		//  the ViewController assigns the accessory view to the cell.
 		it(@"should have a toolbar above the keyboard", ^{
 		    cell.doseField.inputAccessoryView should_not be_nil;
 		});
 
-		describe(@"when the dose is changed", ^{
-		    __block NSString* originalText;
+		// This is checked here, instead of in DoseFieldCellSpec, because
+		//  the ViewController assigns the accessory view to the cell.
+		it(@"should have Cancel and Done buttons above the keyboard", ^{
+		    UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
+		    toolbar should_not be_nil;
+		    toolbar should be_instance_of([UIToolbar class]);
+		    toolbar.items.count should equal(3);
+		});
 
+		describe(@"when the accessory toolbar Cancel button is tapped", ^{
 		    beforeEach(^{
-			originalText = cell.doseField.text;
+			spy_on(cell);
 
-			cell.doseField.text = @"1";
+			UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
+			UIBarButtonItem* cancelButton = [toolbar.items objectAtIndex:0];
+			[cancelButton tap];
 		    });
 
-		    describe(@"when the accessory toolbar Cancel button is tapped", ^{
-			beforeEach(^{
-			    UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
-			    UIBarButtonItem* cancelButton = [toolbar.items objectAtIndex:0];
-			    [cancelButton tap];
-			});
-
-			it(@"should resign first responder", ^{
-			    cell.doseField.isFirstResponder should_not be_truthy;
-			});
-
-			it(@"should restore the previous value", ^{
-			    cell.doseField.text should equal(originalText);
-			});
-		    });
-
-		    describe(@"when the accessory toolbar Done button is tapped", ^{
-			beforeEach(^{
-			    UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
-			    UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
-			    [doneButton tap];
-			});
-
-			it(@"should resign first responder", ^{
-			    cell.doseField.isFirstResponder should_not be_truthy;
-			});
-
-			it(@"should keep the new value", ^{
-			    cell.doseField.text should equal(@"1");
-			});
-
-			it(@"should cause the next row to become first responder", ^{
-			    DoseFieldCell* nextCell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionInsulin]];
-			    nextCell.doseField.isFirstResponder should be_truthy;
-			});
+		    it(@"must inform the cell", ^{
+			cell should have_received("cancel");
 		    });
 		});
 
-		describe(@"when the dose is not changed", ^{
+		describe(@"when the accessory toolbar Done button is tapped", ^{
+		    beforeEach(^{
+			spy_on(cell);
+			spy_on(controller);
+
+			UIToolbar* toolbar = (UIToolbar*)cell.doseField.inputAccessoryView;
+			UIBarButtonItem* doneButton = [toolbar.items objectAtIndex:2];
+			[doneButton tap];
+		    });
+
+		    it(@"must inform the cell", ^{
+			cell should have_received("save");
+		    });
+
+		    describe(@"when the cell ends editing", ^{
+			__block DoseFieldCell* nextCell;
+
+			beforeEach(^{
+			    nextCell = (DoseFieldCell*)[controller.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:kSectionInsulin]];
+			    spy_on(nextCell.doseField);
+
+			    [controller doseDidEndEditing:cell];
+			});
+
+			it(@"should cause the next row to become first responder", ^{
+			    nextCell.doseField should have_received("becomeFirstResponder");
+			});
+		    });
 		});
 	    });
 

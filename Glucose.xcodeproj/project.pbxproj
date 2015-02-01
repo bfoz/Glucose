@@ -24,6 +24,8 @@
 		1524475F16ACF6D900422F3E /* SplashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1524475D16ACF6D900422F3E /* SplashViewController.m */; };
 		15271CAC180B6A2B000273AD /* Icon120.png in Resources */ = {isa = PBXBuildFile; fileRef = 1504E020180B60D5001AE1AA /* Icon120.png */; };
 		152DCCC216A28A0300EA9371 /* LogModel+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 152DCCC116A28A0300EA9371 /* LogModel+SpecHelper.m */; };
+		153143C71A78A5BD00AD7BF8 /* NumberFieldCellSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 153143C61A78A5BD00AD7BF8 /* NumberFieldCellSpec.mm */; };
+		153D18F11A7994CE00430040 /* UIResponder+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 153D18F01A7994CE00430040 /* UIResponder+SpecHelper.m */; };
 		153F26A10E7F70C000F75D9F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 153F26A00E7F70C000F75D9F /* Security.framework */; };
 		1545EB5716C73370001C0EDE /* SplashViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1545EB5616C73370001C0EDE /* SplashViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		1545EB6216C73E59001C0EDE /* UIView+App.m in Sources */ = {isa = PBXBuildFile; fileRef = 1545EB6116C73E59001C0EDE /* UIView+App.m */; };
@@ -43,7 +45,7 @@
 		1581CE12155F0F9A00B069F2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1581CE23155F116600B069F2 /* libCedar-StaticLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1581CDE5155F091D00B069F2 /* libCedar-StaticLib.a */; };
 		1581CE28155F126900B069F2 /* AppDelegateSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1581CE27155F126900B069F2 /* AppDelegateSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		1581CE2F155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1581CE2E155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		1581CE2F155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1581CE2E155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm */; };
 		158272BF16D9888F004CAC92 /* DoseFieldCellSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 158272BE16D9888F004CAC92 /* DoseFieldCellSpec.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15836FE1169E89EE000D4FC2 /* ManagedLogDay+App.m in Sources */ = {isa = PBXBuildFile; fileRef = 15836FE0169E89EE000D4FC2 /* ManagedLogDay+App.m */; };
 		15836FE2169E89EE000D4FC2 /* ManagedLogDay+App.m in Sources */ = {isa = PBXBuildFile; fileRef = 15836FE0169E89EE000D4FC2 /* ManagedLogDay+App.m */; };
@@ -245,6 +247,9 @@
 		1524475D16ACF6D900422F3E /* SplashViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplashViewController.m; sourceTree = "<group>"; };
 		152DCCC016A28A0300EA9371 /* LogModel+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LogModel+SpecHelper.h"; sourceTree = "<group>"; };
 		152DCCC116A28A0300EA9371 /* LogModel+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LogModel+SpecHelper.m"; sourceTree = "<group>"; };
+		153143C61A78A5BD00AD7BF8 /* NumberFieldCellSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NumberFieldCellSpec.mm; sourceTree = "<group>"; };
+		153D18EF1A7994CE00430040 /* UIResponder+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIResponder+SpecHelper.h"; sourceTree = "<group>"; };
+		153D18F01A7994CE00430040 /* UIResponder+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIResponder+SpecHelper.m"; sourceTree = "<group>"; };
 		153F26A00E7F70C000F75D9F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		1545EB5616C73370001C0EDE /* SplashViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SplashViewControllerSpec.mm; sourceTree = "<group>"; };
 		1545EB6016C73E59001C0EDE /* UIView+App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+App.h"; sourceTree = "<group>"; };
@@ -557,6 +562,7 @@
 			isa = PBXGroup;
 			children = (
 				158272BE16D9888F004CAC92 /* DoseFieldCellSpec.mm */,
+				153143C61A78A5BD00AD7BF8 /* NumberFieldCellSpec.mm */,
 			);
 			path = TableViewCells;
 			sourceTree = "<group>";
@@ -579,6 +585,8 @@
 				15C6D50916327F7000D6838D /* UIView+SpecHelper.m */,
 				15C8F66C1630E00900CA92D4 /* UIViewController+SpecHelper.h */,
 				15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */,
+				153D18EF1A7994CE00430040 /* UIResponder+SpecHelper.h */,
+				153D18F01A7994CE00430040 /* UIResponder+SpecHelper.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -979,6 +987,7 @@
 				158F40AD162A3EFC0000DD52 /* ExportViewController.m in Sources */,
 				158F40AF162A3EFC0000DD52 /* InsulinTypeViewController.m in Sources */,
 				158F40B1162A3EFC0000DD52 /* LogEntryViewController.m in Sources */,
+				153143C71A78A5BD00AD7BF8 /* NumberFieldCellSpec.mm in Sources */,
 				158F40B3162A3EFC0000DD52 /* LogViewController.m in Sources */,
 				158F40B7162A3EFC0000DD52 /* SettingsViewController.m in Sources */,
 				158F40BB162A4B690000DD52 /* DropboxExportViewControllerSpec.mm in Sources */,
@@ -1041,6 +1050,7 @@
 				155A26A90F2AF5810077FC20 /* NumberField.m in Sources */,
 				15EC68CD13B1B74900016937 /* LogModel.m in Sources */,
 				158F409C162A3E7A0000DD52 /* DropboxExportViewController.m in Sources */,
+				153D18F11A7994CE00430040 /* UIResponder+SpecHelper.m in Sources */,
 				158F40AC162A3EFC0000DD52 /* ExportViewController.m in Sources */,
 				158F40AE162A3EFC0000DD52 /* InsulinTypeViewController.m in Sources */,
 				158F40B0162A3EFC0000DD52 /* LogEntryViewController.m in Sources */,

@@ -1,11 +1,3 @@
-//
-//  NumberFieldCell.h
-//  Glucose
-//
-//  Created by Brandon Fosdick on 1/22/09.
-//  Copyright 2009 __MyCompanyName__. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 #import "NumberField.h"
 
@@ -35,6 +27,9 @@
 
 - (BOOL) becomeFirstResponder;
 - (BOOL) resignFirstResponder;
+
+- (void) cancel;
+- (void) save;
 
 @end
 

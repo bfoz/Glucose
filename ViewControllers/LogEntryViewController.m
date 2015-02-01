@@ -41,17 +41,17 @@ enum GlucoseSectionRows
 @property (nonatomic, strong) NSDateFormatter*	dateFormatter;
 
 @property (nonatomic, strong) UILabel*	    categoryLabel;
+@property (nonatomic, strong) NumberFieldCell*	glucoseCell;
 @property (nonatomic, strong) DateField*    timestampField;
 @property (nonatomic, strong) UILabel*	    timestampLabel;
-
+@property (nonatomic, strong) NumberFieldCell*	currentEditingCell;
+@property (nonatomic, strong) UITextField*  currentEditingField;
 @end
 
 @implementation LogEntryViewController
 {
-    NumberFieldCell*	glucoseCell;
     UITableViewCell*	noteCell;
     UIToolbar*	    inputToolbar;
-    UITextField*    currentEditingField;
 
     NSString*		noteText;
     ManagedCategory*	selectedCategory;
@@ -110,6 +110,9 @@ static NSUserDefaults* defaults = nil;
 {
     [super viewDidLoad];
 
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.tableView.allowsSelectionDuringEditing = YES;
 }
@@ -146,7 +149,7 @@ static NSUserDefaults* defaults = nil;
 - (void) finishEditingLogEntry
 {
     self.logEntry.category = selectedCategory;
-    self.logEntry.glucose = glucoseCell.number;
+    self.logEntry.glucose = self.glucoseCell.number;
     self.logEntry.note = noteText;
     self.logEntry.timestamp = self.timestampField.date;
 
@@ -286,13 +289,15 @@ static NSUserDefaults* defaults = nil;
 
 - (void) didTapToolbarCancelButton
 {
-    [currentEditingField.undoManager undo];
-    [currentEditingField resignFirstResponder];
+    [self.currentEditingCell cancel];
+    [self.currentEditingField.undoManager undo];
+    [self.currentEditingField resignFirstResponder];
 }
 
 - (void) didTapDoneButton
 {
-    [currentEditingField resignFirstResponder];
+    [self.currentEditingCell save];
+    [self.currentEditingField resignFirstResponder];
 }
 
 #pragma mark -
@@ -433,18 +438,18 @@ static NSUserDefaults* defaults = nil;
 		if( self.editing )
 		{
 		    if( self.logEntry )
-			glucoseCell = [NumberFieldCell cellForLogEntry:self.logEntry
+			self.glucoseCell = [NumberFieldCell cellForLogEntry:self.logEntry
 							 accessoryView:self.inputToolbar
 							      delegate:self
 							     tableView:tv];
 		    else
-			glucoseCell = [NumberFieldCell cellForNumber:nil
+			self.glucoseCell = [NumberFieldCell cellForNumber:nil
 							   precision:[model glucosePrecisionForNewEntries]
 							 unitsString:[NSString stringWithFormat:@" %@", [LogModel glucoseUnitsSettingString]]
 						  inputAccessoryView:self.inputToolbar
 							    delegate:self
 							   tableView:tv];
-		    cell = glucoseCell;
+		    cell = self.glucoseCell;
 		}
 		else
 		{
@@ -558,7 +563,7 @@ static NSUserDefaults* defaults = nil;
 		break;
 	    }
 	    case 2: // Go into edit mode if the user taps anywhere on the row
-		[glucoseCell becomeFirstResponder];
+		[self.glucoseCell becomeFirstResponder];
 		break;
 	}
     }
@@ -576,7 +581,7 @@ static NSUserDefaults* defaults = nil;
 	EditTextViewController* viewController = [[EditTextViewController alloc] initWithText:noteText];
 	viewController.delegate = self;
 	self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:nil action:nil];
-	[self.navigationController pushViewController:viewController animated:YES];
+	[self presentViewController:viewController animated:YES completion:nil];
     }
 }
 
@@ -603,14 +608,14 @@ static NSUserDefaults* defaults = nil;
 
 - (void)numberFieldCellDidBeginEditing:(NumberFieldCell*)cell
 {
-    [cell.field.undoManager registerUndoWithTarget:cell selector:@selector(setNumber:) object:cell.number];
-    currentEditingField = cell.field;
+    self.currentEditingCell = cell;
     [self disableSaveButton];
 }
 
 - (void)numberFieldCellDidEndEditing:(NumberFieldCell*)cell
 {
-    currentEditingField = nil;
+    self.currentEditingCell = nil;
+    self.currentEditingField = nil;
     [self enableSaveButton];
 }
 
@@ -652,15 +657,14 @@ static NSUserDefaults* defaults = nil;
     [self updateCategoryLabel];
 
     if( editingNewEntry )
-	[glucoseCell becomeFirstResponder];
+	[self.glucoseCell becomeFirstResponder];
 }
 
 #pragma mark DoseFieldCellDelegate
 
 - (void)doseDidBeginEditing:(DoseFieldCell*)cell
 {
-    [cell.doseField.undoManager registerUndoWithTarget:cell.doseField selector:@selector(setNumber:) object:cell.doseField.number];
-    currentEditingField = cell.doseField;
+    self.currentEditingCell = (id)cell;
     [self disableSaveButton];
 }
 
@@ -681,7 +685,7 @@ static NSUserDefaults* defaults = nil;
 
     cell.dose = cell.dose;
 
-    currentEditingField = nil;
+    self.currentEditingField = nil;
     [self enableSaveButton];
 }
 

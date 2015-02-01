@@ -3,6 +3,9 @@
 #import "Constants.h"
 
 @implementation DoseFieldCell
+{
+    NSUndoManager*  _undoManager;
+}
 
 + (DoseFieldCell*) cellForInsulinDose:(ManagedInsulinDose*)insulinDose
 			accessoryView:(UIView*)accessoryView
@@ -86,6 +89,20 @@
     _doseField.frame  = insetRect;
 }
 
+#pragma mark -
+
+- (void) cancel
+{
+    [self.undoManager undo];
+    [_doseField resignFirstResponder];
+}
+
+- (void) save
+{
+    [self.undoManager removeAllActions];
+    [_doseField resignFirstResponder];
+}
+
 - (void) updateHidden
 {
     self.textLabel.hidden = !(!_doseField.number && !self.insulinType);
@@ -129,10 +146,42 @@
     [self updateHidden];
 }
 
+- (NSNumber*) number
+{
+    return _doseField.number;
+}
+
+- (void) setNumber:(NSNumber*)n
+{
+    _doseField.number = n;
+}
+
+- (int) precision
+{
+    return _doseField.precision;
+}
+
+- (void) setPrecision:(int)p
+{
+    _doseField.precision = p;
+}
+
+// This looks funny because it generates an NSUndoManager if the underlying field
+//  control doesn't have one. The only time this should happen is when running tests.
+- (NSUndoManager*) undoManager
+{
+    if( _doseField.undoManager )
+	return _doseField.undoManager;
+    if( nil == _undoManager )
+	_undoManager = [[NSUndoManager alloc] init];
+    return _undoManager;
+}
+
 #pragma mark UITextFieldDelegate
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
+    [self.undoManager registerUndoWithTarget:self.doseField selector:@selector(setNumber:) object:self.doseField.number];
     if( self.delegate && [self.delegate respondsToSelector:@selector(doseDidBeginEditing:)] )
 	[self.delegate doseDidBeginEditing:self];
 }
@@ -161,18 +210,6 @@
 {
     [_doseField resignFirstResponder];
     return YES;
-}
-
-#pragma mark Propertes
-
-- (int) precision
-{
-    return _doseField.precision;
-}
-
-- (void) setPrecision:(int)p
-{
-    _doseField.precision = p;
 }
 
 @end

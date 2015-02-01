@@ -9,6 +9,7 @@
 @implementation NumberFieldCell
 {
     UILabel*	label;
+    NSUndoManager*  _undoManager;
 }
 
 @synthesize field;
@@ -94,6 +95,17 @@
     return [field resignFirstResponder];
 }
 
+- (void) cancel
+{
+    [self.undoManager undo];
+    [field resignFirstResponder];
+}
+
+- (void) save
+{
+    [self.undoManager removeAllActions];
+    [field resignFirstResponder];
+}
 
 #pragma mark UITextFieldDelegate
 
@@ -106,6 +118,7 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
+    [self.undoManager registerUndoWithTarget:field selector:@selector(setNumber:) object:field.number];
     if( [self.delegate respondsToSelector:@selector(numberFieldCellDidBeginEditing:)] )
 	[self.delegate numberFieldCellDidBeginEditing:self];
 }
@@ -212,6 +225,17 @@
 - (void) setTextAlignment:(UITextAlignment)a
 {
     field.textAlignment = a;
+}
+
+// This looks funny because it generates an NSUndoManager if the underlying field
+//  control doesn't have one. The only time this should happen is when running tests.
+- (NSUndoManager*) undoManager
+{
+    if( field.undoManager )
+	return field.undoManager;
+    if( nil == _undoManager )
+	_undoManager = [[NSUndoManager alloc] init];
+    return _undoManager;
 }
 
 @end

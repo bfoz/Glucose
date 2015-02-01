@@ -69,6 +69,86 @@ describe(@"DoseFieldCell", ^{
 	    cell.doseField.placeholder should equal(@"Insulin");
 	});
     });
+
+    describe(@"when the dose field begins editing", ^{
+	__block id mockDelegate;
+
+	beforeEach(^{
+	    ManagedLogEntry* managedLogEntry = [logModel insertManagedLogEntry];
+	    ManagedInsulinDose* insulinDose = [managedLogEntry addDoseWithType:insulinType];
+	    insulinDose.quantity = @2;
+
+	    // Use nice_fake_for() because fake_for() doesn't mock optional methods
+	    mockDelegate = nice_fake_for(@protocol(DoseFieldCellDelegate));
+
+	    cell = [DoseFieldCell cellForInsulinDose:insulinDose
+				       accessoryView:nil
+					    delegate:mockDelegate
+					   precision:0
+					   tableView:nil];
+
+
+	    [cell textFieldDidBeginEditing:cell.doseField];
+
+	    cell.number = @42;
+	});
+
+	it(@"must inform the delegate", ^{
+	    mockDelegate should have_received("doseDidBeginEditing:");
+	});
+
+	describe(@"when cancelled", ^{
+	    beforeEach(^{
+		spy_on(cell.doseField);
+
+		[cell cancel];
+	    });
+
+	    it(@"must resign first responder", ^{
+		cell.doseField should have_received("resignFirstResponder");
+	    });
+
+	    it(@"must undo any changes", ^{
+		cell.number should_not equal(@42);
+	    });
+
+	    describe(@"when the field ends editing", ^{
+		beforeEach(^{
+		    [cell textFieldDidEndEditing:cell.doseField];
+		});
+
+		it(@"must notify the delegate", ^{
+		    mockDelegate should have_received("doseDidEndEditing:");
+		});
+	    });
+	});
+
+	describe(@"when told to save", ^{
+	    beforeEach(^{
+		spy_on(cell.doseField);
+
+		[cell save];
+	    });
+
+	    it(@"must resign first responder", ^{
+		cell.doseField should have_received("resignFirstResponder");
+	    });
+
+	    it(@"should accept the new value", ^{
+		cell.number should equal(@42);
+	    });
+
+	    describe(@"when the field ends editing", ^{
+		beforeEach(^{
+		    [cell textFieldDidEndEditing:cell.doseField];
+		});
+
+		it(@"must notify the delegate", ^{
+		    mockDelegate should have_received("doseDidEndEditing:").with(cell);
+		});
+	    });
+	});
+    });
 });
 
 SPEC_END

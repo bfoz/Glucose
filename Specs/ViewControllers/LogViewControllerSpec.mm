@@ -65,16 +65,13 @@ describe(@"LogViewController", ^{
 
     describe(@"when the Add button is tapped", ^{
 	beforeEach(^{
+	    spy_on(controller.navigationController);
+
 	    [controller.navigationItem.rightBarButtonItem tap];
 	});
 
 	it(@"should push a new log entry view controller", ^{
-	    controller.navigationController.topViewController should be_instance_of([LogEntryViewController class]);
-	});
-
-	it(@"should put the log entry view controller in edit mode", ^{
-	    LogEntryViewController* logEntryViewController = (LogEntryViewController*)controller.navigationController.topViewController;
-	    logEntryViewController.editingNewEntry should be_truthy;
+	    controller.navigationController should have_received("pushViewController:animated:");
 	});
 
 	it(@"should change the Back button title to Cancel", ^{
@@ -146,22 +143,18 @@ describe(@"LogViewController", ^{
 
 	it(@"should have proper section titles", ^{
 	    [controller tableView:nil titleForHeaderInSection:0] should equal(@"Today (150 mg/dL)");
-	    [controller tableView:nil titleForHeaderInSection:1] should equal(@"Yesterday");
+	    [controller tableView:nil titleForHeaderInSection:1] should equal(@"Yesterday (150 mg/dL)");
 	    [controller tableView:nil titleForHeaderInSection:2] should equal(@"1/1/13 (200 mg/dL)");
 	});
 
 	describe(@"when a row is tapped", ^{
 	    beforeEach(^{
+		spy_on(controller.navigationController);
 		[controller tableView:nil didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
 	    });
 
 	    it(@"should push a log entry view controller", ^{
-		controller.navigationController.topViewController should be_instance_of([LogEntryViewController class]);
-	    });
-
-	    it(@"should not put the log entry view controller in edit mode", ^{
-		LogEntryViewController* logEntryViewController = (LogEntryViewController*)controller.navigationController.topViewController;
-		logEntryViewController.editingNewEntry should_not be_truthy;
+		controller.navigationController should have_received("pushViewController:animated:");
 	    });
 	});
     });
