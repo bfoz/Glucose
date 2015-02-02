@@ -237,7 +237,6 @@ enum AboutSectionRows
 	{
 	    cell.textLabel.text = @"Sort order";
 	    UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:@[@"Descending", @"Ascending"]];
-	    s.segmentedControlStyle = UISegmentedControlStyleBar;
 	    [s addTarget:self action:@selector(logDaySortOrderAction:) forControlEvents:UIControlEventValueChanged];
 	    s.selectedSegmentIndex = [[NSUserDefaults standardUserDefaults] integerForKey:kLogDaySortOder];
 	    cell.accessoryView = s;
@@ -273,7 +272,6 @@ enum AboutSectionRows
 		case kGlucoseUnitsRow:
 		    cell.textLabel.text = @"Glucose Units";
 		    UISegmentedControl* s = [[UISegmentedControl alloc] initWithItems:@[GlucoseUnitsTypeString_mgdL,GlucoseUnitsTypeString_mmolL]];
-		    s.segmentedControlStyle = UISegmentedControlStyleBar;
 		    [s addTarget:self action:@selector(glucoseUnitsAction:) forControlEvents:UIControlEventValueChanged];
 		    s.selectedSegmentIndex = (kGlucoseUnits_mgdL == [LogModel glucoseUnitsSetting]) ? 0 : 1;
 		    cell.accessoryView = s;

@@ -200,9 +200,9 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 	float maxWidth = 0;
 	for( ManagedCategory* c in self.categories )
 	{
-	    const float a = [c.name sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
-	    if( a > maxWidth )
-		maxWidth = a;
+	    const float width = [c.name sizeWithAttributes:@{NSFontAttributeName: [UIFont systemFontOfSize:[UIFont smallSystemFontSize]]}].width;
+	    if( width > maxWidth )
+		maxWidth = width;
 	}
 	if( maxWidth != 0 )
 	    categoryNameMaxWidth = [NSNumber numberWithFloat:maxWidth];
@@ -264,9 +264,9 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 	float maxWidth = 0;
 	for( InsulinType* t in self.insulinTypes )
 	{
-	    const float a = [t.shortName sizeWithFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]].width;
-	    if( a > maxWidth )
-		maxWidth = a;
+	    const float width = [t.shortName sizeWithAttributes:@{NSFontAttributeName: [UIFont systemFontOfSize:[UIFont smallSystemFontSize]]}].width;
+	    if( width > maxWidth )
+		maxWidth = width;
 	}
 	if( maxWidth != 0 )
 	    insulinTypeShortNameMaxWidth = [NSNumber numberWithFloat:maxWidth];

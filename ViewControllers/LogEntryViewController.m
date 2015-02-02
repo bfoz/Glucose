@@ -598,9 +598,10 @@ static NSUserDefaults* defaults = nil;
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath*)path
 {
     if( (kSectionNote == path.section) && noteText )
-	return 15 + [noteText sizeWithFont:[UIFont boldSystemFontOfSize:[UIFont labelFontSize]]
-			 constrainedToSize:CGSizeMake(280, 1000)
-			     lineBreakMode:NSLineBreakByWordWrapping].height;
+	return 15 + [noteText boundingRectWithSize:CGSizeMake(280, 1000)
+					   options:NSStringDrawingUsesLineFragmentOrigin
+					attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:[UIFont labelFontSize]]}
+					   context:nil].size.width;
     return 44;
 }
 
