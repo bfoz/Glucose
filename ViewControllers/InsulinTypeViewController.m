@@ -239,6 +239,8 @@
 	case NSFetchedResultsChangeInsert:
 	    [self.tableView insertSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
 	    break;
+	default:
+	    break;
     }
 }
 
