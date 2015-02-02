@@ -309,7 +309,7 @@ enum AboutSectionRows
 	NSBundle *const mainBundle = [NSBundle mainBundle];
 	NSString* version = [mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
 	NSString* name = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
-	return [NSString stringWithFormat:@"%@ v%@\nCopyright 2008-2013 Brandon Fosdick", name, version];
+	return [NSString stringWithFormat:@"%@ v%@\nCopyright 2008-2015 Brandon Fosdick", name, version];
     }
     return nil;
 }
