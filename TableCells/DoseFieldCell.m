@@ -58,7 +58,7 @@
 	_doseField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
 	_doseField.font = [UIFont systemFontOfSize:[UIFont labelFontSize]];
 	_doseField.clearButtonMode = UITextFieldViewModeWhileEditing;
-	_doseField.placeholder = @"Insulin";
+	_doseField.placeholder = @"Insulin Dose";
 
 	_typeField = [[UILabel alloc] initWithFrame:CGRectZero];
 	_typeField.backgroundColor = [UIColor clearColor];

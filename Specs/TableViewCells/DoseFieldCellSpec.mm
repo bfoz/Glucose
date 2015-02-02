@@ -66,7 +66,7 @@ describe(@"DoseFieldCell", ^{
 	});
 
 	it(@"should display placeholder text for the Insulin Quantity", ^{
-	    cell.doseField.placeholder should equal(@"Insulin");
+	    cell.doseField.placeholder should equal(@"Insulin Dose");
 	});
     });
 
