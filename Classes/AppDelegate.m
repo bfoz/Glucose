@@ -49,10 +49,12 @@ NSDateFormatter* shortDateFormatter = nil;
 	// Set the background color for the flip animation going to/from the settings view
 	//  The background color is what shows up behind the flipping views
 	window.backgroundColor = [UIColor blackColor];
-	
+
+#if !(TARGET_IPHONE_SIMULATOR)
     DBAccountManager* accountManager = [[DBAccountManager alloc] initWithAppKey:dropboxAppKey
 									 secret:dropboxAppSecret];
     [DBAccountManager setSharedManager:accountManager];
+#endif
 
     SplashViewController* splashViewController = [[SplashViewController alloc] initForMigration:[LogModel needsMigration]];
     splashViewController.delegate = self;
