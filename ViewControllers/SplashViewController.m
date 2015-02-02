@@ -30,7 +30,7 @@
     if( self )
     {
 	self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-	self.backgroundImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Default"]];
+	self.backgroundImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LaunchImage"]];
 	self.backgroundImageView.contentMode = UIViewContentModeCenter;
 	self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
 	self.textLabel = [[UILabel alloc] init];

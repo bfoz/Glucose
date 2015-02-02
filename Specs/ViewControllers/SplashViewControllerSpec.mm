@@ -36,7 +36,7 @@ describe(@"SplashViewController", ^{
 	});
 
 	it(@"should have a background image", ^{
-	    controller.backgroundImageView.image should equal([UIImage imageNamed:@"Default"]);
+	    controller.backgroundImageView.image should equal([UIImage imageNamed:@"LaunchImage"]);
 	});
 
 	it(@"should start the activity spinner", ^{
