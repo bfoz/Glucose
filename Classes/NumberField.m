@@ -12,7 +12,6 @@
     if (self = [super initWithFrame:CGRectZero])
     {
 	self.delegate = self;
-	self.keyboardType = UIKeyboardTypeNumberPad;
 	self.numberFieldDelegate = delegate;
     }
     return self;
@@ -37,31 +36,11 @@
 
 #pragma mark UITextFieldDelegate
 
-- (BOOL) textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
-    // Behave normally if not using fractional digits
-    if( 0 == self.precision )
-	return YES;
-
-    NSString* s = [[[super.text stringByReplacingOccurrencesOfString:@"0." withString:@""] stringByReplacingOccurrencesOfString:@"." withString:@""] stringByAppendingString:string];
-
-    // Allow backspace
-    if( range.length && (0 == [string length]) )
-        s = [s substringToIndex:(s.length - range.length)];
-
-    const long i = s.length - 1;
-    if( i > 0 )
-	super.text = [NSString stringWithFormat:@"%@.%@", [s substringToIndex:i], [s substringFromIndex:i]];
-    else if( i == 0 )
-	super.text = [NSString stringWithFormat:@"0.%@", s];
-    else
-	super.text = nil;
-
-    return NO;
-}
-
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
+    // Locales that use non-integer glucose, or insulin dose, values need a decimal point on the keyboard
+    self.keyboardType = (0 == self.precision) ? UIKeyboardTypeNumberPad : UIKeyboardTypeDecimalPad;
+
     if( [self.numberFieldDelegate respondsToSelector:@selector(textFieldShouldBeginEditing:)] )
 	return [self.numberFieldDelegate textFieldShouldBeginEditing:self];
     return YES;
