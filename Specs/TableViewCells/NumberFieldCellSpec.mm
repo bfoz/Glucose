@@ -2,7 +2,6 @@
 #import "NumberFieldCell.h"
 
 #import "LogModel+SpecHelper.h"
-#import "UIResponder+SpecHelper.h"
 
 SPEC_BEGIN(NumberFieldCellSpec)
 
