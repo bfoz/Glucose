@@ -344,6 +344,11 @@
 
 - (void) logEntryView:(LogEntryViewController*)view didEndEditingEntry:(ManagedLogEntry*)logEntry
 {
+    // Forcefully update the section header
+    NSIndexPath* indexPath = [fetchedResultsController indexPathForObject:logEntry];
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section]
+		  withRowAnimation:UITableViewRowAnimationAutomatic];
+
     [self.navigationController popViewControllerAnimated:YES];
 }
 
