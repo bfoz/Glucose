@@ -227,10 +227,10 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     [LogModel closeDatabase:bundledDatabase];
 
     unsigned index = 0;
-    for( Category* category in bundledCategories )
+    for( NSDictionary* category in bundledCategories )
     {
 	ManagedCategory* managedCategory = [LogModel insertManagedCategoryIntoContext:self.managedObjectContext];
-	managedCategory.name = category.categoryName;
+	managedCategory.name = category[@"name"];
 	managedCategory.sequenceNumber = [NSNumber numberWithInt:index];
 	++index;
     }
@@ -303,10 +303,10 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     [LogModel closeDatabase:bundledDatabase];
 
     unsigned index = 0;
-    for( InsulinType* insulinType in bundledInsulinTypes )
+    for( NSDictionary* insulinType in bundledInsulinTypes )
     {
 	ManagedInsulinType* managedInsulinType = [LogModel insertManagedInsulinTypeIntoContext:self.managedObjectContext];
-	managedInsulinType.shortName = insulinType.shortName;
+	managedInsulinType.shortName = insulinType[@"shortName"];
 	managedInsulinType.sequenceNumber = index;
 	++index;
     }
