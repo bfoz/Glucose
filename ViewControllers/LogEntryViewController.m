@@ -511,7 +511,7 @@ static NSUserDefaults* defaults = nil;
     if( UITableViewCellEditingStyleDelete == editingStyle )
     {
 	if( kSectionNote == path.section )
-	    [self editTextViewControllerDidFinishWithText:nil];
+	    [self editTextViewControllerDidFinishWithText:@""];
 	else
 	    [tv deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationFade];
     }
@@ -581,7 +581,10 @@ static NSUserDefaults* defaults = nil;
 	EditTextViewController* viewController = [[EditTextViewController alloc] initWithText:noteText];
 	viewController.delegate = self;
 	self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:nil action:nil];
-	[self presentViewController:viewController animated:YES completion:nil];
+
+	[self presentViewController:[[UINavigationController alloc] initWithRootViewController:viewController]
+			   animated:YES
+			 completion:nil];
     }
 }
 
@@ -711,11 +714,20 @@ static NSUserDefaults* defaults = nil;
 
 - (void) editTextViewControllerDidFinishWithText:(NSString*)text
 {
-    noteText = text;
-    noteCell.textLabel.text = text;
+    // If the returned text is nil, then the user tapped the cancel button. So, don't do anything.
+    if( text )
+    {
+	// If the returned text is empty, then the user must have tried to delete the text
+	if( 0 == text.length )
+	    noteText = nil;
+	else
+	    noteText = text;
+
+	[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kSectionNote] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
 
     self.navigationItem.backBarButtonItem = nil;
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kSectionNote] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self dismissViewControllerAnimated:YES completion:^{}];
 }
 
 @end

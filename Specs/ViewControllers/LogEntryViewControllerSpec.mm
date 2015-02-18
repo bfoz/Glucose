@@ -364,6 +364,7 @@ describe(@"LogEntryViewController", ^{
 
 		describe(@"when the log entry already had a note", ^{
 		    __block NSString* noteText;
+		    __block CGFloat originalCellHeight;
 
 		    beforeEach(^{
 			noteText = @"This is some note text";
@@ -371,6 +372,7 @@ describe(@"LogEntryViewController", ^{
 			controller.logEntry = logEntry;
 
 			cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+			originalCellHeight = [controller tableView:nil heightForRowAtIndexPath:noteRowIndexPath];
 		    });
 
 		    it(@"should show the note text in the cell", ^{
@@ -393,11 +395,12 @@ describe(@"LogEntryViewController", ^{
 			});
 
 			it(@"should display the edit text view", ^{
-			    controller.presentedViewController should be_instance_of([EditTextViewController class]);
+			    controller.presentedViewController should be_instance_of([UINavigationController class]);
+			    ((UINavigationController*)controller.presentedViewController).topViewController should be_instance_of([EditTextViewController class]);
 			});
 
 			it(@"should set the initial text for the edit text view", ^{
-			    EditTextViewController* editController = (EditTextViewController*)controller.presentedViewController;
+			    EditTextViewController* editController = (EditTextViewController*)(((UINavigationController*)controller.presentedViewController).topViewController);
 			    editController.text should equal(noteText);
 			});
 
@@ -419,9 +422,9 @@ describe(@"LogEntryViewController", ^{
 			    });
 			});
 
-			describe(@"when the edit controller returns with no text", ^{
+			describe(@"when the edit controller returns empty text", ^{
 			    beforeEach(^{
-				[controller editTextViewControllerDidFinishWithText:nil];
+				[controller editTextViewControllerDidFinishWithText:@""];
 			    });
 
 			    it(@"should set the cell to Add a Note", ^{
@@ -432,6 +435,46 @@ describe(@"LogEntryViewController", ^{
 			    it(@"should return the cell height to the standard value", ^{
 				[controller tableView:nil heightForRowAtIndexPath:noteRowIndexPath] should equal(44);
 			    });
+			});
+
+			describe(@"when the edit controller cancels the edit", ^{
+			    beforeEach(^{
+				[controller editTextViewControllerDidFinishWithText:nil];
+			    });
+
+			    it(@"should set the cell to the original text", ^{
+				UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+				cell.textLabel.text should equal(noteText);
+			    });
+
+			    it(@"should return the cell height to the original value", ^{
+				[controller tableView:nil heightForRowAtIndexPath:noteRowIndexPath] should equal(originalCellHeight);
+			    });
+			});
+		    });
+
+		    describe(@"when the row is deleted", ^{
+			beforeEach(^{
+			    [controller tableView:controller.tableView
+			       commitEditingStyle:UITableViewCellEditingStyleDelete
+				forRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionNote]];
+			});
+
+			it(@"must set the cell to Add a Note", ^{
+			    cell.textLabel.text should equal(@"Add a Note");
+			});
+
+			it(@"should not display a header for the Note section", ^{
+			    [controller tableView:nil titleForHeaderInSection:kSectionNote] should be_nil;
+			});
+
+			it(@"should center justify the text", ^{
+			    UITableViewCell* cell = [controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+			    cell.textLabel.textAlignment should equal(NSTextAlignmentCenter);
+			});
+
+			it(@"should set the cell height to the standard value", ^{
+			    [controller tableView:nil heightForRowAtIndexPath:noteRowIndexPath] should equal(44);
 			});
 		    });
 		});
@@ -467,11 +510,12 @@ describe(@"LogEntryViewController", ^{
 			});
 
 			it(@"should display the edit text view", ^{
-			    controller.presentedViewController should be_instance_of([EditTextViewController class]);
+			    controller.presentedViewController should be_instance_of([UINavigationController class]);
+			    ((UINavigationController*)controller.presentedViewController).topViewController should be_instance_of([EditTextViewController class]);
 			});
 
 			it(@"should set the initial text for the edit text view", ^{
-			    EditTextViewController* editController = (EditTextViewController*)controller.presentedViewController;
+			    EditTextViewController* editController = (EditTextViewController*)(((UINavigationController*)controller.presentedViewController).topViewController);
 			    editController.text.length should equal(0);
 			});
 
@@ -808,7 +852,34 @@ describe(@"LogEntryViewController", ^{
 		    });
 		});
 
+		describe(@"with empty text", ^{
+		    beforeEach(^{
+			[controller editTextViewControllerDidFinishWithText:@""];
+		    });
+
+		    it(@"should change the button to say Add a Note", ^{
+			cell.textLabel.text should equal(@"Add a Note");
+		    });
+
+		    it(@"should center justify the text", ^{
+			UITableViewCell* cell = [controller tableView:controller.tableView cellForRowAtIndexPath:noteRowIndexPath];
+			cell.textLabel.textAlignment should equal(NSTextAlignmentCenter);
+		    });
+
+		    it(@"should show the disclosure indicator", ^{
+			cell.accessoryType should equal(UITableViewCellAccessoryDisclosureIndicator);
+		    });
+
+		    it(@"should not have a section title", ^{
+			[controller tableView:nil titleForHeaderInSection:kSectionNote] should be_nil;
+		    });
+		});
+
 		describe(@"without text", ^{
+		    beforeEach(^{
+			[controller editTextViewControllerDidFinishWithText:nil];
+		    });
+
 		    it(@"should change the button to say Add a Note", ^{
 			cell.textLabel.text should equal(@"Add a Note");
 		    });

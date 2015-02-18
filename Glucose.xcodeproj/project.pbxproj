@@ -91,6 +91,7 @@
 		15C6D50A16327F7000D6838D /* UIView+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C6D50916327F7000D6838D /* UIView+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		15C6D5C716337EE100D6838D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15C6D5C616337EE000D6838D /* SystemConfiguration.framework */; };
 		15C8F66F1630E0DE00CA92D4 /* UIViewController+SpecHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		15C90A0C1A947DC50095797E /* EditTextViewControllerSpec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15C90A0B1A947DC50095797E /* EditTextViewControllerSpec.mm */; };
 		15CAB6E2194518E00064BC2A /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CAB6E1194518E00064BC2A /* libc++.dylib */; };
 		15CBAAC91A77363500AC4156 /* Dropbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CBAAC81A77363500AC4156 /* Dropbox.framework */; };
 		15CBAACD1A7739C000AC4156 /* libFlurry_6.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15CBAACC1A7739C000AC4156 /* libFlurry_6.0.0.a */; };
@@ -320,6 +321,7 @@
 		15C6D5C616337EE000D6838D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		15C8F66C1630E00900CA92D4 /* UIViewController+SpecHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+SpecHelper.h"; sourceTree = "<group>"; };
 		15C8F66E1630E0DE00CA92D4 /* UIViewController+SpecHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+SpecHelper.m"; sourceTree = "<group>"; };
+		15C90A0B1A947DC50095797E /* EditTextViewControllerSpec.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditTextViewControllerSpec.mm; sourceTree = "<group>"; };
 		15CAB6E1194518E00064BC2A /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		15CBAAC81A77363500AC4156 /* Dropbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Dropbox.framework; sourceTree = "<group>"; };
 		15CBAACB1A7739C000AC4156 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
@@ -541,6 +543,7 @@
 				15836FE7169E9736000D4FC2 /* LogViewControllerSpec.mm */,
 				15E59FFE1699539C0067BDC1 /* SettingsViewControllerSpec.mm */,
 				1545EB5616C73370001C0EDE /* SplashViewControllerSpec.mm */,
+				15C90A0B1A947DC50095797E /* EditTextViewControllerSpec.mm */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -959,6 +962,7 @@
 				1581CE28155F126900B069F2 /* AppDelegateSpec.mm in Sources */,
 				1581CE2F155F2E4B00B069F2 /* LogEntryViewControllerSpec.mm in Sources */,
 				158F409D162A3E7A0000DD52 /* DropboxExportViewController.m in Sources */,
+				15C90A0C1A947DC50095797E /* EditTextViewControllerSpec.mm in Sources */,
 				158F40AD162A3EFC0000DD52 /* ExportViewController.m in Sources */,
 				158F40AF162A3EFC0000DD52 /* InsulinTypeViewController.m in Sources */,
 				158F40B1162A3EFC0000DD52 /* LogEntryViewController.m in Sources */,
