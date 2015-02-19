@@ -226,12 +226,22 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     NSArray* bundledCategories = [LogModel loadCategoriesFromDatabase:bundledDatabase];
     [LogModel closeDatabase:bundledDatabase];
 
+    NSArray* categories = self.categories;
+
     unsigned index = 0;
     for( NSDictionary* category in bundledCategories )
     {
-	ManagedCategory* managedCategory = [LogModel insertManagedCategoryIntoContext:self.managedObjectContext];
-	managedCategory.name = category[@"name"];
-	managedCategory.sequenceNumber = [NSNumber numberWithInt:index];
+	NSUInteger existing_index = [categories indexOfObjectPassingTest:^BOOL(ManagedCategory* obj, NSUInteger idx, BOOL *stop) {
+	    return [obj.name isEqualToString:category[@"name"]];
+	}];
+
+	// If the category already exists, do nothing
+	if( NSNotFound == existing_index )
+	{
+	    ManagedCategory* managedCategory = [LogModel insertManagedCategoryIntoContext:self.managedObjectContext];
+	    managedCategory.name = category[@"name"];
+	    managedCategory.sequenceNumber = @(index);
+	}
 	++index;
     }
 
@@ -302,12 +312,22 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
     NSArray* bundledInsulinTypes = [LogModel loadInsulinTypesFromDatabase:bundledDatabase];
     [LogModel closeDatabase:bundledDatabase];
 
+    NSArray* insulinTypes = self.insulinTypes;
+
     unsigned index = 0;
     for( NSDictionary* insulinType in bundledInsulinTypes )
     {
-	ManagedInsulinType* managedInsulinType = [LogModel insertManagedInsulinTypeIntoContext:self.managedObjectContext];
-	managedInsulinType.shortName = insulinType[@"shortName"];
-	managedInsulinType.sequenceNumber = index;
+	NSUInteger existing_index = [insulinTypes indexOfObjectPassingTest:^BOOL(ManagedInsulinType* obj, NSUInteger idx, BOOL *stop) {
+	    return [obj.shortName isEqualToString:insulinType[@"insulinTypeID"]];
+	}];
+
+	// If the category already exists, do nothing
+	if( NSNotFound == existing_index )
+	{
+	    ManagedInsulinType* managedInsulinType = [LogModel insertManagedInsulinTypeIntoContext:self.managedObjectContext];
+	    managedInsulinType.shortName = insulinType[@"shortName"];
+	    managedInsulinType.sequenceNumber = index;
+	}
 	++index;
     }
 
