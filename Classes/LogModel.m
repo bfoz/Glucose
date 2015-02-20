@@ -301,6 +301,7 @@ void configureAverageGlucoseFormatter(NSNumberFormatter* averageGlucoseFormatter
 {
     [self removeInsulinTypeForNewEntries:insulinType];
     [self.insulinTypes removeObject:insulinType];
+    [self.managedObjectContext deleteObject:insulinType];
 }
 
 - (void) restoreBundledInsulinTypes
