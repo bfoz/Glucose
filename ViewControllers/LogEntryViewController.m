@@ -722,8 +722,11 @@ static NSUserDefaults* defaults = nil;
 	    noteText = nil;
 	else
 	    noteText = text;
-
+#ifdef SPECS
+	[self updateNoteCell];
+#else
 	[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kSectionNote] withRowAnimation:UITableViewRowAnimationAutomatic];
+#endif
     }
 
     self.navigationItem.backBarButtonItem = nil;
