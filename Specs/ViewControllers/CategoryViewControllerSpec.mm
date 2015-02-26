@@ -45,8 +45,8 @@ describe(@"CategoryViewController", ^{
 	[controller.tableView numberOfSections] should equal(1);
     });
 
-    it(@"should have the correct number of category rows", ^{
-	[controller.tableView numberOfRowsInSection:kCategoriesSectionNumber] should equal(10);
+    it(@"should have the correct number of category rows and a row for None", ^{
+	[controller.tableView numberOfRowsInSection:kCategoriesSectionNumber] should equal(logModel.categories.count + 1);
     });
 
     describe(@"when in edit mode", ^{

@@ -52,6 +52,10 @@
     NSManagedObjectContext* _managedObjectContext = nil;
 
     BOOL sqliteDatabaseAlreadyExisted = [[NSFileManager defaultManager] fileExistsAtPath:[[LogModel sqlitePersistentStoreURL] path]];
+#ifndef SPECS	// Always set up a new persistent store when running tests
+    sqliteDatabaseAlreadyExisted = NO;
+#endif
+
     NSPersistentStoreCoordinator* coordinator = [self persistentStoreCoordinator];
     if( coordinator )
     {
