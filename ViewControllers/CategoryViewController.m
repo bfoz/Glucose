@@ -97,7 +97,7 @@
     if( self.editing )
     {
 	((TextFieldCell*)cell).editedObject = category;
-	((TextFieldCell*)cell).textField.text = [category name];
+	((TextFieldCell*)cell).textField.text = [NSString stringWithFormat:@"%@ (%lu)", category.name, (unsigned long)category.logEntries.count];
 	cell.accessibilityLabel = [category name];
     }
     else
