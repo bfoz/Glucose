@@ -21,6 +21,11 @@
     return [[LogModel applicationDocumentsDirectory] URLByAppendingPathComponent:@"GlucoseCoreData.sqlite"];
 }
 
++ (BOOL) persistentStoreExists
+{
+    return [[NSFileManager defaultManager] fileExistsAtPath:self.sqlitePersistentStoreURL.path];
+}
+
 + (void) importFromBundledDatabaseIntoContext:(NSManagedObjectContext*)managedObjectContext
 {
     sqlite3* database = [LogModel openDatabasePath:[LogModel bundledDatabasePath]];
@@ -51,8 +56,8 @@
 {
     NSManagedObjectContext* _managedObjectContext = nil;
 
-    BOOL sqliteDatabaseAlreadyExisted = [[NSFileManager defaultManager] fileExistsAtPath:[[LogModel sqlitePersistentStoreURL] path]];
-#ifndef SPECS	// Always set up a new persistent store when running tests
+    BOOL sqliteDatabaseAlreadyExisted = [self persistentStoreExists];
+#ifdef SPECS	// Always set up a new persistent store when running tests
     sqliteDatabaseAlreadyExisted = NO;
 #endif
 

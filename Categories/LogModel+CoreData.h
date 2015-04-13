@@ -6,6 +6,7 @@
 
 + (NSURL*) applicationDocumentsDirectory;
 + (NSURL*) sqlitePersistentStoreURL;
++ (BOOL) persistentStoreExists;
 
 + (NSManagedObjectContext*) managedObjectContext;
 + (NSManagedObjectModel*) managedObjectModel;
