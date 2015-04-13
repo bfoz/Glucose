@@ -164,6 +164,7 @@
 - (void) deleteInsulinType:(ManagedInsulinType*)insulinType
 {
     [model removeInsulinType:insulinType];
+    [model save];
 }
 
 - (void) confirmDeleteInsulinType:(ManagedInsulinType*)insulinType
