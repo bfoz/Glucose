@@ -145,7 +145,7 @@
     if( self.editing )
     {
 	((TextFieldCell*)cell).editedObject = insulinType;
-	((TextFieldCell*)cell).textField.text = [insulinType shortName];
+	((TextFieldCell*)cell).textField.text = [NSString stringWithFormat:@"%@ (%lu)", insulinType.shortName, (unsigned long)[model numberOfLogEntriesForInsulinType:insulinType]];
 	cell.accessibilityLabel = [insulinType shortName];
 
 	// Highlight the row if its insulin type is on the list of types used for new entries
